@@ -1,0 +1,78 @@
+<div class="layui-row">
+    <div class="layui-col-md3">
+        <div class="left-panel">
+            <div class="left-search">
+                <input type="text" placeholder="搜索" autocomplete="off" class="layui-input eleTree-search">
+                <div class="layui-btn-group">
+                    <button id="add-btn" class="layui-btn layui-btn-normal layui-btn-sm" title="新增">
+                        <i class="layui-icon layui-icon-add-1"></i>
+                    </button>
+                    <button id="del-btn" class="layui-btn layui-btn-normal layui-btn-sm" title="删除">
+                        <i class="layui-icon layui-icon-delete"></i>
+                    </button>
+                </div>
+            </div>
+            <table class="layui-hide" lay-filter="left-table" id="left-table"></table>
+        </div>
+    </div>
+    <div class="layui-col-md9">
+        <div class="right-panel">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <h3><b>字典信息</b></h3>
+                </div>
+                <div class="layui-card-body">
+                    <form id="dictionary-info" class="layui-form" action="" lay-filter="dictionary-form">
+                        <input type="hidden" name="dictTypeId" value="">
+                        <div class="layui-row layui-col-space10 layui-form-item">
+                            <div class="layui-col-lg4">
+                                <label class="layui-form-label">字典名称：</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="dictTypeName" autocomplete="off" class="layui-input"
+                                           maxlength="20" placeholder="请输入字典名称" lay-verify="required|repeat">
+                                </div>
+                            </div>
+                            <div class="layui-col-lg4">
+                                <label class="layui-form-label">字典键：</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="dictTypeKey" autocomplete="off" class="layui-input"
+                                           maxlength="50" placeholder="请输入字典键" lay-verify="required|repeat|regExp">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row layui-col-space10 layui-form-item">
+                            <div class="layui-col-lg4">
+                                <label class="layui-form-label">字典内容：</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-btn-group" style="margin: 5px 0px">
+                                        <button id="add-node-btn" type="button" class="layui-btn layui-btn-normal layui-btn-sm" title="新增">
+                                            <i class="layui-icon layui-icon-add-1"></i>
+                                        </button>
+                                        <!--<button id="edit-node-btn" class="layui-btn layui-btn-normal layui-btn-sm" title="修改">
+                                            <i class="layui-icon layui-icon-edit"></i>
+                                        </button>
+                                        <button id="del-node-btn" class="layui-btn layui-btn-normal layui-btn-sm" title="删除">
+                                            <i class="layui-icon layui-icon-delete"></i>
+                                        </button>-->
+                                    </div>
+                                    <div style="width: 300px; height: 300px; border-radius: 4px; border: 1px solid #d2d2d2; ">
+                                        <ul id="dict-node-tree" class="ztree"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row layui-col-space10">
+                            <div class="layui-col-lg-offset10 layui-col-lg2">
+                                <button type="button" lay-filter="submit-btn" lay-submit class="layui-btn">保存</button>
+                                <button type="button" id="cancel-btn" class="layui-btn layui-btn-primary">取消</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/jquery/jquery-1.8.3.js"></script>
+<script src="/lib/ztree/js/jquery.ztree.all.js"></script>
+<script src="/page/module/system/dictionary/manyLevel.js"></script>
