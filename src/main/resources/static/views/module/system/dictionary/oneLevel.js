@@ -1,5 +1,11 @@
 /** 菜单管理 */
 //@ sourceURL=oneLevel.js
+layui.config({
+    base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
+}).extend({
+    eleTree: 'eleTree' //扩展模块
+    ,ajax: 'ajax'
+});
 layui.use(['form', 'eleTree', 'jquery', 'layer', 'table', 'ajax'], function () {
     var $ = layui.jquery;
     var eleTree = layui.eleTree;

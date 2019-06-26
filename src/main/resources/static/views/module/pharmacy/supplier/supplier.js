@@ -1,5 +1,11 @@
 /** 供应商 */
 //@ sourceURL=supplier.js
+layui.config({
+    base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
+}).extend({
+    utils: 'utils' //扩展模块
+    ,ajax: 'ajax'
+});
 layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
     var $ = layui.jquery;
     var layer = layui.layer;
@@ -15,11 +21,11 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
         url: rootMappint + '/findAll',
         limit: 300,// 最多可有300个供应商
         cols: [[
-            {field: 'supplierId', title: TABLE_COLUMN.numbers, width: '5%', type: 'numbers'},
-            {field: 'supplierName', title: '供应商名称', width: '20%', edit: 'text'},
-            {field: 'supplierPhone', title: '联系方式', width: '20%', edit: 'text'},
+            {field: 'supplierId', title: TABLE_COLUMN.numbers, type: 'numbers'},
+            {field: 'supplierName', title: '供应商名称', width: '20%',  edit: 'text'},
+            {field: 'supplierPhone', title: '联系方式', width: '15%', edit: 'text'},
             {field: 'supplierAddress', title: '地址', edit: 'text'},
-            {title: TABLE_COLUMN.operation, toolbar: '#operate-column', width: '13%', align: 'center'}
+            {title: TABLE_COLUMN.operation, toolbar: '#operate-column', width: '15%', align: 'center'}
         ]],
         parseData: function (res) {
             if (res == null || res.data == null || res.data.length <= 0) {

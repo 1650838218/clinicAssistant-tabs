@@ -1,5 +1,11 @@
 /** 药品清单 */
 //@ sourceURL=medicineList.js
+layui.config({
+    base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
+}).extend({
+    utils: 'utils' //扩展模块
+    ,ajax: 'ajax'
+});
 layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
     var $ = layui.jquery;
     var form = layui.form;
@@ -14,8 +20,8 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
     // 初始化表格
     table.render({
         elem: '#left-table',
-        // url: rootMapping + '/queryPage',
-        height: 'full-140',
+        url: rootMapping + '/queryPage',
+        height: 'full-85',
         page: {
             limit: 20,
             groups: 3,

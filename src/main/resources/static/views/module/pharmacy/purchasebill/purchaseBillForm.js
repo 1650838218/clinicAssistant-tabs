@@ -1,6 +1,12 @@
 /** 采购单 */
 //@ sourceURL=purchaseBillForm.js
-layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate','optimizeSelectOption'], function () {
+layui.config({
+    base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
+}).extend({
+    utils: 'utils' //扩展模块
+    ,ajax: 'ajax'
+});
+layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], function () {
     var $ = layui.jquery;
     var form = layui.form;
     var layer = layui.layer;
@@ -35,24 +41,81 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate','optimi
         defaultValue:1
     });
 
+    // 判断是否可以进行编辑，返回true 可以编辑，false 不可以编辑
+    var editIndex = undefined;
+    function endEditing(){
+        if (editIndex == undefined) return true;
+        // 校验上一个编辑的单元格，校验通过则结束上一个单元格的编辑状态
+        if ($('#' + itemTableId).datagrid('validateRow', editIndex)){
+            $('#' + itemTableId).datagrid('endEdit', editIndex);
+            editIndex = undefined;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // 初始化表格
-    var itemTable = table.render({
-        elem: '#purchasebill-table',
-        limit: 500,//
-        height: 'full-240',
-        cols: [[
-            {field: 'goodsName', title: '药品名称', width: '20%', edit: 'text', event: 'searchMedicine'},
-            {field: 'specifications', title: '规格', width: '18%', edit: 'text'},
-            {field: 'manufacturer', title: '制造商', width: '18%', edit: 'text'},
-            {field: 'count', title: '数量', width: '8%', edit: 'text'},
-            {field: 'countUnit', title: '单位', width: '12%', templet: '#count-unit-select',},
-            {field: 'unitPrice', title: '单价(元)', width: '8%', edit: 'text'},
-            {field: 'totalPrice', title: '总价(元)', width: '8%', edit: 'text'},
-            {field: 'purchaseBillItemId', title: TABLE_COLUMN.operation, toolbar: '#operate-column', align: 'center'}
+    $('#' + itemTableId).datagrid({
+        // url:'datagrid_data.json',
+        fitColumns: true,
+        autoRowHeight: true,
+        columns: [[
+            {
+                field: 'goodsName', title: '药品名称', width: '210',
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        valueField: 'realValue',
+                        textField: 'displayValue',
+                        method: 'get',
+                        url: '/pharmacy/medicineList/getSelectOption',
+                        // required: true,
+                        mode: 'remote'
+
+                    }
+                },
+                formatter:function(value,row){
+                    return row.displayValue;
+                }
+            },
+            {field: 'specifications', title: '规格', width: '200', editor: 'text'},
+            {field: 'manufacturer', title: '制造商', width: '150', editor: 'text'},
+            {field: 'count', title: '数量', width: '80', editor: {type:'numberbox',options:{precision:2}}},
+            {
+                field: 'countUnit', title: '单位', width: '120',
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        valueField: 'dictItemValue',
+                        textField: 'dictItemName',
+                        method: 'get',
+                        url: '/system/dictionary/oneLevel/getItemByKey?dictTypeKey=SLDW',
+                        // required: true,
+                        mode: 'remote'
+                    }
+                },
+                formatter:function(value,row){
+                    // console.log(row);
+                    return row.dictItemName;
+                }
+            },
+            {field: 'unitPrice', title: '单价(元)', width: '100', editor: 'numberbox'},
+            {field: 'totalPrice', title: '总价(元)', width: '100', editor: 'numberbox'},
+            {field: 'purchaseBillItemId', title: TABLE_COLUMN.operation, align: 'center',fixed: true,
+                formatter: function (value,row,index) {
+                    return '<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="create">新增</a>\n' +
+                        '    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="delete">删除</a>';
+                }}
         ]],
-        data: [{
-            "goodsName": "",
-        }]
+        data: [{}],
+        onClickCell: function (rowIndex, field, value) {
+            if (endEditing()){
+                $('#' + itemTableId).datagrid('selectRow', rowIndex)
+                    .datagrid('editCell', {index:rowIndex,field:field});
+                editIndex = rowIndex;
+            }
+        }
     });
 
     // 表格添加行

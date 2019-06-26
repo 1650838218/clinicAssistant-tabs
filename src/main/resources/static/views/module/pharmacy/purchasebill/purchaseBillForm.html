@@ -1,25 +1,29 @@
-<style>
-    .center-panel form .layui-inline {
-        margin-right: 0px;
-    }
-    .center-panel form .layui-form-label {
-        width: 60px;
-    }
-    .center-panel form .layui-input-inline {
-        width: 150px;
-        margin-right: 0px;
-    }
-    /* 防止下拉框的下拉列表被隐藏---必须设置--- */
-    .layui-table-cell {
-        overflow: visible;
-    }
-    /* 使得下拉框与单元格刚好合适 */
-    td .layui-form-select {
-        margin-top: -10px;
-        margin-left: -15px;
-        margin-right: -15px;
-    }
-</style>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/lib/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/lib/easyui/1.8.1/themes/default/easyui.css" media="all">
+    <link rel="stylesheet" href="/lib/easyui/1.8.1/themes/icon.css" media="all">
+    <link rel="stylesheet" href="/css/my.css" media="all">
+    <style>
+        .center-panel form .layui-inline {
+            margin-right: 0px;
+        }
+        .center-panel form .layui-form-label {
+            width: 60px;
+            padding: 9px 0px;
+        }
+        .center-panel form .layui-input-inline {
+            width: 150px;
+            margin-right: 0px;
+        }
+    </style>
+</head>
+<body>
 <div class="layui-row">
     <div class="layui-col-md12">
         <div class="center-panel">
@@ -68,13 +72,8 @@
                                 </div>
                             </div>
                         </div>
-                        <table class="layui-hide" lay-filter="purchasebill-table" id="purchasebill-table"></table>
-                        <div class="layui-row layui-col-space10">
-                            <!--<div class="layui-col-lg3">
-                                <select id="search-medicine" lay-filter="search-medicine" lay-search="">
-                                    <option value="">药品搜索</option>
-                                </select>
-                            </div>-->
+                        <table id="purchasebill-table" style="max-height: 350px"></table>
+                        <div class="layui-row layui-col-space10" style="margin-top: 5px;">
                             <div class="layui-col-lg-offset10 layui-col-lg2" style="text-align: right;">
                                 <button type="button" lay-filter="submit-btn" lay-submit class="layui-btn layui-btn-sm">保存</button>
                                 <button type="button" lay-filter="cancel-btn" class="layui-btn layui-btn-primary layui-btn-sm">取消</button>
@@ -86,18 +85,13 @@
         </div>
     </div>
 </div>
-<!--单位下拉框-->
-<script type="text/html" id="count-unit-select">
-    <select name="countUnit" lay-filter="count-unit">
-        <option value="1">公斤(千克)</option>
-        <option value="2">箱</option>
-    </select>
-</script>
-<!--layui table 操作列-->
-<script type="text/html" id="operate-column">
-    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="create">新增</a>
-    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="delete">删除</a>
-</script>
-<script src="/js/pinyin/pinyin_dict_withtone.js"></script>
-<script src="/js/pinyin/pinyinUtil.js"></script>
-<script src="/page/module/pharmacy/purchasebill/purchaseBillForm.js"></script>
+<script src="/lib/easyui/1.8.1/jquery.min.js"></script>
+<script src="/lib/layuiadmin/layui/layui.js"></script>
+<script src="/js/common/constant.js"></script>
+<script src="/lib/pinyin/pinyin_dict_withtone.js"></script>
+<script src="/lib/pinyin/pinyinUtil.js"></script>
+<script src="/lib/easyui/1.8.1/jquery.easyui.min.js"></script>
+<script src="/lib/easyui/1.8.1/plugins/jquery.editcell.js"></script>
+<script src="/views/module/pharmacy/purchasebill/purchaseBillForm.js"></script>
+</body>
+</html>

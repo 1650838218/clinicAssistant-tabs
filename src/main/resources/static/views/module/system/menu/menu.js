@@ -1,5 +1,10 @@
 /** 菜单管理 */
 //@ sourceURL=menu.js
+layui.config({
+    base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
+}).extend({
+    eleTree: 'eleTree' //扩展模块
+});
 layui.use(['form', 'eleTree', 'jquery', 'layer'], function () {
     var $ = layui.jquery;
     var eleTree = layui.eleTree;
