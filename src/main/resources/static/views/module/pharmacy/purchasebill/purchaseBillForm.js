@@ -70,7 +70,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                         textField: 'displayValue',
                         method: 'get',
                         url: '/pharmacy/medicineList/getSelectOption',
-                        // required: true,
+                        required: true,
                         mode: 'remote'
 
                     }
@@ -97,7 +97,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                 },
                 formatter:function(value,row){
                     // console.log(row);
-                    return row.dictItemName;
+                    return row.countUnitName;
                 }
             },
             {field: 'unitPrice', title: '单价(元)', width: '100', editor: 'numberbox'},
@@ -115,6 +115,13 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                     .datagrid('editCell', {index:rowIndex,field:field});
                 editIndex = rowIndex;
             }
+        },
+        onEndEdit: function (index, row) {
+            var ed = $(this).datagrid('getEditor', {
+                index: index,
+                field: 'countUnit'
+            });
+            row.countUnitName = $(ed.target).combobox('getText');
         }
     });
 
