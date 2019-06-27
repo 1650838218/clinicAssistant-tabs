@@ -145,7 +145,8 @@ public class DictionaryController {
     @RequestMapping(value = "/getItemByKey", method = RequestMethod.GET)
     public List<DictionaryItem> getItemByKey(@RequestParam String dictTypeKey) {
         try {
-            return dictionaryService.getByKey(dictTypeKey).getDictItem();
+            DictionaryType dictionaryType = dictionaryService.getByKey(dictTypeKey);
+            if (dictionaryType != null) return dictionaryType.getDictItem();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
