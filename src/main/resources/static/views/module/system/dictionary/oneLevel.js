@@ -5,14 +5,16 @@ layui.config({
 }).extend({
     eleTree: 'eleTree' //扩展模块
     ,ajax: 'ajax'
+    ,utils: 'utils'
 });
-layui.use(['form', 'eleTree', 'jquery', 'layer', 'table', 'ajax'], function () {
+layui.use(['form', 'eleTree', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
     var $ = layui.jquery;
     var eleTree = layui.eleTree;
     var form = layui.form;
     var layer = layui.layer;
     var table = layui.table;
     var ajax = layui.ajax;
+    var utils = layui.utils;
     var rootMappint = '/system/dictionary/oneLevel';
     var leftTree;// 左侧菜单树
     var dictItemTableId = 'dict-item-table';

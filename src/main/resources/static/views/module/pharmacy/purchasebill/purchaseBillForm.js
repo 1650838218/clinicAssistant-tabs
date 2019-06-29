@@ -60,8 +60,8 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         autoRowHeight: true,
         columns: [[
             {
-                field: 'medicineListId', title: '药品名称', width: '210',editor:'textbox'
-                /*editor: {
+                field: 'medicineListId', title: '药品名称', width: '210',editor:'textbox',
+                editor: {
                     type: 'combobox',
                     options: {
                         valueField: 'realValue',
@@ -77,14 +77,14 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                 },
                 formatter:function(value,row){
                     return row.goodsName;
-                }*/
+                }
             },
             {field: 'specifications', title: '规格', width: '200', editor: {type:'textbox',options:{type:'text'}}},
             {field: 'manufacturer', title: '制造商', width: '150', editor: {type:'textbox',options:{type:'text'}}},
             {field: 'count', title: '数量', width: '80', editor: {type:'numberbox',options:{precision:2}}},
             {
-                field: 'countUnit', title: '单位', width: '120',editor:'textbox'
-                /*editor: {
+                field: 'countUnit', title: '单位', width: '120',editor:'textbox',
+                editor: {
                     type: 'combobox',
                     options: {
                         valueField: 'dictItemValue',
@@ -100,21 +100,23 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                 formatter:function(value,row){
                     // console.log(row);
                     return row.countUnitName;
-                }*/
+                }
             },
             {field: 'unitPrice', title: '单价(元)', width: '100', editor: {type:'numberbox',options:{precision:2}}},
             {field: 'totalPrice', title: '总价(元)', width: '100', editor: {type:'numberbox',options:{precision:2}}},
             {field: 'purchaseBillItemId', title: TABLE_COLUMN.operation, align: 'center',fixed: true,
                 formatter: function (value,row,index) {
-                    return '<a class="layui-btn layui-btn-normal layui-btn-xs" onclick="">新增</a>\n' +
+                    return '<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="create">新增</a>\n' +
                         '    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="delete">删除</a>';
-                }}
+                }
+            }
         ]],
         data: [{}],
         onClickCell: function (rowIndex, field, value) {
             if (editIndex != rowIndex){
                 if (endEditing()){
-                    $('#' + itemTableId).datagrid('selectRow', rowIndex).datagrid('beginEdit', rowIndex);
+                    $('#' + itemTableId).datagrid('selectRow', rowIndex)
+                        .datagrid('beginEdit', rowIndex);
                     var ed = $('#' + itemTableId).datagrid('getEditor', {index:rowIndex,field:field});
                     if (ed){
                         ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
@@ -128,23 +130,17 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
             }
         },
         onEndEdit: function (index, row) {
-            // 编辑结束后获取combobox的显示值并放到row中
-            /*var ed = $(this).datagrid('getEditor', {
+            var ed = $(this).datagrid('getEditor', {
+                index: index,
+                field: 'medicineListId'
+            });
+            row.goodsName = $(ed.target).combobox('getText');
+            var ed = $(this).datagrid('getEditor', {
                 index: index,
                 field: 'countUnit'
             });
             row.countUnitName = $(ed.target).combobox('getText');
-            ed = $(this).datagrid('getEditor', {
-                index: index,
-                field: 'medicineListId'
-            });
-            row.goodsName = $(ed.target).combobox('getText');*/
         }
-    });
-
-    // 点击页面空白处，退出表格编辑状态
-    $(document).click(function(e){
-        endEditing();
     });
 
     // 表格添加行
