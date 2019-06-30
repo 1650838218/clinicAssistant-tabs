@@ -93,8 +93,10 @@
 }
 
 
-
-
+/* easyui datagrid*/
+.datagrid-cell-check input[type=checkbox], .datagrid-header-check input[type=checkbox]{
+    display: inline-block;
+}
 
 
 /* 表单 */

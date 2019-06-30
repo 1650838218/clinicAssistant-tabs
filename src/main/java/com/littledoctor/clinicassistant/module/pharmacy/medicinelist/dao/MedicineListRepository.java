@@ -17,7 +17,10 @@ public interface MedicineListRepository extends JpaRepository<MedicineList,Integ
     /**
      * 获取selecOption
      * @return
+     * @param keywords
      */
-    @Query(value = "select new com.littledoctor.clinicassistant.common.plugin.select.SelectOption(t.medicineListId, t.medicineName) from MedicineList t")
-    List<SelectOption> getSelectOption();
+    @Query(value = "select new com.littledoctor.clinicassistant.common.plugin.select.SelectOption(t.medicineListId, t.medicineName) " +
+            "from MedicineList t where t.medicineName like concat('%',?1,'%') or t.fullPinyin like concat('%',?1,'%') " +
+            "or t.abbreviation like concat('%',?1,'%')")
+    List<SelectOption> getSelectOption(String keywords);
 }

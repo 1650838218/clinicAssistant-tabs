@@ -168,9 +168,10 @@ public class MedicineListServiceImpl implements MedicineListService {
     /**
      * 获取下拉框的option list
      * @return
+     * @param keywords
      */
     @Override
-    public List<SelectOption> getSelectOption() throws Exception {
-        return medicineListRepository.getSelectOption();
+    public List<SelectOption> getSelectOption(String keywords) throws Exception {
+        return medicineListRepository.getSelectOption(keywords);
     }
 }

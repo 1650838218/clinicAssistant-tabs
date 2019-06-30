@@ -58,9 +58,34 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     $('#' + itemTableId).datagrid({
         fitColumns: true,
         autoRowHeight: true,
+        singleSelect: true,
+        rownumbers:true,
+        toolbar: [{
+            text:'添加',
+            iconCls:'icon-add',
+            handler:function(){
+                if (endEditing()){
+                    $('#' + itemTableId).datagrid('appendRow',{});
+                    editIndex = $('#' + itemTableId).datagrid('getRows').length - 1;
+                    $('#' + itemTableId).datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
+                }
+                setEditing(editIndex);//此句较为重要
+            }
+        },'-',{
+            text:'删除',
+            iconCls:'icon-remove',
+            handler:function(){
+                if (editIndex == undefined) {
+                    layer.msg(MSG.select_one);
+                    return;
+                }
+                $('#' + itemTableId).datagrid('cancelEdit', editIndex).datagrid('deleteRow', editIndex);
+                editIndex = undefined;
+            }
+        }],
         columns: [[
             {
-                field: 'medicineListId', title: '药品名称', width: '210',editor:'textbox',
+                field: 'medicineListId', title: '药品名称', width: '210',
                 editor: {
                     type: 'combobox',
                     options: {
@@ -72,7 +97,6 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                         required: true,
                         panelHeight:'auto',
                         panelMaxHeight: 200
-
                     }
                 },
                 formatter:function(value,row){
@@ -83,7 +107,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
             {field: 'manufacturer', title: '制造商', width: '150', editor: {type:'textbox',options:{type:'text'}}},
             {field: 'count', title: '数量', width: '80', editor: {type:'numberbox',options:{precision:2}}},
             {
-                field: 'countUnit', title: '单位', width: '120',editor:'textbox',
+                field: 'countUnit', title: '单位', width: '120',
                 editor: {
                     type: 'combobox',
                     options: {
@@ -98,29 +122,22 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                     }
                 },
                 formatter:function(value,row){
-                    // console.log(row);
                     return row.countUnitName;
                 }
             },
             {field: 'unitPrice', title: '单价(元)', width: '100', editor: {type:'numberbox',options:{precision:2}}},
-            {field: 'totalPrice', title: '总价(元)', width: '100', editor: {type:'numberbox',options:{precision:2}}},
-            {field: 'purchaseBillItemId', title: TABLE_COLUMN.operation, align: 'center',fixed: true,
-                formatter: function (value,row,index) {
-                    return '<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="create">新增</a>\n' +
-                        '    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="delete">删除</a>';
-                }
-            }
+            {field: 'totalPrice', title: '总价(元)', width: '100', editor: {type:'numberbox',options:{precision:2}}}
         ]],
         data: [{}],
         onClickCell: function (rowIndex, field, value) {
             if (editIndex != rowIndex){
                 if (endEditing()){
-                    $('#' + itemTableId).datagrid('selectRow', rowIndex)
-                        .datagrid('beginEdit', rowIndex);
+                    $('#' + itemTableId).datagrid('selectRow', rowIndex).datagrid('beginEdit', rowIndex);
                     var ed = $('#' + itemTableId).datagrid('getEditor', {index:rowIndex,field:field});
                     if (ed){
                         ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
                     }
+                    setEditing(rowIndex);
                     editIndex = rowIndex;
                 } else {
                     setTimeout(function(){
@@ -143,13 +160,22 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         }
     });
 
-    // 表格添加行
-    function addRow() {
-        console.log("添加行");
-        if (endEditing()){
-            $('#' + itemTableId).datagrid('appendRow',{});
-            editIndex = $('#' + itemTableId).datagrid('getRows').length - 1;
-            $('#' + itemTableId).datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
+    //计算表格每一行的总价
+    function setEditing(rowIndex){
+        var editors = $('#' + itemTableId).datagrid('getEditors', rowIndex);
+        var countEditor = editors[3];// 数量
+        var unitPriceEditor = editors[5];// 单价
+        var totalPriceEditor = editors[6];// 总价
+        $(countEditor.target.siblings("span").children("input").first()).on("change", function(){
+            calculate();
+        });
+        $(unitPriceEditor.target.siblings("span").children("input").first()).on("change", function(){
+            calculate();
+        });
+        function calculate(){
+            var cost = ($(countEditor.target.siblings("span").children("input").first()).val()) * ($(unitPriceEditor.target.siblings("span").children("input").first()).val());
+            console.log(cost);
+            $(totalPriceEditor.target).numberbox("setValue",cost);
         }
     }
 

@@ -152,9 +152,9 @@ public class MedicineListController {
      * @return
      */
     @RequestMapping(value = "/getSelectOption", method = RequestMethod.GET)
-    public List<SelectOption> getSelectOption() {
+    public List<SelectOption> getSelectOption(@RequestParam(value = "q", required = false) String keywords) {
         try {
-            return medicineListService.getSelectOption();
+            return medicineListService.getSelectOption(keywords);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

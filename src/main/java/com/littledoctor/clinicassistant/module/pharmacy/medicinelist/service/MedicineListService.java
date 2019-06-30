@@ -71,6 +71,7 @@ public interface MedicineListService {
     /**
      * 获取下拉框的option list
      * @return
+     * @param keywords
      */
-    List<SelectOption> getSelectOption() throws Exception;
+    List<SelectOption> getSelectOption(String keywords) throws Exception;
 }
