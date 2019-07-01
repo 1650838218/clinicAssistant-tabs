@@ -172,6 +172,10 @@ public class MedicineListServiceImpl implements MedicineListService {
      */
     @Override
     public List<SelectOption> getSelectOption(String keywords) throws Exception {
-        return medicineListRepository.getSelectOption(keywords);
+        if (StringUtils.isBlank(keywords)) {
+            return medicineListRepository.getSelectOption();
+        } else {
+            return medicineListRepository.getSelectOption(keywords.trim());
+        }
     }
 }

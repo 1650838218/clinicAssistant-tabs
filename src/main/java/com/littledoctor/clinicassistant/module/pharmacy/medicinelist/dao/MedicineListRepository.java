@@ -14,6 +14,14 @@ import java.util.List;
  * @Description: 药材清单，进货时从此清单中选取
  */
 public interface MedicineListRepository extends JpaRepository<MedicineList,Integer>, JpaSpecificationExecutor<MedicineList> {
+
+    /**
+     * 获取selecOption
+     * @return
+     */
+    @Query(value = "select new com.littledoctor.clinicassistant.common.plugin.select.SelectOption(t.medicineListId, t.medicineName) from MedicineList t ")
+    List<SelectOption> getSelectOption();
+
     /**
      * 获取selecOption
      * @return

@@ -40,6 +40,9 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         where: {dictTypeKey: 'SLDW'},
         defaultValue:1
     });
+    // 生成单号
+    $('#purchasebill-form input[name="purchaseBillCode"]').val(new Date().format('yyyyMMddhhmmssS'));
+
 
     // 判断是否可以进行编辑，返回true 可以编辑，false 不可以编辑
     var editIndex = undefined;
@@ -105,7 +108,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
             },
             {field: 'specifications', title: '规格', width: '200', editor: {type:'textbox',options:{type:'text'}}},
             {field: 'manufacturer', title: '制造商', width: '150', editor: {type:'textbox',options:{type:'text'}}},
-            {field: 'count', title: '数量', width: '80', editor: {type:'numberbox',options:{precision:2}}},
+            {field: 'count', title: '数量', width: '80', editor: {type:'numberbox',options:{precision:2,required: true}}},
             {
                 field: 'countUnit', title: '单位', width: '120',
                 editor: {
@@ -118,15 +121,16 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                         // required: true,
                         mode: 'remote',
                         panelHeight:'auto',
-                        panelMaxHeight: 200
+                        panelMaxHeight: 200,
+                        editable: false
                     }
                 },
                 formatter:function(value,row){
                     return row.countUnitName;
                 }
             },
-            {field: 'unitPrice', title: '单价(元)', width: '100', editor: {type:'numberbox',options:{precision:2}}},
-            {field: 'totalPrice', title: '总价(元)', width: '100', editor: {type:'numberbox',options:{precision:2}}}
+            {field: 'unitPrice', title: '单价(元)', width: '100', editor: {type:'numberbox',options:{precision:2,required: true}}},
+            {field: 'totalPrice', title: '总价(元)', width: '100', editor: {type:'numberbox',options:{precision:2,required: true}}}
         ]],
         data: [{}],
         onClickCell: function (rowIndex, field, value) {
@@ -179,24 +183,40 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         }
     }
 
-    // 根据id查询多级字典
-    function getById(purchaseBillId) {
-        if (utils.isNotNull(purchaseBillId)) {
-            $.getJSON(rootMapping + '/getById', {purchaseBillId: purchaseBillId}, function (medicineList) {
-                if (medicineList != null) {
-                    console.log(medicineList);
-                    form.val('medicinelist-form', medicineList);
-                } else {
-                    layer.alert('未找到该药品，请重试！',{icon: 0}, function (index) {
-                        table.reload(leftTableId, {});
-                        layer.close(index);
-                    });
-                }
-            });
-        }else {
-            layer.msg('药品ID为空，无法查询！', {icon:2});
+    /**
+     * 保存采购单
+     * @param data
+     * @returns {boolean}
+     */
+    function savePurchaseBill(obj) {
+        $(obj.elem).addClass('layui-btn-disabled');// 按钮禁用，防止重复提交
+        $(obj.elem).attr('disabled', 'disabled');
+        var purchaseBill = obj.field;// 表单值
+        var billItems = $('#' + itemTableId).datagrid('getData');// 获取表格数据
+        console.log(billItems);
+        if (!billItems) {
+            $(obj.elem).removeClass('layui-btn-disabled');// 按钮可用
+            $(obj.elem).removeAttr('disabled');
+            layer.msg("采购单至少要有一条明细数据！");
+            return false;
         }
-    }
+        purchaseBill.dictItem = dictItems;
+        ajax.postJSON(rootMappint + '/save', dictionary, function (dict) {
+            if (!!dict && !!dict.dictTypeId) {
+                assigForm(dict);// 赋值
+                table.reload(dictItemTableId, {data: dict.dictItem});
+                if (!!leftTree) leftTree = leftTree.reload({async: false});
+                leftTree.setHighLight(dict.dictTypeId);// 高亮显示当前菜单
+                currentDictTypeId = dict.dictTypeId;
+                layer.msg(MSG.save_success);
+            } else {
+                layer.msg(MSG.save_fail);
+            }
+            $(obj.elem).removeClass('layui-btn-disabled');// 按钮可用
+            $(obj.elem).removeAttr('disabled');
+        });
+        return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+    };
 
 
 
@@ -226,21 +246,6 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         }];
         table.reload(dictItemTableId, {
             data: newRow   // 将新数据重新载入表格
-        });
-    }
-
-    /**
-     * 给表单赋值
-     * @param data
-     */
-    function assigForm(data) {
-        // 表单赋值
-        form.val("dictionary-form", {
-            "dictTypeId": data.dictTypeId,
-            "menuId": data.menuId,
-            "menuName": data.menuName,
-            "dictTypeName": data.dictTypeName,
-            "dictTypeKey": data.dictTypeKey
         });
     }
 
@@ -281,112 +286,6 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         }
     });
 
-    /**
-     * 删除菜单
-     */
-    function delDictionaryFun() {
-        if (!!currentDictTypeId) {
-            layer.confirm(MSG.delete_confirm + '此字典吗？', {icon: 3, title: '提示'}, function (index) {
-                ajax.delete(rootMappint + '/delete/' + currentDictTypeId, function (data, textStatus, jqXHR) {
-                    if (data) {
-                        layer.msg(MSG.delete_success);
-                        if (!!leftTree) leftTree = leftTree.reload();
-                        resetForm();
-                    } else {
-                        layer.msg(MSG.delete_fail);
-                    }
-                });
-                layer.close(index);
-            });
-        } else {
-            layer.msg(MSG.select_one);
-        }
-    };
 
-    // 表格数据校验
-    function verifyTable(tableData) {
-        if (!tableData) {
-            layer.alert('表格数据为空，请填写表格数据！', {icon: 2});
-            return false;
-        }
-        // 删除空数组
-        for (var i = 0; i < tableData.length; i++) {
-            if (Array.isArray(tableData[i]) && tableData[i].length === 0) {
-                tableData.splice(i, 1);
-            }
-        }
-        if (!tableData || tableData.length <= 0) {
-            layer.alert('表格数据为空，请填写表格数据！', {icon: 2});
-            return false;
-        }
-        for (var i = 0; i < tableData.length; i++) {
-            // 判断是否是空行
-            if (!tableData[i].dictItemName || !tableData[i].dictItemValue) {// 表格数据校验
-                layer.alert('表格数据不完整，请补充完整！', {icon: 2});
-                return false;
-            }
-        }
-        // 校验是否有重复数据
-        for (var i = 0; i < tableData.length - 1; i++) {
-            var row1 = tableData[i];
-            for (var j = i + 1; j < tableData.length; j++) {
-                var row2 = tableData[j];
-                if (row1.dictItemName === row2.dictItemName
-                    || row1.dictItemValue === row2.dictItemValue) {
-                    layer.alert('字典项名称和字典项值不能重复，请重新填写！', {icon: 2});
-                    return false;
-                }
-            }
-        }
-        return tableData;
-    }
-
-    /**
-     * 保存字典
-     * @param data
-     * @returns {boolean}
-     */
-    function saveDictionary(obj) {
-        $(obj.elem).addClass('layui-btn-disabled');// 按钮禁用，防止重复提交
-        $(obj.elem).attr('disabled', 'disabled');
-        var dictionary = obj.field;// 表单值
-        var dictItems = table.cache[dictItemTableId];// 获取表格数据
-        dictItems = verifyTable(dictItems);// 表格数据校验
-        if (!dictItems) {
-            $(obj.elem).removeClass('layui-btn-disabled');// 按钮可用
-            $(obj.elem).removeAttr('disabled');
-            return false;
-        }
-        dictionary.dictItem = dictItems;
-        ajax.postJSON(rootMappint + '/save', dictionary, function (dict) {
-            if (!!dict && !!dict.dictTypeId) {
-                assigForm(dict);// 赋值
-                table.reload(dictItemTableId, {data: dict.dictItem});
-                if (!!leftTree) leftTree = leftTree.reload({async: false});
-                leftTree.setHighLight(dict.dictTypeId);// 高亮显示当前菜单
-                currentDictTypeId = dict.dictTypeId;
-                layer.msg(MSG.save_success);
-            } else {
-                layer.msg(MSG.save_fail);
-            }
-            $(obj.elem).removeClass('layui-btn-disabled');// 按钮可用
-            $(obj.elem).removeAttr('disabled');
-        });
-        return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-    };
-
-    // 查询加载树形下拉框的内容
-    function loadSelectTree(e) {
-        e.stopPropagation();
-        var selectMenuTree = eleTree.render({
-            elem: '.select-tree',
-            url: "/system/menu/querySelectTree",
-            method: "get",
-            defaultExpandAll: true,
-            expandOnClickNode: false,
-            highlightCurrent: true
-        });
-        $(".select-tree").toggle();
-    };
 });
 
