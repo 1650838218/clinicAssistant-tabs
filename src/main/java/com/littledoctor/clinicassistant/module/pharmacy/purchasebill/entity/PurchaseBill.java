@@ -2,7 +2,9 @@ package com.littledoctor.clinicassistant.module.pharmacy.purchasebill.entity;
 
 import javax.persistence.*;
 import java.sql.Blob;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Auther: 周俊林
@@ -58,6 +60,10 @@ public class PurchaseBill {
     /** 是否已入库 SF 1：已入库；0：未入库*/
     @Column(name = "ENTRY_GODOWN")
     private Boolean entryGodown;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @JoinColumn(name = "PURCHASE_BILL_ID")
+    private List<PurchaseBillItem> purchaseBillItems = new ArrayList<>();
 
     public Integer getPurchaseBillId() {
         return purchaseBillId;
@@ -145,5 +151,13 @@ public class PurchaseBill {
 
     public void setEntryGodown(Boolean entryGodown) {
         this.entryGodown = entryGodown;
+    }
+
+    public List<PurchaseBillItem> getPurchaseBillItems() {
+        return purchaseBillItems;
+    }
+
+    public void setPurchaseBillItems(List<PurchaseBillItem> purchaseBillItems) {
+        this.purchaseBillItems = purchaseBillItems;
     }
 }

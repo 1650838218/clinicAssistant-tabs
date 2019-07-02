@@ -20,4 +20,18 @@ public interface PurchaseBillService {
      * @return
      */
     Page<PurchaseBill> queryPage(Pageable page, String dateRange, String supplierId, String orderType) throws Exception;
+
+    /**
+     * 保存采购单
+     * @param purchaseBill
+     * @return
+     */
+    PurchaseBill save(PurchaseBill purchaseBill);
+
+    /**
+     * 根据采购单id查询采购单
+     * @param purchaseBillId
+     * @return
+     */
+    PurchaseBill queryById(String purchaseBillId);
 }

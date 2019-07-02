@@ -183,38 +183,68 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         }
     }
 
+    // 明细表格校验
+    function validateGrid() {
+        var rowCount = $('$' + itemTableId).datagrid('getRows').length;
+        if (rowCount === 0) {
+            layer.msg("采购单至少要有一条明细数据！");
+            return false;
+        }
+        if (endEditing()) {
+            for (var i = 0; i < rowCount; i++) {
+                if (!$('#' + itemTableId).datagrid('validateRow', i)) {
+                    $('#' + itemTableId).datagrid('selectRow', i).datagrid('beginEdit', i);
+                    return false;
+                }
+            }
+        } else {
+            setTimeout(function(){
+                $('#' + itemTableId).datagrid('selectRow', editIndex);
+            },0);
+            return false;
+        }
+        return true;
+    }
+
+    // 根据ID查询采购单
+    function queryPurchaseBillById(purchaseBillId) {
+        if (utils.isNotNull(purchaseBillId)) {
+            $.getJSON(rootMapping + "queryById",{purchaseBillId: purchaseBillId}, function (purchaseBill) {
+                if (purchaseBill != null) {
+                    $('#purchasebill-form').val('purchasebill-form', purchaseBill);// 表单赋值
+                    form.render();
+                    $('#' + itemTableId).datagrid('loadData', purchaseBill.purchaseBillItems);// 加载采购单明细
+                }
+            });
+        } else {
+            layer.alert('采购单ID为空！', {icon: LAYER_ICON.error});
+        }
+    }
+
     /**
      * 保存采购单
      * @param data
      * @returns {boolean}
      */
     function savePurchaseBill(obj) {
-        $(obj.elem).addClass('layui-btn-disabled');// 按钮禁用，防止重复提交
-        $(obj.elem).attr('disabled', 'disabled');
-        var purchaseBill = obj.field;// 表单值
-        var billItems = $('#' + itemTableId).datagrid('getData');// 获取表格数据
-        console.log(billItems);
-        if (!billItems) {
-            $(obj.elem).removeClass('layui-btn-disabled');// 按钮可用
-            $(obj.elem).removeAttr('disabled');
-            layer.msg("采购单至少要有一条明细数据！");
-            return false;
+        if (validateGrid()) {
+            $(obj.elem).addClass('layui-btn-disabled');// 按钮禁用，防止重复提交
+            $(obj.elem).attr('disabled', 'disabled');
+            var purchaseBill = obj.field;// 表单值
+            var billItems = $('#' + itemTableId).datagrid('getData');// 获取表格数据
+            console.log(billItems);
+            purchaseBill.purchaseBillItems = billItems;
+            ajax.postJSON(rootMapping + '/save', purchaseBill, function (bill) {
+                if (bill != null && bill.purchaseBillId != null) {
+                    queryPurchaseBillById(bill.purchaseBillId);// 根据ID查询采购单，并赋值
+                    layer.msg(MSG.save_success);
+                } else {
+                    layer.msg(MSG.save_fail);
+                }
+                $(obj.elem).removeClass('layui-btn-disabled');// 按钮可用
+                $(obj.elem).removeAttr('disabled');
+            });
         }
-        purchaseBill.dictItem = dictItems;
-        ajax.postJSON(rootMappint + '/save', dictionary, function (dict) {
-            if (!!dict && !!dict.dictTypeId) {
-                assigForm(dict);// 赋值
-                table.reload(dictItemTableId, {data: dict.dictItem});
-                if (!!leftTree) leftTree = leftTree.reload({async: false});
-                leftTree.setHighLight(dict.dictTypeId);// 高亮显示当前菜单
-                currentDictTypeId = dict.dictTypeId;
-                layer.msg(MSG.save_success);
-            } else {
-                layer.msg(MSG.save_fail);
-            }
-            $(obj.elem).removeClass('layui-btn-disabled');// 按钮可用
-            $(obj.elem).removeAttr('disabled');
-        });
         return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
     };
 

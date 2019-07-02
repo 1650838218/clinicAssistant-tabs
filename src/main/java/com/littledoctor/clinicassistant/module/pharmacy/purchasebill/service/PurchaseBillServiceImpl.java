@@ -58,4 +58,24 @@ public class PurchaseBillServiceImpl implements PurchaseBillService {
             }
         }, page);
     }
+
+    /**
+     * 保存采购单
+     * @param purchaseBill
+     * @return
+     */
+    @Override
+    public PurchaseBill save(PurchaseBill purchaseBill) {
+        return purchaseBillRepository.saveAndFlush(purchaseBill);
+    }
+
+    /**
+     * 根据采购单ID查询采购单
+     * @param purchaseBillId
+     * @return
+     */
+    @Override
+    public PurchaseBill queryById(String purchaseBillId) {
+        return purchaseBillRepository.findById(Integer.parseInt(purchaseBillId)).get();
+    }
 }

@@ -17,9 +17,9 @@ public class PurchaseBillItem {
     @Column(name = "PURCHASE_BILL_ITEM_ID", nullable = false)
     private Integer purchaseBillItemId;
 
-    /** 采购单ID */
+/*    *//** 采购单ID *//*
     @Column(name = "PURCHASE_BILL_ID")
-    private Integer purchaseBillId;
+    private Integer purchaseBillId;*/
 
     /** 药品清单ID，为了关联采购的是哪个药品 */
     @Column(name = "MEDICINE_LIST_ID")
@@ -52,14 +52,14 @@ public class PurchaseBillItem {
     public void setPurchaseBillItemId(Integer purchaseBillItemId) {
         this.purchaseBillItemId = purchaseBillItemId;
     }
-
+/*
     public Integer getPurchaseBillId() {
         return purchaseBillId;
     }
 
     public void setPurchaseBillId(Integer purchaseBillId) {
         this.purchaseBillId = purchaseBillId;
-    }
+    }*/
 
     public Integer getMedicineListId() {
         return medicineListId;
