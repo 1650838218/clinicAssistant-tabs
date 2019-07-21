@@ -1,6 +1,7 @@
 package com.littledoctor.clinicassistant.module.pharmacy.purchasebill.service;
 
 import com.littledoctor.clinicassistant.module.pharmacy.purchasebill.entity.PurchaseBill;
+import com.littledoctor.clinicassistant.module.pharmacy.purchasebill.entity.PurchaseBillOTM;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,24 +15,31 @@ public interface PurchaseBillService {
     /**
      * 分页查询订单
      * @param page
-     * @param dateRange
+     * @param purchaseBillCode
+     * @param purchaseBillDate
      * @param supplierId
-     * @param orderType
      * @return
      */
-    Page<PurchaseBill> queryPage(Pageable page, String dateRange, String supplierId, String orderType) throws Exception;
+    Page<PurchaseBill> queryPage(Pageable page, String purchaseBillCode, String purchaseBillDate, String supplierId) throws Exception;
 
     /**
      * 保存采购单
-     * @param purchaseBill
+     * @param purchaseBillOTM
      * @return
      */
-    PurchaseBill save(PurchaseBill purchaseBill);
+    PurchaseBillOTM save(PurchaseBillOTM purchaseBillOTM);
 
     /**
      * 根据采购单id查询采购单
      * @param purchaseBillId
      * @return
      */
-    PurchaseBill queryById(String purchaseBillId);
+    PurchaseBillOTM queryById(String purchaseBillId);
+
+    /**
+     * 删除采购单
+     * @param purchaseBillId
+     * @return
+     */
+    boolean delete(String purchaseBillId);
 }

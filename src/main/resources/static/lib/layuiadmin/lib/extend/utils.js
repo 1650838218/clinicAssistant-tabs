@@ -66,6 +66,20 @@ layui.define(['jquery', 'form'], function (exports) {
                 config.elem.html(optionHtml);
                 form.render('select');
             });
+        },
+        btnDisabled: function (elem) {
+            if (!(elem instanceof $)) {
+                elem = $(elem);
+            }
+            elem.attr('disabled', 'disabled');
+            elem.addClass('layui-btn-disabled');// 按钮禁用，防止重复提交
+        },
+        btnEnabled: function (elem) {
+            if (!(elem instanceof $)) {
+                elem = $(elem);
+            }
+            elem.removeClass('layui-btn-disabled');// 按钮可用
+            elem.removeAttr('disabled');
         }
     };
 

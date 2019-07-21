@@ -1,8 +1,8 @@
-package com.littledoctor.clinicassistant.module.pharmacy.medicinelist.service;
+package com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.service;
 
 import com.littledoctor.clinicassistant.common.plugin.select.SelectOption;
-import com.littledoctor.clinicassistant.module.pharmacy.medicinelist.dao.MedicineListRepository;
-import com.littledoctor.clinicassistant.module.pharmacy.medicinelist.entity.MedicineList;
+import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.dao.PharmacyItemRepository;
+import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.entity.PharmacyItem;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,13 +20,13 @@ import java.util.List;
 /**
  * @Auther: 周俊林
  * @Date: 2018/10/19 22:48
- * @Description: 药材清单，进货时从此清单中选取
+ * @Description: 药房品目
  */
 @Service
-public class MedicineListServiceImpl implements MedicineListService {
+public class PharmacyItemServiceImpl implements PharmacyItemService {
 
     @Autowired
-    private MedicineListRepository medicineListRepository;
+    private PharmacyItemRepository pharmacyItemRepository;
 
     /**
      * 分页查询
@@ -35,10 +35,10 @@ public class MedicineListServiceImpl implements MedicineListService {
      * @return
      */
     @Override
-    public Page<MedicineList> queryPage(String keywords, Pageable page) {
-        return medicineListRepository.findAll(new Specification<MedicineList>() {
+    public Page<PharmacyItem> queryPage(String keywords, Pageable page) {
+        return pharmacyItemRepository.findAll(new Specification<PharmacyItem>() {
             @Override
-            public Predicate toPredicate(Root<MedicineList> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            public Predicate toPredicate(Root<PharmacyItem> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> list = new ArrayList<>();
                 if (StringUtils.isNotBlank(keywords)) {
                     list.add(criteriaBuilder.equal(root.get("barcode"), keywords));
@@ -56,26 +56,26 @@ public class MedicineListServiceImpl implements MedicineListService {
 
     /**
      * 保存
-     * @param medicineList
+     * @param pharmacyItem
      * @return
      */
     @Override
-    public MedicineList save(MedicineList medicineList) {
-        if (medicineList != null) {
-            return medicineListRepository.saveAndFlush(medicineList);
+    public PharmacyItem save(PharmacyItem pharmacyItem) {
+        if (pharmacyItem != null) {
+            return pharmacyItemRepository.saveAndFlush(pharmacyItem);
         }
         return null;
     }
 
     /**
      * 根据ID删除
-     * @param medicineListId
+     * @param pharmacyItemId
      * @return
      */
     @Override
-    public boolean delete(String medicineListId) {
-        if (StringUtils.isNotBlank(medicineListId)) {
-            medicineListRepository.deleteById(Integer.parseInt(medicineListId));
+    public boolean delete(String pharmacyItemId) {
+        if (StringUtils.isNotBlank(pharmacyItemId)) {
+            pharmacyItemRepository.deleteById(Integer.parseInt(pharmacyItemId));
             return true;
         }
         return false;
@@ -83,33 +83,33 @@ public class MedicineListServiceImpl implements MedicineListService {
 
     /**
      * 根据ID查询
-     * @param medicineListId
+     * @param pharmacyItemId
      * @return
      */
     @Override
-    public MedicineList getById(String medicineListId) {
-        if (StringUtils.isNotBlank(medicineListId)) {
-            return medicineListRepository.findById(Integer.parseInt(medicineListId)).get();
+    public PharmacyItem getById(String pharmacyItemId) {
+        if (StringUtils.isNotBlank(pharmacyItemId)) {
+            return pharmacyItemRepository.findById(Integer.parseInt(pharmacyItemId)).get();
         }
         return null;
     }
 
     /**
      * 判断条形码是否不重复，是否不存在
-     * @param midicineListId
+     * @param pharmacyItemId
      * @param barcode
      * @return true 不存在  false 已存在，默认false
      */
     @Override
-    public boolean notRepeatBarcode(String midicineListId, String barcode) {
+    public boolean notRepeatBarcode(String pharmacyItemId, String barcode) {
         if (StringUtils.isNotBlank(barcode)) {
-            return medicineListRepository.count(new Specification<MedicineList>() {
+            return pharmacyItemRepository.count(new Specification<PharmacyItem>() {
                 @Override
-                public Predicate toPredicate(Root<MedicineList> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                public Predicate toPredicate(Root<PharmacyItem> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                     List<Predicate> list = new ArrayList<>();
                     list.add(criteriaBuilder.equal(root.get("barcode"), barcode));
-                    if (StringUtils.isNotBlank(midicineListId)) {
-                        list.add(criteriaBuilder.notEqual(root.get("midicineListId"), midicineListId));
+                    if (StringUtils.isNotBlank(pharmacyItemId)) {
+                        list.add(criteriaBuilder.notEqual(root.get("pharmacyItemId"), pharmacyItemId));
                     }
                     return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
                 }
@@ -121,20 +121,20 @@ public class MedicineListServiceImpl implements MedicineListService {
     /**
      * 判断药品名称是否不重复，是否不存在
      *
-     * @param midicineListId
-     * @param midicineName
+     * @param pharmacyItemId
+     * @param pharmacyItemName
      * @return true 不存在  false 已存在，默认false
      */
     @Override
-    public boolean notRepeatName(String midicineListId, String midicineName) {
-        if (StringUtils.isNotBlank(midicineName)) {
-            return medicineListRepository.count(new Specification<MedicineList>() {
+    public boolean notRepeatName(String pharmacyItemId, String pharmacyItemName) {
+        if (StringUtils.isNotBlank(pharmacyItemName)) {
+            return pharmacyItemRepository.count(new Specification<PharmacyItem>() {
                 @Override
-                public Predicate toPredicate(Root<MedicineList> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                public Predicate toPredicate(Root<PharmacyItem> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                     List<Predicate> list = new ArrayList<>();
-                    list.add(criteriaBuilder.equal(root.get("medicineName"), midicineName));
-                    if (StringUtils.isNotBlank(midicineListId)) {
-                        list.add(criteriaBuilder.notEqual(root.get("midicineListId"), midicineListId));
+                    list.add(criteriaBuilder.equal(root.get("medicineName"), pharmacyItemName));
+                    if (StringUtils.isNotBlank(pharmacyItemId)) {
+                        list.add(criteriaBuilder.notEqual(root.get("pharmacyItemId"), pharmacyItemId));
                     }
                     return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
                 }
@@ -149,11 +149,11 @@ public class MedicineListServiceImpl implements MedicineListService {
      * @return
      */
     @Override
-    public List<MedicineList> queryByName(String name) {
+    public List<PharmacyItem> queryByName(String name) {
         if (StringUtils.isNotBlank(name)) {
-            return medicineListRepository.findAll(new Specification<MedicineList>() {
+            return pharmacyItemRepository.findAll(new Specification<PharmacyItem>() {
                 @Override
-                public Predicate toPredicate(Root<MedicineList> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                public Predicate toPredicate(Root<PharmacyItem> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                     List<Predicate> list = new ArrayList<>();
                     list.add(criteriaBuilder.like(root.get("medicineName"), "%" + name + "%"));
                     list.add(criteriaBuilder.like(root.get("abbreviation"), name + "%"));
@@ -173,9 +173,9 @@ public class MedicineListServiceImpl implements MedicineListService {
     @Override
     public List<SelectOption> getSelectOption(String keywords) throws Exception {
         if (StringUtils.isBlank(keywords)) {
-            return medicineListRepository.getSelectOption();
+            return pharmacyItemRepository.getSelectOption();
         } else {
-            return medicineListRepository.getSelectOption(keywords.trim());
+            return pharmacyItemRepository.getSelectOption(keywords.trim());
         }
     }
 }

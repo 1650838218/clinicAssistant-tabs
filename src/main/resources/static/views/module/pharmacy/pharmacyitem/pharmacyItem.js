@@ -1,5 +1,5 @@
 /** 药品清单 */
-//@ sourceURL=medicineList.js
+//@ sourceURL=pharmacyItem.js
 layui.config({
     base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
 }).extend({
@@ -14,7 +14,7 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
     var ajax = layui.ajax;
     var utils = layui.utils;
     var leftTableId = 'left-table';
-    var rootMapping = '/pharmacy/medicineList';
+    var rootMapping = '/pharmacy/pharmacyItem';
     form.render();
 
     // 初始化表格
@@ -37,7 +37,7 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
             $('#add-btn').click();// 清空表单
             $('#del-btn').addClass('layui-btn-disabled').attr('disabled','disabled');// 禁用 删除按钮
             // 选中当前行
-            var medicineListId = $('#medicinelist-form input[name="medicineListId"]').val();
+            var medicineListId = $('#pharmacyitem-form input[name="medicineListId"]').val();
             if (utils.isNotNull(medicineListId)) {
                 var tableData = table.cache[leftTableId];
                 if (utils.isNotEmpty(tableData)) {
@@ -55,28 +55,28 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
 
     // 动态加载药品类型下拉框
     utils.splicingOption({
-        elem: $('#medicinelist-form select[name="medicineType"]'),
+        elem: $('#pharmacyitem-form select[name="medicineType"]'),
         where: {dictTypeKey: 'YPFL'},
     });
 
     // 监听药品名称输入事件
-    $('#medicinelist-form input[name="medicineName"]').on('input propertychange', function () {
+    $('#pharmacyitem-form input[name="medicineName"]').on('input propertychange', function () {
         var medicineName = $(this).val().trim();
         if (utils.isNotNull(medicineName)) {
             var fullPinyin = pinyinUtil.getPinyin(medicineName, '', false, true);
             var abbreviation = pinyinUtil.getFirstLetter(medicineName, true);
-            $('#medicinelist-form input[name="fullPinyin"]').val(fullPinyin);
-            $('#medicinelist-form input[name="abbreviation"]').val(abbreviation);
+            $('#pharmacyitem-form input[name="fullPinyin"]').val(fullPinyin);
+            $('#pharmacyitem-form input[name="abbreviation"]').val(abbreviation);
         } else {
-            $('#medicinelist-form input[name="fullPinyin"]').val('');
-            $('#medicinelist-form input[name="abbreviation"]').val('');
+            $('#pharmacyitem-form input[name="fullPinyin"]').val('');
+            $('#pharmacyitem-form input[name="abbreviation"]').val('');
         }
     });
 
     // 新增 药品
     $('#add-btn').click(function () {
-        utils.clearForm('#medicinelist-form');// 清空表单
-        form.val('medicinelist-form', {
+        utils.clearForm('#pharmacyitem-form');// 清空表单
+        form.val('pharmacyitem-form', {
             medicineType: 1,
             poisonous: 'false'
         });// 设置初始值
@@ -86,7 +86,7 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
     // 删除 药品
     $('#del-btn').click(function () {
         layer.confirm(MSG.delete_confirm + '该药品吗？',{icon: 3}, function () {
-            var medicineListId = $('#medicinelist-form input[name="medicineListId"]').val();
+            var medicineListId = $('#pharmacyitem-form input[name="medicineListId"]').val();
             if (medicineListId != null && medicineListId != undefined && medicineListId != '') {
                 ajax.delete(rootMapping + '/delete/' + medicineListId, function (success) {
                     if (success) {
@@ -110,7 +110,7 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
             var msg = '';
             var data = {};
             data[inputName] = value.trim();
-            data.medicineListId = $('#medicinelist-form input[name="medicineListId"]').val();
+            data.medicineListId = $('#pharmacyitem-form input[name="medicineListId"]').val();
             if (inputName === 'medicineName') {
                 url = rootMapping + '/notRepeatName';
                 msg = '药品名称已被占用，请重新填写！';
@@ -158,7 +158,7 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
 
     // 取消
     $('#cancel-btn').click(function () {
-        var medicineListId = $('#medicinelist-form input[name="medicineListId"]').val();
+        var medicineListId = $('#pharmacyitem-form input[name="medicineListId"]').val();
         if (medicineListId !== null && medicineListId !== undefined && medicineListId !== '') {
             getById(medicineListId);// 重新查询
         } else {
@@ -184,7 +184,7 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
             $.getJSON(rootMapping + '/getById', {medicineListId: medicineListId}, function (medicineList) {
                 if (medicineList != null) {
                     console.log(medicineList);
-                    form.val('medicinelist-form', medicineList);
+                    form.val('pharmacyitem-form', medicineList);
                 } else {
                     layer.alert('未找到该药品，请重试！',{icon: 0}, function (index) {
                         table.reload(leftTableId, {});

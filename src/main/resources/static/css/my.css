@@ -98,6 +98,10 @@
     display: inline-block;
 }
 
+.datagrid .panel-body {
+    border-color: #dddddd;
+}
+
 
 /* 表单 */
 .layui-input, .layui-select, .layui-textarea, .layui-btn {
@@ -108,4 +112,10 @@
 .layui-form-label span.required {
     color: red;
     /*text-align: center;*/
+}
+
+
+/*layer*/
+.layui-layer-dialog {
+    border-radius: 6px;
 }

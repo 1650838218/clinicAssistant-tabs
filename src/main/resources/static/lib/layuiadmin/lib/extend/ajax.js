@@ -50,7 +50,8 @@ layui.define(["jquery", "layer"], function (exports) {
                 contentType: 'application/json',
                 error: function (e) {
                     layer.msg(MSG.save_fail);
-                    console.log(e);
+                    elem.removeClass('layui-btn-disabled');// 按钮可用
+                    elem.removeAttr('disabled');
                 },
                 complete: function () {
                     elem.removeClass('layui-btn-disabled');// 按钮可用

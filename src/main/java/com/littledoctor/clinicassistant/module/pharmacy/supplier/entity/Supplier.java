@@ -17,15 +17,19 @@ public class Supplier {
     @Column(name = "SUPPLIER_ID", nullable = false)
     private Integer supplierId;
 
-    /** 供应商名称 */
+    /** 联系人姓名 */
     @Column(name = "SUPPLIER_NAME")
     private String supplierName;
 
-    /** 供应商电话 */
+    /** 联系人电话 */
     @Column(name = "SUPPLIER_PHONE")
     private String supplierPhone;
 
-    /** 供应商地址 */
+    /** 主营 */
+    @Column(name = "MAIN_PRODUCTS")
+    private String mainProducts;
+
+    /** 地址 */
     @Column(name = "SUPPLIER_ADDRESS")
     private String supplierAddress;
 
@@ -59,5 +63,13 @@ public class Supplier {
 
     public void setSupplierAddress(String supplierAddress) {
         this.supplierAddress = supplierAddress;
+    }
+
+    public String getMainProducts() {
+        return mainProducts;
+    }
+
+    public void setMainProducts(String mainProducts) {
+        this.mainProducts = mainProducts;
     }
 }

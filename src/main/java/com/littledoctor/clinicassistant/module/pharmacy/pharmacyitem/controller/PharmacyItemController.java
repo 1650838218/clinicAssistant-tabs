@@ -1,12 +1,10 @@
-package com.littledoctor.clinicassistant.module.pharmacy.medicinelist.controller;
+package com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.controller;
 
 import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.common.plugin.layui.LayuiTableEntity;
 import com.littledoctor.clinicassistant.common.plugin.select.SelectOption;
-import com.littledoctor.clinicassistant.common.util.ControllerUtils;
-import com.littledoctor.clinicassistant.module.pharmacy.medicinelist.entity.MedicineList;
-import com.littledoctor.clinicassistant.module.pharmacy.medicinelist.service.MedicineListService;
-import net.sf.json.JSONObject;
+import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.entity.PharmacyItem;
+import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.service.PharmacyItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +18,16 @@ import java.util.List;
 /**
  * @Auther: 周俊林
  * @Date: 2018/10/18 22:31
- * @Description: 药材清单，进货时从此清单中选取
+ * @Description: 药房品目
  */
 @RestController
-@RequestMapping(value = "/pharmacy/medicineList")
-public class MedicineListController {
+@RequestMapping(value = "/pharmacy/pharmacyItem")
+public class PharmacyItemController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private MedicineListService medicineListService;
+    private PharmacyItemService pharmacyItemService;
 
     /**
      * 分页查询
@@ -38,11 +36,11 @@ public class MedicineListController {
      * @return
      */
     @RequestMapping(value = "/queryPage")
-    public LayuiTableEntity<MedicineList> queryPage(String keywords, Pageable page) {
+    public LayuiTableEntity<PharmacyItem> queryPage(String keywords, Pageable page) {
         try {
             if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
-            Page<MedicineList> result = medicineListService.queryPage(keywords,page);
-            return new LayuiTableEntity<MedicineList>(result);
+            Page<PharmacyItem> result = pharmacyItemService.queryPage(keywords,page);
+            return new LayuiTableEntity<PharmacyItem>(result);
         } catch (Exception e) {
             log.error(e.getMessage(),e);
         }
@@ -51,14 +49,14 @@ public class MedicineListController {
 
     /**
      * 保存
-     * @param medicineList
+     * @param pharmacyItem
      * @return
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public MedicineList save(@RequestBody MedicineList medicineList) {
+    public PharmacyItem save(@RequestBody PharmacyItem pharmacyItem) {
         try {
-            Assert.notNull(medicineList, Message.PARAMETER_IS_NULL);
-            return medicineListService.save(medicineList);
+            Assert.notNull(pharmacyItem, Message.PARAMETER_IS_NULL);
+            return pharmacyItemService.save(pharmacyItem);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -67,14 +65,14 @@ public class MedicineListController {
 
     /**
      * 根据ID删除
-     * @param medicineListId
+     * @param pharmacyItemId
      * @return
      */
-    @RequestMapping(value = "/delete/{medicineListId}", method = RequestMethod.DELETE)
-    public boolean delete(@PathVariable(value = "medicineListId") String medicineListId) {
+    @RequestMapping(value = "/delete/{pharmacyItemId}", method = RequestMethod.DELETE)
+    public boolean delete(@PathVariable(value = "pharmacyItemId") String pharmacyItemId) {
         try {
-            Assert.hasLength(medicineListId, Message.PARAMETER_IS_NULL);
-            return medicineListService.delete(medicineListId);
+            Assert.hasLength(pharmacyItemId, Message.PARAMETER_IS_NULL);
+            return pharmacyItemService.delete(pharmacyItemId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -83,14 +81,14 @@ public class MedicineListController {
 
     /**
      * 根据ID查询
-     * @param medicineListId
+     * @param pharmacyItemId
      * @return
      */
     @RequestMapping(value = "/getById", method = RequestMethod.GET)
-    public MedicineList getById(@RequestParam String medicineListId) {
+    public PharmacyItem getById(@RequestParam String pharmacyItemId) {
         try {
 //            Assert.hasLength(medicineListId, Message.PARAMETER_IS_NULL);
-            return medicineListService.getById(medicineListId);
+            return pharmacyItemService.getById(pharmacyItemId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -99,15 +97,15 @@ public class MedicineListController {
 
     /**
      * 判断条形码是否不重复，是否不存在
-     * @param midicineListId
+     * @param pharmacyItemId
      * @param barcode
      * @return true 不存在  false 已存在，默认false
      */
     @RequestMapping(value = "/notRepeatBarcode", method = RequestMethod.GET)
-    public boolean notRepeatBarcode(String medicineListId, @RequestParam String barcode) {
+    public boolean notRepeatBarcode(String pharmacyItemId, @RequestParam String barcode) {
         try {
 //            Assert.hasLength(barcode, Message.PARAMETER_IS_NULL);
-            return medicineListService.notRepeatBarcode(medicineListId, barcode);
+            return pharmacyItemService.notRepeatBarcode(pharmacyItemId, barcode);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -116,15 +114,15 @@ public class MedicineListController {
 
     /**
      * 判断药品名称是否不重复，是否不存在
-     * @param midicineListId
-     * @param midicineName
+     * @param pharmacyItemId
+     * @param pharmacyItemName
      * @return true 不存在  false 已存在，默认false
      */
     @RequestMapping(value = "/notRepeatName", method = RequestMethod.GET)
-    public boolean notRepeatName(String medicineListId, @RequestParam String medicineName) {
+    public boolean notRepeatName(String pharmacyItemId, @RequestParam String pharmacyItemName) {
         try {
 //            Assert.hasLength(midicineName, Message.PARAMETER_IS_NULL);
-            return medicineListService.notRepeatName(medicineListId, medicineName);
+            return pharmacyItemService.notRepeatName(pharmacyItemId, pharmacyItemName);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -137,10 +135,10 @@ public class MedicineListController {
      * @return
      */
     @RequestMapping(value = "/queryByName", method = RequestMethod.GET)
-    public List<MedicineList> queryByName(@RequestParam String name) {
+    public List<PharmacyItem> queryByName(@RequestParam String name) {
         try {
 //            Assert.hasLength(name, Message.PARAMETER_IS_NULL);
-            return medicineListService.queryByName(name);
+            return pharmacyItemService.queryByName(name);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -154,7 +152,7 @@ public class MedicineListController {
     @RequestMapping(value = "/getSelectOption", method = RequestMethod.GET)
     public List<SelectOption> getSelectOption(@RequestParam(value = "q", required = false) String keywords) {
         try {
-            return medicineListService.getSelectOption(keywords);
+            return pharmacyItemService.getSelectOption(keywords);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

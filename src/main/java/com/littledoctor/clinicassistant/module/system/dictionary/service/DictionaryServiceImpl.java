@@ -3,6 +3,7 @@ package com.littledoctor.clinicassistant.module.system.dictionary.service;
 import com.littledoctor.clinicassistant.common.plugin.tree.TreeEntity;
 import com.littledoctor.clinicassistant.common.plugin.tree.TreeNodeType;
 import com.littledoctor.clinicassistant.module.system.dictionary.dao.DictionaryRepository;
+import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryItem;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryType;
 import com.littledoctor.clinicassistant.module.system.menu.entity.Menu;
 import com.littledoctor.clinicassistant.module.system.menu.service.MenuService;
@@ -190,6 +191,29 @@ public class DictionaryServiceImpl implements DictionaryService {
     public DictionaryType getByKey(String dictTypeKey) throws Exception {
         if (!StringUtils.isEmpty(dictTypeKey)) {
             return dictionaryRepository.getByKey(dictTypeKey);
+        }
+        return null;
+    }
+
+    /**
+     * 根据字典键和真实值查询显示值
+     * @param dictTypeKey
+     * @param dictItemValue
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public String queryItemName(String dictTypeKey, Integer dictItemValue) throws Exception {
+        if (!StringUtils.isEmpty(dictTypeKey) && dictItemValue != null) {
+            DictionaryType dt = this.getByKey(dictTypeKey);
+            if (dt.getDictItem() != null && dt.getDictItem().size() > 0) {
+                for (int i = 0; i < dt.getDictItem().size(); i++) {
+                    DictionaryItem di = dt.getDictItem().get(i);
+                    if (dictItemValue.equals(di.getDictItemId())) {
+                        return di.getDictItemName();
+                    }
+                }
+            }
         }
         return null;
     }

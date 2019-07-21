@@ -22,8 +22,9 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
         limit: 300,// 最多可有300个供应商
         cols: [[
             {field: 'supplierId', title: TABLE_COLUMN.numbers, type: 'numbers'},
-            {field: 'supplierName', title: '供应商名称', width: '20%',  edit: 'text'},
-            {field: 'supplierPhone', title: '联系方式', width: '15%', edit: 'text'},
+            {field: 'supplierName', title: '联系人', width: '10%',  edit: 'text'},
+            {field: 'supplierPhone', title: '联系方式', width: '12%', edit: 'text'},
+            {field: 'mainProducts', title: '主营', edit: 'text'},
             {field: 'supplierAddress', title: '地址', edit: 'text'},
             {title: TABLE_COLUMN.operation, toolbar: '#operate-column', width: '15%', align: 'center'}
         ]],
@@ -36,6 +37,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
                     supplierId: '',
                     supplierName: '',
                     supplierPhone: '',
+                    mainProducts: '',
                     supplierAddress: ''
                 }];
             }
@@ -65,6 +67,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
             supplierId: '',
             supplierName: '',
             supplierPhone: '',
+            mainProducts: '',
             supplierAddress: ''
         };
         // 获取当前行的位置
@@ -125,6 +128,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
                 supplierId: '',
                 supplierName: '',
                 supplierPhone: '',
+                mainProducts: '',
                 supplierAddress: ''
             }];
             table.reload(supplierTableId, {
@@ -152,6 +156,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
                         oldData[i].supplierId = supplier.supplierId;
                         oldData[i].supplierName = supplier.supplierName;
                         oldData[i].supplierPhone = supplier.supplierPhone;
+                        oldData[i].mainProducts = supplier.mainProducts;
                         oldData[i].supplierAddress = supplier.supplierAddress;
                         break;
                     }

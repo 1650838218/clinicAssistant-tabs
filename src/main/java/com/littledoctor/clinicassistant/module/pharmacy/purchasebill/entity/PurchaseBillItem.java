@@ -1,6 +1,7 @@
 package com.littledoctor.clinicassistant.module.pharmacy.purchasebill.entity;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 /**
  * @Auther: 周俊林
@@ -17,10 +18,6 @@ public class PurchaseBillItem {
     @Column(name = "PURCHASE_BILL_ITEM_ID", nullable = false)
     private Integer purchaseBillItemId;
 
-/*    *//** 采购单ID *//*
-    @Column(name = "PURCHASE_BILL_ID")
-    private Integer purchaseBillId;*/
-
     /** 药品清单ID，为了关联采购的是哪个药品 */
     @Column(name = "MEDICINE_LIST_ID")
     private Integer medicineListId;
@@ -30,19 +27,23 @@ public class PurchaseBillItem {
     private String goodsName;
 
     /** 数量 */
-    @Column(name = "COUNT")
+    @Column(name = "COUNT", columnDefinition = "double(10,2)")
     private Double count;
 
     /** 数量单位 SLDW 1：公斤(千克)；2：箱 */
     @Column(name = "COUNT_UNIT")
     private Integer countUnit;
 
+    /** 数量单位 字典名 */
+    @Transient
+    private String countUnitName;
+
     /** 单价 */
-    @Column(name = "UNIT_PRICE")
+    @Column(name = "UNIT_PRICE", columnDefinition = "double(10,2)")
     private Double unitPrice;
 
     /** 总价 */
-    @Column(name = "TOTAL_PRICE")
+    @Column(name = "TOTAL_PRICE", columnDefinition = "double(10,2)")
     private Double totalPrice;
 
     public Integer getPurchaseBillItemId() {
@@ -78,7 +79,7 @@ public class PurchaseBillItem {
     }
 
     public Double getCount() {
-        return count;
+        return Double.valueOf(new BigDecimal(this.count).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
     }
 
     public void setCount(Double count) {
@@ -94,7 +95,7 @@ public class PurchaseBillItem {
     }
 
     public Double getUnitPrice() {
-        return unitPrice;
+        return Double.valueOf(new BigDecimal(this.unitPrice).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
     }
 
     public void setUnitPrice(Double unitPrice) {
@@ -102,10 +103,18 @@ public class PurchaseBillItem {
     }
 
     public Double getTotalPrice() {
-        return totalPrice;
+        return Double.valueOf(new BigDecimal(this.totalPrice).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
     }
 
     public void setTotalPrice(Double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public String getCountUnitName() {
+        return countUnitName;
+    }
+
+    public void setCountUnitName(String countUnitName) {
+        this.countUnitName = countUnitName;
     }
 }

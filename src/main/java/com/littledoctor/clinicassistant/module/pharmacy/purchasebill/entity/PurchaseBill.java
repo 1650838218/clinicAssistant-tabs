@@ -1,15 +1,14 @@
 package com.littledoctor.clinicassistant.module.pharmacy.purchasebill.entity;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.sql.Blob;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @Auther: 周俊林
- * @Date: 2019-05-04 16:23
- * @Description: 采购单
+ * @Date: 2019-07-06 13:50
+ * @Description:
  */
 @Entity
 @Table(name = "PURCHASE_BILL")
@@ -33,17 +32,16 @@ public class PurchaseBill {
     @Column(name = "SUPPLIER_ID")
     private Integer supplierId;
 
+    @Transient
+    private String supplierName;
+
     /** 供货商联系方式 */
     @Column(name = "SUPPLIER_PHONE")
     private String supplierPhone;
 
-    /** 采购单类型, CGDLX: 1:药品；2：医疗器械；3：日常用品*/
-    @Column(name = "PURCHASE_BILL_TYPE")
-    private Integer purchaseBillType;
-
     /** 采购单总价 */
-    @Column(name = "TOTAL_PRICE")
-    private String totalPrice;
+    @Column(name = "TOTAL_PRICE", columnDefinition = "double(10,2) default '0.00'")
+    private Double totalPrice;
 
     /** 采购单照片附件 */
     @Column(name = "PURCHASE_BILL_PICTURE")
@@ -58,12 +56,8 @@ public class PurchaseBill {
     private Date updateTime;
 
     /** 是否已入库 SF 1：已入库；0：未入库*/
-    @Column(name = "ENTRY_GODOWN")
-    private Boolean entryGodown;
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-    @JoinColumn(name = "PURCHASE_BILL_ID")
-    private List<PurchaseBillItem> purchaseBillItems = new ArrayList<>();
+    @Column(name = "WAREHOUSING_ENTRY")
+    private Boolean warehousingEntry;
 
     public Integer getPurchaseBillId() {
         return purchaseBillId;
@@ -105,19 +99,11 @@ public class PurchaseBill {
         this.supplierPhone = supplierPhone;
     }
 
-    public Integer getPurchaseBillType() {
-        return purchaseBillType;
+    public Double getTotalPrice() {
+        return Double.valueOf(new BigDecimal(this.totalPrice).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
     }
 
-    public void setPurchaseBillType(Integer purchaseBillType) {
-        this.purchaseBillType = purchaseBillType;
-    }
-
-    public String getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(String totalPrice) {
+    public void setTotalPrice(Double totalPrice) {
         this.totalPrice = totalPrice;
     }
 
@@ -145,19 +131,19 @@ public class PurchaseBill {
         this.updateTime = updateTime;
     }
 
-    public Boolean getEntryGodown() {
-        return entryGodown;
+    public Boolean getWarehousingEntry() {
+        return warehousingEntry;
     }
 
-    public void setEntryGodown(Boolean entryGodown) {
-        this.entryGodown = entryGodown;
+    public void setWarehousingEntry(Boolean warehousingEntry) {
+        this.warehousingEntry = warehousingEntry;
     }
 
-    public List<PurchaseBillItem> getPurchaseBillItems() {
-        return purchaseBillItems;
+    public String getSupplierName() {
+        return supplierName;
     }
 
-    public void setPurchaseBillItems(List<PurchaseBillItem> purchaseBillItems) {
-        this.purchaseBillItems = purchaseBillItems;
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
     }
 }

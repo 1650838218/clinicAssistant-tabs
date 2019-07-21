@@ -72,4 +72,12 @@ public interface DictionaryService {
      * @return
      */
     DictionaryType getByKey(String dictTypeKey) throws Exception;
+
+    /**
+     * 根据字典键和真实值，查询显示值
+     * @param dictTypeKey
+     * @param dictItemValue
+     * @return
+     */
+    String queryItemName(String dictTypeKey, Integer dictItemValue) throws Exception;
 }

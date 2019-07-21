@@ -1,7 +1,11 @@
 package com.littledoctor.clinicassistant.module.pharmacy.purchasebill.service;
 
+import com.littledoctor.clinicassistant.module.pharmacy.purchasebill.dao.PurchaseBillOTMRepository;
 import com.littledoctor.clinicassistant.module.pharmacy.purchasebill.dao.PurchaseBillRepository;
 import com.littledoctor.clinicassistant.module.pharmacy.purchasebill.entity.PurchaseBill;
+import com.littledoctor.clinicassistant.module.pharmacy.purchasebill.entity.PurchaseBillOTM;
+import com.littledoctor.clinicassistant.module.pharmacy.supplier.entity.Supplier;
+import com.littledoctor.clinicassistant.module.pharmacy.supplier.service.SupplierService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +18,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,48 +30,72 @@ import java.util.List;
 public class PurchaseBillServiceImpl implements PurchaseBillService {
 
     @Autowired
+    private PurchaseBillOTMRepository purchaseBillOTMRepository;
+
+    @Autowired
     private PurchaseBillRepository purchaseBillRepository;
+
+    @Autowired
+    private SupplierService supplierService;
 
     /**
      * 分页查询订单
      * @param page
-     * @param dateRange
+     * @param purchaseBillCode
+     * @param purchaseBillDate
      * @param supplierId
-     * @param orderType
      * @return
      * @throws Exception
      */
     @Override
-    public Page<PurchaseBill> queryPage(Pageable page, String dateRange, String supplierId, String orderType) throws Exception {
-        return purchaseBillRepository.findAll(new Specification<PurchaseBill>() {
+    public Page<PurchaseBill> queryPage(Pageable page, String purchaseBillCode, String purchaseBillDate, String supplierId) throws Exception {
+        Page<PurchaseBill> purchaseBillPage = purchaseBillRepository.findAll(new Specification<PurchaseBill>() {
             @Override
             public Predicate toPredicate(Root<PurchaseBill> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicateList = new ArrayList<>();
-                if (StringUtils.isNotBlank(dateRange)) {
-                    String[] dates = dateRange.split(" - ");
+                if (StringUtils.isNotBlank(purchaseBillCode)) {
+                    predicateList.add(criteriaBuilder.equal(root.get("purchaseBillCode"), purchaseBillCode));
+                }
+                if (StringUtils.isNotBlank(purchaseBillDate)) {
+                    String[] dates = purchaseBillDate.split(" - ");
                     if (dates != null && dates.length == 2) {
-                        predicateList.add(criteriaBuilder.between(root.get("orderDate"), dates[0], dates[1]));
+                        predicateList.add(criteriaBuilder.between(root.get("purchaseBillDate"), dates[0], dates[1]));
                     }
                 }
                 if (StringUtils.isNotBlank(supplierId)) {
                     predicateList.add(criteriaBuilder.equal(root.get("supplierId"), supplierId));
                 }
-                if (StringUtils.isNotBlank(orderType)) {
-                    predicateList.add(criteriaBuilder.equal(root.get("orderType"), orderType));
-                }
                 return criteriaBuilder.and(predicateList.toArray(new Predicate[predicateList.size()]));
             }
         }, page);
+        if (purchaseBillPage.getContent() != null && purchaseBillPage.getContent().size() > 0) {
+            List<Supplier> supplierList = supplierService.findAll();
+            if (supplierList != null && supplierList.size() > 0) {
+                for (int i = 0; i < purchaseBillPage.getContent().size(); i++) {
+                    PurchaseBill pb = purchaseBillPage.getContent().get(i);
+                    for (int j = 0; j < supplierList.size(); j++) {
+                        Supplier supplier = supplierList.get(j);
+                        if (pb.getSupplierId().equals(supplier.getSupplierId())) {
+                            pb.setSupplierName(supplier.getSupplierName());
+                        }
+                    }
+                }
+            }
+        }
+        return purchaseBillPage;
     }
 
     /**
      * 保存采购单
-     * @param purchaseBill
+     * @param purchaseBillOTM
      * @return
      */
     @Override
-    public PurchaseBill save(PurchaseBill purchaseBill) {
-        return purchaseBillRepository.saveAndFlush(purchaseBill);
+    public PurchaseBillOTM save(PurchaseBillOTM purchaseBillOTM) {
+        purchaseBillOTM.setCreateTiem(new Date());
+        purchaseBillOTM.setWarehousingEntry(false);
+        purchaseBillOTM.setUpdateTime(new Date());
+        return purchaseBillOTMRepository.saveAndFlush(purchaseBillOTM);
     }
 
     /**
@@ -75,7 +104,21 @@ public class PurchaseBillServiceImpl implements PurchaseBillService {
      * @return
      */
     @Override
-    public PurchaseBill queryById(String purchaseBillId) {
-        return purchaseBillRepository.findById(Integer.parseInt(purchaseBillId)).get();
+    public PurchaseBillOTM queryById(String purchaseBillId) {
+        return purchaseBillOTMRepository.findById(Integer.parseInt(purchaseBillId)).get();
+    }
+
+    /**
+     * 删除采购单
+     * @param purchaseBillId
+     * @return
+     */
+    @Override
+    public boolean delete(String purchaseBillId) {
+        if (StringUtils.isNotBlank(purchaseBillId)) {
+            purchaseBillOTMRepository.deleteById(Integer.parseInt(purchaseBillId));
+            return true;
+        }
+        return false;
     }
 }

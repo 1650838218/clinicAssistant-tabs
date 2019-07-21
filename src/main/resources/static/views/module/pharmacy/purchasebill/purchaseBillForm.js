@@ -34,12 +34,6 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         value: new Date(),
         isInitValue: true
     });
-    // 动态加载数量单位下拉框
-    utils.splicingOption({
-        elem: $('#count-unit-select select[name="countUnit"]'),
-        where: {dictTypeKey: 'SLDW'},
-        defaultValue:1
-    });
     // 生成单号
     $('#purchasebill-form input[name="purchaseBillCode"]').val(new Date().format('yyyyMMddhhmmssS'));
 
@@ -55,6 +49,17 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         } else {
             return false;
         }
+    }
+
+    // 开始编辑一行
+    function beginEditing(rowIndex,field) {
+        $('#' + itemTableId).datagrid('selectRow', rowIndex).datagrid('beginEdit', rowIndex);
+        var ed = $('#' + itemTableId).datagrid('getEditor', {index:rowIndex,field:field});
+        if (ed){
+            ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+        }
+        setEditing(rowIndex);
+        editIndex = rowIndex;
     }
 
     // 初始化表格
@@ -84,6 +89,16 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                 }
                 $('#' + itemTableId).datagrid('cancelEdit', editIndex).datagrid('deleteRow', editIndex);
                 editIndex = undefined;
+                // 如果明细行被全部删除，则新增一个空白行
+                if ($('#' +itemTableId).datagrid('getData').total === 0) {
+                    $('#' + itemTableId).datagrid('appendRow',{});
+                }
+            }
+        },'-',{
+            text:'附件',
+            iconCls:'icon-remove',
+            handler:function(){
+
             }
         }],
         columns: [[
@@ -108,7 +123,18 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
             },
             {field: 'specifications', title: '规格', width: '200', editor: {type:'textbox',options:{type:'text'}}},
             {field: 'manufacturer', title: '制造商', width: '150', editor: {type:'textbox',options:{type:'text'}}},
-            {field: 'count', title: '数量', width: '80', editor: {type:'numberbox',options:{precision:2,required: true}}},
+            {field: 'count', title: '数量', width: '80',
+                editor: {
+                    type:'numberbox',
+                    options:{
+                        precision:2,
+                        required: true
+                    }
+                },
+                formatter: function (value, row) {
+                    if (value != null) return (value - 0).toFixed(2);
+                }
+            },
             {
                 field: 'countUnit', title: '单位', width: '120',
                 editor: {
@@ -129,20 +155,36 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                     return row.countUnitName;
                 }
             },
-            {field: 'unitPrice', title: '单价(元)', width: '100', editor: {type:'numberbox',options:{precision:2,required: true}}},
-            {field: 'totalPrice', title: '总价(元)', width: '100', editor: {type:'numberbox',options:{precision:2,required: true}}}
+            {field: 'unitPrice', title: '单价(元)', width: '100',
+                editor: {
+                    type:'numberbox',
+                    options:{
+                        precision:2,
+                        required: true
+                    }
+                },
+                formatter: function (value, row) {
+                    if (value != null) return (value - 0).toFixed(2);
+                }
+            },
+            {field: 'totalPrice', title: '总价(元)', width: '100',
+                editor: {
+                    type:'numberbox',
+                    options:{
+                        precision:2,
+                        required: true
+                    }
+                },
+                formatter: function (value, row) {
+                    if (value != null) return (value - 0).toFixed(2);
+                }
+            }
         ]],
         data: [{}],
         onClickCell: function (rowIndex, field, value) {
             if (editIndex != rowIndex){
                 if (endEditing()){
-                    $('#' + itemTableId).datagrid('selectRow', rowIndex).datagrid('beginEdit', rowIndex);
-                    var ed = $('#' + itemTableId).datagrid('getEditor', {index:rowIndex,field:field});
-                    if (ed){
-                        ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
-                    }
-                    setEditing(rowIndex);
-                    editIndex = rowIndex;
+                    beginEditing(rowIndex, field);
                 } else {
                     setTimeout(function(){
                         $('#' + itemTableId).datagrid('selectRow', editIndex);
@@ -185,15 +227,19 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
 
     // 明细表格校验
     function validateGrid() {
-        var rowCount = $('$' + itemTableId).datagrid('getRows').length;
+        var gridData = $('#' + itemTableId).datagrid('getData');
+        var rowCount = gridData.total;
         if (rowCount === 0) {
             layer.msg("采购单至少要有一条明细数据！");
             return false;
         }
         if (endEditing()) {
             for (var i = 0; i < rowCount; i++) {
-                if (!$('#' + itemTableId).datagrid('validateRow', i)) {
-                    $('#' + itemTableId).datagrid('selectRow', i).datagrid('beginEdit', i);
+                var goodName = gridData.rows[i].goodsName;
+                var totalPrice = gridData.rows[i].totalPrice;
+                if (!utils.isNotNull(goodName) || !utils.isNotNull(totalPrice)) {
+                    beginEditing(i, 'medicineListId');
+                    layer.msg("请将明细数据补充完整！");
                     return false;
                 }
             }
@@ -201,6 +247,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
             setTimeout(function(){
                 $('#' + itemTableId).datagrid('selectRow', editIndex);
             },0);
+            layer.msg("请将明细数据补充完整！");
             return false;
         }
         return true;
@@ -209,9 +256,9 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     // 根据ID查询采购单
     function queryPurchaseBillById(purchaseBillId) {
         if (utils.isNotNull(purchaseBillId)) {
-            $.getJSON(rootMapping + "queryById",{purchaseBillId: purchaseBillId}, function (purchaseBill) {
+            $.getJSON(rootMapping + "/queryById",{purchaseBillId: purchaseBillId}, function (purchaseBill) {
                 if (purchaseBill != null) {
-                    $('#purchasebill-form').val('purchasebill-form', purchaseBill);// 表单赋值
+                    form.val('purchasebill-form', purchaseBill);// 表单赋值
                     form.render();
                     $('#' + itemTableId).datagrid('loadData', purchaseBill.purchaseBillItems);// 加载采购单明细
                 }
@@ -221,101 +268,86 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         }
     }
 
+    // 总分校验，总金额不能大于明细金额之和；true：通过，false：不通过
+    function generalBranchCheck(totalAmount, billItems) {
+        var totalItems = 0;
+        for (var i = 0; i < billItems.length; i++) {
+            totalItems += (billItems[i].totalPrice - 0);
+        }
+        return totalAmount <= totalItems;
+    }
+
+    // 保存采购单
+    function savePurchaseBill(obj, purchaseBill) {
+        ajax.postJSON(rootMapping + '/save', purchaseBill, function (bill) {
+            if (bill != null && bill.purchaseBillId != null) {
+                queryPurchaseBillById(bill.purchaseBillId);// 根据ID查询采购单，并赋值
+                layer.msg(MSG.save_success);
+            } else {
+                layer.msg(MSG.save_fail);
+            }
+            utils.btnEnabled($(obj.elem));
+        }, $(obj.elem));
+    }
+
     /**
      * 保存采购单
      * @param data
      * @returns {boolean}
      */
-    function savePurchaseBill(obj) {
+    form.on('submit(submit-btn)', function(obj){
+        utils.btnDisabled($(obj.elem));
         if (validateGrid()) {
-            $(obj.elem).addClass('layui-btn-disabled');// 按钮禁用，防止重复提交
-            $(obj.elem).attr('disabled', 'disabled');
             var purchaseBill = obj.field;// 表单值
             var billItems = $('#' + itemTableId).datagrid('getData');// 获取表格数据
-            console.log(billItems);
-            purchaseBill.purchaseBillItems = billItems;
-            ajax.postJSON(rootMapping + '/save', purchaseBill, function (bill) {
-                if (bill != null && bill.purchaseBillId != null) {
-                    queryPurchaseBillById(bill.purchaseBillId);// 根据ID查询采购单，并赋值
-                    layer.msg(MSG.save_success);
-                } else {
-                    layer.msg(MSG.save_fail);
-                }
-                $(obj.elem).removeClass('layui-btn-disabled');// 按钮可用
-                $(obj.elem).removeAttr('disabled');
-            });
+            // console.log(billItems);
+            purchaseBill.purchaseBillItems = billItems.rows;
+            if (!generalBranchCheck(purchaseBill.totalPrice, purchaseBill.purchaseBillItems)) {
+                layer.confirm('采购单总金额大于明细总价之和，数据存在错误风险，确认保存吗？',
+                    {
+                        icon: LAYER_ICON.question,
+                        btn2: function(index, layero) {
+                            utils.btnEnabled($(obj.elem));
+                        },
+                        cancel: function (index, layero) {
+                            utils.btnEnabled($(obj.elem));
+                        }
+                    },
+                    function (index) {
+                        savePurchaseBill(obj, purchaseBill);
+                        layer.close(index);
+                });
+            }else {
+                savePurchaseBill(obj, purchaseBill);
+            }
+        } else {
+            utils.btnEnabled($(obj.elem));
         }
         return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-    };
-
-
-
-
-
-
-    /**
-     * 重置表单
-     */
-    function resetForm() {
-        // 表单清空
-        assigForm({
-            dictionaryId: '',
-            menuId: '',
-            menuName: '',
-            dictionaryName: '',
-            dictionaryKey: ''
-        });
-        // 删除高亮
-        leftTree.unHighLight();
-        // 重置表格
-        var newRow = [{
-            "dictItemName": "",
-            "dictItemValue": "",
-            "isUse": "1",
-            "dictItemId": ''
-        }];
-        table.reload(dictItemTableId, {
-            data: newRow   // 将新数据重新载入表格
-        });
-    }
-
-    // 表单自定义校验规则
-    form.verify({
-        repeat: function (value, item) { //value：表单的值、item：表单的DOM对象
-            var inputName = $(item).attr('name');
-            var url = '';
-            var msg = '';
-            var data = {};
-            data[inputName] = value.trim();
-            data.dictTypeId = $('#dictionary-info input[name="dictTypeId"]').val();
-            if (inputName === 'dictTypeName') {
-                url = rootMappint + '/repeatTypeName';
-                msg = '字典名称已被占用，请重新填写！';
-            } else if (inputName === 'dictTypeKey') {
-                url = rootMappint + '/repeatTypeKey';
-                msg = '字典键已被占用，请重新填写！';
-            }
-            if (utils.isNotNull(url)) {
-                ajax.getJSONAsync(url, data, function (result) {
-                    if (result) msg = '';
-                }, false);
-            }
-            return msg;
-        },
-        regExp: function (value, item) {
-            var inputName = $(item).attr('name');
-            var msg = '';
-            var reg = '';
-            if (inputName === 'dictTypeKey') {
-                reg = /^[a-zA-Z][a-zA-Z_]*$/;
-                msg = '字典键以英文字母开头，只能输入字母和下划线，请重新填写！';
-            }
-            if (!!msg && !reg.test(value)) {
-                return msg;
-            }
-        }
     });
 
+    // 取消按钮点击事件
+    $('button[lay-filter="cancel-btn"]').click(function () {
+        window.location.reload();
+    });
 
+    // 格式化总金额
+    $('#'+ formId + ' input[name="totalPrice"]').bind('change', function () {
+        var value = $(this).val();
+        $(this).val((value - 0).toFixed(2));
+    });
+
+    // 解析url中的参数，如果包含采购单id，则自动查询采购单详情
+    var search = window.location.search;
+    if (search.length > 0) {
+        var condition = search.substr(1).split('&');
+        for (var i = 0; i < condition.length; i++) {
+            var keyVal = condition[i].split('=');
+            if (keyVal[0] === 'purchaseBillId') {
+                queryPurchaseBillById(keyVal[1]);
+                break;
+            }
+        }
+    }
 });
 

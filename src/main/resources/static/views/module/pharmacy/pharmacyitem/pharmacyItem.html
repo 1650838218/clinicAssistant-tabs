@@ -19,6 +19,9 @@
         .layui-input-block {
             margin-left: 90px;
         }
+        .layui-textarea {
+            min-height: 70px;
+        }
     </style>
 </head>
 <body>
@@ -46,27 +49,27 @@
                     <h3><b>药品信息</b></h3>
                 </div>
                 <div class="layui-card-body">
-                    <form id="medicinelist-form" class="layui-form" lay-filter="medicinelist-form">
-                        <input type="hidden" name="medicineListId" value="">
+                    <form id="pharmacyitem-form" class="layui-form" lay-filter="pharmacyitem-form">
+                        <input type="hidden" name="pharmacyItemId" value="">
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm4">
                                 <label class="layui-form-label"><span class="required">*</span>药品名称：</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="medicineName" autocomplete="off" class="layui-input"
+                                    <input type="text" name="pharmacyItemName" autocomplete="off" class="layui-input"
                                            maxlength="50" placeholder="请输入药品名称" lay-verify="required|repeat">
                                 </div>
                             </div>
                             <div class="layui-col-sm4">
                                 <label class="layui-form-label"><span class="required">*</span>药品分类：</label>
                                 <div class="layui-input-block">
-                                    <select name="medicineType" lay-verify="required" placeholder="请选择药品分类"></select>
+                                    <select name="pharmacyItemType" lay-verify="required" placeholder="请选择药品分类"></select>
                                 </div>
                             </div>
                             <div class="layui-col-sm4">
-                                <label class="layui-form-label"><span class="required">*</span>库存预警：</label>
+                                <label class="layui-form-label">是否有毒：</label>
                                 <div class="layui-input-block">
-                                    <input name="stockWarn" class="layui-input" placeholder="请输入库存预警"
-                                           autocomplete="off" maxlength="10" ay-verify="required|number">
+                                    <input type="radio" name="poisonous" value="true" title="是">
+                                    <input type="radio" name="poisonous" value="false" title="否" checked>
                                 </div>
                             </div>
                         </div>
@@ -75,7 +78,7 @@
                                 <label class="layui-form-label">条形码：</label>
                                 <div class="layui-input-block">
                                     <input type="text" name="barcode" class="layui-input" placeholder="请输入条形码"
-                                           autocomplete="off" maxlength="50" ay-verify="repeat|regExp">
+                                           autocomplete="off" maxlength="50" lay-verify="repeat|regExp">
                                 </div>
                             </div>
                             <div class="layui-col-sm4">
@@ -97,14 +100,14 @@
                             <div class="layui-col-sm6">
                                 <label class="layui-form-label">成分：</label>
                                 <div class="layui-input-block">
-                                    <textarea name="component" autocomplete="off" class="layui-textarea" rows="3"
+                                    <textarea name="component" autocomplete="off" class="layui-textarea" rows="2"
                                            maxlength="200" placeholder="请输入成分"></textarea>
                                 </div>
                             </div>
                             <div class="layui-col-sm6">
                                 <label class="layui-form-label">功能主治：</label>
                                 <div class="layui-input-block">
-                                    <textarea name="functionAttending" autocomplete="off" class="layui-textarea" rows="3"
+                                    <textarea name="functionAttending" autocomplete="off" class="layui-textarea" rows="2"
                                               maxlength="300" placeholder="请输入功能主治"></textarea>
                                 </div>
                             </div>
@@ -129,24 +132,30 @@
                             <div class="layui-col-sm6">
                                 <label class="layui-form-label">禁忌：</label>
                                 <div class="layui-input-block">
-                                    <textarea name="taboo" autocomplete="off" class="layui-textarea" rows="3"
+                                    <textarea name="taboo" autocomplete="off" class="layui-textarea" rows="2"
                                               maxlength="300" placeholder="请输入禁忌"></textarea>
                                 </div>
                             </div>
-                            <div class="layui-col-sm4">
-                                <label class="layui-form-label">是否有毒：</label>
+                            <div class="layui-col-sm6">
+                                <label class="layui-form-label">制造商：</label>
                                 <div class="layui-input-block">
-                                    <input type="radio" name="poisonous" value="true" title="是">
-                                    <input type="radio" name="poisonous" value="false" title="否" checked>
+                                    <textarea name="manufacturer" autocomplete="off" class="layui-textarea" rows="2"
+                                           maxlength="50" placeholder="请输入制造商"></textarea>
                                 </div>
                             </div>
                         </div>
                         <div class="layui-row layui-col-space5 layui-form-item">
-                            <div class="layui-col-sm8">
-                                <label class="layui-form-label">制造商：</label>
+                            <div class="layui-col-sm4">
+                                <label class="layui-form-label"><span class="required">*</span>库存预警：</label>
                                 <div class="layui-input-block">
-                                    <input name="manufacturer" autocomplete="off" class="layui-input"
-                                           maxlength="50" placeholder="请输入制造商">
+                                    <input name="stockWarn" class="layui-input" placeholder="请输入库存预警"
+                                           autocomplete="off" maxlength="10" lay-verify="required|number">
+                                </div>
+                            </div>
+                            <div class="layui-col-sm4">
+                                <label class="layui-form-label"><span class="required">*</span>库存单位：</label>
+                                <div class="layui-input-block">
+                                    <select name="stockUnit" lay-verify="required" placeholder="请选择库存单位"></select>
                                 </div>
                             </div>
                         </div>
@@ -167,6 +176,6 @@
 <script src="/lib/pinyin/pinyin_dict_withtone.js"></script>
 <script src="/lib/pinyin/pinyin_dict_polyphone.js"></script>
 <script src="/lib/pinyin/pinyinUtil.js"></script>
-<script src="/views/module/pharmacy/medicinelist/medicineList.js"></script>
+<script src="/views/module/pharmacy/pharmacyitem/pharmacyItem.js"></script>
 </body>
 </html>

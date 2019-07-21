@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 /**
  * @Auther: 周俊林
- * @Date: 2019-05-04 16:44
- * @Description: 采购单
+ * @Date: 2019-07-06 13:53
+ * @Description:
  */
 public interface PurchaseBillRepository extends JpaRepository<PurchaseBill, Integer>, JpaSpecificationExecutor<PurchaseBill> {
 }

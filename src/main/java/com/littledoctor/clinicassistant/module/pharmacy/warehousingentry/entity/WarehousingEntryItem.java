@@ -1,4 +1,4 @@
-package com.littledoctor.clinicassistant.module.pharmacy.godownentry.entity;
+package com.littledoctor.clinicassistant.module.pharmacy.warehousingentry.entity;
 
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
@@ -10,22 +10,22 @@ import javax.persistence.*;
  * @Description: 入库单明细
  */
 @Entity
-@Table(name = "GODOWN_ENTRY_ITEM")
-public class GodownEntryItem {
+@Table(name = "WAREHOUSING_ENTRY_ITEM")
+public class WarehousingEntryItem {
 
     /** 主键ID */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "GODOWN_ENTRY_ITEM_ID", nullable = false)
-    private Integer godownEntryItemId;
-
-    /** 入库单ID */
-    @Column(name = "GODOWN_ENTRY_ID")
-    private Integer godownEntryId;
+    @Column(name = "WAREHOUSING_ENTRY_ITEM_ID", nullable = false)
+    private Integer warehousingEntryItemId;
 
     /** 药品清单ID */
     @Column(name = "MEDICINE_LIST_ID")
     private Integer medicineListId;
+
+    /**  */
+    @Transient
+    private String goodsName;
 
     /** 数量，购进的数量 */
     @Column(name = "COUNT")
@@ -51,24 +51,12 @@ public class GodownEntryItem {
     @Column(name = "EXPIRE_DATE")
     private String expireDate;
 
-    /** 库存量，剩余量；售出，过期，损毁，退货等需要修改此字段 */
-    @Column(name = "STOCK")
-    private Double stock;
-
-    public Integer getGodownEntryItemId() {
-        return godownEntryItemId;
+    public Integer getWarehousingEntryItemId() {
+        return warehousingEntryItemId;
     }
 
-    public void setGodownEntryItemId(Integer godownEntryItemId) {
-        this.godownEntryItemId = godownEntryItemId;
-    }
-
-    public Integer getGodownEntryId() {
-        return godownEntryId;
-    }
-
-    public void setGodownEntryId(Integer godownEntryId) {
-        this.godownEntryId = godownEntryId;
+    public void setWarehousingEntryItemId(Integer warehousingEntryItemId) {
+        this.warehousingEntryItemId = warehousingEntryItemId;
     }
 
     public Integer getMedicineListId() {
@@ -125,13 +113,5 @@ public class GodownEntryItem {
 
     public void setExpireDate(String expireDate) {
         this.expireDate = expireDate;
-    }
-
-    public Double getStock() {
-        return stock;
-    }
-
-    public void setStock(Double stock) {
-        this.stock = stock;
     }
 }
