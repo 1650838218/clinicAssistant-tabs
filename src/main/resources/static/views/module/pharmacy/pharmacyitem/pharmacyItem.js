@@ -31,40 +31,45 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
             limitName: 'size' //每页数据量的参数名，默认：limit
         },
         cols: [[
-            {field: 'medicineName', title: '药品名称'}
+            {field: 'pharmacyItemName', title: '药品名称'}
         ]],
         done: function (res, curr, count) {
             $('#add-btn').click();// 清空表单
             $('#del-btn').addClass('layui-btn-disabled').attr('disabled','disabled');// 禁用 删除按钮
             // 选中当前行
-            var medicineListId = $('#pharmacyitem-form input[name="medicineListId"]').val();
-            if (utils.isNotNull(medicineListId)) {
+            var pharmacyItemId = $('#pharmacyitem-form input[name="pharmacyItemId"]').val();
+            if (utils.isNotNull(pharmacyItemId)) {
                 var tableData = table.cache[leftTableId];
                 if (utils.isNotEmpty(tableData)) {
                     for (var i = 0; i < tableData.length; i++) {
-                        if (parseInt(tableData[i].medicineListId) === parseInt(medicineListId)) {
+                        if (parseInt(tableData[i].pharmacyItemId) === parseInt(pharmacyItemId)) {
                             var rowIndex = tableData[i][table.config.indexName];
                             $('.left-panel .layui-table tbody tr[data-index="' + rowIndex + '"]').find('div').addClass('select');
                         }
                     }
                 }
             }
-
         }
     });
 
     // 动态加载药品类型下拉框
     utils.splicingOption({
-        elem: $('#pharmacyitem-form select[name="medicineType"]'),
+        elem: $('#pharmacyitem-form select[name="pharmacyItemType"]'),
         where: {dictTypeKey: 'YPFL'},
     });
 
+    // 动态加载库存单位下拉框
+    utils.splicingOption({
+        elem: $('#pharmacyitem-form select[name="stockUnit"]'),
+        where: {dictTypeKey: 'KCDW'},
+    });
+
     // 监听药品名称输入事件
-    $('#pharmacyitem-form input[name="medicineName"]').on('input propertychange', function () {
-        var medicineName = $(this).val().trim();
-        if (utils.isNotNull(medicineName)) {
-            var fullPinyin = pinyinUtil.getPinyin(medicineName, '', false, true);
-            var abbreviation = pinyinUtil.getFirstLetter(medicineName, true);
+    $('#pharmacyitem-form input[name="pharmacyItemName"]').on('input propertychange', function () {
+        var pharmacyItemName = $(this).val().trim();
+        if (utils.isNotNull(pharmacyItemName)) {
+            var fullPinyin = pinyinUtil.getPinyin(pharmacyItemName, '', false, true);
+            var abbreviation = pinyinUtil.getFirstLetter(pharmacyItemName, true);
             $('#pharmacyitem-form input[name="fullPinyin"]').val(fullPinyin);
             $('#pharmacyitem-form input[name="abbreviation"]').val(abbreviation);
         } else {
@@ -77,8 +82,9 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
     $('#add-btn').click(function () {
         utils.clearForm('#pharmacyitem-form');// 清空表单
         form.val('pharmacyitem-form', {
-            medicineType: 1,
-            poisonous: 'false'
+            pharmacyItemType: 1,
+            poisonous: 'false',
+            stockUnit: 1
         });// 设置初始值
         form.render();
     });
@@ -86,9 +92,9 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
     // 删除 药品
     $('#del-btn').click(function () {
         layer.confirm(MSG.delete_confirm + '该药品吗？',{icon: 3}, function () {
-            var medicineListId = $('#pharmacyitem-form input[name="medicineListId"]').val();
-            if (medicineListId != null && medicineListId != undefined && medicineListId != '') {
-                ajax.delete(rootMapping + '/delete/' + medicineListId, function (success) {
+            var pharmacyItemId = $('#pharmacyitem-form input[name="pharmacyItemId"]').val();
+            if (pharmacyItemId != null && pharmacyItemId != undefined && pharmacyItemId != '') {
+                ajax.delete(rootMapping + '/delete/' + pharmacyItemId, function (success) {
                     if (success) {
                         layer.msg(MSG.delete_success);
                         table.reload(leftTableId, {});
@@ -110,8 +116,8 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
             var msg = '';
             var data = {};
             data[inputName] = value.trim();
-            data.medicineListId = $('#pharmacyitem-form input[name="medicineListId"]').val();
-            if (inputName === 'medicineName') {
+            data.pharmacyItemId = $('#pharmacyitem-form input[name="pharmacyItemId"]').val();
+            if (inputName === 'pharmacyItemName') {
                 url = rootMapping + '/notRepeatName';
                 msg = '药品名称已被占用，请重新填写！';
             } else if (inputName === 'barcode') {
@@ -144,11 +150,11 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
     // 保存
     form.on('submit(submit-btn)', function (data) {
         var formData = data.field;
-        ajax.postJSON(rootMapping + '/save', formData, function (medicineList) {
-            if (medicineList != null && utils.isNotNull(medicineList.medicineListId)) {
-                getById(medicineList.medicineListId);
+        ajax.postJSON(rootMapping + '/save', formData, function (pharmacyItems) {
+            if (pharmacyItems != null && utils.isNotNull(pharmacyItems.pharmacyItemId)) {
                 layer.msg(MSG.save_success);
                 table.reload(leftTableId, {});
+                getById(pharmacyItems.pharmacyItemId);
             } else {
                 layer.msg(MSG.save_fail);
             }
@@ -158,9 +164,9 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
 
     // 取消
     $('#cancel-btn').click(function () {
-        var medicineListId = $('#pharmacyitem-form input[name="medicineListId"]').val();
-        if (medicineListId !== null && medicineListId !== undefined && medicineListId !== '') {
-            getById(medicineListId);// 重新查询
+        var pharmacyItemId = $('#pharmacyitem-form input[name="pharmacyItemId"]').val();
+        if (pharmacyItemId !== null && pharmacyItemId !== undefined && pharmacyItemId !== '') {
+            getById(pharmacyItemId);// 重新查询
         } else {
             $('#add-btn').click();// 清空表单
         }
@@ -173,18 +179,18 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
         $('#del-btn').removeClass('layui-btn-disabled').removeAttr('disabled');
         // $('#del-btn').removeAttr('disabled');
         // 获取id，根据ID查询多级字典，表单设置值
-        var medicineListId = obj.data.medicineListId;
-        getById(medicineListId);
+        var pharmacyItemId = obj.data.pharmacyItemId;
+        getById(pharmacyItemId);
 
     });
 
-    // 根据id查询多级字典
-    function getById(medicineListId) {
-        if (utils.isNotNull(medicineListId)) {
-            $.getJSON(rootMapping + '/getById', {medicineListId: medicineListId}, function (medicineList) {
-                if (medicineList != null) {
-                    console.log(medicineList);
-                    form.val('pharmacyitem-form', medicineList);
+    // 根据id查询
+    function getById(pharmacyItemId) {
+        if (utils.isNotNull(pharmacyItemId)) {
+            $.getJSON(rootMapping + '/getById', {pharmacyItemId: pharmacyItemId}, function (pharmacyItem) {
+                if (pharmacyItem != null) {
+                    // console.log(pharmacyItems);
+                    form.val('pharmacyitem-form', pharmacyItem);
                 } else {
                     layer.alert('未找到该药品，请重试！',{icon: 0}, function (index) {
                         table.reload(leftTableId, {});

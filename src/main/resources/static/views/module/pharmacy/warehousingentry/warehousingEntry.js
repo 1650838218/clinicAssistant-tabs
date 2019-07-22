@@ -1,5 +1,5 @@
 /** 采购单 */
-//@ sourceURL=purchaseBillForm.js
+//@ sourceURL=purchaseOrderForm.js
 layui.config({
     base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
 }).extend({
@@ -202,7 +202,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         if (utils.isNotNull(purchaseBillId)) {
             $.getJSON(rootMapping + "/queryById",{purchaseBillId: purchaseBillId}, function (purchaseBill) {
                 if (purchaseBill != null) {
-                    form.val('purchasebill-form', purchaseBill);// 表单赋值
+                    form.val('purchaseorder-form', purchaseBill);// 表单赋值
                     form.render();
                     $('#' + itemTableId).datagrid('loadData', purchaseBill.purchaseBillItems);// 加载采购单明细
                 }

@@ -33,36 +33,36 @@
                 </div>-->
                 <div class="layui-card-body">
                     <form id="purchasebill-form" class="layui-form" lay-filter="purchasebill-form">
-                        <input type="hidden" name="purchaseBillId" value="">
+                        <input type="hidden" name="purchaseOrderId" value="">
                         <div class="layui-form-item">
                             <div class="layui-inline">
                                 <label class="layui-form-label">单号：</label>
                                 <div class="layui-input-inline">
-                                    <input name="purchaseBillCode" readonly class="layui-input" lay-verify="required" placeholder="请填写采购单号">
+                                    <input name="purchaseOrderCode" readonly class="layui-input" lay-verify="required" placeholder="请填写采购单号">
                                 </div>
                             </div>
                             <!--<div class="layui-inline">
                                 <label class="layui-form-label">类型：</label>
                                 <div class="layui-input-inline" style="width: 160px;">
-                                    <select name="purchaseBillType" lay-verify="required" lay-filter="purchase-bill-type"></select>
+                                    <select name="purchaseOrderType" lay-verify="required" lay-filter="purchase-bill-type"></select>
                                 </div>
                             </div>-->
                             <div class="layui-inline">
                                 <label class="layui-form-label">日期：</label>
                                 <div class="layui-input-inline">
-                                    <input name="purchaseBillDate" readonly class="layui-input" placeholder="请选择采购单日期" lay-verify="required">
+                                    <input name="purchaseOrderDate" readonly class="layui-input" placeholder="请选择采购单日期" lay-verify="required">
                                 </div>
                             </div>
                             <div class="layui-inline">
                                 <label class="layui-form-label">供应商：</label>
                                 <div class="layui-input-inline">
-                                    <select name="supplierId" lay-verify="required"></select>
+                                    <select name="supplier.supplierId" lay-verify="required"></select>
                                 </div>
                             </div>
                             <div class="layui-inline">
                                 <label class="layui-form-label">电话：</label>
                                 <div class="layui-input-inline">
-                                    <input name="supplierPhone" class="layui-input" lay-verify="phone" placeholder="请填写联系方式">
+                                    <input name="supplier.supplierPhone" class="layui-input" lay-verify="phone" placeholder="请填写联系方式">
                                 </div>
                             </div>
                             <div class="layui-inline">
@@ -93,6 +93,6 @@
 <script src="/lib/easyui/1.8.1/jquery.easyui.min.js"></script>
 <script src="/lib/easyui/1.8.1/locale/easyui-lang-zh_CN.js"></script>
 <!--<script src="/lib/easyui/1.8.1/plugins/jquery.editcell.js"></script>-->
-<script src="/views/module/pharmacy/purchasebill/purchaseBillForm.js"></script>
+<script src="/views/module/pharmacy/purchaseorder/purchaseOrderForm.js"></script>
 </body>
 </html>

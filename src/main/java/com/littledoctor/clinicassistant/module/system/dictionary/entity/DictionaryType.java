@@ -37,6 +37,7 @@ public class DictionaryType {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     @JoinColumn(name = "DICT_TYPE_ID")
+    @OrderBy("dictItemValue asc")
     private List<DictionaryItem> dictItem = new ArrayList<>();
 
     public Integer getDictTypeId() {

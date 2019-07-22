@@ -1,5 +1,5 @@
 /** 采购单 */
-//@ sourceURL=purchaseBillForm.js
+//@ sourceURL=purchaseOrderForm.js
 layui.config({
     base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
 }).extend({
@@ -14,15 +14,15 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     var ajax = layui.ajax;
     var utils = layui.utils;
     var laydate = layui.laydate;
-    var rootMapping = '/pharmacy/purchasebill';
-    var itemTableId = 'purchasebill-table';
-    var formId = 'purchasebill-form';
+    var rootMapping = '/pharmacy/purchaseorder';
+    var itemTableId = 'purchaseorder-table';
+    var formId = 'purchaseorder-form';
     var medicineLayer = null;
     form.render();
 
     // 动态加载供应商
     utils.splicingOption({
-        elem: $('#' + formId + ' select[name="supplierId"]'),
+        elem: $('#' + formId + ' select[name="supplier.supplierId"]'),
         tips: '请选择供应商',
         url:'/pharmacy/supplier/getSelectOption',
         realValueName: 'realValue',
@@ -30,12 +30,12 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     });
     // 动态加载日期控件
     laydate.render({
-        elem: '#' + formId + ' input[name="purchaseBillDate"]',
+        elem: '#' + formId + ' input[name="purchaseOrderDate"]',
         value: new Date(),
         isInitValue: true
     });
     // 生成单号
-    $('#purchasebill-form input[name="purchaseBillCode"]').val(new Date().format('yyyyMMddhhmmssS'));
+    $('#purchaseorder-form input[name="purchaseOrderCode"]').val(new Date().format('yyyyMMddhhmmssS'));
 
 
     // 判断是否可以进行编辑，返回true 可以编辑，false 不可以编辑
@@ -103,14 +103,14 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         }],
         columns: [[
             {
-                field: 'medicineListId', title: '药品名称', width: '210',
+                field: 'pharmacyItem.pharmacyItemId', title: '药品名称', width: '210',
                 editor: {
                     type: 'combobox',
                     options: {
                         valueField: 'realValue',
                         textField: 'displayValue',
                         method: 'get',
-                        url: '/pharmacy/medicineList/getSelectOption',
+                        url: '/pharmacy/pharmacyitem/getSelectOption',
                         mode: 'remote',
                         required: true,
                         panelHeight:'auto',
@@ -118,7 +118,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                     }
                 },
                 formatter:function(value,row){
-                    return row.goodsName;
+                    return row.pharmacyItem.pharmacyItemName;
                 }
             },
             {field: 'specifications', title: '规格', width: '200', editor: {type:'textbox',options:{type:'text'}}},
@@ -254,13 +254,13 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     }
 
     // 根据ID查询采购单
-    function queryPurchaseBillById(purchaseBillId) {
-        if (utils.isNotNull(purchaseBillId)) {
-            $.getJSON(rootMapping + "/queryById",{purchaseBillId: purchaseBillId}, function (purchaseBill) {
-                if (purchaseBill != null) {
-                    form.val('purchasebill-form', purchaseBill);// 表单赋值
+    function queryPurchaseOrderById(purchaseOrderId) {
+        if (utils.isNotNull(purchaseOrderId)) {
+            $.getJSON(rootMapping + "/queryById",{purchaseOrderId: purchaseOrderId}, function (purchaseOrder) {
+                if (purchaseOrder != null) {
+                    form.val('purchaseorder-form', purchaseOrder);// 表单赋值
                     form.render();
-                    $('#' + itemTableId).datagrid('loadData', purchaseBill.purchaseBillItems);// 加载采购单明细
+                    $('#' + itemTableId).datagrid('loadData', purchaseOrder.purchaseOrderItems);// 加载采购单明细
                 }
             });
         } else {
@@ -269,19 +269,19 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     }
 
     // 总分校验，总金额不能大于明细金额之和；true：通过，false：不通过
-    function generalBranchCheck(totalAmount, billItems) {
+    function generalBranchCheck(totalAmount, orderItems) {
         var totalItems = 0;
-        for (var i = 0; i < billItems.length; i++) {
-            totalItems += (billItems[i].totalPrice - 0);
+        for (var i = 0; i < orderItems.length; i++) {
+            totalItems += (orderItems[i].totalPrice - 0);
         }
         return totalAmount <= totalItems;
     }
 
     // 保存采购单
-    function savePurchaseBill(obj, purchaseBill) {
-        ajax.postJSON(rootMapping + '/save', purchaseBill, function (bill) {
-            if (bill != null && bill.purchaseBillId != null) {
-                queryPurchaseBillById(bill.purchaseBillId);// 根据ID查询采购单，并赋值
+    function savePurchaseOrder(obj, purchaseOrder) {
+        ajax.postJSON(rootMapping + '/save', purchaseOrder, function (order) {
+            if (order != null && order.purchaseOrderId != null) {
+                queryPurchaseOrderById(order.purchaseOrderId);// 根据ID查询采购单，并赋值
                 layer.msg(MSG.save_success);
             } else {
                 layer.msg(MSG.save_fail);
@@ -298,11 +298,11 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     form.on('submit(submit-btn)', function(obj){
         utils.btnDisabled($(obj.elem));
         if (validateGrid()) {
-            var purchaseBill = obj.field;// 表单值
-            var billItems = $('#' + itemTableId).datagrid('getData');// 获取表格数据
-            // console.log(billItems);
-            purchaseBill.purchaseBillItems = billItems.rows;
-            if (!generalBranchCheck(purchaseBill.totalPrice, purchaseBill.purchaseBillItems)) {
+            var purchaseOrder = obj.field;// 表单值
+            var orderItems = $('#' + itemTableId).datagrid('getData');// 获取表格数据
+            // console.log(orderItems);
+            purchaseOrder.purchaseOrderItems = orderItems.rows;
+            if (!generalBranchCheck(purchaseOrder.totalPrice, purchaseOrder.purchaseOrderItems)) {
                 layer.confirm('采购单总金额大于明细总价之和，数据存在错误风险，确认保存吗？',
                     {
                         icon: LAYER_ICON.question,
@@ -314,11 +314,11 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                         }
                     },
                     function (index) {
-                        savePurchaseBill(obj, purchaseBill);
+                        savePurchaseOrder(obj, purchaseOrder);
                         layer.close(index);
                 });
             }else {
-                savePurchaseBill(obj, purchaseBill);
+                savePurchaseOrder(obj, purchaseOrder);
             }
         } else {
             utils.btnEnabled($(obj.elem));
@@ -343,8 +343,8 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         var condition = search.substr(1).split('&');
         for (var i = 0; i < condition.length; i++) {
             var keyVal = condition[i].split('=');
-            if (keyVal[0] === 'purchaseBillId') {
-                queryPurchaseBillById(keyVal[1]);
+            if (keyVal[0] === 'purchaseOrderId') {
+                queryPurchaseOrderById(keyVal[1]);
                 break;
             }
         }

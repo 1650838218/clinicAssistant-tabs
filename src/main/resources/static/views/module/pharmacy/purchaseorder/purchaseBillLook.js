@@ -11,9 +11,9 @@ layui.use(['form','utils', 'jquery', 'layer', 'table'], function () {
     var layer = layui.layer;
     var table = layui.table;
     var utils = layui.utils;
-    var rootMapping = '/pharmacy/purchasebill';
-    var itemTableId = 'purchasebill-table';
-    var formId = 'purchasebill-form';
+    var rootMapping = '/pharmacy/purchaseorder';
+    var itemTableId = 'purchaseorder-table';
+    var formId = 'purchaseorder-form';
     form.render();
 
     // 初始化表格
@@ -38,7 +38,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table'], function () {
             $.getJSON(rootMapping + "/queryById",{purchaseBillId: purchaseBillId, type: 'EAGER'}, function (purchaseBill) {
                 if (purchaseBill != null) {
                     purchaseBill.totalPrice = purchaseBill.totalPrice + '元';
-                    form.val('purchasebill-form', purchaseBill);// 表单赋值
+                    form.val('purchaseorder-form', purchaseBill);// 表单赋值
                     form.render();
                     table.reload(itemTableId,{data:purchaseBill.purchaseBillItems});// 加载采购单明细
                 }

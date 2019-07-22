@@ -17,8 +17,8 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
     var utils = layui.utils;
     var laydate = layui.laydate;
     var form = layui.form;
-    var rootMappint = '/pharmacy/purchasebill';
-    var purchaseBillTableId = 'purchasebill-table';
+    var rootMappint = '/pharmacy/purchaseorder';
+    var purchaseBillTableId = 'purchaseorder-table';
     var formId = 'query-form';
 
     // 动态加载供应商
@@ -88,7 +88,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
             area: [width+'px', height+'px'],
             title: false,
             fixed: false, //不固定
-            content: '/views/module/pharmacy/purchasebill/purchaseBillLook.html?purchaseBillId='+obj.data.purchaseBillId,
+            content: '/views/module/pharmacy/purchaseorder/purchaseBillLook.html?purchaseBillId='+obj.data.purchaseBillId,
         });
         layer.full(index);
     }
@@ -121,7 +121,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
             area: [width+'px', height+'px'],
             title: false,
             fixed: false, //不固定
-            content: '/views/module/pharmacy/purchasebill/purchaseBillForm.html?purchaseBillId='+obj.data.purchaseBillId,
+            content: '/views/module/pharmacy/purchaseorder/purchaseOrderForm.html?purchaseBillId='+obj.data.purchaseBillId,
         });
         layer.full(index);
     }
@@ -135,7 +135,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
             area: [width+'px', height+'px'],
             title: false,
             fixed: false, //不固定
-            content: '/views/module/pharmacy/purchasebill/purchaseBillForm.html?purchaseBillId='+obj.data.purchaseBillId,
+            content: '/views/module/pharmacy/purchaseorder/purchaseOrderForm.html?purchaseBillId='+obj.data.purchaseBillId,
         });
         layer.full(index);
     }

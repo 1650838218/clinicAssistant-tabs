@@ -42,7 +42,7 @@ public class PharmacyItemServiceImpl implements PharmacyItemService {
                 List<Predicate> list = new ArrayList<>();
                 if (StringUtils.isNotBlank(keywords)) {
                     list.add(criteriaBuilder.equal(root.get("barcode"), keywords));
-                    list.add(criteriaBuilder.like(root.get("medicineName"), "%" + keywords + "%"));
+                    list.add(criteriaBuilder.like(root.get("pharmacyItemName"), "%" + keywords + "%"));
                     list.add(criteriaBuilder.like(root.get("abbreviation"), keywords.toUpperCase() + "%"));
                     list.add(criteriaBuilder.like(root.get("fullPinyin"), keywords.toLowerCase() + "%"));
                 }
@@ -132,7 +132,7 @@ public class PharmacyItemServiceImpl implements PharmacyItemService {
                 @Override
                 public Predicate toPredicate(Root<PharmacyItem> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                     List<Predicate> list = new ArrayList<>();
-                    list.add(criteriaBuilder.equal(root.get("medicineName"), pharmacyItemName));
+                    list.add(criteriaBuilder.equal(root.get("pharmacyItemName"), pharmacyItemName));
                     if (StringUtils.isNotBlank(pharmacyItemId)) {
                         list.add(criteriaBuilder.notEqual(root.get("pharmacyItemId"), pharmacyItemId));
                     }
@@ -155,7 +155,7 @@ public class PharmacyItemServiceImpl implements PharmacyItemService {
                 @Override
                 public Predicate toPredicate(Root<PharmacyItem> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                     List<Predicate> list = new ArrayList<>();
-                    list.add(criteriaBuilder.like(root.get("medicineName"), "%" + name + "%"));
+                    list.add(criteriaBuilder.like(root.get("pharmacyItemName"), "%" + name + "%"));
                     list.add(criteriaBuilder.like(root.get("abbreviation"), name + "%"));
                     list.add(criteriaBuilder.like(root.get("fullPinyin"), name + "%"));
                     return criteriaBuilder.or(list.toArray(new Predicate[list.size()]));

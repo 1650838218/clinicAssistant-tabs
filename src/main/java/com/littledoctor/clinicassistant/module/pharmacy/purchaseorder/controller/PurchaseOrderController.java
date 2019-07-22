@@ -1,11 +1,10 @@
-package com.littledoctor.clinicassistant.module.pharmacy.purchasebill.controller;
+package com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.controller;
 
 import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.common.plugin.layui.LayuiTableEntity;
-import com.littledoctor.clinicassistant.module.pharmacy.purchasebill.entity.PurchaseBill;
-import com.littledoctor.clinicassistant.module.pharmacy.purchasebill.entity.PurchaseBillItem;
-import com.littledoctor.clinicassistant.module.pharmacy.purchasebill.entity.PurchaseBillOTM;
-import com.littledoctor.clinicassistant.module.pharmacy.purchasebill.service.PurchaseBillService;
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.PurchaseOrder;
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.PurchaseOrderDetail;
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.service.PurchaseOrderService;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.service.SupplierService;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryItem;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryType;
@@ -24,13 +23,13 @@ import org.springframework.web.bind.annotation.*;
  * @Description: 采购单
  */
 @RestController
-@RequestMapping(value = "/pharmacy/purchasebill")
-public class PurchaseBillController {
+@RequestMapping(value = "/pharmacy/purchaseorder")
+public class PurchaseOrderController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private PurchaseBillService purchaseBillService;
+    private PurchaseOrderService purchaseOrderService;
 
     @Autowired
     private SupplierService supplierService;
@@ -42,12 +41,11 @@ public class PurchaseBillController {
      * 分页查询
      * @return
      */
-    @ResponseBody
     @RequestMapping(value = "/queryPage", method = RequestMethod.GET)
-    public LayuiTableEntity<PurchaseBill> queryPage(Pageable page, String purchaseBillCode, String purchaseBillDate, String supplierId) {
+    public LayuiTableEntity<PurchaseOrder> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) {
         try {
             if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
-            return new LayuiTableEntity<PurchaseBill>(purchaseBillService.queryPage(page, purchaseBillCode, purchaseBillDate, supplierId));
+            return new LayuiTableEntity<PurchaseOrder>(purchaseOrderService.queryPage(page, purchaseOrderCode, purchaseOrderDate, supplierId));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -56,15 +54,14 @@ public class PurchaseBillController {
 
     /**
      * 保存采购单
-     * @param purchaseBillOTM
+     * @param purchaseOrder
      * @return
      */
-    @ResponseBody
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public PurchaseBillOTM save(@RequestBody PurchaseBillOTM purchaseBillOTM) {
+    public PurchaseOrder save(@RequestBody PurchaseOrder purchaseOrder) {
         try {
-            Assert.notNull(purchaseBillOTM, Message.PARAMETER_IS_NULL);
-            return purchaseBillService.save(purchaseBillOTM);
+            Assert.notNull(purchaseOrder, Message.PARAMETER_IS_NULL);
+            return purchaseOrderService.save(purchaseOrder);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -73,28 +70,26 @@ public class PurchaseBillController {
 
     /**
      * 根据采购单ID查询采购单
-     * @param purchaseBillId
+     * @param purchaseOrderId
      * @return
      */
-    @ResponseBody
     @RequestMapping(value = "queryById", method = RequestMethod.GET)
-    public PurchaseBillOTM queryById(@RequestParam String purchaseBillId, String type) {
+    public PurchaseOrder queryById(@RequestParam String purchaseOrderId, String type) {
         try {
-            PurchaseBillOTM purchaseBill = purchaseBillService.queryById(purchaseBillId);
+            PurchaseOrder purchaseOrder = purchaseOrderService.queryById(purchaseOrderId);
             if ("EAGER".equals(type)) {
-                if (purchaseBill.getSupplierId() != null) {
-                    purchaseBill.setSupplierName(supplierService.findById(purchaseBill.getSupplierId().toString()).getSupplierName());
-                }
-                if (purchaseBill.getPurchaseBillItems() != null && purchaseBill.getPurchaseBillItems().size() > 0) {
+                purchaseOrder.getSupplier();// 查询供应商
+                // 查询字典显示值
+                if (purchaseOrder.getPurchaseOrderDetails() != null && purchaseOrder.getPurchaseOrderDetails().size() > 0) {
                     DictionaryType dt = dictionaryService.getByKey("SLDW");
                     if (dt != null && dt.getDictItem() != null && dt.getDictItem().size() > 0) {
-                        for (int i = 0; i < purchaseBill.getPurchaseBillItems().size(); i++) {
-                            PurchaseBillItem pbi = purchaseBill.getPurchaseBillItems().get(i);
-                            if (pbi.getCountUnit() != null) {
+                        for (int i = 0; i < purchaseOrder.getPurchaseOrderDetails().size(); i++) {
+                            PurchaseOrderDetail pbi = purchaseOrder.getPurchaseOrderDetails().get(i);
+                            if (pbi.getPurchaseUnit() != null) {
                                 for (int j = 0; j < dt.getDictItem().size(); j++) {
                                     DictionaryItem di = dt.getDictItem().get(j);
-                                    if (pbi.getCountUnit().equals(Integer.valueOf(di.getDictItemValue()))) {
-                                        pbi.setCountUnitName(di.getDictItemName());
+                                    if (pbi.getPurchaseUnit().equals(Integer.valueOf(di.getDictItemValue()))) {
+                                        pbi.setPurchaseUnitName(di.getDictItemName());
                                         break;
                                     }
                                 }
@@ -103,7 +98,7 @@ public class PurchaseBillController {
                     }
                 }
             }
-            return purchaseBill;
+            return purchaseOrder;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -112,14 +107,14 @@ public class PurchaseBillController {
 
     /**
      * 删除采购单
-     * @param purchaseBillId
+     * @param purchaseOrderId
      * @return
      */
-    @RequestMapping(value = "/delete/{purchaseBillId}", method = RequestMethod.DELETE)
-    public boolean delete(@PathVariable("purchaseBillId") String purchaseBillId) {
+    @RequestMapping(value = "/delete/{purchaseOrderId}", method = RequestMethod.DELETE)
+    public boolean delete(@PathVariable("purchaseOrderId") String purchaseOrderId) {
         try {
-            Assert.notNull(purchaseBillId, Message.PARAMETER_IS_NULL);
-            return purchaseBillService.delete(purchaseBillId);
+            Assert.notNull(purchaseOrderId, Message.PARAMETER_IS_NULL);
+            return purchaseOrderService.delete(purchaseOrderId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
