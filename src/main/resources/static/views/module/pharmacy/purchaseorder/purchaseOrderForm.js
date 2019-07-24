@@ -64,10 +64,6 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
 
     // 初始化表格
     $('#' + itemTableId).datagrid({
-        fitColumns: true,
-        autoRowHeight: true,
-        singleSelect: true,
-        rownumbers:true,
         toolbar: [{
             text:'添加',
             iconCls:'icon-add',
@@ -101,86 +97,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
 
             }
         }],
-        columns: [[
-            {
-                field: 'pharmacyItem.pharmacyItemId', title: '药品名称', width: '210',
-                editor: {
-                    type: 'combobox',
-                    options: {
-                        valueField: 'realValue',
-                        textField: 'displayValue',
-                        method: 'get',
-                        url: '/pharmacy/pharmacyitem/getSelectOption',
-                        mode: 'remote',
-                        required: true,
-                        panelHeight:'auto',
-                        panelMaxHeight: 200
-                    }
-                },
-                formatter:function(value,row){
-                    return row.pharmacyItem.pharmacyItemName;
-                }
-            },
-            {field: 'specifications', title: '规格', width: '200', editor: {type:'textbox',options:{type:'text'}}},
-            {field: 'manufacturer', title: '制造商', width: '150', editor: {type:'textbox',options:{type:'text'}}},
-            {field: 'count', title: '数量', width: '80',
-                editor: {
-                    type:'numberbox',
-                    options:{
-                        precision:2,
-                        required: true
-                    }
-                },
-                formatter: function (value, row) {
-                    if (value != null) return (value - 0).toFixed(2);
-                }
-            },
-            {
-                field: 'countUnit', title: '单位', width: '120',
-                editor: {
-                    type: 'combobox',
-                    options: {
-                        valueField: 'dictItemValue',
-                        textField: 'dictItemName',
-                        method: 'get',
-                        url: '/system/dictionary/oneLevel/getItemByKey?dictTypeKey=SLDW',
-                        // required: true,
-                        mode: 'remote',
-                        panelHeight:'auto',
-                        panelMaxHeight: 200,
-                        editable: false
-                    }
-                },
-                formatter:function(value,row){
-                    return row.countUnitName;
-                }
-            },
-            {field: 'unitPrice', title: '单价(元)', width: '100',
-                editor: {
-                    type:'numberbox',
-                    options:{
-                        precision:2,
-                        required: true
-                    }
-                },
-                formatter: function (value, row) {
-                    if (value != null) return (value - 0).toFixed(2);
-                }
-            },
-            {field: 'totalPrice', title: '总价(元)', width: '100',
-                editor: {
-                    type:'numberbox',
-                    options:{
-                        precision:2,
-                        required: true
-                    }
-                },
-                formatter: function (value, row) {
-                    if (value != null) return (value - 0).toFixed(2);
-                }
-            }
-        ]],
-        data: [{}],
+        data: [{pharmacyItem:{}}],
         onClickCell: function (rowIndex, field, value) {
             if (editIndex != rowIndex){
                 if (endEditing()){
@@ -195,23 +112,23 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         onEndEdit: function (index, row) {
             var ed = $(this).datagrid('getEditor', {
                 index: index,
-                field: 'medicineListId'
+                field: 'pharmacyItem.pharmacyItemId'
             });
-            row.goodsName = $(ed.target).combobox('getText');
+            row.pharmacyItem.pharmacyItemName = $(ed.target).combobox('getText');
             var ed = $(this).datagrid('getEditor', {
                 index: index,
-                field: 'countUnit'
+                field: 'purchaseUnit'
             });
-            row.countUnitName = $(ed.target).combobox('getText');
+            row.purchaseUnitName = $(ed.target).combobox('getText');
         }
     });
 
     //计算表格每一行的总价
     function setEditing(rowIndex){
         var editors = $('#' + itemTableId).datagrid('getEditors', rowIndex);
-        var countEditor = editors[3];// 数量
-        var unitPriceEditor = editors[5];// 单价
-        var totalPriceEditor = editors[6];// 总价
+        var countEditor = editors[4];// 数量
+        var unitPriceEditor = editors[6];// 单价
+        var totalPriceEditor = editors[7];// 总价
         $(countEditor.target.siblings("span").children("input").first()).on("change", function(){
             calculate();
         });
@@ -235,10 +152,10 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         }
         if (endEditing()) {
             for (var i = 0; i < rowCount; i++) {
-                var goodName = gridData.rows[i].goodsName;
+                var pharmacyItemId = gridData.rows[i].pharmacyItem.pharmacyItemId;
                 var totalPrice = gridData.rows[i].totalPrice;
-                if (!utils.isNotNull(goodName) || !utils.isNotNull(totalPrice)) {
-                    beginEditing(i, 'medicineListId');
+                if (!utils.isNotNull(pharmacyItemId) || !utils.isNotNull(totalPrice)) {
+                    beginEditing(i, 'pharmacyItem.pharmacyItemId');
                     layer.msg("请将明细数据补充完整！");
                     return false;
                 }

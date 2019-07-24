@@ -21,7 +21,7 @@ import java.util.List;
  * @Description: 药房品目
  */
 @RestController
-@RequestMapping(value = "/pharmacy/pharmacyItem")
+@RequestMapping(value = "/pharmacy/pharmacyitem")
 public class PharmacyItemController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());

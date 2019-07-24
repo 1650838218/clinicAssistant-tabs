@@ -32,7 +32,7 @@
                     <h3><b>新建采购单</b></h3>
                 </div>-->
                 <div class="layui-card-body">
-                    <form id="purchasebill-form" class="layui-form" lay-filter="purchasebill-form">
+                    <form id="purchaseorder-form" class="layui-form" lay-filter="purchaseorder-form">
                         <input type="hidden" name="purchaseOrderId" value="">
                         <div class="layui-form-item">
                             <div class="layui-inline">
@@ -41,12 +41,6 @@
                                     <input name="purchaseOrderCode" readonly class="layui-input" lay-verify="required" placeholder="请填写采购单号">
                                 </div>
                             </div>
-                            <!--<div class="layui-inline">
-                                <label class="layui-form-label">类型：</label>
-                                <div class="layui-input-inline" style="width: 160px;">
-                                    <select name="purchaseOrderType" lay-verify="required" lay-filter="purchase-bill-type"></select>
-                                </div>
-                            </div>-->
                             <div class="layui-inline">
                                 <label class="layui-form-label">日期：</label>
                                 <div class="layui-input-inline">
@@ -72,7 +66,86 @@
                                 </div>
                             </div>
                         </div>
-                        <table id="purchasebill-table" style="max-height: 390px"></table>
+                        <table id="purchaseorder-table" style="max-height: 390px;width:100%"
+                               data-options="fitColumns: true, autoRowHeight: true, singleSelect: true, rownumbers:true">
+                            <thead>
+                                <tr>
+                                    <th data-options="field: 'pharmacyItem.pharmacyItemId',
+                                    editor: {
+                                        type: 'combobox',
+                                        options: {
+                                            valueField: 'realValue',
+                                            textField: 'displayValue',
+                                            method: 'get',
+                                            url: '/pharmacy/pharmacyitem/getSelectOption',
+                                            mode: 'remote',
+                                            required: true,
+                                            panelHeight:'auto',
+                                            panelMaxHeight: 200,
+                                            hasDownArrow: false
+                                        }
+                                    },
+                                    formatter:function(value,row){
+                                        return row.pharmacyItem.pharmacyItemName;
+                                    }"
+                                        width="15%">药品名称</th>
+                                    <th data-options="field: 'specifications'" width="12%">规格</th>
+                                    <th data-options="field: 'manufacturer'" width="15%">制造商</th>
+                                    <th data-options="field: 'batchNumber',editor: {type:'textbox',options:{type:'text'}}" width="10%">批号</th>
+                                    <th data-options="field: 'manufactureDate',editor: {type: 'datebox',options: {editable: false,hasDownArrow: false}}" width="9%">生产日期</th>
+                                    <th data-options="field: 'expireDate', editor: {type: 'datebox',options: {editable: false,hasDownArrow: false}}" width="9%">有效期至</th>
+                                    <th data-options="field: 'purchaseCount', editor: {type:'numberbox',options:{precision:2,required: true}},
+                                    formatter: function (value, row) {
+                                        if (value != null) return (value - 0).toFixed(2);
+                                    }"
+                                        width="7%">数量</th>
+                                    <th data-options="field: 'purchaseUnit',
+                                    editor: {
+                                        type: 'combobox',
+                                        options: {
+                                            valueField: 'dictItemValue',
+                                            textField: 'dictItemName',
+                                            method: 'get',
+                                            url: '/system/dictionary/oneLevel/getItemByKey?dictTypeKey=SLDW',
+                                            required: true,
+                                            mode: 'remote',
+                                            panelHeight:'auto',
+                                            panelMaxHeight: 200,
+                                            editable: false,
+                                            hasDownArrow: false
+                                        }
+                                    },
+                                    formatter:function(value,row){
+                                        return row.purchaseUnitName;
+                                    }"
+                                        width="7%">单位</th>
+                                    <th data-options="field: 'unitPrice',
+                                    editor: {
+                                        type:'numberbox',
+                                        options:{
+                                            precision:2,
+                                            required: true
+                                        }
+                                    },
+                                    formatter: function (value, row) {
+                                        if (value != null) return (value - 0).toFixed(2);
+                                    }"
+                                        width="8%">单价(元)</th>
+                                    <th data-options="field: 'totalPrice',
+                                    editor: {
+                                        type:'numberbox',
+                                        options:{
+                                            precision:2,
+                                            required: true
+                                        }
+                                    },
+                                    formatter: function (value, row) {
+                                        if (value != null) return (value - 0).toFixed(2);
+                                    }"
+                                        width="8%">总价(元)</th>
+                                </tr>
+                            </thead>
+                        </table>
                         <div class="layui-row layui-col-space10" style="margin-top: 5px;">
                             <div class="layui-col-lg-offset10 layui-col-lg2" style="text-align: right;">
                                 <button type="button" lay-filter="submit-btn" lay-submit class="layui-btn layui-btn-sm">保存</button>
