@@ -149,20 +149,13 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                     panelMaxHeight: 200,
                     panelWidth:568,
                     hasDownArrow: false,
-                    onSelect: function(record){
-                        var me = this;
-                        var pharmacyItemId = record.realValue;
-                        // 根据ID查询详情，自动填充规格和制造商
-                        $.getJSON('/pharmacy/pharmacyitem/getById',{pharmacyItemId:pharmacyItemId}, function(pharmacyItem){
-                            if (pharmacyItem != null) {
-                                var row = $('#purchaseorder-table').datagrid('getSelected');
-                                var tr =  $(me).closest('tr.datagrid-row');
-                                row.pharmacyItem.specifications = pharmacyItem.specifications;
-                                row.pharmacyItem.manufacturer = pharmacyItem.manufacturer;
-                                tr.find('td[field=\'pharmacyItem.specifications\'] div').text(pharmacyItem.specifications);
-                                tr.find('td[field=\'pharmacyItem.manufacturer\'] div').text(pharmacyItem.manufacturer);
-                            }
-                        });
+                    onSelect: function(index,pharmacyItem){
+                        var row = $('#purchaseorder-table').datagrid('getSelected');
+                        // var tr =  $(this).closest('tr.datagrid-row');
+                        row.pharmacyItem.specifications = pharmacyItem.specifications;
+                        row.pharmacyItem.manufacturer = pharmacyItem.manufacturer;
+                        // tr.find('td[field=\'pharmacyItem.specifications\'] div').text(pharmacyItem.specifications);
+                        // tr.find('td[field=\'pharmacyItem.manufacturer\'] div').text(pharmacyItem.manufacturer);
                     },
                     onChange: function (newValue, oldValue) {
                         if (!utils.isNotNull(newValue)) {
