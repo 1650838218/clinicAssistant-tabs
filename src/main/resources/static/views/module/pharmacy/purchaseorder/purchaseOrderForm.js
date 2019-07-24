@@ -35,7 +35,10 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         isInitValue: true
     });
     // 生成单号
-    $('#purchaseorder-form input[name="purchaseOrderCode"]').val(new Date().format('yyyyMMddhhmmssS'));
+    var date = new Date();
+    var ymd = date.format('yyMMdd');
+    var num = date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds();
+    $('#purchaseorder-form input[name="purchaseOrderCode"]').val(ymd + num);
 
 
     // 判断是否可以进行编辑，返回true 可以编辑，false 不可以编辑
@@ -122,6 +125,131 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
             row.purchaseUnitName = $(ed.target).combobox('getText');
         }
     });
+
+    // 动态设置列的editor和其他属性
+    var columns = [
+        {
+            field: 'pharmacyItem.pharmacyItemId',
+            editor: {
+                type: 'combogrid',
+                options: {
+                    idField:'pharmacyItemId',
+                    textField:'pharmacyItemName',
+                    method: 'get',
+                    url: '/pharmacy/pharmacyitem/getCombogrid',
+                    mode: 'remote',
+                    columns:[[
+                        {field:'pharmacyItemName',title:'药品名称',width:150},
+                        {field:'pharmacyItemTypeName',title:'药品类型',width:80},
+                        {field:'specifications',title:'规格',width:120},
+                        {field:'manufacturer',title:'制造商',width:200}
+                    ]],
+                    required: true,
+                    panelHeight:'auto',
+                    panelMaxHeight: 200,
+                    panelWidth:568,
+                    hasDownArrow: false,
+                    onSelect: function(record){
+                        var me = this;
+                        var pharmacyItemId = record.realValue;
+                        // 根据ID查询详情，自动填充规格和制造商
+                        $.getJSON('/pharmacy/pharmacyitem/getById',{pharmacyItemId:pharmacyItemId}, function(pharmacyItem){
+                            if (pharmacyItem != null) {
+                                var row = $('#purchaseorder-table').datagrid('getSelected');
+                                var tr =  $(me).closest('tr.datagrid-row');
+                                row.pharmacyItem.specifications = pharmacyItem.specifications;
+                                row.pharmacyItem.manufacturer = pharmacyItem.manufacturer;
+                                tr.find('td[field=\'pharmacyItem.specifications\'] div').text(pharmacyItem.specifications);
+                                tr.find('td[field=\'pharmacyItem.manufacturer\'] div').text(pharmacyItem.manufacturer);
+                            }
+                        });
+                    },
+                    onChange: function (newValue, oldValue) {
+                        if (!utils.isNotNull(newValue)) {
+                            // 清空规则和制造商
+                            var row = $('#purchaseorder-table').datagrid('getSelected');
+                            var tr =  $(this).closest('tr.datagrid-row');
+                            row.pharmacyItem.specifications = '';
+                            row.pharmacyItem.manufacturer = '';
+                            tr.find('td[field=\'pharmacyItem.specifications\'] div').text('');
+                            tr.find('td[field=\'pharmacyItem.manufacturer\'] div').text('');
+                        }
+                    },
+                    onHidePanel: function () {
+                        
+                    }
+                }
+            },
+            formatter:function(value,row){
+                return row.pharmacyItem.pharmacyItemName;
+            }
+        },
+        {
+            field: 'purchaseCount',
+            editor: {
+                type:'numberbox',
+                options:{
+                    precision:2,
+                    required: true
+                }
+            },
+            formatter: function (value, row) {
+                if (value != null) return (value - 0).toFixed(2);
+            }
+        },
+        {
+            field: 'purchaseUnit',
+            editor: {
+                type: 'combobox',
+                options: {
+                    valueField: 'dictItemValue',
+                    textField: 'dictItemName',
+                    method: 'get',
+                    url: '/system/dictionary/oneLevel/getItemByKey?dictTypeKey=SLDW',
+                    required: true,
+                    mode: 'remote',
+                    panelHeight:'auto',
+                    panelMaxHeight: 200,
+                    editable: false,
+                    hasDownArrow: false
+                }
+            },
+            formatter:function(value,row){
+                return row.purchaseUnitName;
+            }
+        },
+        {
+            field: 'unitPrice',
+            editor: {
+                type:'numberbox',
+                options:{
+                    precision:2,
+                    required: true
+                }
+            },
+            formatter: function (value, row) {
+                if (value != null) return (value - 0).toFixed(2);
+            }
+        },
+        {
+            field: 'totalPrice',
+            editor: {
+                type:'numberbox',
+                options:{
+                    precision:2,
+                    required: true
+                }
+            },
+            formatter: function (value, row) {
+                if (value != null) return (value - 0).toFixed(2);
+            }
+        }
+    ];
+    for (var i = 0, l = columns.length; i < l; i++) {
+        var e = $('#' + itemTableId).datagrid('getColumnOption', columns[i].field);
+        e.editor = columns[i].editor;
+        e.formatter = columns[i].formatter;
+    }
 
     //计算表格每一行的总价
     function setEditing(rowIndex){

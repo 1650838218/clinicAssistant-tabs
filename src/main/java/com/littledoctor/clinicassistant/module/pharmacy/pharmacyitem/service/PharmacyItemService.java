@@ -74,4 +74,18 @@ public interface PharmacyItemService {
      * @param keywords
      */
     List<SelectOption> getSelectOption(String keywords) throws Exception;
+
+    /**
+     * 根据品目ID判断该品目是否存在
+     * @param pharmacyItemId
+     * @return
+     */
+    boolean isExist(String pharmacyItemId);
+
+    /**
+     * 获取下拉表格
+     * @param keywords
+     * @return
+     */
+    List<PharmacyItem> getCombogrid(String keywords) throws Exception;
 }

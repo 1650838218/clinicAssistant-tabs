@@ -130,7 +130,7 @@ public class PharmacyItemController {
     }
 
     /**
-     * 根据名称查询药品清单
+     * 根据名称查询药房品目
      * @param name 可以是药品名称，药品全拼，药品简拼
      * @return
      */
@@ -157,5 +157,34 @@ public class PharmacyItemController {
             log.error(e.getMessage(), e);
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * 获取下拉表格的list
+     * @return
+     */
+    @RequestMapping(value = "/getCombogrid", method = RequestMethod.GET)
+    public List<PharmacyItem> getCombogrid(@RequestParam(value = "q", required = false) String keywords) {
+        try {
+            return pharmacyItemService.getCombogrid(keywords);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * 根据品目ID判断该品目是否存在
+     * @param pharmacyItemId
+     * @return
+     */
+    @RequestMapping(value = "/isExist", method = RequestMethod.GET)
+    public boolean isExist(@RequestParam(value = "") String pharmacyItemId) {
+        try {
+            return pharmacyItemService.isExist(pharmacyItemId);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return false;
     }
 }

@@ -70,79 +70,16 @@
                                data-options="fitColumns: true, autoRowHeight: true, singleSelect: true, rownumbers:true">
                             <thead>
                                 <tr>
-                                    <th data-options="field: 'pharmacyItem.pharmacyItemId',
-                                    editor: {
-                                        type: 'combobox',
-                                        options: {
-                                            valueField: 'realValue',
-                                            textField: 'displayValue',
-                                            method: 'get',
-                                            url: '/pharmacy/pharmacyitem/getSelectOption',
-                                            mode: 'remote',
-                                            required: true,
-                                            panelHeight:'auto',
-                                            panelMaxHeight: 200,
-                                            hasDownArrow: false
-                                        }
-                                    },
-                                    formatter:function(value,row){
-                                        return row.pharmacyItem.pharmacyItemName;
-                                    }"
-                                        width="15%">药品名称</th>
-                                    <th data-options="field: 'specifications'" width="12%">规格</th>
-                                    <th data-options="field: 'manufacturer'" width="15%">制造商</th>
+                                    <th data-options="field: 'pharmacyItem.pharmacyItemId'" width="15%">药品名称</th>
+                                    <th data-options="field: 'pharmacyItem.specifications'" width="12%">规格</th>
+                                    <th data-options="field: 'pharmacyItem.manufacturer'" width="15%">制造商</th>
                                     <th data-options="field: 'batchNumber',editor: {type:'textbox',options:{type:'text'}}" width="10%">批号</th>
                                     <th data-options="field: 'manufactureDate',editor: {type: 'datebox',options: {editable: false,hasDownArrow: false}}" width="9%">生产日期</th>
                                     <th data-options="field: 'expireDate', editor: {type: 'datebox',options: {editable: false,hasDownArrow: false}}" width="9%">有效期至</th>
-                                    <th data-options="field: 'purchaseCount', editor: {type:'numberbox',options:{precision:2,required: true}},
-                                    formatter: function (value, row) {
-                                        if (value != null) return (value - 0).toFixed(2);
-                                    }"
-                                        width="7%">数量</th>
-                                    <th data-options="field: 'purchaseUnit',
-                                    editor: {
-                                        type: 'combobox',
-                                        options: {
-                                            valueField: 'dictItemValue',
-                                            textField: 'dictItemName',
-                                            method: 'get',
-                                            url: '/system/dictionary/oneLevel/getItemByKey?dictTypeKey=SLDW',
-                                            required: true,
-                                            mode: 'remote',
-                                            panelHeight:'auto',
-                                            panelMaxHeight: 200,
-                                            editable: false,
-                                            hasDownArrow: false
-                                        }
-                                    },
-                                    formatter:function(value,row){
-                                        return row.purchaseUnitName;
-                                    }"
-                                        width="7%">单位</th>
-                                    <th data-options="field: 'unitPrice',
-                                    editor: {
-                                        type:'numberbox',
-                                        options:{
-                                            precision:2,
-                                            required: true
-                                        }
-                                    },
-                                    formatter: function (value, row) {
-                                        if (value != null) return (value - 0).toFixed(2);
-                                    }"
-                                        width="8%">单价(元)</th>
-                                    <th data-options="field: 'totalPrice',
-                                    editor: {
-                                        type:'numberbox',
-                                        options:{
-                                            precision:2,
-                                            required: true
-                                        }
-                                    },
-                                    formatter: function (value, row) {
-                                        if (value != null) return (value - 0).toFixed(2);
-                                    }"
-                                        width="8%">总价(元)</th>
+                                    <th data-options="field: 'purchaseCount'" width="7%">数量</th>
+                                    <th data-options="field: 'purchaseUnit'" width="7%">单位</th>
+                                    <th data-options="field: 'unitPrice'" width="8%">单价(元)</th>
+                                    <th data-options="field: 'totalPrice'" width="8%">总价(元)</th>
                                 </tr>
                             </thead>
                         </table>

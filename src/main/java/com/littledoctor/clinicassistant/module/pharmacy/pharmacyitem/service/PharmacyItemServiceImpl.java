@@ -3,6 +3,9 @@ package com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.service;
 import com.littledoctor.clinicassistant.common.plugin.select.SelectOption;
 import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.dao.PharmacyItemRepository;
 import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.entity.PharmacyItem;
+import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryItem;
+import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryType;
+import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,6 +30,9 @@ public class PharmacyItemServiceImpl implements PharmacyItemService {
 
     @Autowired
     private PharmacyItemRepository pharmacyItemRepository;
+
+    @Autowired
+    private DictionaryService dictionaryService;
 
     /**
      * 分页查询
@@ -177,5 +183,54 @@ public class PharmacyItemServiceImpl implements PharmacyItemService {
         } else {
             return pharmacyItemRepository.getSelectOption(keywords.trim());
         }
+    }
+
+    /**
+     * 根据品目ID判断该品目是否存在
+     * @param pharmacyItemId
+     * @return
+     */
+    @Override
+    public boolean isExist(String pharmacyItemId) {
+        if (StringUtils.isBlank(pharmacyItemId)) {
+            return pharmacyItemRepository.count(new Specification<PharmacyItem>() {
+                @Override
+                public Predicate toPredicate(Root<PharmacyItem> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                    return criteriaBuilder.equal(root.get("pharmacyItemId"), pharmacyItemId);
+                }
+            }) > 0;
+        }
+        return false;
+    }
+
+    /**
+     * 获取下拉表格
+     * @param keywords
+     * @return
+     */
+    @Override
+    public List<PharmacyItem> getCombogrid(String keywords) throws Exception {
+        List<PharmacyItem> result = new ArrayList<>();
+        if (StringUtils.isBlank(keywords)) {
+            result = pharmacyItemRepository.findAll();
+        } else {
+            result = this.queryByName(keywords);
+        }
+        if (result != null && result.size() > 0) {
+            // 查询药品类型字典，将显示值set进去
+            DictionaryType dt = dictionaryService.getByKey("YPFL");
+            if (dt != null && dt.getDictItem() != null && dt.getDictItem().size() > 0) {
+                List<DictionaryItem> dItem = dt.getDictItem();
+                for (int i = 0, len = result.size(); i < len; i++) {
+                    for (int j = 0, l = dItem.size(); j < l; j++) {
+                        if (dItem.get(j).getDictItemValue() != null && dItem.get(j).getDictItemValue().equals(result.get(i).getPharmacyItemType().toString())) {
+                            result.get(i).setPharmacyItemTypeName(dItem.get(j).getDictItemName());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return result;
     }
 }

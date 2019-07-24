@@ -19,15 +19,15 @@ public class DictionaryItem {
     private Integer dictItemId;
 
     /** 字典项名称*/
-    @Column(name = "DICT_ITEM_NAME", nullable = false, length = 500)
+    @Column(name = "DICT_ITEM_NAME")
     private String dictItemName;
 
     /** 字典项值*/
-    @Column(name = "DICT_ITEM_VALUE", nullable = false, length = 500)
+    @Column(name = "DICT_ITEM_VALUE")
     private String dictItemValue;
 
     /** 是否启用 */
-    @Column(name = "IS_USE", nullable = false, length = 1)
+    @Column(name = "IS_USE")
     private Integer isUse;
 
     public Integer getDictItemId() {

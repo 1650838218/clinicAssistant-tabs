@@ -1,6 +1,7 @@
 package com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.entity;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 
 /**
  * @Auther: 周俊林
@@ -24,6 +25,10 @@ public class PharmacyItem {
     /** 药品分类，YPFL：1：中草药；2：中成药；3：中药饮片；99：其他 */
     @Column(name = "PHARMACY_ITEM_TYPE")
     private Integer pharmacyItemType;
+
+    /** 药品分类，YPFL：1：中草药；2：中成药；3：中药饮片；99：其他 */
+    @Transient
+    private String pharmacyItemTypeName;
 
     /** 是否有毒 */
     @Column(name = "POISONOUS")
@@ -191,5 +196,13 @@ public class PharmacyItem {
 
     public void setStockUnit(Integer stockUnit) {
         this.stockUnit = stockUnit;
+    }
+
+    public String getPharmacyItemTypeName() {
+        return pharmacyItemTypeName;
+    }
+
+    public void setPharmacyItemTypeName(String pharmacyItemTypeName) {
+        this.pharmacyItemTypeName = pharmacyItemTypeName;
     }
 }

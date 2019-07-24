@@ -14,7 +14,7 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
     var ajax = layui.ajax;
     var utils = layui.utils;
     var leftTableId = 'left-table';
-    var rootMapping = '/pharmacy/pharmacyItem';
+    var rootMapping = '/pharmacy/pharmacyitem';
     form.render();
 
     // 初始化表格
