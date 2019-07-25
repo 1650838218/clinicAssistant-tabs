@@ -1,8 +1,9 @@
-package com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity;
+package com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.po;
 
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.entity.Supplier;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,7 +16,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "PURCHASE_ORDER")
-public class PurchaseOrder {
+public class PurchaseOrderPo implements Serializable {
 
     /** 主键ID */
     @Id
@@ -52,12 +53,13 @@ public class PurchaseOrder {
     @Column(name = "CREATE_TIME")
     private Date createTiem;
 
-    /** 采购单更新时间 */    @Column(name = "UPDATE_TIME")
+    /** 采购单更新时间 */
+    @Column(name = "UPDATE_TIME")
     private Date updateTime;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     @JoinColumn(name = "PURCHASE_ORDER_ID")
-    private List<PurchaseOrderDetail> purchaseOrderDetails = new ArrayList<>();
+    private List<PurchaseOrderDetailPo> purchaseOrderDetailPos = new ArrayList<>();
 
     public Integer getPurchaseOrderId() {
         return purchaseOrderId;
@@ -131,11 +133,11 @@ public class PurchaseOrder {
         this.updateTime = updateTime;
     }
 
-    public List<PurchaseOrderDetail> getPurchaseOrderDetails() {
-        return purchaseOrderDetails;
+    public List<PurchaseOrderDetailPo> getPurchaseOrderDetailPos() {
+        return purchaseOrderDetailPos;
     }
 
-    public void setPurchaseOrderDetails(List<PurchaseOrderDetail> purchaseOrderDetails) {
-        this.purchaseOrderDetails = purchaseOrderDetails;
+    public void setPurchaseOrderDetailPos(List<PurchaseOrderDetailPo> purchaseOrderDetailPos) {
+        this.purchaseOrderDetailPos = purchaseOrderDetailPos;
     }
 }

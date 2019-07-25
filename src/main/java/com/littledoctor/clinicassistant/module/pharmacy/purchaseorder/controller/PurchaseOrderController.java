@@ -2,8 +2,8 @@ package com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.controlle
 
 import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.common.plugin.layui.LayuiTableEntity;
-import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.PurchaseOrder;
-import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.PurchaseOrderDetail;
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.po.PurchaseOrderPo;
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.po.PurchaseOrderDetailPo;
 import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.service.PurchaseOrderService;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.service.SupplierService;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryItem;
@@ -42,10 +42,10 @@ public class PurchaseOrderController {
      * @return
      */
     @RequestMapping(value = "/queryPage", method = RequestMethod.GET)
-    public LayuiTableEntity<PurchaseOrder> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) {
+    public LayuiTableEntity<PurchaseOrderPo> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) {
         try {
             if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
-            return new LayuiTableEntity<PurchaseOrder>(purchaseOrderService.queryPage(page, purchaseOrderCode, purchaseOrderDate, supplierId));
+            return new LayuiTableEntity<PurchaseOrderPo>(purchaseOrderService.queryPage(page, purchaseOrderCode, purchaseOrderDate, supplierId));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -54,14 +54,14 @@ public class PurchaseOrderController {
 
     /**
      * 保存采购单
-     * @param purchaseOrder
+     * @param purchaseOrderPo
      * @return
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public PurchaseOrder save(@RequestBody PurchaseOrder purchaseOrder) {
+    public PurchaseOrderPo save(@RequestBody PurchaseOrderPo purchaseOrderPo) {
         try {
-            Assert.notNull(purchaseOrder, Message.PARAMETER_IS_NULL);
-            return purchaseOrderService.save(purchaseOrder);
+            Assert.notNull(purchaseOrderPo, Message.PARAMETER_IS_NULL);
+            return purchaseOrderService.save(purchaseOrderPo);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -74,17 +74,17 @@ public class PurchaseOrderController {
      * @return
      */
     @RequestMapping(value = "queryById", method = RequestMethod.GET)
-    public PurchaseOrder queryById(@RequestParam String purchaseOrderId, String type) {
+    public PurchaseOrderPo queryById(@RequestParam String purchaseOrderId, String type) {
         try {
-            PurchaseOrder purchaseOrder = purchaseOrderService.queryById(purchaseOrderId);
+            PurchaseOrderPo purchaseOrderPo = purchaseOrderService.queryById(purchaseOrderId);
             if ("EAGER".equals(type)) {
-                purchaseOrder.getSupplier();// 查询供应商
+                purchaseOrderPo.getSupplier();// 查询供应商
                 // 查询字典显示值
-                if (purchaseOrder.getPurchaseOrderDetails() != null && purchaseOrder.getPurchaseOrderDetails().size() > 0) {
+                if (purchaseOrderPo.getPurchaseOrderDetailPos() != null && purchaseOrderPo.getPurchaseOrderDetailPos().size() > 0) {
                     DictionaryType dt = dictionaryService.getByKey("SLDW");
                     if (dt != null && dt.getDictItem() != null && dt.getDictItem().size() > 0) {
-                        for (int i = 0; i < purchaseOrder.getPurchaseOrderDetails().size(); i++) {
-                            PurchaseOrderDetail pbi = purchaseOrder.getPurchaseOrderDetails().get(i);
+                        for (int i = 0; i < purchaseOrderPo.getPurchaseOrderDetailPos().size(); i++) {
+                            PurchaseOrderDetailPo pbi = purchaseOrderPo.getPurchaseOrderDetailPos().get(i);
                             if (pbi.getPurchaseUnit() != null) {
                                 for (int j = 0; j < dt.getDictItem().size(); j++) {
                                     DictionaryItem di = dt.getDictItem().get(j);
@@ -98,7 +98,7 @@ public class PurchaseOrderController {
                     }
                 }
             }
-            return purchaseOrder;
+            return purchaseOrderPo;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

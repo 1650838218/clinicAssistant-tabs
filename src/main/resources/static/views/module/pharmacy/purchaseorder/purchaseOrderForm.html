@@ -50,7 +50,7 @@
                             <div class="layui-inline">
                                 <label class="layui-form-label">供应商：</label>
                                 <div class="layui-input-inline">
-                                    <select name="supplier.supplierId" lay-verify="required"></select>
+                                    <select name="supplier.supplierId" lay-verify="required" lay-filter="supplierId"></select>
                                 </div>
                             </div>
                             <div class="layui-inline">
@@ -70,9 +70,9 @@
                                data-options="fitColumns: true, autoRowHeight: true, singleSelect: true, rownumbers:true">
                             <thead>
                                 <tr>
-                                    <th data-options="field: 'pharmacyItem.pharmacyItemId'" width="15%">药品名称</th>
-                                    <th data-options="field: 'pharmacyItem.specifications'" width="12%">规格</th>
-                                    <th data-options="field: 'pharmacyItem.manufacturer'" width="15%">制造商</th>
+                                    <th data-options="field: 'pharmacyItemId'" width="15%">药品名称</th>
+                                    <th data-options="field: 'specifications'" width="12%">规格</th>
+                                    <th data-options="field: 'manufacturer'" width="15%">制造商</th>
                                     <th data-options="field: 'batchNumber',editor: {type:'textbox',options:{type:'text'}}" width="10%">批号</th>
                                     <th data-options="field: 'manufactureDate',editor: {type: 'datebox',options: {editable: false,hasDownArrow: false}}" width="9%">生产日期</th>
                                     <th data-options="field: 'expireDate', editor: {type: 'datebox',options: {editable: false,hasDownArrow: false}}" width="9%">有效期至</th>

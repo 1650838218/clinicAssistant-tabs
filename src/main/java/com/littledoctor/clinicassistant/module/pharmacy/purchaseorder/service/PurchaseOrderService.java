@@ -1,6 +1,6 @@
 package com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.service;
 
-import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.PurchaseOrder;
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.po.PurchaseOrderPo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -19,21 +19,21 @@ public interface PurchaseOrderService {
      * @param supplierId
      * @return
      */
-    Page<PurchaseOrder> queryPage(Pageable page, String purchaseBillCode, String purchaseBillDate, String supplierId) throws Exception;
+    Page<PurchaseOrderPo> queryPage(Pageable page, String purchaseBillCode, String purchaseBillDate, String supplierId) throws Exception;
 
     /**
      * 保存采购单
-     * @param purchaseOrder
+     * @param purchaseOrderPo
      * @return
      */
-    PurchaseOrder save(PurchaseOrder purchaseOrder);
+    PurchaseOrderPo save(PurchaseOrderPo purchaseOrderPo);
 
     /**
      * 根据采购单id查询采购单
      * @param purchaseBillId
      * @return
      */
-    PurchaseOrder queryById(String purchaseBillId);
+    PurchaseOrderPo queryById(String purchaseBillId);
 
     /**
      * 删除采购单

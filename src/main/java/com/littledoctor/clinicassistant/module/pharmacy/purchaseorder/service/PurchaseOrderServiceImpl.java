@@ -1,8 +1,7 @@
 package com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.service;
 
 import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.dao.PurchaseOrderRepository;
-import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.PurchaseOrder;
-import com.littledoctor.clinicassistant.module.pharmacy.supplier.entity.Supplier;
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.po.PurchaseOrderPo;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.service.SupplierService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +42,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
      * @throws Exception
      */
     @Override
-    public Page<PurchaseOrder> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) throws Exception {
-        Page<PurchaseOrder> purchaseOrderPage = purchaseOrderRepository.findAll(new Specification<PurchaseOrder>() {
+    public Page<PurchaseOrderPo> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) throws Exception {
+        Page<PurchaseOrderPo> purchaseOrderPage = purchaseOrderRepository.findAll(new Specification<PurchaseOrderPo>() {
             @Override
-            public Predicate toPredicate(Root<PurchaseOrder> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            public Predicate toPredicate(Root<PurchaseOrderPo> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicateList = new ArrayList<>();
                 if (StringUtils.isNotBlank(purchaseOrderCode)) {
                     predicateList.add(criteriaBuilder.equal(root.get("purchaseOrderCode"), purchaseOrderCode));
@@ -67,7 +66,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             List<Supplier> supplierList = supplierService.findAll();
             if (supplierList != null && supplierList.size() > 0) {
                 for (int i = 0; i < purchaseOrderPage.getContent().size(); i++) {
-                    PurchaseOrder pb = purchaseOrderPage.getContent().get(i);
+                    PurchaseOrderPo pb = purchaseOrderPage.getContent().get(i);
                     for (int j = 0; j < supplierList.size(); j++) {
                         Supplier supplier = supplierList.get(j);
                         if (pb.getSupplierId().equals(supplier.getSupplierId())) {
@@ -82,15 +81,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     /**
      * 保存采购单
-     * @param purchaseOrder
+     * @param purchaseOrderPo
      * @return
      */
     @Override
-    public PurchaseOrder save(PurchaseOrder purchaseOrder) {
-        purchaseOrder.setCreateTiem(new Date());
-        purchaseOrder.setEntry(false);
-        purchaseOrder.setUpdateTime(new Date());
-        return purchaseOrderRepository.saveAndFlush(purchaseOrder);
+    public PurchaseOrderPo save(PurchaseOrderPo purchaseOrderPo) {
+        purchaseOrderPo.setCreateTiem(new Date());
+        purchaseOrderPo.setEntry(false);
+        purchaseOrderPo.setUpdateTime(new Date());
+        return purchaseOrderRepository.saveAndFlush(purchaseOrderPo);
     }
 
     /**
@@ -99,7 +98,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
      * @return
      */
     @Override
-    public PurchaseOrder queryById(String purchaseOrderId) {
+    public PurchaseOrderPo queryById(String purchaseOrderId) {
         return purchaseOrderRepository.findById(Integer.parseInt(purchaseOrderId)).get();
     }
 

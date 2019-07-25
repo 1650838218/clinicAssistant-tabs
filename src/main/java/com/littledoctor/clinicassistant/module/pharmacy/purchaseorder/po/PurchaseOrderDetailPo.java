@@ -1,8 +1,9 @@
-package com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity;
+package com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.po;
 
 import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.entity.PharmacyItem;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * @Auther: 周俊林
@@ -11,7 +12,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "PURCHASE_ORDER_DETAIL")
-public class PurchaseOrderDetail {
+public class PurchaseOrderDetailPo implements Serializable {
 
     /** 主键ID */
     @Id
