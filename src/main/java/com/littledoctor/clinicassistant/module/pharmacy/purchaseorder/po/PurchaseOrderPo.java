@@ -1,5 +1,6 @@
 package com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.po;
 
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.vo.PurchaseOrderVo;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.entity.Supplier;
 
 import javax.persistence.*;
@@ -139,5 +140,11 @@ public class PurchaseOrderPo implements Serializable {
 
     public void setPurchaseOrderDetailPos(List<PurchaseOrderDetailPo> purchaseOrderDetailPos) {
         this.purchaseOrderDetailPos = purchaseOrderDetailPos;
+    }
+
+    // 将po转换成vo
+    public PurchaseOrderVo transformVo() {
+        PurchaseOrderVo vo = new PurchaseOrderVo();
+        return vo;
     }
 }
