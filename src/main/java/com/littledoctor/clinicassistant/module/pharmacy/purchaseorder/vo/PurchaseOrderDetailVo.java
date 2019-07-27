@@ -1,6 +1,7 @@
 package com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.vo;
 
 import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.entity.PharmacyItem;
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.po.PurchaseOrderDetailPo;
 
 import javax.persistence.*;
 
@@ -149,5 +150,21 @@ public class PurchaseOrderDetailVo {
 
     public void setTotalPrice(Double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    // 将vo转成po
+    public PurchaseOrderDetailPo transformPo() {
+        PurchaseOrderDetailPo po = new PurchaseOrderDetailPo();
+        po.setBatchNumber(this.getBatchNumber());
+        po.setExpireDate(this.getExpireDate());
+        po.setGoodsName(this.getGoodsName());
+        po.setManufactureDate(this.getManufactureDate());
+        po.setPharmacyItemId(this.getPharmacyItemId());
+        po.setPurchaseCount(this.getPurchaseCount());
+        po.setPurchaseOrderDetailId(this.getPurchaseOrderDetailId());
+        po.setPurchaseUnit(this.getPurchaseUnit());
+        po.setTotalPrice(this.getTotalPrice());
+        po.setUnitPrice(this.getUnitPrice());
+        return po;
     }
 }

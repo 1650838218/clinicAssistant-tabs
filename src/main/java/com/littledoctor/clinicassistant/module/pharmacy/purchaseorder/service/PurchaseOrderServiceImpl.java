@@ -62,20 +62,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 return criteriaBuilder.and(predicateList.toArray(new Predicate[predicateList.size()]));
             }
         }, page);
-        /*if (purchaseOrderPage.getContent() != null && purchaseOrderPage.getContent().size() > 0) {
-            List<Supplier> supplierList = supplierService.findAll();
-            if (supplierList != null && supplierList.size() > 0) {
-                for (int i = 0; i < purchaseOrderPage.getContent().size(); i++) {
-                    PurchaseOrderPo pb = purchaseOrderPage.getContent().get(i);
-                    for (int j = 0; j < supplierList.size(); j++) {
-                        Supplier supplier = supplierList.get(j);
-                        if (pb.getSupplierId().equals(supplier.getSupplierId())) {
-                            pb.setSupplierName(supplier.getSupplierName());
-                        }
-                    }
-                }
-            }
-        }*/
         return purchaseOrderPage;
     }
 

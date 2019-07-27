@@ -5,6 +5,7 @@ import com.littledoctor.clinicassistant.common.plugin.layui.LayuiTableEntity;
 import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.po.PurchaseOrderPo;
 import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.po.PurchaseOrderDetailPo;
 import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.service.PurchaseOrderService;
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.vo.PurchaseOrderVo;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.service.SupplierService;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryItem;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryType;
@@ -12,10 +13,13 @@ import com.littledoctor.clinicassistant.module.system.dictionary.service.Diction
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @Auther: 周俊林
@@ -42,10 +46,12 @@ public class PurchaseOrderController {
      * @return
      */
     @RequestMapping(value = "/queryPage", method = RequestMethod.GET)
-    public LayuiTableEntity<PurchaseOrderPo> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) {
+    public LayuiTableEntity<PurchaseOrderVo> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) {
         try {
             if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
-            return new LayuiTableEntity<PurchaseOrderPo>(purchaseOrderService.queryPage(page, purchaseOrderCode, purchaseOrderDate, supplierId));
+            Page<PurchaseOrderPo> pos = purchaseOrderService.queryPage(page, purchaseOrderCode, purchaseOrderDate, supplierId);
+
+            return new LayuiTableEntity<PurchaseOrderVo>();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

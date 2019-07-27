@@ -1,5 +1,6 @@
 package com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.po;
 
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.vo.PurchaseOrderDetailVo;
 import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.vo.PurchaseOrderVo;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.entity.Supplier;
 
@@ -34,9 +35,8 @@ public class PurchaseOrderPo implements Serializable {
     private String purchaseOrderDate;
 
     /** 供货商ID */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SUPPLIER_ID")
-    private Supplier supplier;
+    @Column(name = "SUPPLIER_ID")
+    private Integer supplierId;
 
     /** 采购单总价 */
     @Column(name = "TOTAL_PRICE")
@@ -84,14 +84,6 @@ public class PurchaseOrderPo implements Serializable {
 
     public void setPurchaseOrderDate(String purchaseOrderDate) {
         this.purchaseOrderDate = purchaseOrderDate;
-    }
-
-    public Supplier getSupplier() {
-        return supplier;
-    }
-
-    public void setSupplier(Supplier supplier) {
-        this.supplier = supplier;
     }
 
     public Double getTotalPrice() {
@@ -142,9 +134,31 @@ public class PurchaseOrderPo implements Serializable {
         this.purchaseOrderDetailPos = purchaseOrderDetailPos;
     }
 
+    public Integer getSupplierId() {
+        return supplierId;
+    }
+
+    public void setSupplierId(Integer supplierId) {
+        this.supplierId = supplierId;
+    }
+
     // 将po转换成vo
     public PurchaseOrderVo transformVo() {
         PurchaseOrderVo vo = new PurchaseOrderVo();
+        vo.setEntry(this.getEntry());
+        vo.setPurchaseOrderCode(this.getPurchaseOrderCode());
+        vo.setPurchaseOrderDate(this.getPurchaseOrderDate());
+        vo.setPurchaseOrderId(this.getPurchaseOrderId());
+        vo.setPurchaseOrderPicture(this.getPurchaseOrderPicture());
+        vo.setSupplierId(this.getSupplierId());
+        vo.setTotalPrice(this.getTotalPrice());
+        if (this.purchaseOrderDetailPos != null && this.purchaseOrderDetailPos.size() > 0) {
+            List<PurchaseOrderDetailVo> podps = new ArrayList<>();
+            for (int i = 0, len = this.purchaseOrderDetailPos.size(); i < len; i++) {
+                podps.add(this.purchaseOrderDetailPos.get(i).transformVo());
+            }
+            vo.setPurchaseOrderDetailVos(podps);
+        }
         return vo;
     }
 }

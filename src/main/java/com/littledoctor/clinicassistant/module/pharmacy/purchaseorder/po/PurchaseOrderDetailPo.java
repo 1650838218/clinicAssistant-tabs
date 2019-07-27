@@ -1,6 +1,7 @@
 package com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.po;
 
 import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.entity.PharmacyItem;
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.vo.PurchaseOrderDetailVo;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -21,9 +22,8 @@ public class PurchaseOrderDetailPo implements Serializable {
     private Integer purchaseOrderDetailId;
 
     /** 药房品目，为了关联采购的是哪个药品 */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PHARMACY_ITEM_ID")
-    private PharmacyItem pharmacyItem;
+    @Column(name = "PHARMACY_ITEM_ID")
+    private Integer pharmacyItemId;
 
     /** 商品名称，当采购的物品不是药品时，需要填写此字段 */
     @Column(name = "GOODS_NAME")
@@ -49,10 +49,6 @@ public class PurchaseOrderDetailPo implements Serializable {
     @Column(name = "PURCHASE_UNIT")
     private Integer purchaseUnit;
 
-    /** 数量单位 字典名 */
-    @Transient
-    private String purchaseUnitName;
-
     /** 单价 */
     @Column(name = "UNIT_PRICE")
     private Double unitPrice;
@@ -69,12 +65,12 @@ public class PurchaseOrderDetailPo implements Serializable {
         this.purchaseOrderDetailId = purchaseOrderDetailId;
     }
 
-    public PharmacyItem getPharmacyItem() {
-        return pharmacyItem;
+    public Integer getPharmacyItemId() {
+        return pharmacyItemId;
     }
 
-    public void setPharmacyItem(PharmacyItem pharmacyItem) {
-        this.pharmacyItem = pharmacyItem;
+    public void setPharmacyItemId(Integer pharmacyItemId) {
+        this.pharmacyItemId = pharmacyItemId;
     }
 
     public String getGoodsName() {
@@ -125,14 +121,6 @@ public class PurchaseOrderDetailPo implements Serializable {
         this.purchaseUnit = purchaseUnit;
     }
 
-    public String getPurchaseUnitName() {
-        return purchaseUnitName;
-    }
-
-    public void setPurchaseUnitName(String purchaseUnitName) {
-        this.purchaseUnitName = purchaseUnitName;
-    }
-
     public Double getUnitPrice() {
         return unitPrice;
     }
@@ -147,5 +135,21 @@ public class PurchaseOrderDetailPo implements Serializable {
 
     public void setTotalPrice(Double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    // 将po转换成vo
+    public PurchaseOrderDetailVo transformVo() {
+        PurchaseOrderDetailVo vo = new PurchaseOrderDetailVo();
+        vo.setBatchNumber(this.getBatchNumber());
+        vo.setExpireDate(this.getExpireDate());
+        vo.setGoodsName(this.getGoodsName());
+        vo.setManufactureDate(this.getManufactureDate());
+        vo.setPharmacyItemId(this.getPharmacyItemId());
+        vo.setPurchaseCount(this.getPurchaseCount());
+        vo.setPurchaseOrderDetailId(this.getPurchaseOrderDetailId());
+        vo.setPurchaseUnit(this.getPurchaseUnit());
+        vo.setTotalPrice(this.getTotalPrice());
+        vo.setUnitPrice(this.getUnitPrice());
+        return vo;
     }
 }
