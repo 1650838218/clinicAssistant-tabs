@@ -37,19 +37,19 @@
         <div class="center-panel">
             <div class="layui-card">
                 <div class="layui-card-body">
-                    <form id="purchasebill-form" class="layui-form" lay-filter="purchasebill-form">
-                        <input type="hidden" name="purchaseBillId" value="">
+                    <form id="purchaseorder-form" class="layui-form" lay-filter="purchaseorder-form">
+                        <input type="hidden" name="purchaseOrderId" value="">
                         <div class="layui-form-item">
                             <div class="layui-inline">
                                 <label class="layui-form-label">单号：</label>
                                 <div class="layui-input-inline">
-                                    <input name="purchaseBillCode" readonly class="layui-input">
+                                    <input name="purchaseOrderCode" readonly class="layui-input">
                                 </div>
                             </div>
                             <div class="layui-inline">
                                 <label class="layui-form-label">日期：</label>
                                 <div class="layui-input-inline">
-                                    <input name="purchaseBillDate" readonly class="layui-input">
+                                    <input name="purchaseOrderDate" readonly class="layui-input">
                                 </div>
                             </div>
                             <div class="layui-inline">
@@ -59,19 +59,13 @@
                                 </div>
                             </div>
                             <div class="layui-inline">
-                                <label class="layui-form-label">电话：</label>
-                                <div class="layui-input-inline">
-                                    <input name="supplierPhone" readonly class="layui-input">
-                                </div>
-                            </div>
-                            <div class="layui-inline">
                                 <label class="layui-form-label">金额：</label>
                                 <div class="layui-input-inline">
                                     <input name="totalPrice" readonly class="layui-input">
                                 </div>
                             </div>
                         </div>
-                        <table id="purchasebill-table"></table>
+                        <table id="purchaseorder-table"></table>
                     </form>
                 </div>
             </div>
@@ -81,6 +75,6 @@
 <script src="/lib/easyui/1.8.1/jquery.min.js"></script>
 <script src="/lib/layuiadmin/layui/layui.js"></script>
 <script src="/js/common/constant.js"></script>
-<script src="/views/module/pharmacy/purchasebill/purchaseBillLook.js"></script>
+<script src="/views/module/pharmacy/purchaseorder/purchaseOrderLook.js"></script>
 </body>
 </html>

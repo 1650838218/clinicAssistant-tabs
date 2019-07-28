@@ -16,7 +16,7 @@ public class WarehousingEntry {
 
     /** 主键ID */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "WAREHOUSING_ENTRY_ID", nullable = false)
     private Integer warehousingEntryId;
 

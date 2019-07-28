@@ -1,10 +1,6 @@
-package com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.po;
-
-import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.entity.PharmacyItem;
-import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.vo.PurchaseOrderDetailVo;
+package com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 /**
  * @Auther: 周俊林
@@ -13,11 +9,11 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "PURCHASE_ORDER_DETAIL")
-public class PurchaseOrderDetailPo implements Serializable {
+public class PurchaseOrderDetail {
 
     /** 主键ID */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PURCHASE_ORDER_DETAIL_ID", nullable = false)
     private Integer purchaseOrderDetailId;
 
@@ -56,6 +52,22 @@ public class PurchaseOrderDetailPo implements Serializable {
     /** 总价 */
     @Column(name = "TOTAL_PRICE")
     private Double totalPrice;
+
+    /** 药品名称 */
+    @Transient
+    private String pharmacyItemName;
+
+    /** 规格 */
+    @Transient
+    private String specifications;
+
+    /** 制造商 */
+    @Transient
+    private String manufacturer;
+
+    /** 进货单位名称 */
+    @Transient
+    private String purchaseUnitName;
 
     public Integer getPurchaseOrderDetailId() {
         return purchaseOrderDetailId;
@@ -137,19 +149,35 @@ public class PurchaseOrderDetailPo implements Serializable {
         this.totalPrice = totalPrice;
     }
 
-    // 将po转换成vo
-    public PurchaseOrderDetailVo transformVo() {
-        PurchaseOrderDetailVo vo = new PurchaseOrderDetailVo();
-        vo.setBatchNumber(this.getBatchNumber());
-        vo.setExpireDate(this.getExpireDate());
-        vo.setGoodsName(this.getGoodsName());
-        vo.setManufactureDate(this.getManufactureDate());
-        vo.setPharmacyItemId(this.getPharmacyItemId());
-        vo.setPurchaseCount(this.getPurchaseCount());
-        vo.setPurchaseOrderDetailId(this.getPurchaseOrderDetailId());
-        vo.setPurchaseUnit(this.getPurchaseUnit());
-        vo.setTotalPrice(this.getTotalPrice());
-        vo.setUnitPrice(this.getUnitPrice());
-        return vo;
+    public String getPharmacyItemName() {
+        return pharmacyItemName;
+    }
+
+    public void setPharmacyItemName(String pharmacyItemName) {
+        this.pharmacyItemName = pharmacyItemName;
+    }
+
+    public String getSpecifications() {
+        return specifications;
+    }
+
+    public void setSpecifications(String specifications) {
+        this.specifications = specifications;
+    }
+
+    public String getManufacturer() {
+        return manufacturer;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    public String getPurchaseUnitName() {
+        return purchaseUnitName;
+    }
+
+    public void setPurchaseUnitName(String purchaseUnitName) {
+        this.purchaseUnitName = purchaseUnitName;
     }
 }

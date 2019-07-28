@@ -2,10 +2,13 @@ package com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.controlle
 
 import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.common.plugin.layui.LayuiTableEntity;
-import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.po.PurchaseOrderPo;
-import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.po.PurchaseOrderDetailPo;
+import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.entity.PharmacyItem;
+import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.service.PharmacyItemService;
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.PurchaseOrder;
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.PurchaseOrderDetail;
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.PurchaseOrderSingle;
 import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.service.PurchaseOrderService;
-import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.vo.PurchaseOrderVo;
+import com.littledoctor.clinicassistant.module.pharmacy.supplier.entity.Supplier;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.service.SupplierService;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryItem;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryType;
@@ -13,7 +16,6 @@ import com.littledoctor.clinicassistant.module.system.dictionary.service.Diction
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.Assert;
@@ -35,23 +37,15 @@ public class PurchaseOrderController {
     @Autowired
     private PurchaseOrderService purchaseOrderService;
 
-    @Autowired
-    private SupplierService supplierService;
-
-    @Autowired
-    private DictionaryService dictionaryService;
-
     /**
      * 分页查询
      * @return
      */
     @RequestMapping(value = "/queryPage", method = RequestMethod.GET)
-    public LayuiTableEntity<PurchaseOrderVo> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) {
+    public LayuiTableEntity<PurchaseOrderSingle> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) {
         try {
             if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
-            Page<PurchaseOrderPo> pos = purchaseOrderService.queryPage(page, purchaseOrderCode, purchaseOrderDate, supplierId);
-
-            return new LayuiTableEntity<PurchaseOrderVo>();
+            return new LayuiTableEntity<PurchaseOrderSingle>(purchaseOrderService.queryPage(page, purchaseOrderCode, purchaseOrderDate, supplierId));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -60,14 +54,14 @@ public class PurchaseOrderController {
 
     /**
      * 保存采购单
-     * @param purchaseOrderPo
+     * @param purchaseOrder
      * @return
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public PurchaseOrderPo save(@RequestBody PurchaseOrderPo purchaseOrderPo) {
+    public PurchaseOrder save(@RequestBody PurchaseOrder purchaseOrder) {
         try {
-            Assert.notNull(purchaseOrderPo, Message.PARAMETER_IS_NULL);
-            return purchaseOrderService.save(purchaseOrderPo);
+            Assert.notNull(purchaseOrder, Message.PARAMETER_IS_NULL);
+            return purchaseOrderService.save(purchaseOrder);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -80,31 +74,10 @@ public class PurchaseOrderController {
      * @return
      */
     @RequestMapping(value = "queryById", method = RequestMethod.GET)
-    public PurchaseOrderPo queryById(@RequestParam String purchaseOrderId, String type) {
+    public PurchaseOrder queryById(@RequestParam String purchaseOrderId) {
         try {
-            PurchaseOrderPo purchaseOrderPo = purchaseOrderService.queryById(purchaseOrderId);
-            if ("EAGER".equals(type)) {
-                purchaseOrderPo.getSupplier();// 查询供应商
-                // 查询字典显示值
-                if (purchaseOrderPo.getPurchaseOrderDetailPos() != null && purchaseOrderPo.getPurchaseOrderDetailPos().size() > 0) {
-                    DictionaryType dt = dictionaryService.getByKey("SLDW");
-                    if (dt != null && dt.getDictItem() != null && dt.getDictItem().size() > 0) {
-                        for (int i = 0; i < purchaseOrderPo.getPurchaseOrderDetailPos().size(); i++) {
-                            PurchaseOrderDetailPo pbi = purchaseOrderPo.getPurchaseOrderDetailPos().get(i);
-                            if (pbi.getPurchaseUnit() != null) {
-                                for (int j = 0; j < dt.getDictItem().size(); j++) {
-                                    DictionaryItem di = dt.getDictItem().get(j);
-                                    if (pbi.getPurchaseUnit().equals(Integer.valueOf(di.getDictItemValue()))) {
-                                        pbi.setPurchaseUnitName(di.getDictItemName());
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return purchaseOrderPo;
+            PurchaseOrder purchaseOrder = purchaseOrderService.queryById(purchaseOrderId);
+            return purchaseOrder;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

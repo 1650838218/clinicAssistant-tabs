@@ -14,7 +14,7 @@ public class PharmacyItem {
 
     /** 主键ID */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PHARMACY_ITEM_ID", nullable = false)
     private Integer pharmacyItemId;
 

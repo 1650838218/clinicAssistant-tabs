@@ -13,25 +13,37 @@ public class Supplier {
 
     /** 主键ID */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SUPPLIER_ID", nullable = false)
     private Integer supplierId;
 
-    /** 联系人姓名 */
+    /** 供应商名称 */
     @Column(name = "SUPPLIER_NAME")
     private String supplierName;
 
+    /** 联系人姓名 */
+    @Column(name = "LINK_MAN_1")
+    private String linkMan1;
+
     /** 联系人电话 */
-    @Column(name = "SUPPLIER_PHONE")
-    private String supplierPhone;
+    @Column(name = "PHONE_1")
+    private String phone1;
+
+    /** 联系人姓名 */
+    @Column(name = "LINK_MAN_2")
+    private String linkMan2;
+
+    /** 联系人电话 */
+    @Column(name = "PHONE_2")
+    private String phone2;
 
     /** 主营 */
     @Column(name = "MAIN_PRODUCTS")
     private String mainProducts;
 
     /** 地址 */
-    @Column(name = "SUPPLIER_ADDRESS")
-    private String supplierAddress;
+    @Column(name = "ADDRESS")
+    private String address;
 
     public Integer getSupplierId() {
         return supplierId;
@@ -49,27 +61,51 @@ public class Supplier {
         this.supplierName = supplierName;
     }
 
-    public String getSupplierPhone() {
-        return supplierPhone;
-    }
-
-    public void setSupplierPhone(String supplierPhone) {
-        this.supplierPhone = supplierPhone;
-    }
-
-    public String getSupplierAddress() {
-        return supplierAddress;
-    }
-
-    public void setSupplierAddress(String supplierAddress) {
-        this.supplierAddress = supplierAddress;
-    }
-
     public String getMainProducts() {
         return mainProducts;
     }
 
     public void setMainProducts(String mainProducts) {
         this.mainProducts = mainProducts;
+    }
+
+    public String getLinkMan1() {
+        return linkMan1;
+    }
+
+    public void setLinkMan1(String linkMan1) {
+        this.linkMan1 = linkMan1;
+    }
+
+    public String getPhone1() {
+        return phone1;
+    }
+
+    public void setPhone1(String phone1) {
+        this.phone1 = phone1;
+    }
+
+    public String getLinkMan2() {
+        return linkMan2;
+    }
+
+    public void setLinkMan2(String linkMan2) {
+        this.linkMan2 = linkMan2;
+    }
+
+    public String getPhone2() {
+        return phone2;
+    }
+
+    public void setPhone2(String phone2) {
+        this.phone2 = phone2;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

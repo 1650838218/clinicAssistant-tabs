@@ -1,8 +1,17 @@
 package com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.service;
 
+import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.entity.PharmacyItem;
+import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.service.PharmacyItemService;
 import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.dao.PurchaseOrderRepository;
-import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.po.PurchaseOrderPo;
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.dao.PurchaseOrderSingleRepository;
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.PurchaseOrder;
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.PurchaseOrderDetail;
+import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.PurchaseOrderSingle;
+import com.littledoctor.clinicassistant.module.pharmacy.supplier.entity.Supplier;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.service.SupplierService;
+import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryItem;
+import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryType;
+import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,6 +39,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     private PurchaseOrderRepository purchaseOrderRepository;
 
     @Autowired
+    private PurchaseOrderSingleRepository purchaseOrderSingleRepository;
+
+    @Autowired
+    private PharmacyItemService pharmacyItemService;
+
+    @Autowired
+    private DictionaryService dictionaryService;
+
+    @Autowired
     private SupplierService supplierService;
 
     /**
@@ -42,10 +60,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
      * @throws Exception
      */
     @Override
-    public Page<PurchaseOrderPo> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) throws Exception {
-        Page<PurchaseOrderPo> purchaseOrderPage = purchaseOrderRepository.findAll(new Specification<PurchaseOrderPo>() {
+    public Page<PurchaseOrderSingle> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) throws Exception {
+        Page<PurchaseOrderSingle> purchaseOrderPage = purchaseOrderSingleRepository.findAll(new Specification<PurchaseOrderSingle>() {
             @Override
-            public Predicate toPredicate(Root<PurchaseOrderPo> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            public Predicate toPredicate(Root<PurchaseOrderSingle> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicateList = new ArrayList<>();
                 if (StringUtils.isNotBlank(purchaseOrderCode)) {
                     predicateList.add(criteriaBuilder.equal(root.get("purchaseOrderCode"), purchaseOrderCode));
@@ -62,20 +80,31 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 return criteriaBuilder.and(predicateList.toArray(new Predicate[predicateList.size()]));
             }
         }, page);
+        // 设置供应商名称
+        List<PurchaseOrderSingle> pol = purchaseOrderPage.getContent();
+        if (pol != null && pol.size() > 0) {
+            for (int i = 0, len = pol.size(); i < len; i++) {
+                PurchaseOrderSingle pos = pol.get(i);
+                if (pos.getSupplierId() != null) {
+                    Supplier s = supplierService.findById(String.valueOf(pos.getSupplierId()));
+                    if (s != null) pos.setSupplierName(s.getSupplierName());
+                }
+            }
+        }
         return purchaseOrderPage;
     }
 
     /**
      * 保存采购单
-     * @param purchaseOrderPo
+     * @param purchaseOrder
      * @return
      */
     @Override
-    public PurchaseOrderPo save(PurchaseOrderPo purchaseOrderPo) {
-        purchaseOrderPo.setCreateTiem(new Date());
-        purchaseOrderPo.setEntry(false);
-        purchaseOrderPo.setUpdateTime(new Date());
-        return purchaseOrderRepository.saveAndFlush(purchaseOrderPo);
+    public PurchaseOrder save(PurchaseOrder purchaseOrder) {
+        purchaseOrder.setCreateTiem(new Date());
+        purchaseOrder.setEntry(false);
+        purchaseOrder.setUpdateTime(new Date());
+        return purchaseOrderRepository.saveAndFlush(purchaseOrder);
     }
 
     /**
@@ -84,8 +113,43 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
      * @return
      */
     @Override
-    public PurchaseOrderPo queryById(String purchaseOrderId) {
-        return purchaseOrderRepository.findById(Integer.parseInt(purchaseOrderId)).get();
+    public PurchaseOrder queryById(String purchaseOrderId) throws Exception {
+        PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(Integer.parseInt(purchaseOrderId)).get();
+        if (purchaseOrder != null) {
+            // 设置供应商名称
+            Supplier supplier = supplierService.findById(String.valueOf(purchaseOrder.getSupplierId()));
+            purchaseOrder.setSupplierName(supplier.getSupplierName());
+            List<PurchaseOrderDetail> pods = purchaseOrder.getPurchaseOrderDetails();
+            if (pods != null && pods.size() > 0) {
+                // 查询字典显示值
+                DictionaryType dt = dictionaryService.getByKey("SLDW");
+                for (int i = 0, len = pods.size(); i < len; i++) {
+                    PurchaseOrderDetail pbi = pods.get(i);
+                    // 查询药品信息
+                    if (pbi.getPharmacyItemId() != null) {
+                        PharmacyItem pi = pharmacyItemService.getById(String.valueOf(pbi.getPharmacyItemId()));
+                        if (pi != null) {
+                            pbi.setPharmacyItemName(pi.getPharmacyItemName());
+                            pbi.setManufacturer(pi.getManufacturer());
+                            pbi.setSpecifications(pi.getSpecifications());
+                        }
+                    }
+                    // 设置数量单位名称
+                    if (dt != null && dt.getDictItem() != null && dt.getDictItem().size() > 0) {
+                        if (pbi.getPurchaseUnit() != null) {
+                            for (int j = 0; j < dt.getDictItem().size(); j++) {
+                                DictionaryItem di = dt.getDictItem().get(j);
+                                if (pbi.getPurchaseUnit().equals(Integer.valueOf(di.getDictItemValue()))) {
+                                    pbi.setPurchaseUnitName(di.getDictItemName());
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return purchaseOrder;
     }
 
     /**
@@ -94,7 +158,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
      * @return
      */
     @Override
-    public boolean delete(String purchaseOrderId) {
+    public boolean delete(String purchaseOrderId) throws Exception {
         if (StringUtils.isNotBlank(purchaseOrderId)) {
             purchaseOrderRepository.deleteById(Integer.parseInt(purchaseOrderId));
             return true;

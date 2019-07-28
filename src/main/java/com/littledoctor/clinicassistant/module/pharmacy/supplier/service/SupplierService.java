@@ -2,6 +2,8 @@ package com.littledoctor.clinicassistant.module.pharmacy.supplier.service;
 
 import com.littledoctor.clinicassistant.common.plugin.select.SelectOption;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.entity.Supplier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -43,4 +45,12 @@ public interface SupplierService {
      * @param supplierId
      */
     Supplier findById(String supplierId) throws Exception;
+
+    /**
+     * 分页查询供应商
+     * @param keywords
+     * @param page
+     * @return
+     */
+    Page<Supplier> queryPage(String keywords, Pageable page);
 }

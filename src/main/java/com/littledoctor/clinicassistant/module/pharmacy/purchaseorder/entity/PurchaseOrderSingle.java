@@ -1,28 +1,20 @@
-package com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.po;
-
-import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.vo.PurchaseOrderDetailVo;
-import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.vo.PurchaseOrderVo;
-import com.littledoctor.clinicassistant.module.pharmacy.supplier.entity.Supplier;
+package com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.sql.Blob;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @Auther: 周俊林
- * @Date: 2019-07-06 13:50
+ * @Date: 2019-07-27 13:32
  * @Description:
  */
 @Entity
 @Table(name = "PURCHASE_ORDER")
-public class PurchaseOrderPo implements Serializable {
-
+public class PurchaseOrderSingle {
     /** 主键ID */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PURCHASE_ORDER_ID", nullable = false)
     private Integer purchaseOrderId;
 
@@ -33,6 +25,10 @@ public class PurchaseOrderPo implements Serializable {
     /** 采购单日期 */
     @Column(name = "PURCHASE_ORDER_DATE")
     private String purchaseOrderDate;
+
+    /** 采购单类型 */
+    @Column(name = "PURCHASE_ORDER_TYPE")
+    private String purchaseOrderType;
 
     /** 供货商ID */
     @Column(name = "SUPPLIER_ID")
@@ -58,9 +54,9 @@ public class PurchaseOrderPo implements Serializable {
     @Column(name = "UPDATE_TIME")
     private Date updateTime;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
-    @JoinColumn(name = "PURCHASE_ORDER_ID")
-    private List<PurchaseOrderDetailPo> purchaseOrderDetailPos = new ArrayList<>();
+    /** 供货商联系人 */
+    @Transient
+    private String supplierName;
 
     public Integer getPurchaseOrderId() {
         return purchaseOrderId;
@@ -84,6 +80,22 @@ public class PurchaseOrderPo implements Serializable {
 
     public void setPurchaseOrderDate(String purchaseOrderDate) {
         this.purchaseOrderDate = purchaseOrderDate;
+    }
+
+    public String getPurchaseOrderType() {
+        return purchaseOrderType;
+    }
+
+    public void setPurchaseOrderType(String purchaseOrderType) {
+        this.purchaseOrderType = purchaseOrderType;
+    }
+
+    public Integer getSupplierId() {
+        return supplierId;
+    }
+
+    public void setSupplierId(Integer supplierId) {
+        this.supplierId = supplierId;
     }
 
     public Double getTotalPrice() {
@@ -126,39 +138,11 @@ public class PurchaseOrderPo implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public List<PurchaseOrderDetailPo> getPurchaseOrderDetailPos() {
-        return purchaseOrderDetailPos;
+    public String getSupplierName() {
+        return supplierName;
     }
 
-    public void setPurchaseOrderDetailPos(List<PurchaseOrderDetailPo> purchaseOrderDetailPos) {
-        this.purchaseOrderDetailPos = purchaseOrderDetailPos;
-    }
-
-    public Integer getSupplierId() {
-        return supplierId;
-    }
-
-    public void setSupplierId(Integer supplierId) {
-        this.supplierId = supplierId;
-    }
-
-    // 将po转换成vo
-    public PurchaseOrderVo transformVo() {
-        PurchaseOrderVo vo = new PurchaseOrderVo();
-        vo.setEntry(this.getEntry());
-        vo.setPurchaseOrderCode(this.getPurchaseOrderCode());
-        vo.setPurchaseOrderDate(this.getPurchaseOrderDate());
-        vo.setPurchaseOrderId(this.getPurchaseOrderId());
-        vo.setPurchaseOrderPicture(this.getPurchaseOrderPicture());
-        vo.setSupplierId(this.getSupplierId());
-        vo.setTotalPrice(this.getTotalPrice());
-        if (this.purchaseOrderDetailPos != null && this.purchaseOrderDetailPos.size() > 0) {
-            List<PurchaseOrderDetailVo> podps = new ArrayList<>();
-            for (int i = 0, len = this.purchaseOrderDetailPos.size(); i < len; i++) {
-                podps.add(this.purchaseOrderDetailPos.get(i).transformVo());
-            }
-            vo.setPurchaseOrderDetailVos(podps);
-        }
-        return vo;
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
     }
 }

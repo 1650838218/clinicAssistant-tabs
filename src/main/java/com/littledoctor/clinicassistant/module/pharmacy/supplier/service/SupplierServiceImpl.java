@@ -1,12 +1,21 @@
 package com.littledoctor.clinicassistant.module.pharmacy.supplier.service;
 
 import com.littledoctor.clinicassistant.common.plugin.select.SelectOption;
+import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.entity.PharmacyItem;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.dao.SupplierRepository;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.entity.Supplier;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -74,5 +83,24 @@ public class SupplierServiceImpl implements SupplierService {
             return supplierRepository.findById(Integer.parseInt(supplierId)).get();
         }
         return null;
+    }
+
+    /**
+     * 分页查询供应商
+     * @param keywords
+     * @param page
+     * @return
+     */
+    @Override
+    public Page<Supplier> queryPage(String keywords, Pageable page) {
+        return supplierRepository.findAll(new Specification<Supplier>() {
+            @Override
+            public Predicate toPredicate(Root<Supplier> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                if (StringUtils.isNotBlank(keywords)) {
+                    return criteriaBuilder.like(root.get("supplierName"), "%" + keywords.toLowerCase() + "%");
+                }
+                return null;
+            }
+        }, page);
     }
 }

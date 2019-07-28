@@ -21,6 +21,29 @@
             width: 150px;
             margin-right: 0px;
         }
+        .layui-form-label-icon {
+            text-align: left;
+            padding: 9px 0 9px 5px;
+            width: 20px;
+            float: left;
+            display: block;
+            font-weight: 400;
+            line-height: 20px;
+        }
+        .layui-form-label-icon .layui-icon {
+            font-size: 23px;
+            color: #D3D3D3;
+            cursor:pointer;
+        }
+        .layui-form-label-icon .layui-icon:hover {
+             color: black;
+         }
+        .layui-layer .layui-form-item {
+            margin-bottom: 0px;
+        }
+        .layui-layer .layui-form-label {
+            width: 120px;
+        }
     </style>
 </head>
 <body>
@@ -28,9 +51,6 @@
     <div class="layui-col-md12">
         <div class="center-panel">
             <div class="layui-card">
-               <!-- <div class="layui-card-header">
-                    <h3><b>新建采购单</b></h3>
-                </div>-->
                 <div class="layui-card-body">
                     <form id="purchaseorder-form" class="layui-form" lay-filter="purchaseorder-form">
                         <input type="hidden" name="purchaseOrderId" value="">
@@ -50,14 +70,11 @@
                             <div class="layui-inline">
                                 <label class="layui-form-label">供应商：</label>
                                 <div class="layui-input-inline">
-                                    <select name="supplier.supplierId" lay-verify="required" lay-filter="supplierId"></select>
+                                    <select name="supplierId" lay-verify="required"></select>
                                 </div>
-                            </div>
-                            <div class="layui-inline">
-                                <label class="layui-form-label">电话：</label>
-                                <div class="layui-input-inline">
-                                    <input name="supplier.supplierPhone" class="layui-input" lay-verify="phone" placeholder="请填写联系方式">
-                                </div>
+                                <label class="layui-form-label-icon">
+                                    <i class="layui-icon layui-icon-about" title="查看供应商详情"></i>
+                                </label>
                             </div>
                             <div class="layui-inline">
                                 <label class="layui-form-label">金额：</label>
@@ -86,7 +103,10 @@
                         <div class="layui-row layui-col-space10" style="margin-top: 5px;">
                             <div class="layui-col-lg-offset10 layui-col-lg2" style="text-align: right;">
                                 <button type="button" lay-filter="submit-btn" lay-submit class="layui-btn layui-btn-sm">保存</button>
+                                <button type="button" lay-filter="entry-btn" class="layui-btn layui-btn-sm">入库</button>
+                                <!--<button type="button" lay-filter="golist-btn" class="layui-btn layui-btn-sm">转到采购单列表</button>-->
                                 <button type="button" lay-filter="cancel-btn" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
+                                <button type="button" lay-filter="close-btn" class="layui-btn layui-btn-primary layui-btn-sm" style="display: none">关闭</button>
                             </div>
                         </div>
                     </form>

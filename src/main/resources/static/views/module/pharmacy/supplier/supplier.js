@@ -6,168 +6,199 @@ layui.config({
     utils: 'utils' //扩展模块
     ,ajax: 'ajax'
 });
-layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
+layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
     var $ = layui.jquery;
+    var form = layui.form;
     var layer = layui.layer;
     var table = layui.table;
     var ajax = layui.ajax;
     var utils = layui.utils;
-    var rootMappint = '/pharmacy/supplier';
-    var supplierTableId = 'supplier-table';
+    var leftTableId = 'left-table';
+    var rootMapping = '/pharmacy/supplier';
+    form.render();
 
     // 初始化表格
     table.render({
-        elem: '#supplier-table',
-        url: rootMappint + '/findAll',
-        limit: 300,// 最多可有300个供应商
-        cols: [[
-            {field: 'supplierId', title: TABLE_COLUMN.numbers, type: 'numbers'},
-            {field: 'supplierName', title: '联系人', width: '10%',  edit: 'text'},
-            {field: 'supplierPhone', title: '联系方式', width: '12%', edit: 'text'},
-            {field: 'mainProducts', title: '主营', edit: 'text'},
-            {field: 'supplierAddress', title: '地址', edit: 'text'},
-            {title: TABLE_COLUMN.operation, toolbar: '#operate-column', width: '15%', align: 'center'}
-        ]],
-        parseData: function (res) {
-            if (res == null || res.data == null || res.data.length <= 0) {
-                res.count = 1;
-                res.code = 0;
-                res.msg = '';
-                res.data = [{
-                    supplierId: '',
-                    supplierName: '',
-                    supplierPhone: '',
-                    mainProducts: '',
-                    supplierAddress: ''
-                }];
-            }
+        elem: '#left-table',
+        url: rootMapping + '/queryPage',
+        height: 'full-85',
+        page: {
+            limit: 20,
+            groups: 3,
+            layout: ['count','refresh']
         },
+        request: {
+            limitName: 'size' //每页数据量的参数名，默认：limit
+        },
+        cols: [[
+            {field: 'supplierName', title: '供应商名称'}
+        ]],
         done: function (res, curr, count) {
-
+            $('#add-btn').click();// 清空表单
+            $('#del-btn').addClass('layui-btn-disabled').attr('disabled','disabled');// 禁用 删除按钮
         }
     });
 
-    //监听表格操作列
-    table.on('tool(' + supplierTableId + ')', function (obj) {
-        var data = obj.data;
-        if (obj.event === 'create') {
-            createRow(obj);
-        } else if (obj.event === 'delete') {
-            deleteRow(obj);
-        } else if (obj.event === 'save') {
-            saveRow(obj);
-        }
+    // 新增 供应商
+    $('#add-btn').click(function () {
+        utils.clearForm('#supplier-form');// 清空表单
+        form.render();
     });
 
-    // 新增行
-    function createRow(obj) {
-        var dataBak = [];// 缓存表格已有的数据
-        var oldData = table.cache[supplierTableId];
-        var newRow = {
-            supplierId: '',
-            supplierName: '',
-            supplierPhone: '',
-            mainProducts: '',
-            supplierAddress: ''
-        };
-        // 获取当前行的位置
-        var rowIndex = -1;
-        try {
-            rowIndex = obj.tr[0].rowIndex;
-        } catch (e) {
-            layer.alert(MSG.system_exception, {icon: 2});
-        }
-        //将之前的数组备份
-        for (var i = 0; i < oldData.length; i++) {
-            if (!Array.isArray(oldData[i]) || oldData[i].length > 0)
-                dataBak.push(oldData[i]);
-        }
-        // 插入空白行
-        if (rowIndex != -1) {
-            dataBak.splice(rowIndex + 1, 0, newRow);
-        } else {
-            dataBak.push(newRow);
-        }
-        table.reload(supplierTableId, {
-            url:'',
-            data: dataBak   // 将新数据重新载入表格
-        });
-    }
-
-    // 删除行
-    function deleteRow(obj) {
-        // 此处的删除是真删除
-        layer.confirm(MSG.delete_confirm + '该供应商吗？', {icon: 0}, function (index) {
-            var supplierId = obj.data.supplierId;
-            if (utils.isNotNull(supplierId)) {
-                ajax.delete(rootMappint + '/delete/' + supplierId, function (success) {
+    // 删除 供应商
+    $('#del-btn').click(function () {
+        layer.confirm(MSG.delete_confirm + '该供应商吗？',{icon: 3}, function () {
+            var supplierId = $('#supplier-form input[name="supplierId"]').val();
+            if (supplierId != null && supplierId != undefined && supplierId != '') {
+                ajax.delete(rootMapping + '/delete/' + supplierId, function (success) {
                     if (success) {
                         layer.msg(MSG.delete_success);
-                        obj.del();
+                        table.reload(leftTableId, {done: function (res, curr, count) {
+                                $('#add-btn').click();// 清空表单
+                                $('#del-btn').addClass('layui-btn-disabled').attr('disabled','disabled');// 禁用 删除按钮
+                            }});
                     } else {
                         layer.msg(MSG.delete_fail);
                     }
                 });
             } else {
-                layer.msg(MSG.delete_success);
-                obj.del();
+                layer.msg('供应商ID为空，无法删除！', {icon:2});
             }
-            layer.close(index);
-            // 判断表格行是否全部删除
-            var oldData = table.cache[supplierTableId];
-            if (oldData.length > 0) {
-                // 做for循环的原因：obj.del只是把该行数据删掉，但是oldData的长度不变，必须要判断行数据是否为空
-                for (var i = 0; i < oldData.length; i++) {
-                    if (!Array.isArray(oldData[i]) || oldData[i].length > 0) {
-                        return;
-                    }
-                }
-            }
-            // 如果表格行全部被删除，则新增一个空白行
-            var newRow = [{
-                supplierId: '',
-                supplierName: '',
-                supplierPhone: '',
-                mainProducts: '',
-                supplierAddress: ''
-            }];
-            table.reload(supplierTableId, {
-                url: '',
-                data: newRow   // 将新数据重新载入表格
-            });
         });
-    }
-    
-    // 保存行
-    function saveRow(obj) {
-        // 行数据校验
-        var rowData = obj.data;
-        var rowIndex = obj.tr[0].rowIndex;
-        if (!utils.isNotNull(rowData.supplierName.trim())
-            || !utils.isNotNull(rowData.supplierPhone.trim())) {
-            layer.msg('供应商名称和联系方法不能为空！', {icon: 5, shift: 6});
+    });
+
+    // 表单自定义校验规则
+    form.verify({
+        repeat: function (value, item) { //value：表单的值、item：表单的DOM对象
+            var inputName = $(item).attr('name');
+            var url = rootMapping + '/notRepeatName';
+            var msg = '供应商名称已被占用，请重新填写！';
+            var data = {};
+            data[inputName] = value.trim();
+            data.supplierId = $('#supplier-form input[name="supplierId"]').val();
+            if (utils.isNotNull(url) && utils.isNotNull(data[inputName])) {
+                ajax.getJSONAsync(url, data, function (result) {
+                    if (result) msg = '';
+                }, false);
+            } else {
+                msg = '';
+            }
+            return msg;
         }
-        ajax.postJSON(rootMappint + '/save', rowData, function (supplier) {
-            if (supplier != null && utils.isNotNull(supplier.supplierId)) {
-                layer.msg(MSG.save_success);
-                var oldData = table.cache[supplierTableId];
-                for (var i = 0; i < oldData.length; i++) {
-                    if (oldData[i][table.config.indexName] === rowIndex) {
-                        oldData[i].supplierId = supplier.supplierId;
-                        oldData[i].supplierName = supplier.supplierName;
-                        oldData[i].supplierPhone = supplier.supplierPhone;
-                        oldData[i].mainProducts = supplier.mainProducts;
-                        oldData[i].supplierAddress = supplier.supplierAddress;
-                        break;
+    });
+
+    // 选中一条记录
+    function selectOne(supplierId) {
+        var tableData = table.cache[leftTableId];
+        if (utils.isNotEmpty(tableData)) {
+            if (utils.isNotNull(supplierId)) {
+                for (var i = 0; i < tableData.length; i++) {
+                    if (parseInt(tableData[i].supplierId) === parseInt(supplierId)) {
+                        var rowIndex = tableData[i][table.config.indexName];
+                        $('.left-panel .layui-table tbody tr div').removeClass('select');
+                        $('.left-panel .layui-table tbody tr[data-index="' + rowIndex + '"]').find('div').addClass('select');
+                        getById(supplierId);
                     }
                 }
-                table.reload(supplierTableId, {
-                    url: '',
-                    data: oldData
-                });
+            } else {
+                $('#add-btn').click();// 清空表单
+            }
+        } else {
+            $('#add-btn').click();// 清空表单
+        }
+    }
+
+    // 保存
+    form.on('submit(submit-btn)', function (data) {
+        var formData = data.field;
+        ajax.postJSON(rootMapping + '/save', formData, function (suppliers) {
+            if (suppliers != null && utils.isNotNull(suppliers.supplierId)) {
+                layer.msg(MSG.save_success);
+                table.reload(leftTableId, {done: function (res, curr, count) {
+                    var tableData = table.cache[leftTableId];
+                    for (var i = 0; i < tableData.length; i++) {
+                        if (parseInt(tableData[i].supplierId) === parseInt(suppliers.supplierId)) {
+                            var rowIndex = tableData[i][table.config.indexName];
+                            $('.left-panel .layui-table tbody tr div').removeClass('select');
+                            $('.left-panel .layui-table tbody tr[data-index="' + rowIndex + '"]').find('div').addClass('select');
+                            getById(suppliers.supplierId);
+                        }
+                    }
+                }});
             } else {
                 layer.msg(MSG.save_fail);
             }
-        }, obj.tr.find('td').last().find('a[lay-event="save"]'));
+        }, data.elem);
+        return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+    });
+
+    // 取消
+    $('#cancel-btn').click(function () {
+        var supplierId = $('#supplier-form input[name="supplierId"]').val();
+        if (supplierId !== null && supplierId !== undefined && supplierId !== '') {
+            getById(supplierId);// 重新查询
+        } else {
+            $('#add-btn').click();// 清空表单
+        }
+    });
+
+    // 监听行单击事件
+    table.on('row(left-table)', function (obj) {
+        $('.left-panel .layui-table tbody tr div').removeClass('select');
+        $(obj.tr).find('div').addClass('select');
+        $('#del-btn').removeClass('layui-btn-disabled').removeAttr('disabled');
+        // 获取id，根据ID查询多级字典，表单设置值
+        var supplierId = obj.data.supplierId;
+        getById(supplierId);
+
+    });
+
+    // 根据id查询
+    function getById(supplierId) {
+        if (utils.isNotNull(supplierId)) {
+            $.getJSON(rootMapping + '/findById', {supplierId: supplierId}, function (supplier) {
+                if (supplier != null) {
+                    // console.log(suppliers);
+                    form.val('supplier-form', supplier);
+                } else {
+                    layer.alert('未找到该供应商，请重试！',{icon: 0}, function (index) {
+                        table.reload(leftTableId, {done: function (res, curr, count) {
+                                $('#add-btn').click();// 清空表单
+                                $('#del-btn').addClass('layui-btn-disabled').attr('disabled','disabled');// 禁用 删除按钮
+                            }});
+                        layer.close(index);
+                    });
+                }
+            });
+        }else {
+            layer.msg('供应商ID为空，无法查询！', {icon:2});
+        }
     }
+
+    // 查询 供应商
+    var timeoutId = null;
+    var lastKeyword = '';
+    $('.left-panel .left-search input').bind('input porpertychange', function () {
+        var _keywords = $(this).val();
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        timeoutId = setTimeout(function() {
+            if (lastKeyword === _keywords) {
+                return;
+            }
+            table.reload(leftTableId,
+                {
+                    where: {
+                        keywords: _keywords
+                    },
+                    done: function (res, curr, count) {
+                        $('#add-btn').click();// 清空表单
+                        $('#del-btn').addClass('layui-btn-disabled').attr('disabled', 'disabled');// 禁用 删除按钮
+                    }
+                }
+            );
+            lastKeyword = _keywords;
+        }, 500);
+    });
 });

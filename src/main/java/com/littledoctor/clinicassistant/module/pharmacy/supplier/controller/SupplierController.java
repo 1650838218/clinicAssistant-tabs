@@ -3,11 +3,15 @@ package com.littledoctor.clinicassistant.module.pharmacy.supplier.controller;
 import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.common.plugin.layui.LayuiTableEntity;
 import com.littledoctor.clinicassistant.common.plugin.select.SelectOption;
+import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.entity.PharmacyItem;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.entity.Supplier;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.service.SupplierService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +30,24 @@ public class SupplierController {
 
     @Autowired
     private SupplierService supplierService;
+
+    /**
+     * 分页查询供应商
+     * @param keywords
+     * @param page
+     * @return
+     */
+    @RequestMapping(value = "/queryPage")
+    public LayuiTableEntity<Supplier> queryPage(String keywords, Pageable page) {
+        try {
+            if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
+            Page<Supplier> result = supplierService.queryPage(keywords,page);
+            return new LayuiTableEntity<Supplier>(result);
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
+        }
+        return new LayuiTableEntity<>();
+    }
 
     /**
      * 查询所有的供货商

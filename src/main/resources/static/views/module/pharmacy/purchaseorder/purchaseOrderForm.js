@@ -22,7 +22,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
 
     // 动态加载供应商
     utils.splicingOption({
-        elem: $('#' + formId + ' select[name="supplier.supplierId"]'),
+        elem: $('#' + formId + ' select[name="supplierId"]'),
         tips: '请选择供应商',
         url:'/pharmacy/supplier/getSelectOption',
         realValueName: 'realValue',
@@ -39,16 +39,6 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     var ymd = date.format('yyMMdd');
     var num = date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds();
     $('#purchaseorder-form input[name="purchaseOrderCode"]').val(ymd + num);
-
-    // 供应商下拉框监听
-    form.on('select(supplierId)', function (data) {
-        // 查询供应商的电话，自动填充
-        $.getJSON('/pharmacy/supplier/findById', {supplierId: data.value}, function (supplier) {
-            if (supplier != null && supplier.supplierPhone != null) {
-                $('#' + formId).find('input[name="supplier.supplierPhone"]').val(supplier.supplierPhone);
-            }
-        })
-    });
 
 
     // 判断是否可以进行编辑，返回true 可以编辑，false 不可以编辑
@@ -130,11 +120,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                 index: index,
                 field: 'pharmacyItemId'
             });
-            row.pharmacyItem.pharmacyItemName = $(ed.target).combogrid('getText');
-            row.pharmacyItem.pharmacyItemId = row.pharmacyItemId;
-            var selectRow = $(ed.target).combogrid('grid').datagrid('getSelected');	// get datagrid object  get the selected row
-            row.pharmacyItem.specifications = selectRow.specifications;
-            row.pharmacyItem.manufacturer = selectRow.manufacturer;
+            row.pharmacyItemName = $(ed.target).combogrid('getText');
             var ed = $(this).datagrid('getEditor', {
                 index: index,
                 field: 'purchaseUnit'
@@ -193,7 +179,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                 }
             },
             formatter:function(value,row){
-                return row.pharmacyItem.pharmacyItemName;
+                return row.pharmacyItemName;
             }
         },
         {
@@ -206,7 +192,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                 }
             },
             formatter:function(value,row){
-                return row.pharmacyItem.specifications;
+                return row.specifications;
             }
         },
         {
@@ -219,7 +205,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                 }
             },
             formatter:function(value,row){
-                return row.pharmacyItem.manufacturer;
+                return row.manufacturer;
             }
         },
         {
@@ -309,7 +295,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         }
         if (endEditing()) {
             for (var i = 0; i < rowCount; i++) {
-                var pharmacyItemId = gridData.rows[i].pharmacyItem.pharmacyItemId;
+                var pharmacyItemId = gridData.rows[i].pharmacyItemId;
                 var totalPrice = gridData.rows[i].totalPrice;
                 if (!utils.isNotNull(pharmacyItemId) || !utils.isNotNull(totalPrice)) {
                     beginEditing(i, 'pharmacyItemId');
@@ -332,6 +318,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         if (utils.isNotNull(purchaseOrderId)) {
             $.getJSON(rootMapping + "/queryById",{purchaseOrderId: purchaseOrderId}, function (purchaseOrder) {
                 if (purchaseOrder != null) {
+                    purchaseOrder.totalPrice = parseFloat(purchaseOrder.totalPrice).toFixed(2);
                     form.val('purchaseorder-form', purchaseOrder);// 表单赋值
                     form.render();
                     $('#' + itemTableId).datagrid('loadData', purchaseOrder.purchaseOrderDetails);// 加载采购单明细
@@ -353,6 +340,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
 
     // 保存采购单
     function savePurchaseOrder(obj, purchaseOrder) {
+        purchaseOrder.purchaseOrderType = 1;// 采购单类型，药品采购单
         ajax.postJSON(rootMapping + '/save', purchaseOrder, function (order) {
             if (order != null && order.purchaseOrderId != null) {
                 queryPurchaseOrderById(order.purchaseOrderId);// 根据ID查询采购单，并赋值
@@ -405,10 +393,72 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         window.location.reload();
     });
 
+    // 关闭按钮点击事件
+    $('button[lay-filter="close-btn"]').click(function () {
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.close(index); //再执行关闭
+    });
+
+    // 转到采购单列表
+/*    $('button[lay-filter="golist-btn"]').click(function () {
+        var treeMenu = $('#LAY-system-side-menu', parent.document);
+        treeMenu.find('li[data-name="pharmacy"] dl dd[data-name="supplier"] a').click();
+    });*/
+
     // 格式化总金额
     $('#'+ formId + ' input[name="totalPrice"]').bind('change', function () {
         var value = $(this).val();
         $(this).val((value - 0).toFixed(2));
+    });
+
+    // 弹框显示供应商信息
+    $('.layui-form-label-icon .layui-icon').click(function () {
+        // 获取被选中的供应商
+        var supplierId = $('#' + formId).find('select[name="supplierId"]').val();
+        if (utils.isNotNull(supplierId)) {
+            // ajax请求，根据供应商ID查询供应商
+            $.getJSON('/pharmacy/supplier/findById',{supplierId: supplierId}, function (supplier) {
+                if (supplier != null) {
+                    var content = '';
+                    content += '<form class="layui-form" action="">';
+                    content += '<div class="layui-form-item">';
+                    content += '<label class="layui-form-label">供应商名称：</label>';
+                    content += '<div class="layui-form-mid layui-word-aux">' + supplier.supplierName + '</div>';
+                    content += '</div>';
+                    content += '<div class="layui-form-item">';
+                    content += '<label class="layui-form-label">联系人1：</label>';
+                    content += '<div class="layui-form-mid layui-word-aux">' + supplier.linkMan1 + '</div>';
+                    content += '</div>';
+                    content += '<div class="layui-form-item">';
+                    content += '<label class="layui-form-label">联系电话1：</label>';
+                    content += '<div class="layui-form-mid layui-word-aux">' + supplier.phone1 + '</div>';
+                    content += '</div>';
+                    content += '<div class="layui-form-item">';
+                    content += '<label class="layui-form-label">联系人2：</label>';
+                    content += '<div class="layui-form-mid layui-word-aux">' + supplier.linkMan2 + '</div>';
+                    content += '</div>';
+                    content += '<div class="layui-form-item">';
+                    content += '<label class="layui-form-label">联系电话2：</label>';
+                    content += '<div class="layui-form-mid layui-word-aux">' + supplier.phone2 + '</div>';
+                    content += '</div>';
+                    content += '<div class="layui-form-item">';
+                    content += '<label class="layui-form-label">主营：</label>';
+                    content += '<div class="layui-form-mid layui-word-aux">' + supplier.mainProducts + '</div>';
+                    content += '</div>';
+                    content += '<div class="layui-form-item">';
+                    content += '<label class="layui-form-label">地址：</label>';
+                    content += '<div class="layui-form-mid layui-word-aux">' + supplier.address + '</div>';
+                    content += '</div>';
+                    content += '</form>';
+                    layer.open({ title: '供应商信息',area: '500px', content: content});
+                } else {
+                    layer.alert('未找到该供应商，请检查该供应商是否存在！',{icon: LAYER_ICON.warning});
+                }
+            });
+            // 显示供应商信息
+        } else {
+            layer.msg('请先选择一个供应商！');
+        }
     });
 
     // 解析url中的参数，如果包含采购单id，则自动查询采购单详情
@@ -418,6 +468,8 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         for (var i = 0; i < condition.length; i++) {
             var keyVal = condition[i].split('=');
             if (keyVal[0] === 'purchaseOrderId') {
+                $('button[lay-filter="cancel-btn"]').hide();
+                $('button[lay-filter="close-btn"]').show();
                 queryPurchaseOrderById(keyVal[1]);
                 break;
             }
