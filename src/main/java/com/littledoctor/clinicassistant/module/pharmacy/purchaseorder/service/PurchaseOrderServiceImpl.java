@@ -165,4 +165,45 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         }
         return false;
     }
+
+    /**
+     * 根据id查询采购单，用于入库单
+     * @param purchaseOrderId
+     * @return
+     */
+    @Override
+    public PurchaseOrder queryByIdForEntry(String purchaseOrderId) throws Exception {
+        if (StringUtils.isNotBlank(purchaseOrderId)) {
+            PurchaseOrder po = this.queryById(purchaseOrderId);
+            if (po != null) {
+                // 查询库存单位，换算单位，计算库存量，计算售价
+                List<PurchaseOrderDetail> details = po.getPurchaseOrderDetails();
+                // 查询字典显示值
+                DictionaryType dt = dictionaryService.getByKey("SLDW");
+                if (details != null && details.size() > 0 && dt != null && dt.getDictItem() != null && dt.getDictItem().size() > 0) {
+                    for (int i = 0, len = details.size(); i < len; i++) {
+                        PurchaseOrderDetail pod = details.get(i);
+                        if (pod != null) {
+                            PharmacyItem pi = pharmacyItemService.getById(String.valueOf(pod.getPharmacyItemId()));
+                            if (pi != null) {
+                                // 设置数量单位名称
+                                if (pi.getStockUnit() != null) {
+                                    for (int j = 0; j < dt.getDictItem().size(); j++) {
+                                        DictionaryItem di = dt.getDictItem().get(j);
+                                        if (pi.getStockUnit().equals(Integer.valueOf(di.getDictItemValue()))) {
+                                            pod.setStockUnitName(di.getDictItemName());// 库存单位
+                                            // TODO 查询换算单位，计算库存量
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return po;
+        }
+        return null;
+    }
 }

@@ -42,7 +42,7 @@
                             <div class="layui-inline">
                                 <label class="layui-form-label">采购单号：</label>
                                 <div class="layui-input-inline">
-                                    <input name="purchaseBillCode" readonly class="layui-input" lay-verify="required" placeholder="请填写采购单号">
+                                    <input name="purchaseOrderCode" readonly class="layui-input" lay-verify="required" placeholder="请填写采购单号">
                                 </div>
                             </div>
                             <div class="layui-inline">
@@ -52,11 +52,11 @@
                                 </div>
                             </div>
                         </div>
-                        <table id="warehousingentry-table" style="max-height: 390px"></table>
+                        <table id="warehousingentry-table"></table>
                         <div class="layui-row layui-col-space10" style="margin-top: 5px;">
                             <div class="layui-col-lg-offset10 layui-col-lg2" style="text-align: right;">
                                 <button type="button" lay-filter="submit-btn" lay-submit class="layui-btn layui-btn-sm">保存</button>
-                                <button type="button" lay-filter="cancel-btn" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
+                                <button type="button" lay-filter="close-btn" class="layui-btn layui-btn-primary layui-btn-sm">关闭</button>
                             </div>
                         </div>
                     </form>
@@ -65,11 +65,8 @@
         </div>
     </div>
 </div>
-<script src="/lib/easyui/1.8.1/jquery.min.js"></script>
 <script src="/lib/layuiadmin/layui/layui.js"></script>
 <script src="/js/common/constant.js"></script>
-<script src="/lib/easyui/1.8.1/jquery.easyui.min.js"></script>
-<script src="/lib/easyui/1.8.1/locale/easyui-lang-zh_CN.js"></script>
 <script src="/views/module/pharmacy/warehousingentry/warehousingentry.js"></script>
 </body>
 </html>

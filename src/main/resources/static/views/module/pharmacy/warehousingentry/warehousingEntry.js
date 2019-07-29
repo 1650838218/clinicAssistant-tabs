@@ -26,148 +26,41 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         isInitValue: true
     });
     // 生成单号
-    $('#' + formId + ' input[name="warehousingEntryCode"]').val(new Date().format('yyyyMMddhhmmssS'));
-
-    // 判断是否可以进行编辑，返回true 可以编辑，false 不可以编辑
-    var editIndex = undefined;
-    function endEditing(){
-        if (editIndex == undefined) return true;
-        if ($('#' + itemTableId).datagrid('validateRow', editIndex)){
-            $('#' + itemTableId).datagrid('endEdit', editIndex);
-            editIndex = undefined;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    // 开始编辑一行
-    function beginEditing(rowIndex,field) {
-        $('#' + itemTableId).datagrid('selectRow', rowIndex).datagrid('beginEdit', rowIndex);
-        var ed = $('#' + itemTableId).datagrid('getEditor', {index:rowIndex,field:field});
-        if (ed){
-            ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
-        }
-        setEditing(rowIndex);
-        editIndex = rowIndex;
-    }
+    var date = new Date();
+    var ymd = date.format('yyMMdd');
+    var num = date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds();
+    $('#' + formId + ' input[name="warehousingEntryCode"]').val(ymd + num);
 
     // 初始化表格
-    $('#' + itemTableId).datagrid({
-        fitColumns: true,
-        autoRowHeight: true,
-        singleSelect: true,
-        rownumbers:true,
-        columns: [[
-            {
-                field: 'goodsName', title: '药品名称', width: '210',
-                formatter:function(value,row){
-                    return row.goodsName;
-                }
-            },
-            {field: 'specifications', title: '规格', width: '200', editor: {type:'textbox',options:{type:'text'}}},
-            {field: 'manufacturer', title: '制造商', width: '150', editor: {type:'textbox',options:{type:'text'}}},
-            {field: 'count', title: '数量', width: '80',
-                editor: {
-                    type:'numberbox',
-                    options:{
-                        precision:2,
-                        required: true
-                    }
-                },
-                formatter: function (value, row) {
-                    if (value != null) return (value - 0).toFixed(2);
-                }
-            },
-            {
-                field: 'countUnit', title: '单位', width: '120',
-                editor: {
-                    type: 'combobox',
-                    options: {
-                        valueField: 'dictItemValue',
-                        textField: 'dictItemName',
-                        method: 'get',
-                        url: '/system/dictionary/oneLevel/getItemByKey?dictTypeKey=SLDW',
-                        // required: true,
-                        mode: 'remote',
-                        panelHeight:'auto',
-                        panelMaxHeight: 200,
-                        editable: false
-                    }
-                },
-                formatter:function(value,row){
-                    return row.countUnitName;
-                }
-            },
-            {field: 'unitPrice', title: '单价(元)', width: '100',
-                editor: {
-                    type:'numberbox',
-                    options:{
-                        precision:2,
-                        required: true
-                    }
-                },
-                formatter: function (value, row) {
-                    if (value != null) return (value - 0).toFixed(2);
-                }
-            },
-            {field: 'totalPrice', title: '总价(元)', width: '100',
-                editor: {
-                    type:'numberbox',
-                    options:{
-                        precision:2,
-                        required: true
-                    }
-                },
-                formatter: function (value, row) {
-                    if (value != null) return (value - 0).toFixed(2);
-                }
-            }
+    table.render({
+        elem: '#' + itemTableId,
+        height: 'full-100',
+        cols: [[
+            {field: 'purchaseOrderItemId', title: TABLE_COLUMN.numbers, type: 'numbers'},
+            {field: 'pharmacyItemName', title: '药品名称', width: '12%',fixed: 'left'},
+            {field: 'specifications', title: '规格', width: '10%'},
+            {field: 'manufacturer', title: '制造商'},
+            {field: 'batchNumber', title: '批号', width: '10%'},
+            {field: 'manufactureDate', title: '生产日期', width: '10%'},
+            {field: 'expireDate', title: '有效期至', width: '10%'},
+            {field: 'purchaseCount', title: '数量', width: '7%',fixed: 'right',templet: function (d) {
+                    return parseFloat(d.purchaseCount).toFixed(2);
+                }},
+            {field: 'purchaseUnitName', title: '单位', width: '7%',fixed: 'right'},
+            {field: 'unitPrice', title: '单价(元)', width: '8%',fixed: 'right',templet: function (d) {
+                    return parseFloat(d.unitPrice).toFixed(2);
+                }},
+            {field: '', title: '库存数量', width: '8%',fixed: 'right', templet: function (d) {
+                    // 异步请求换算单位
+                    return parseFloat(d.purchaseCount);
+                }},
+            {field: 'stockUnitName', title: '库存单位', width: '8%',fixed: 'right', templet: function (d) {
+                    // 异步请求换算单位
+                    return parseFloat(d.purchaseCount);
+                }},
+            {field: '', title: '零售价', width: '8%',fixed: 'right'}
         ]],
-        data: [{}],
-        onClickCell: function (rowIndex, field, value) {
-            if (editIndex != rowIndex){
-                if (endEditing()){
-                    beginEditing(rowIndex, field);
-                } else {
-                    setTimeout(function(){
-                        $('#' + itemTableId).datagrid('selectRow', editIndex);
-                    },0);
-                }
-            }
-        },
-        onEndEdit: function (index, row) {
-            var ed = $(this).datagrid('getEditor', {
-                index: index,
-                field: 'medicineListId'
-            });
-            row.goodsName = $(ed.target).combobox('getText');
-            var ed = $(this).datagrid('getEditor', {
-                index: index,
-                field: 'countUnit'
-            });
-            row.countUnitName = $(ed.target).combobox('getText');
-        }
     });
-
-    //计算表格每一行的总价
-    function setEditing(rowIndex){
-        var editors = $('#' + itemTableId).datagrid('getEditors', rowIndex);
-        var countEditor = editors[3];// 数量
-        var unitPriceEditor = editors[5];// 单价
-        var totalPriceEditor = editors[6];// 总价
-        $(countEditor.target.siblings("span").children("input").first()).on("change", function(){
-            calculate();
-        });
-        $(unitPriceEditor.target.siblings("span").children("input").first()).on("change", function(){
-            calculate();
-        });
-        function calculate(){
-            var cost = ($(countEditor.target.siblings("span").children("input").first()).val()) * ($(unitPriceEditor.target.siblings("span").children("input").first()).val());
-            console.log(cost);
-            $(totalPriceEditor.target).numberbox("setValue",cost);
-        }
-    }
 
     // 明细表格校验
     function validateGrid() {
@@ -198,13 +91,13 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     }
 
     // 根据ID查询采购单
-    function queryPurchaseBillById(purchaseBillId) {
-        if (utils.isNotNull(purchaseBillId)) {
-            $.getJSON(rootMapping + "/queryById",{purchaseBillId: purchaseBillId}, function (purchaseBill) {
-                if (purchaseBill != null) {
-                    form.val('purchaseorder-form', purchaseBill);// 表单赋值
+    function queryPurchaseOrderById(purchaseOrderId) {
+        if (utils.isNotNull(purchaseOrderId)) {
+            $.getJSON(rootMapping + "/queryById",{purchaseOrderId: purchaseOrderId, queryType: 'entry'}, function (purchaseOrder) {
+                if (purchaseOrder != null) {
+                    form.val('purchaseorder-form', purchaseOrder);// 表单赋值
                     form.render();
-                    $('#' + itemTableId).datagrid('loadData', purchaseBill.purchaseBillItems);// 加载采购单明细
+                    $('#' + itemTableId).datagrid('loadData', purchaseOrder.purchaseOrderDetails);// 加载采购单明细
                 }
             });
         } else {
@@ -212,20 +105,11 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         }
     }
 
-    // 总分校验，总金额不能大于明细金额之和；true：通过，false：不通过
-    function generalBranchCheck(totalAmount, billItems) {
-        var totalItems = 0;
-        for (var i = 0; i < billItems.length; i++) {
-            totalItems += (billItems[i].totalPrice - 0);
-        }
-        return totalAmount <= totalItems;
-    }
-
     // 保存采购单
-    function savePurchaseBill(obj, purchaseBill) {
-        ajax.postJSON(rootMapping + '/save', purchaseBill, function (bill) {
-            if (bill != null && bill.purchaseBillId != null) {
-                queryPurchaseBillById(bill.purchaseBillId);// 根据ID查询采购单，并赋值
+    function savePurchaseOrder(obj, purchaseOrder) {
+        ajax.postJSON(rootMapping + '/save', purchaseOrder, function (bill) {
+            if (bill != null && bill.purchaseOrderId != null) {
+                queryPurchaseOrderById(bill.purchaseOrderId);// 根据ID查询采购单，并赋值
                 layer.msg(MSG.save_success);
             } else {
                 layer.msg(MSG.save_fail);
@@ -242,11 +126,11 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     form.on('submit(submit-btn)', function(obj){
         utils.btnDisabled($(obj.elem));
         if (validateGrid()) {
-            var purchaseBill = obj.field;// 表单值
+            var purchaseOrder = obj.field;// 表单值
             var billItems = $('#' + itemTableId).datagrid('getData');// 获取表格数据
             // console.log(billItems);
-            purchaseBill.purchaseBillItems = billItems.rows;
-            if (!generalBranchCheck(purchaseBill.totalPrice, purchaseBill.purchaseBillItems)) {
+            purchaseOrder.purchaseOrderItems = billItems.rows;
+            if (!generalBranchCheck(purchaseOrder.totalPrice, purchaseOrder.purchaseOrderItems)) {
                 layer.confirm('采购单总金额大于明细总价之和，数据存在错误风险，确认保存吗？',
                     {
                         icon: LAYER_ICON.question,
@@ -258,11 +142,11 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                         }
                     },
                     function (index) {
-                        savePurchaseBill(obj, purchaseBill);
+                        savePurchaseOrder(obj, purchaseOrder);
                         layer.close(index);
                     });
             }else {
-                savePurchaseBill(obj, purchaseBill);
+                savePurchaseOrder(obj, purchaseOrder);
             }
         } else {
             utils.btnEnabled($(obj.elem));
@@ -271,14 +155,9 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     });
 
     // 取消按钮点击事件
-    $('button[lay-filter="cancel-btn"]').click(function () {
-        window.location.reload();
-    });
-
-    // 格式化总金额
-    $('#'+ formId + ' input[name="totalPrice"]').bind('change', function () {
-        var value = $(this).val();
-        $(this).val((value - 0).toFixed(2));
+    $('button[lay-filter="close-btn"]').click(function () {
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.close(index); //再执行关闭
     });
 
     // 解析url中的参数，如果包含采购单id，则自动查询采购单详情
@@ -287,8 +166,8 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         var condition = search.substr(1).split('&');
         for (var i = 0; i < condition.length; i++) {
             var keyVal = condition[i].split('=');
-            if (keyVal[0] === 'purchaseBillId') {
-                queryPurchaseBillById(keyVal[1]);
+            if (keyVal[0] === 'purchaseOrderId') {
+                queryPurchaseOrderById(keyVal[1]);
                 break;
             }
         }

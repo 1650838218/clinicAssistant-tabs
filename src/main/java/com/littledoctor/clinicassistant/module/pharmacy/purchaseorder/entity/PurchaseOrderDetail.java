@@ -69,6 +69,10 @@ public class PurchaseOrderDetail {
     @Transient
     private String purchaseUnitName;
 
+    /** 库存单位名称 */
+    @Transient
+    private String stockUnitName;
+
     public Integer getPurchaseOrderDetailId() {
         return purchaseOrderDetailId;
     }
@@ -179,5 +183,13 @@ public class PurchaseOrderDetail {
 
     public void setPurchaseUnitName(String purchaseUnitName) {
         this.purchaseUnitName = purchaseUnitName;
+    }
+
+    public String getStockUnitName() {
+        return stockUnitName;
+    }
+
+    public void setStockUnitName(String stockUnitName) {
+        this.stockUnitName = stockUnitName;
     }
 }

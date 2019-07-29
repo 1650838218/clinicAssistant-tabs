@@ -74,10 +74,13 @@ public class PurchaseOrderController {
      * @return
      */
     @RequestMapping(value = "queryById", method = RequestMethod.GET)
-    public PurchaseOrder queryById(@RequestParam String purchaseOrderId) {
+    public PurchaseOrder queryById(@RequestParam String purchaseOrderId, String queryType) {
         try {
-            PurchaseOrder purchaseOrder = purchaseOrderService.queryById(purchaseOrderId);
-            return purchaseOrder;
+            if ("entry".equals(queryType)) {
+                return purchaseOrderService.queryByIdForEntry(purchaseOrderId);
+            } else {
+                return purchaseOrderService.queryById(purchaseOrderId);
+            }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
