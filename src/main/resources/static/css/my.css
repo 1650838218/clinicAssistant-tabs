@@ -88,7 +88,7 @@
 /*右侧面板*/
 .center-panel {
     padding: 0px 10px;
-    margin: 10px;
+    margin: 10px 10px 0 10px;
     background-color: white;
 }
 

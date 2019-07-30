@@ -24,10 +24,6 @@ public class WarehousingEntry {
     @Column(name = "PURCHASE_BILL_ID")
     private Integer purchaseBillId;
 
-    /** 采购单号 */
-    @Transient
-    private String purchaseBillCode;
-
     /** 入库单单号 取当前时间yyyymmddhhmmsssss */
     @Column(name = "WAREHOUSING_ENTRY_CODE")
     private String warehousingEntryCode;
@@ -47,7 +43,7 @@ public class WarehousingEntry {
     /** 入库单明细 */
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     @JoinColumn(name = "WAREHOUSING_ENTRY_ID")
-    private List<WarehousingEntryItem> warehousingEntryItems = new ArrayList<>();
+    private List<WarehousingEntryDetail> warehousingEntryDetails = new ArrayList<>();
 
     public Integer getWarehousingEntryId() {
         return warehousingEntryId;
@@ -55,6 +51,14 @@ public class WarehousingEntry {
 
     public void setWarehousingEntryId(Integer warehousingEntryId) {
         this.warehousingEntryId = warehousingEntryId;
+    }
+
+    public Integer getPurchaseBillId() {
+        return purchaseBillId;
+    }
+
+    public void setPurchaseBillId(Integer purchaseBillId) {
+        this.purchaseBillId = purchaseBillId;
     }
 
     public String getWarehousingEntryCode() {
@@ -73,14 +77,6 @@ public class WarehousingEntry {
         this.warehousingEntryDate = warehousingEntryDate;
     }
 
-    public Integer getPurchaseBillId() {
-        return purchaseBillId;
-    }
-
-    public void setPurchaseBillId(Integer purchaseBillId) {
-        this.purchaseBillId = purchaseBillId;
-    }
-
     public Date getCreateTime() {
         return createTime;
     }
@@ -97,31 +93,11 @@ public class WarehousingEntry {
         this.updateTime = updateTime;
     }
 
-    public List<WarehousingEntryItem> getWarehousingEntryItems() {
-        return warehousingEntryItems;
+    public List<WarehousingEntryDetail> getWarehousingEntryDetails() {
+        return warehousingEntryDetails;
     }
 
-    public void setWarehousingEntryItems(List<WarehousingEntryItem> warehousingEntryItems) {
-        this.warehousingEntryItems = warehousingEntryItems;
-    }
-
-    public String getPurchaseBillCode() {
-        return purchaseBillCode;
-    }
-
-    public void setPurchaseBillCode(String purchaseBillCode) {
-        this.purchaseBillCode = purchaseBillCode;
-    }
-
-    /** 复制一个新的对象，不包含入库单明细 */
-    public WarehousingEntry copy(){
-        WarehousingEntry we = new WarehousingEntry();
-        we.setCreateTime(this.getCreateTime());
-        we.setPurchaseBillId(this.getPurchaseBillId());
-        we.setUpdateTime(this.getUpdateTime());
-        we.setWarehousingEntryCode(this.getWarehousingEntryCode());
-        we.setWarehousingEntryDate(this.getWarehousingEntryDate());
-        we.setWarehousingEntryId(this.getWarehousingEntryId());
-        return we;
+    public void setWarehousingEntryDetails(List<WarehousingEntryDetail> warehousingEntryDetails) {
+        this.warehousingEntryDetails = warehousingEntryDetails;
     }
 }

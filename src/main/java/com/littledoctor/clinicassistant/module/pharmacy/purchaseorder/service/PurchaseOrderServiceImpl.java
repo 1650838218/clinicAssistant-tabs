@@ -9,6 +9,7 @@ import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.Pur
 import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.PurchaseOrderSingle;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.entity.Supplier;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.service.SupplierService;
+import com.littledoctor.clinicassistant.module.pharmacy.unitconversion.service.UnitConversionService;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryItem;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryType;
 import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
@@ -49,6 +50,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Autowired
     private SupplierService supplierService;
+
+    @Autowired
+    private UnitConversionService unitConversionService;
 
     /**
      * 分页查询订单
@@ -175,26 +179,28 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     public PurchaseOrder queryByIdForEntry(String purchaseOrderId) throws Exception {
         if (StringUtils.isNotBlank(purchaseOrderId)) {
             PurchaseOrder po = this.queryById(purchaseOrderId);
-            if (po != null) {
-                // 查询库存单位，换算单位，计算库存量，计算售价
-                List<PurchaseOrderDetail> details = po.getPurchaseOrderDetails();
-                // 查询字典显示值
-                DictionaryType dt = dictionaryService.getByKey("SLDW");
-                if (details != null && details.size() > 0 && dt != null && dt.getDictItem() != null && dt.getDictItem().size() > 0) {
-                    for (int i = 0, len = details.size(); i < len; i++) {
-                        PurchaseOrderDetail pod = details.get(i);
-                        if (pod != null) {
-                            PharmacyItem pi = pharmacyItemService.getById(String.valueOf(pod.getPharmacyItemId()));
-                            if (pi != null) {
-                                // 设置数量单位名称
-                                if (pi.getStockUnit() != null) {
-                                    for (int j = 0; j < dt.getDictItem().size(); j++) {
-                                        DictionaryItem di = dt.getDictItem().get(j);
-                                        if (pi.getStockUnit().equals(Integer.valueOf(di.getDictItemValue()))) {
-                                            pod.setStockUnitName(di.getDictItemName());// 库存单位
-                                            // TODO 查询换算单位，计算库存量
-                                            break;
+            if (po == null) return null;
+            // 查询库存单位，换算单位，计算库存量，计算售价
+            List<PurchaseOrderDetail> details = po.getPurchaseOrderDetails();
+            // 查询字典显示值
+            DictionaryType dt = dictionaryService.getByKey("KCDW");
+            if (details != null && details.size() > 0 && dt != null && dt.getDictItem() != null && dt.getDictItem().size() > 0) {
+                for (int i = 0, len = details.size(); i < len; i++) {
+                    PurchaseOrderDetail pod = details.get(i);
+                    if (pod != null) {
+                        PharmacyItem pi = pharmacyItemService.getById(String.valueOf(pod.getPharmacyItemId()));
+                        if (pi != null) {
+                            // 设置数量单位名称
+                            if (pi.getStockUnit() != null) {
+                                for (int j = 0; j < dt.getDictItem().size(); j++) {
+                                    DictionaryItem di = dt.getDictItem().get(j);
+                                    if (pi.getStockUnit().equals(Integer.valueOf(di.getDictItemValue()))) {
+                                        pod.setStockUnitName(di.getDictItemName());// 库存单位
+                                        Double unitConversion = unitConversionService.queryConversionValue(String.valueOf(pod.getPurchaseUnit()), String.valueOf(pi.getStockUnit()));//  查询换算单位，计算库存量
+                                        if (unitConversion != null) {
+                                            pod.setStockCount(pod.getPurchaseCount() * unitConversion);
                                         }
+                                        break;
                                     }
                                 }
                             }

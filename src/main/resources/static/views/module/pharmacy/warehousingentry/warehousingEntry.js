@@ -1,5 +1,5 @@
 /** 采购单 */
-//@ sourceURL=purchaseOrderForm.js
+//@ sourceURL=warehousingEntry.js
 layui.config({
     base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
 }).extend({
@@ -34,58 +34,77 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     // 初始化表格
     table.render({
         elem: '#' + itemTableId,
-        height: 'full-100',
+        height: 'full-145',
         cols: [[
-            {field: 'purchaseOrderItemId', title: TABLE_COLUMN.numbers, type: 'numbers'},
-            {field: 'pharmacyItemName', title: '药品名称', width: '12%',fixed: 'left'},
-            {field: 'specifications', title: '规格', width: '10%'},
-            {field: 'manufacturer', title: '制造商'},
-            {field: 'batchNumber', title: '批号', width: '10%'},
-            {field: 'manufactureDate', title: '生产日期', width: '10%'},
-            {field: 'expireDate', title: '有效期至', width: '10%'},
-            {field: 'purchaseCount', title: '数量', width: '7%',fixed: 'right',templet: function (d) {
+            {field: 'purchaseOrderDetailId', title: TABLE_COLUMN.numbers, type: 'numbers',fixed: 'left'},
+            {field: 'pharmacyItemName', title: '药品名称', width: '180',fixed: 'left'},
+            {field: 'specifications', title: '规格', width: '150'},
+            {field: 'manufacturer', title: '制造商', width: '200'},
+            {field: 'batchNumber', title: '批号', width: '100'},
+            {field: 'manufactureDate', title: '生产日期', width: '120'},
+            {field: 'expireDate', title: '有效期至', width: '120'},
+            {field: 'purchaseCount', title: '采购数量', width: '100',fixed: 'right',templet: function (d) {
                     return parseFloat(d.purchaseCount).toFixed(2);
                 }},
-            {field: 'purchaseUnitName', title: '单位', width: '7%',fixed: 'right'},
-            {field: 'unitPrice', title: '单价(元)', width: '8%',fixed: 'right',templet: function (d) {
+            {field: 'purchaseUnitName', title: '采购单位', width: '90',fixed: 'right'},
+            {field: 'unitPrice', title: '单价(元)', width: '100',fixed: 'right',templet: function (d) {
                     return parseFloat(d.unitPrice).toFixed(2);
                 }},
-            {field: '', title: '库存数量', width: '8%',fixed: 'right', templet: function (d) {
-                    // 异步请求换算单位
-                    return parseFloat(d.purchaseCount);
+            {field: 'stockCount', title: '库存数量', width: '100',fixed: 'right', templet: function (d) {
+                    return parseFloat(d.stockCount).toFixed(2);
                 }},
-            {field: 'stockUnitName', title: '库存单位', width: '8%',fixed: 'right', templet: function (d) {
-                    // 异步请求换算单位
-                    return parseFloat(d.purchaseCount);
-                }},
-            {field: '', title: '零售价', width: '8%',fixed: 'right'}
+            {field: 'stockUnitName', title: '库存单位', width: '90',fixed: 'right'},
+            {
+                field: 'sellingPrice',
+                title: '零售价(元)',
+                width: '100',
+                fixed: 'right',
+                edit: 'text',
+                templet: function (d) {
+                    if (d.sellingPrice) {
+                        return parseFloat(d.sellingPrice).toFixed(2);
+                    } else {
+                        return '';
+                    }
+                }
+            }
         ]],
     });
 
+    // 单元格编辑事件
+    /*table.on('edit(' + itemTableId + ')', function(obj){ //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
+        // console.log(obj.value); //得到修改后的值
+        // console.log(obj.field); //当前编辑的字段名
+        // console.log(obj.data); //所在行的所有相关数据
+        if (obj.field === 'sellingPrice') {
+            if (isNaN(obj.value)) {
+                // 不是数字
+                var inputElem = $(this);
+                var oldValue = inputElem.prev().text();
+                var tdElem = inputElem.closest('td');
+                var data = {};
+                data[obj.field] = oldValue;
+                layer.msg('只能输入数字！', function () {
+                    inputElem.blur();
+                    obj.update(data);
+                    tdElem.click();
+                });
+            } else {
+                var data = {};
+                data[obj.field] = parseFloat(obj.value).toFixed(2);
+                obj.update(data);
+            }
+        }
+    });*/
+
     // 明细表格校验
     function validateGrid() {
-        var gridData = $('#' + itemTableId).datagrid('getData');
-        var rowCount = gridData.total;
-        if (rowCount === 0) {
-            layer.msg("采购单至少要有一条明细数据！");
-            return false;
-        }
-        if (endEditing()) {
-            for (var i = 0; i < rowCount; i++) {
-                var goodName = gridData.rows[i].goodsName;
-                var totalPrice = gridData.rows[i].totalPrice;
-                if (!utils.isNotNull(goodName) || !utils.isNotNull(totalPrice)) {
-                    beginEditing(i, 'medicineListId');
-                    layer.msg("请将明细数据补充完整！");
-                    return false;
-                }
+        var tableData = table.cache[itemTableId];
+        for (var i = 0, len = tableData.leng; i < len; i++) {
+            if (!utils.isNotNull(tableData[i].sellingPrice)) {
+                layer.alert('零售价不能为空，请补充完整！', {icon: LAYER_ICON.error});
+                return false;
             }
-        } else {
-            setTimeout(function(){
-                $('#' + itemTableId).datagrid('selectRow', editIndex);
-            },0);
-            layer.msg("请将明细数据补充完整！");
-            return false;
         }
         return true;
     }
@@ -93,11 +112,11 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     // 根据ID查询采购单
     function queryPurchaseOrderById(purchaseOrderId) {
         if (utils.isNotNull(purchaseOrderId)) {
-            $.getJSON(rootMapping + "/queryById",{purchaseOrderId: purchaseOrderId, queryType: 'entry'}, function (purchaseOrder) {
+            $.getJSON("/pharmacy/purchaseorder/queryById",{purchaseOrderId: purchaseOrderId, queryType: 'entry'}, function (purchaseOrder) {
                 if (purchaseOrder != null) {
                     form.val('purchaseorder-form', purchaseOrder);// 表单赋值
                     form.render();
-                    $('#' + itemTableId).datagrid('loadData', purchaseOrder.purchaseOrderDetails);// 加载采购单明细
+                    table.reload(itemTableId,{data:purchaseOrder.purchaseOrderDetails});// 加载采购单明细
                 }
             });
         } else {
@@ -105,12 +124,13 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         }
     }
 
-    // 保存采购单
-    function savePurchaseOrder(obj, purchaseOrder) {
-        ajax.postJSON(rootMapping + '/save', purchaseOrder, function (bill) {
-            if (bill != null && bill.purchaseOrderId != null) {
-                queryPurchaseOrderById(bill.purchaseOrderId);// 根据ID查询采购单，并赋值
+    // 保存入库单
+    function saveWarehousingEntry(obj, warehousingEntry) {
+        ajax.postJSON(rootMapping + '/save', warehousingEntry, function (bill) {
+            if (bill != null && bill.warehousingEntryId != null) {
+                // queryWarehousingEntryById(bill.warehousingEntryId);// 根据ID查询入库单，并赋值
                 layer.msg(MSG.save_success);
+                // TODO 关闭当前页面，刷新采购单的状态
             } else {
                 layer.msg(MSG.save_fail);
             }
@@ -126,28 +146,11 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     form.on('submit(submit-btn)', function(obj){
         utils.btnDisabled($(obj.elem));
         if (validateGrid()) {
-            var purchaseOrder = obj.field;// 表单值
-            var billItems = $('#' + itemTableId).datagrid('getData');// 获取表格数据
+            var warehousingEntry = obj.field;// 表单值
+            var billItems = table.cache[itemTableId];// 获取表格数据
             // console.log(billItems);
-            purchaseOrder.purchaseOrderItems = billItems.rows;
-            if (!generalBranchCheck(purchaseOrder.totalPrice, purchaseOrder.purchaseOrderItems)) {
-                layer.confirm('采购单总金额大于明细总价之和，数据存在错误风险，确认保存吗？',
-                    {
-                        icon: LAYER_ICON.question,
-                        btn2: function(index, layero) {
-                            utils.btnEnabled($(obj.elem));
-                        },
-                        cancel: function (index, layero) {
-                            utils.btnEnabled($(obj.elem));
-                        }
-                    },
-                    function (index) {
-                        savePurchaseOrder(obj, purchaseOrder);
-                        layer.close(index);
-                    });
-            }else {
-                savePurchaseOrder(obj, purchaseOrder);
-            }
+            warehousingEntry.warehousingEntryDetails = billItems.rows;
+            saveWarehousingEntry(obj, warehousingEntry);
         } else {
             utils.btnEnabled($(obj.elem));
         }

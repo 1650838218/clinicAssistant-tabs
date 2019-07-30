@@ -73,6 +73,10 @@ public class PurchaseOrderDetail {
     @Transient
     private String stockUnitName;
 
+    /** 库存数量 */
+    @Transient
+    private Double stockCount;
+
     public Integer getPurchaseOrderDetailId() {
         return purchaseOrderDetailId;
     }
@@ -191,5 +195,13 @@ public class PurchaseOrderDetail {
 
     public void setStockUnitName(String stockUnitName) {
         this.stockUnitName = stockUnitName;
+    }
+
+    public Double getStockCount() {
+        return stockCount;
+    }
+
+    public void setStockCount(Double stockCount) {
+        this.stockCount = stockCount;
     }
 }

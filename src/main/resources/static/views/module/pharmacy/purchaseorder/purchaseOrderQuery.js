@@ -86,7 +86,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
             updateRow(obj);
         } else if (obj.event === 'delete') {
             deleteRow(obj);
-        } else if (obj.event === 'warehousingEntry') {
+        } else if (obj.event === 'entry') {
             warehousingEntryRow(obj);// 入库
         } else if (obj.event === 'lookSupplier') { // 监听单元格事件
             lookSupplier(obj);// 查看供应商详情
@@ -149,7 +149,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
             area: [width+'px', height+'px'],
             title: false,
             fixed: false, //不固定
-            content: '/views/module/pharmacy/purchaseorder/purchaseOrderForm.html?purchaseOrderId='+obj.data.purchaseOrderId,
+            content: '/views/module/pharmacy/warehousingentry/warehousingEntry.html?purchaseOrderId='+obj.data.purchaseOrderId,
         });
         layer.full(index);
     }
