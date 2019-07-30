@@ -56,7 +56,7 @@
                                 <label class="layui-form-label"><span class="required">*</span>药品名称：</label>
                                 <div class="layui-input-block">
                                     <input type="text" name="pharmacyItemName" autocomplete="off" class="layui-input"
-                                           maxlength="50" placeholder="请输入药品名称" lay-verify="required|repeat">
+                                           maxlength="50" placeholder="请填写药品名称" lay-verify="required|repeat">
                                 </div>
                             </div>
                             <div class="layui-col-sm4">
@@ -77,7 +77,7 @@
                             <div class="layui-col-sm4">
                                 <label class="layui-form-label">条形码：</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="barcode" class="layui-input" placeholder="请输入条形码"
+                                    <input type="text" name="barcode" class="layui-input" placeholder="请填写条形码"
                                            autocomplete="off" maxlength="50" lay-verify="repeat|regExp">
                                 </div>
                             </div>
@@ -85,14 +85,14 @@
                                 <label class="layui-form-label"><span class="required">*</span>全拼：</label>
                                 <div class="layui-input-block">
                                     <input name="fullPinyin" autocomplete="off" class="layui-input"
-                                           maxlength="50" placeholder="请输入全拼" lay-verify="required">
+                                           maxlength="50" placeholder="请填写全拼" lay-verify="required">
                                 </div>
                             </div>
                             <div class="layui-col-sm4">
                                 <label class="layui-form-label"><span class="required">*</span>简拼：</label>
                                 <div class="layui-input-block">
                                     <input type="text" name="abbreviation" autocomplete="off" class="layui-input"
-                                           maxlength="50" placeholder="请输入简拼" lay-verify="required">
+                                           maxlength="50" placeholder="请填写简拼" lay-verify="required">
                                 </div>
                             </div>
                         </div>
@@ -101,14 +101,14 @@
                                 <label class="layui-form-label">成分：</label>
                                 <div class="layui-input-block">
                                     <textarea name="component" autocomplete="off" class="layui-textarea" rows="2"
-                                           maxlength="200" placeholder="请输入成分"></textarea>
+                                           maxlength="200" placeholder="请填写成分"></textarea>
                                 </div>
                             </div>
                             <div class="layui-col-sm6">
                                 <label class="layui-form-label">功能主治：</label>
                                 <div class="layui-input-block">
                                     <textarea name="functionAttending" autocomplete="off" class="layui-textarea" rows="2"
-                                              maxlength="300" placeholder="请输入功能主治"></textarea>
+                                              maxlength="300" placeholder="请填写功能主治"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -117,14 +117,14 @@
                                 <label class="layui-form-label">规格：</label>
                                 <div class="layui-input-block">
                                     <input name="specifications" autocomplete="off" class="layui-input"
-                                              maxlength="100" placeholder="请输入规格">
+                                              maxlength="100" placeholder="请填写规格">
                                 </div>
                             </div>
                             <div class="layui-col-sm6">
                                 <label class="layui-form-label">用法用量：</label>
                                 <div class="layui-input-block">
                                     <input name="usageAndDosage" autocomplete="off" class="layui-input"
-                                           maxlength="100" placeholder="请输入用法用量">
+                                           maxlength="100" placeholder="请填写用法用量">
                                 </div>
                             </div>
                         </div>
@@ -133,14 +133,35 @@
                                 <label class="layui-form-label">禁忌：</label>
                                 <div class="layui-input-block">
                                     <textarea name="taboo" autocomplete="off" class="layui-textarea" rows="2"
-                                              maxlength="300" placeholder="请输入禁忌"></textarea>
+                                              maxlength="300" placeholder="请填写禁忌"></textarea>
                                 </div>
                             </div>
                             <div class="layui-col-sm6">
                                 <label class="layui-form-label">制造商：</label>
                                 <div class="layui-input-block">
                                     <textarea name="manufacturer" autocomplete="off" class="layui-textarea" rows="2"
-                                           maxlength="50" placeholder="请输入制造商"></textarea>
+                                           maxlength="50" placeholder="请填写制造商"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row layui-col-space5 layui-form-item">
+                            <div class="layui-col-sm4">
+                                <label class="layui-form-label"><span class="required">*</span>采购单位：</label>
+                                <div class="layui-input-block">
+                                    <select name="purchaseUnit" lay-verify="required" placeholder="请选择采购单位"></select>
+                                </div>
+                            </div>
+                            <div class="layui-col-sm4">
+                                <label class="layui-form-label"><span class="required">*</span>库存单位：</label>
+                                <div class="layui-input-block">
+                                    <select name="stockUnit" lay-verify="required" placeholder="请选择库存单位"></select>
+                                </div>
+                            </div>
+                            <div class="layui-col-sm4">
+                                <label class="layui-form-label"><span class="required">*</span>单位换算：</label>
+                                <div class="layui-input-block">
+                                    <input name="unitConvert" class="layui-input" placeholder="请填写单位换算值"
+                                           autocomplete="off" maxlength="10" lay-verify="required|number">
                                 </div>
                             </div>
                         </div>
@@ -148,14 +169,8 @@
                             <div class="layui-col-sm4">
                                 <label class="layui-form-label"><span class="required">*</span>库存预警：</label>
                                 <div class="layui-input-block">
-                                    <input name="stockWarn" class="layui-input" placeholder="请输入库存预警"
+                                    <input name="stockWarn" class="layui-input" placeholder="请填写库存预警"
                                            autocomplete="off" maxlength="10" lay-verify="required|number">
-                                </div>
-                            </div>
-                            <div class="layui-col-sm4">
-                                <label class="layui-form-label"><span class="required">*</span>库存单位：</label>
-                                <div class="layui-input-block">
-                                    <select name="stockUnit" lay-verify="required" placeholder="请选择库存单位"></select>
                                 </div>
                             </div>
                         </div>

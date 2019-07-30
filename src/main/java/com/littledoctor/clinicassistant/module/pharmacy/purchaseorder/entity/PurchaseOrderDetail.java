@@ -41,10 +41,6 @@ public class PurchaseOrderDetail {
     @Column(name = "PURCHASE_COUNT")
     private Double purchaseCount;
 
-    /** 数量单位 SLDW 1：公斤(千克)；2：箱 */
-    @Column(name = "PURCHASE_UNIT")
-    private Integer purchaseUnit;
-
     /** 单价 */
     @Column(name = "UNIT_PRICE")
     private Double unitPrice;
@@ -65,13 +61,17 @@ public class PurchaseOrderDetail {
     @Transient
     private String manufacturer;
 
-    /** 进货单位名称 */
+    /** 采购单位名称 */
     @Transient
     private String purchaseUnitName;
 
     /** 库存单位名称 */
     @Transient
     private String stockUnitName;
+
+    /** 单位换算 */
+    @Transient
+    private Double unitConvert;
 
     /** 库存数量 */
     @Transient
@@ -131,14 +131,6 @@ public class PurchaseOrderDetail {
 
     public void setPurchaseCount(Double purchaseCount) {
         this.purchaseCount = purchaseCount;
-    }
-
-    public Integer getPurchaseUnit() {
-        return purchaseUnit;
-    }
-
-    public void setPurchaseUnit(Integer purchaseUnit) {
-        this.purchaseUnit = purchaseUnit;
     }
 
     public Double getUnitPrice() {
@@ -203,5 +195,13 @@ public class PurchaseOrderDetail {
 
     public void setStockCount(Double stockCount) {
         this.stockCount = stockCount;
+    }
+
+    public Double getUnitConvert() {
+        return unitConvert;
+    }
+
+    public void setUnitConvert(Double unitConvert) {
+        this.unitConvert = unitConvert;
     }
 }

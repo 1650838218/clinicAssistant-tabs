@@ -112,7 +112,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     // 根据ID查询采购单
     function queryPurchaseOrderById(purchaseOrderId) {
         if (utils.isNotNull(purchaseOrderId)) {
-            $.getJSON("/pharmacy/purchaseorder/queryById",{purchaseOrderId: purchaseOrderId, queryType: 'entry'}, function (purchaseOrder) {
+            $.getJSON("/pharmacy/purchaseorder/queryById",{purchaseOrderId: purchaseOrderId}, function (purchaseOrder) {
                 if (purchaseOrder != null) {
                     form.val('purchaseorder-form', purchaseOrder);// 表单赋值
                     form.render();

@@ -27,6 +27,7 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: 周俊林
@@ -126,7 +127,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             List<PurchaseOrderDetail> pods = purchaseOrder.getPurchaseOrderDetails();
             if (pods != null && pods.size() > 0) {
                 // 查询字典显示值
-                DictionaryType dt = dictionaryService.getByKey("SLDW");
+                Map<String, String> sldw = dictionaryService.getItemMapByKey("SLDW");
+                Map<String, String> kcdw = dictionaryService.getItemMapByKey("KCDW");
                 for (int i = 0, len = pods.size(); i < len; i++) {
                     PurchaseOrderDetail pbi = pods.get(i);
                     // 查询药品信息
@@ -136,18 +138,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                             pbi.setPharmacyItemName(pi.getPharmacyItemName());
                             pbi.setManufacturer(pi.getManufacturer());
                             pbi.setSpecifications(pi.getSpecifications());
-                        }
-                    }
-                    // 设置数量单位名称
-                    if (dt != null && dt.getDictItem() != null && dt.getDictItem().size() > 0) {
-                        if (pbi.getPurchaseUnit() != null) {
-                            for (int j = 0; j < dt.getDictItem().size(); j++) {
-                                DictionaryItem di = dt.getDictItem().get(j);
-                                if (pbi.getPurchaseUnit().equals(Integer.valueOf(di.getDictItemValue()))) {
-                                    pbi.setPurchaseUnitName(di.getDictItemName());
-                                    break;
-                                }
+                            pbi.setUnitConvert(pi.getUnitConvert());
+                            // 计算库存量
+                            if (pbi.getPurchaseCount() != null && pbi.getUnitConvert() != null) {
+                                pbi.setStockCount(pbi.getPurchaseCount() * pbi.getUnitConvert());
                             }
+                            // 设置数量单位名称
+                            if (sldw != null) pbi.setPurchaseUnitName(sldw.get(pi.getPurchaseUnit()));
+                            if (kcdw != null) pbi.setStockUnitName(kcdw.get(pi.getStockUnit()));
+
                         }
                     }
                 }
@@ -168,48 +167,5 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             return true;
         }
         return false;
-    }
-
-    /**
-     * 根据id查询采购单，用于入库单
-     * @param purchaseOrderId
-     * @return
-     */
-    @Override
-    public PurchaseOrder queryByIdForEntry(String purchaseOrderId) throws Exception {
-        if (StringUtils.isNotBlank(purchaseOrderId)) {
-            PurchaseOrder po = this.queryById(purchaseOrderId);
-            if (po == null) return null;
-            // 查询库存单位，换算单位，计算库存量，计算售价
-            List<PurchaseOrderDetail> details = po.getPurchaseOrderDetails();
-            // 查询字典显示值
-            DictionaryType dt = dictionaryService.getByKey("KCDW");
-            if (details != null && details.size() > 0 && dt != null && dt.getDictItem() != null && dt.getDictItem().size() > 0) {
-                for (int i = 0, len = details.size(); i < len; i++) {
-                    PurchaseOrderDetail pod = details.get(i);
-                    if (pod != null) {
-                        PharmacyItem pi = pharmacyItemService.getById(String.valueOf(pod.getPharmacyItemId()));
-                        if (pi != null) {
-                            // 设置数量单位名称
-                            if (pi.getStockUnit() != null) {
-                                for (int j = 0; j < dt.getDictItem().size(); j++) {
-                                    DictionaryItem di = dt.getDictItem().get(j);
-                                    if (pi.getStockUnit().equals(Integer.valueOf(di.getDictItemValue()))) {
-                                        pod.setStockUnitName(di.getDictItemName());// 库存单位
-                                        Double unitConversion = unitConversionService.queryConversionValue(String.valueOf(pod.getPurchaseUnit()), String.valueOf(pi.getStockUnit()));//  查询换算单位，计算库存量
-                                        if (unitConversion != null) {
-                                            pod.setStockCount(pod.getPurchaseCount() * unitConversion);
-                                        }
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return po;
-        }
-        return null;
     }
 }

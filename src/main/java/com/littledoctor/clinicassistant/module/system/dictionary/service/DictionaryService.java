@@ -1,11 +1,13 @@
 package com.littledoctor.clinicassistant.module.system.dictionary.service;
 
 import com.littledoctor.clinicassistant.common.plugin.tree.TreeEntity;
+import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryItem;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: 周俊林
@@ -49,7 +51,6 @@ public interface DictionaryService {
      */
     DictionaryType getById(Integer dictionaryId) throws Exception;
 
-
     /**
      * 检查字典名称是否重复
      * @param dictTypeId
@@ -72,6 +73,20 @@ public interface DictionaryService {
      * @return
      */
     DictionaryType getByKey(String dictTypeKey) throws Exception;
+
+    /**
+     * 根据字典键查询字典
+     * @param dictTypeKey
+     * @return
+     */
+    List<DictionaryItem> getItemListByKey(String dictTypeKey) throws Exception;
+
+    /**
+     * 根据字典键查询字典
+     * @param dictTypeKey
+     * @return
+     */
+    Map<String, String> getItemMapByKey(String dictTypeKey) throws Exception;
 
     /**
      * 根据字典键和真实值，查询显示值

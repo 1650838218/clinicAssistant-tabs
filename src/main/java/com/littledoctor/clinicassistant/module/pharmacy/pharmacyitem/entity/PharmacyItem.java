@@ -70,13 +70,21 @@ public class PharmacyItem {
     @Column(name = "MANUFACTURER")
     private String manufacturer;
 
+    /** 库存单位 */
+    @Column(name = "STOCK_UNIT")
+    private String stockUnit;
+
+    /** 采购单位 */
+    @Column(name = "PURCHASE_UNIT")
+    private String purchaseUnit;
+
+    /** 单位换算 */
+    @Column(name = "UNIT_CONVERT")
+    private Double unitConvert;
+
     /** 库存预警 */
     @Column(name = "STOCK_WARN")
     private Double stockWarn;
-
-    /** 库存单位 */
-    @Column(name = "STOCK_UNIT")
-    private Integer stockUnit;
 
     public Integer getPharmacyItemId() {
         return pharmacyItemId;
@@ -190,19 +198,35 @@ public class PharmacyItem {
         this.stockWarn = stockWarn;
     }
 
-    public Integer getStockUnit() {
-        return stockUnit;
-    }
-
-    public void setStockUnit(Integer stockUnit) {
-        this.stockUnit = stockUnit;
-    }
-
     public String getPharmacyItemTypeName() {
         return pharmacyItemTypeName;
     }
 
     public void setPharmacyItemTypeName(String pharmacyItemTypeName) {
         this.pharmacyItemTypeName = pharmacyItemTypeName;
+    }
+
+    public String getStockUnit() {
+        return stockUnit;
+    }
+
+    public void setStockUnit(String stockUnit) {
+        this.stockUnit = stockUnit;
+    }
+
+    public String getPurchaseUnit() {
+        return purchaseUnit;
+    }
+
+    public void setPurchaseUnit(String purchaseUnit) {
+        this.purchaseUnit = purchaseUnit;
+    }
+
+    public Double getUnitConvert() {
+        return unitConvert;
+    }
+
+    public void setUnitConvert(Double unitConvert) {
+        this.unitConvert = unitConvert;
     }
 }

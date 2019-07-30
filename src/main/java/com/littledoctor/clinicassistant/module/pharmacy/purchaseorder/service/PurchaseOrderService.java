@@ -42,11 +42,4 @@ public interface PurchaseOrderService {
      * @return
      */
     boolean delete(String purchaseOrderId) throws Exception;
-
-    /**
-     * 根据id查询采购单，用于入库单
-     * @param purchaseOrderId
-     * @return
-     */
-    PurchaseOrder queryByIdForEntry(String purchaseOrderId) throws Exception;
 }

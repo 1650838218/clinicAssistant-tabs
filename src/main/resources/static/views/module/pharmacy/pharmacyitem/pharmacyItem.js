@@ -58,6 +58,12 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
         where: {dictTypeKey: 'YPFL'},
     });
 
+    // 动态加载采购单位下拉框
+    utils.splicingOption({
+        elem: $('#pharmacyitem-form select[name="purchaseUnit"]'),
+        where: {dictTypeKey: 'SLDW'},
+    });
+
     // 动态加载库存单位下拉框
     utils.splicingOption({
         elem: $('#pharmacyitem-form select[name="stockUnit"]'),

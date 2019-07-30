@@ -22,7 +22,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: 周俊林
@@ -191,6 +193,39 @@ public class DictionaryServiceImpl implements DictionaryService {
     public DictionaryType getByKey(String dictTypeKey) throws Exception {
         if (!StringUtils.isEmpty(dictTypeKey)) {
             return dictionaryRepository.getByKey(dictTypeKey);
+        }
+        return null;
+    }
+
+    /**
+     * 根据字典键查询字典
+     * @param dictTypeKey
+     * @return
+     */
+    @Override
+    public List<DictionaryItem> getItemListByKey(String dictTypeKey) throws Exception {
+        if (!StringUtils.isEmpty(dictTypeKey)) {
+            return dictionaryRepository.getByKey(dictTypeKey).getDictItem();
+        }
+        return null;
+    }
+
+    /**
+     * 根据字典键查询字典
+     * @param dictTypeKey
+     * @return
+     */
+    @Override
+    public Map<String, String> getItemMapByKey(String dictTypeKey) throws Exception {
+        if (!StringUtils.isEmpty(dictTypeKey)) {
+            List<DictionaryItem> items = dictionaryRepository.getByKey(dictTypeKey).getDictItem();
+            if (items != null && items.size() > 0) {
+                Map<String, String> map = new HashMap<>();
+                for (int i = 0; i < items.size(); i++) {
+                    map.put(items.get(i).getDictItemValue(), items.get(i).getDictItemName());
+                }
+                return map;
+            }
         }
         return null;
     }
