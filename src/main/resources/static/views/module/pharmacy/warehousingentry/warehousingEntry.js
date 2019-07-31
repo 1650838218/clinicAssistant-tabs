@@ -34,10 +34,13 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     // 初始化表格
     table.render({
         elem: '#' + itemTableId,
+        id: itemTableId,
         height: 'full-145',
         cols: [[
-            {field: 'purchaseOrderDetailId', title: TABLE_COLUMN.numbers, type: 'numbers',fixed: 'left'},
-            {field: 'pharmacyItemName', title: '药品名称', width: '180',fixed: 'left'},
+            {field: 'warehousingEntryDetailId', title: TABLE_COLUMN.numbers, type: 'numbers',fixed: 'left'},
+            {field: 'pharmacyItemId', title: '药品名称', width: '180',fixed: 'left', templet: function (d) {
+                    return d.pharmacyItemName;
+                }},
             {field: 'specifications', title: '规格', width: '150'},
             {field: 'manufacturer', title: '制造商', width: '200'},
             {field: 'batchNumber', title: '批号', width: '100'},
@@ -71,32 +74,6 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         ]],
     });
 
-    // 单元格编辑事件
-    /*table.on('edit(' + itemTableId + ')', function(obj){ //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
-        // console.log(obj.value); //得到修改后的值
-        // console.log(obj.field); //当前编辑的字段名
-        // console.log(obj.data); //所在行的所有相关数据
-        if (obj.field === 'sellingPrice') {
-            if (isNaN(obj.value)) {
-                // 不是数字
-                var inputElem = $(this);
-                var oldValue = inputElem.prev().text();
-                var tdElem = inputElem.closest('td');
-                var data = {};
-                data[obj.field] = oldValue;
-                layer.msg('只能输入数字！', function () {
-                    inputElem.blur();
-                    obj.update(data);
-                    tdElem.click();
-                });
-            } else {
-                var data = {};
-                data[obj.field] = parseFloat(obj.value).toFixed(2);
-                obj.update(data);
-            }
-        }
-    });*/
-
     // 明细表格校验
     function validateGrid() {
         var tableData = table.cache[itemTableId];
@@ -114,7 +91,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         if (utils.isNotNull(purchaseOrderId)) {
             $.getJSON("/pharmacy/purchaseorder/queryById",{purchaseOrderId: purchaseOrderId}, function (purchaseOrder) {
                 if (purchaseOrder != null) {
-                    form.val('purchaseorder-form', purchaseOrder);// 表单赋值
+                    form.val('warehousingentry-form', purchaseOrder);// 表单赋值
                     form.render();
                     table.reload(itemTableId,{data:purchaseOrder.purchaseOrderDetails});// 加载采购单明细
                 }
@@ -129,8 +106,9 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         ajax.postJSON(rootMapping + '/save', warehousingEntry, function (bill) {
             if (bill != null && bill.warehousingEntryId != null) {
                 // queryWarehousingEntryById(bill.warehousingEntryId);// 根据ID查询入库单，并赋值
-                layer.msg(MSG.save_success);
-                // TODO 关闭当前页面，刷新采购单的状态
+                layer.msg(MSG.save_success,{time:2000}, function () {
+                    $('button[lay-filter="close-btn"]').click();// 关闭当前页面，刷新采购单的状态
+                });
             } else {
                 layer.msg(MSG.save_fail);
             }
@@ -148,8 +126,8 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         if (validateGrid()) {
             var warehousingEntry = obj.field;// 表单值
             var billItems = table.cache[itemTableId];// 获取表格数据
-            // console.log(billItems);
-            warehousingEntry.warehousingEntryDetails = billItems.rows;
+            console.log(billItems);
+            warehousingEntry.warehousingEntryDetails = billItems;
             saveWarehousingEntry(obj, warehousingEntry);
         } else {
             utils.btnEnabled($(obj.elem));

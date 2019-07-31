@@ -121,11 +121,6 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                 field: 'pharmacyItemId'
             });
             row.pharmacyItemName = $(ed.target).combogrid('getText');
-            var ed = $(this).datagrid('getEditor', {
-                index: index,
-                field: 'purchaseUnit'
-            });
-            row.purchaseUnitName = $(ed.target).combobox('getText');
         }
     });
 
@@ -158,6 +153,9 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                         $(editor1.target).textbox('setValue', pharmacyItem.specifications);
                         var editor2 = $('#' + itemTableId).datagrid('getEditor',{index: editIndex,field: 'manufacturer'});
                         $(editor2.target).textbox('setValue', pharmacyItem.manufacturer);
+                        // 设置采购单位
+                        var editor3 = $('#' + itemTableId).datagrid('getEditor',{index: editIndex,field: 'purchaseUnitName'});
+                        $(editor3.target).textbox('setValue', pharmacyItem.purchaseUnitName);
                     },
                     onChange: function (newValue, oldValue) {
                         if (!utils.isNotNull(newValue)) {
@@ -166,6 +164,8 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                             $(editor1.target).textbox('clear');
                             var editor2 = $('#' + itemTableId).datagrid('getEditor',{index: editIndex,field: 'manufacturer'});
                             $(editor2.target).textbox('clear');
+                            var editor3 = $('#' + itemTableId).datagrid('getEditor',{index: editIndex,field: 'purchaseUnitName'});
+                            $(editor3.target).textbox('clear');
                         }
                     },
                     onHidePanel: function () {
@@ -227,20 +227,12 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
             }
         },
         {
-            field: 'purchaseUnit',
+            field: 'purchaseUnitName',
             editor: {
-                type: 'combobox',
+                type: 'textbox',
                 options: {
-                    valueField: 'dictItemValue',
-                    textField: 'dictItemName',
-                    method: 'get',
-                    url: '/system/dictionary/oneLevel/getItemByKey?dictTypeKey=SLDW',
-                    required: true,
-                    mode: 'remote',
-                    panelHeight:'auto',
-                    panelMaxHeight: 200,
                     editable: false,
-                    hasDownArrow: false
+                    readonly: true
                 }
             },
             formatter:function(value,row){

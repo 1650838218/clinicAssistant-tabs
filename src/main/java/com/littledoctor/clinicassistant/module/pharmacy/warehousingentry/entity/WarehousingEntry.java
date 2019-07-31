@@ -21,8 +21,8 @@ public class WarehousingEntry {
     private Integer warehousingEntryId;
 
     /** 采购单ID */
-    @Column(name = "PURCHASE_BILL_ID")
-    private Integer purchaseBillId;
+    @Column(name = "PURCHASE_ORDER_ID")
+    private Integer purchaseOrderId;
 
     /** 入库单单号 取当前时间yyyymmddhhmmsssss */
     @Column(name = "WAREHOUSING_ENTRY_CODE")
@@ -35,10 +35,6 @@ public class WarehousingEntry {
     /** 创建时间 */
     @Column(name = "CREATE_TIME")
     private Date createTime;
-
-    /** 更新时间 */
-    @Column(name = "UPDATE_TIME")
-    private Date updateTime;
 
     /** 入库单明细 */
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
@@ -53,12 +49,12 @@ public class WarehousingEntry {
         this.warehousingEntryId = warehousingEntryId;
     }
 
-    public Integer getPurchaseBillId() {
-        return purchaseBillId;
+    public Integer getPurchaseOrderId() {
+        return purchaseOrderId;
     }
 
-    public void setPurchaseBillId(Integer purchaseBillId) {
-        this.purchaseBillId = purchaseBillId;
+    public void setPurchaseOrderId(Integer purchaseOrderId) {
+        this.purchaseOrderId = purchaseOrderId;
     }
 
     public String getWarehousingEntryCode() {
@@ -83,14 +79,6 @@ public class WarehousingEntry {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
     }
 
     public List<WarehousingEntryDetail> getWarehousingEntryDetails() {

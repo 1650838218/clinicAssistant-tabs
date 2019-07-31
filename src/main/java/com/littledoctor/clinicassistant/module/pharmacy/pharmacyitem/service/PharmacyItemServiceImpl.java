@@ -19,6 +19,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: 周俊林
@@ -218,17 +219,11 @@ public class PharmacyItemServiceImpl implements PharmacyItemService {
         }
         if (result != null && result.size() > 0) {
             // 查询药品类型字典，将显示值set进去
-            DictionaryType dt = dictionaryService.getByKey("YPFL");
-            if (dt != null && dt.getDictItem() != null && dt.getDictItem().size() > 0) {
-                List<DictionaryItem> dItem = dt.getDictItem();
-                for (int i = 0, len = result.size(); i < len; i++) {
-                    for (int j = 0, l = dItem.size(); j < l; j++) {
-                        if (dItem.get(j).getDictItemValue() != null && dItem.get(j).getDictItemValue().equals(result.get(i).getPharmacyItemType().toString())) {
-                            result.get(i).setPharmacyItemTypeName(dItem.get(j).getDictItemName());
-                            break;
-                        }
-                    }
-                }
+            Map<String, String> ypfl = dictionaryService.getItemMapByKey("YPFL");// 药品分类
+            Map<String, String> sldw = dictionaryService.getItemMapByKey("SLDW");// 数量单位
+            for (int i = 0, len = result.size(); i < len; i++) {
+                if (ypfl != null) result.get(i).setPharmacyItemTypeName(ypfl.get(result.get(i).getPharmacyItemType()));
+                if (sldw != null) result.get(i).setPurchaseUnitName(sldw.get(result.get(i).getPurchaseUnit()));
             }
         }
         return result;

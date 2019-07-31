@@ -86,6 +86,14 @@ public class PharmacyItem {
     @Column(name = "STOCK_WARN")
     private Double stockWarn;
 
+    /** 库存单位名称 */
+    @Transient
+    private String stockUnitName;
+
+    /** 采购单位名称 */
+    @Transient
+    private String purchaseUnitName;
+
     public Integer getPharmacyItemId() {
         return pharmacyItemId;
     }
@@ -228,5 +236,21 @@ public class PharmacyItem {
 
     public void setUnitConvert(Double unitConvert) {
         this.unitConvert = unitConvert;
+    }
+
+    public String getStockUnitName() {
+        return stockUnitName;
+    }
+
+    public void setStockUnitName(String stockUnitName) {
+        this.stockUnitName = stockUnitName;
+    }
+
+    public String getPurchaseUnitName() {
+        return purchaseUnitName;
+    }
+
+    public void setPurchaseUnitName(String purchaseUnitName) {
+        this.purchaseUnitName = purchaseUnitName;
     }
 }

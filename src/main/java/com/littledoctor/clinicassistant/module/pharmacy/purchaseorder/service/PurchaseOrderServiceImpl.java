@@ -9,9 +9,6 @@ import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.Pur
 import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.PurchaseOrderSingle;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.entity.Supplier;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.service.SupplierService;
-import com.littledoctor.clinicassistant.module.pharmacy.unitconversion.service.UnitConversionService;
-import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryItem;
-import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryType;
 import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +48,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Autowired
     private SupplierService supplierService;
-
-    @Autowired
-    private UnitConversionService unitConversionService;
 
     /**
      * 分页查询订单
@@ -146,7 +140,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                             // 设置数量单位名称
                             if (sldw != null) pbi.setPurchaseUnitName(sldw.get(pi.getPurchaseUnit()));
                             if (kcdw != null) pbi.setStockUnitName(kcdw.get(pi.getStockUnit()));
-
                         }
                     }
                 }
@@ -164,6 +157,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     public boolean delete(String purchaseOrderId) throws Exception {
         if (StringUtils.isNotBlank(purchaseOrderId)) {
             purchaseOrderRepository.deleteById(Integer.parseInt(purchaseOrderId));
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateEntry(Integer purchaseOrderId) throws Exception {
+        if (purchaseOrderId != null) {
+            purchaseOrderRepository.updateEntry(purchaseOrderId);
             return true;
         }
         return false;

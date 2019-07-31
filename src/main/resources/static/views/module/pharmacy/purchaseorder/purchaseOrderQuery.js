@@ -136,6 +136,12 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
             title: false,
             fixed: false, //不固定
             content: '/views/module/pharmacy/purchaseorder/purchaseOrderForm.html?purchaseOrderId='+obj.data.purchaseOrderId,
+            cancel: function(index, layero) {
+                table.reload(purchaseOrderTableId, {});
+            },
+            end: function () {
+                table.reload(purchaseOrderTableId, {});
+            }
         });
         layer.full(index);
     }
@@ -150,6 +156,12 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
             title: false,
             fixed: false, //不固定
             content: '/views/module/pharmacy/warehousingentry/warehousingEntry.html?purchaseOrderId='+obj.data.purchaseOrderId,
+            cancel: function(index, layero) {
+                table.reload(purchaseOrderTableId, {});
+            },
+            end: function () {
+                table.reload(purchaseOrderTableId, {});
+            }
         });
         layer.full(index);
     }

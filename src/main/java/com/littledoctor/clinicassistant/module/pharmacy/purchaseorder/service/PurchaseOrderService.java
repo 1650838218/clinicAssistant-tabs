@@ -42,4 +42,10 @@ public interface PurchaseOrderService {
      * @return
      */
     boolean delete(String purchaseOrderId) throws Exception;
+
+    /**
+     * 根据ID更新入库状态，将入库状态改为true
+     * @param purchaseOrderId
+     */
+    boolean updateEntry(Integer purchaseOrderId) throws Exception;
 }
