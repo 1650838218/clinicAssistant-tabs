@@ -15,9 +15,9 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, In
 
     /**
      * 根据ID将采购单的状态改为已入库
-     * @param purchaseOrderId
+     * @param purchaseOrderIds
      */
     @Modifying
-    @Query(value = "update PURCHASE_ORDER set IS_ENTRY = 1 where PURCHASE_ORDER_ID = ?1", nativeQuery = true)
-    int updateEntry(Integer purchaseOrderId);
+    @Query(value = "update PURCHASE_ORDER set IS_ENTRY = 1 where PURCHASE_ORDER_ID in (?1)", nativeQuery = true)
+    int updateEntry(String purchaseOrderIds);
 }

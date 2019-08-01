@@ -46,7 +46,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table'], function () {
         if (utils.isNotNull(purchaseOrderId)) {
             $.getJSON(rootMapping + "/queryById",{purchaseOrderId: purchaseOrderId}, function (purchaseOrder) {
                 if (purchaseOrder != null) {
-                    purchaseOrder.totalPrice = purchaseOrder.totalPrice.toFixed(2) + '元';
+                    purchaseOrder.totalPrice = purchaseOrder.totalPrice.toFixed(2) + ' 元';
                     form.val('purchaseorder-form', purchaseOrder);// 表单赋值
                     form.render();
                     table.reload(itemTableId,{data:purchaseOrder.purchaseOrderDetails});// 加载采购单明细

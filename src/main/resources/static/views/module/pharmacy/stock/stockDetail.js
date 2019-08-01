@@ -1,5 +1,5 @@
 /** 采购单 */
-//@ sourceURL=warehousingEntry.js
+//@ sourceURL=stockDetail.js
 layui.config({
     base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
 }).extend({
@@ -14,22 +14,10 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     var ajax = layui.ajax;
     var utils = layui.utils;
     var laydate = layui.laydate;
-    var rootMapping = '/pharmacy/warehousingentry';
-    var itemTableId = 'warehousingentry-table';
-    var formId = 'warehousingentry-form';
+    var rootMapping = '/pharmacy/stock';
+    var itemTableId = 'stockdetail-table';
+    var formId = 'stockdetail-form';
     form.render();
-
-    // 动态加载日期控件
-    laydate.render({
-        elem: '#' + formId + ' input[name="warehousingEntryDate"]',
-        value: new Date(),
-        isInitValue: true
-    });
-    // 生成单号
-    var date = new Date();
-    var ymd = date.format('yyMMdd');
-    var num = date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds();
-    $('#' + formId + ' input[name="warehousingEntryCode"]').val(ymd + num);
 
     // 初始化表格
     table.render({
@@ -37,7 +25,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         id: itemTableId,
         height: 'full-145',
         cols: [[
-            {field: 'warehousingEntryDetailId', title: TABLE_COLUMN.numbers, type: 'numbers',fixed: 'left'},
+            {field: 'stockDetailId', title: TABLE_COLUMN.numbers, type: 'numbers',fixed: 'left'},
             {field: 'pharmacyItemId', title: '药品名称', width: '180',fixed: 'left', templet: function (d) {
                     return d.pharmacyItemName;
                 }},
@@ -91,7 +79,8 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         if (utils.isNotNull(purchaseOrderId)) {
             $.getJSON("/pharmacy/purchaseorder/queryById",{purchaseOrderId: purchaseOrderId}, function (purchaseOrder) {
                 if (purchaseOrder != null) {
-                    form.val('warehousingentry-form', purchaseOrder);// 表单赋值
+                    purchaseOrder.totalPrice = purchaseOrder.totalPrice.toFixed(2) + ' 元';
+                    form.val('stockdetail-form', purchaseOrder);// 表单赋值
                     form.render();
                     table.reload(itemTableId,{data:purchaseOrder.purchaseOrderDetails});// 加载采购单明细
                 }
@@ -101,34 +90,37 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         }
     }
 
-    // 保存入库单
-    function saveWarehousingEntry(obj, warehousingEntry) {
-        ajax.postJSON(rootMapping + '/save', warehousingEntry, function (bill) {
-            if (bill != null && bill.warehousingEntryId != null) {
-                // queryWarehousingEntryById(bill.warehousingEntryId);// 根据ID查询入库单，并赋值
-                layer.msg(MSG.save_success,{time:2000}, function () {
+    // 保存入库
+    function saveStockDetail(obj, stockDetails) {
+        ajax.postJSON(rootMapping + '/save', stockDetails, function (stockDetails) {
+            if (stockDetails != null) {
+                // queryStockEntryById(bill.stockEntryId);// 根据ID查询入库单，并赋值
+                layer.msg('入库成功！',{time:2000}, function () {
                     $('button[lay-filter="close-btn"]').click();// 关闭当前页面，刷新采购单的状态
                 });
             } else {
-                layer.msg(MSG.save_fail);
+                layer.msg('入库失败！');
             }
             utils.btnEnabled($(obj.elem));
         }, $(obj.elem));
     }
 
     /**
-     * 保存采购单
+     * 保存入库
      * @param data
      * @returns {boolean}
      */
     form.on('submit(submit-btn)', function(obj){
         utils.btnDisabled($(obj.elem));
         if (validateGrid()) {
-            var warehousingEntry = obj.field;// 表单值
-            var billItems = table.cache[itemTableId];// 获取表格数据
-            console.log(billItems);
-            warehousingEntry.warehousingEntryDetails = billItems;
-            saveWarehousingEntry(obj, warehousingEntry);
+            var stockDetails = table.cache[itemTableId];// 获取表格数据
+            var purchaseOrderId = $('#' + formId).find('input[name="purchaseOrderId"]').val();
+            // console.log(billItems);
+            for (var i = 0, len = stockDetails.length; i < len; i++) {
+                stockDetails[i].purchaseOrderId = purchaseOrderId;
+                stockDetails[i].stockState = 1;
+            }
+            saveStockDetail(obj, stockDetails);
         } else {
             utils.btnEnabled($(obj.elem));
         }

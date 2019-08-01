@@ -5,6 +5,8 @@ import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.Pur
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.HashSet;
+
 /**
  * @Auther: 周俊林
  * @Date: 2019-05-04 16:42
@@ -45,7 +47,7 @@ public interface PurchaseOrderService {
 
     /**
      * 根据ID更新入库状态，将入库状态改为true
-     * @param purchaseOrderId
+     * @param purchaseOrderIds
      */
-    boolean updateEntry(Integer purchaseOrderId) throws Exception;
+    boolean updateEntry(HashSet<String> purchaseOrderIds) throws Exception;
 }

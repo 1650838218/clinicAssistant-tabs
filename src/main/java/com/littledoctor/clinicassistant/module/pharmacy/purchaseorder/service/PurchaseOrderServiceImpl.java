@@ -21,10 +21,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Auther: 周俊林
@@ -162,10 +159,22 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         return false;
     }
 
+    /**
+     * 更新入库状态为已入库
+     * @param purchaseOrderIds
+     * @return
+     * @throws Exception
+     */
     @Override
-    public boolean updateEntry(Integer purchaseOrderId) throws Exception {
-        if (purchaseOrderId != null) {
-            purchaseOrderRepository.updateEntry(purchaseOrderId);
+    public boolean updateEntry(HashSet<String> purchaseOrderIds) throws Exception {
+        if (purchaseOrderIds != null && !purchaseOrderIds.isEmpty()) {
+            String ids = "";
+            Iterator iterator = purchaseOrderIds.iterator();
+            while (iterator.hasNext()) {
+                ids += iterator.next().toString();
+                if (iterator.hasNext()) ids += ",";
+            }
+            purchaseOrderRepository.updateEntry(ids);
             return true;
         }
         return false;

@@ -29,16 +29,9 @@
         <div class="center-panel">
             <div class="layui-card">
                 <div class="layui-card-body">
-                    <form id="warehousingentry-form" class="layui-form" lay-filter="warehousingentry-form">
-                        <input type="hidden" name="warehousingEntryId" value="">
+                    <form id="stockdetail-form" class="layui-form" lay-filter="stockdetail-form">
                         <input type="hidden" name="purchaseOrderId" value="">
                         <div class="layui-form-item">
-                            <div class="layui-inline">
-                                <label class="layui-form-label">入库单号：</label>
-                                <div class="layui-input-inline">
-                                    <input name="warehousingEntryCode" readonly class="layui-input" lay-verify="required" placeholder="请填写入库单号">
-                                </div>
-                            </div>
                             <div class="layui-inline">
                                 <label class="layui-form-label">采购单号：</label>
                                 <div class="layui-input-inline">
@@ -46,13 +39,25 @@
                                 </div>
                             </div>
                             <div class="layui-inline">
-                                <label class="layui-form-label">日期：</label>
+                                <label class="layui-form-label">采购日期：</label>
                                 <div class="layui-input-inline">
-                                    <input name="warehousingEntryDate" readonly class="layui-input" placeholder="请选择入库单日期" lay-verify="required">
+                                    <input name="purchaseOrderDate" readonly class="layui-input" placeholder="请选择入库单日期" lay-verify="required">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">供应商：</label>
+                                <div class="layui-input-inline">
+                                    <input name="supplierName" readonly class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">金额：</label>
+                                <div class="layui-input-inline">
+                                    <input name="totalPrice" readonly class="layui-input">
                                 </div>
                             </div>
                         </div>
-                        <table id="warehousingentry-table" lay-filter="warehousingentry-table"></table>
+                        <table id="stockdetail-table" lay-filter="stockdetail-table"></table>
                         <div class="layui-row layui-col-space10" style="margin-top: 5px;">
                             <div class="layui-col-lg-offset10 layui-col-lg2" style="text-align: right;">
                                 <button type="button" lay-filter="submit-btn" lay-submit class="layui-btn layui-btn-sm">保存</button>
@@ -67,6 +72,6 @@
 </div>
 <script src="/lib/layuiadmin/layui/layui.js"></script>
 <script src="/js/common/constant.js"></script>
-<script src="/views/module/pharmacy/warehousingentry/warehousingentry.js"></script>
+<script src="/views/module/pharmacy/stock/stockDetail.js"></script>
 </body>
 </html>

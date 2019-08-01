@@ -87,7 +87,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
         } else if (obj.event === 'delete') {
             deleteRow(obj);
         } else if (obj.event === 'entry') {
-            warehousingEntryRow(obj);// 入库
+            stockEntryRow(obj);// 入库
         } else if (obj.event === 'lookSupplier') { // 监听单元格事件
             lookSupplier(obj);// 查看供应商详情
         }
@@ -147,7 +147,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
     }
 
     // 入库
-    function warehousingEntryRow(obj) {
+    function stockEntryRow(obj) {
         var height = $('.center-panel').height();
         var width = $('.center-panel').width();
         var index = layer.open({
@@ -155,7 +155,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
             area: [width+'px', height+'px'],
             title: false,
             fixed: false, //不固定
-            content: '/views/module/pharmacy/warehousingentry/warehousingEntry.html?purchaseOrderId='+obj.data.purchaseOrderId,
+            content: '/views/module/pharmacy/stock/stockDetail.html?purchaseOrderId='+obj.data.purchaseOrderId,
             cancel: function(index, layero) {
                 table.reload(purchaseOrderTableId, {});
             },

@@ -1,23 +1,26 @@
-package com.littledoctor.clinicassistant.module.pharmacy.warehousingentry.entity;
-
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+package com.littledoctor.clinicassistant.module.pharmacy.stock.entity;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @Auther: 周俊林
  * @Date: 2019-05-11 18:24
- * @Description: 入库单明细
+ * @Description: 库存明细
  */
 @Entity
-@Table(name = "WAREHOUSING_ENTRY_DETAIL")
-public class WarehousingEntryDetail {
+@Table(name = "STOCK_DETAIL")
+public class StockDetail {
 
     /** 主键ID */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "WAREHOUSING_ENTRY_DETAIL_ID", nullable = false)
-    private Integer warehousingEntryDetailId;
+    @Column(name = "STOCK_DETAIL_ID", nullable = false)
+    private Integer stockDetailId;
+
+    /** 采购单ID */
+    @Column(name = "PURCHASE_ORDER_ID")
+    private Integer purchaseOrderId;
 
     /** 药房品目，为了关联采购的是哪个药品 */
     @Column(name = "PHARMACY_ITEM_ID")
@@ -43,12 +46,24 @@ public class WarehousingEntryDetail {
     @Column(name = "SELLING_PRICE")
     private Double sellingPrice;
 
-    public Integer getWarehousingEntryDetailId() {
-        return warehousingEntryDetailId;
+    /** 库存状态(1：正常；2：已退货；3：已过期) */
+    @Column(name = "STOCK_STATE")
+    private Integer stockState;
+
+    /** 创建时间 */
+    @Column(name = "CREATE_TIME")
+    private Date createTiem;
+
+    /** 更新时间 */
+    @Column(name = "UPDATE_TIME")
+    private Date updateTime;
+
+    public Integer getStockDetailId() {
+        return stockDetailId;
     }
 
-    public void setWarehousingEntryDetailId(Integer warehousingEntryDetailId) {
-        this.warehousingEntryDetailId = warehousingEntryDetailId;
+    public void setStockDetailId(Integer stockDetailId) {
+        this.stockDetailId = stockDetailId;
     }
 
     public Double getStockCount() {
@@ -97,5 +112,37 @@ public class WarehousingEntryDetail {
 
     public void setExpireDate(String expireDate) {
         this.expireDate = expireDate;
+    }
+
+    public Integer getStockState() {
+        return stockState;
+    }
+
+    public void setStockState(Integer stockState) {
+        this.stockState = stockState;
+    }
+
+    public Integer getPurchaseOrderId() {
+        return purchaseOrderId;
+    }
+
+    public void setPurchaseOrderId(Integer purchaseOrderId) {
+        this.purchaseOrderId = purchaseOrderId;
+    }
+
+    public Date getCreateTiem() {
+        return createTiem;
+    }
+
+    public void setCreateTiem(Date createTiem) {
+        this.createTiem = createTiem;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }
