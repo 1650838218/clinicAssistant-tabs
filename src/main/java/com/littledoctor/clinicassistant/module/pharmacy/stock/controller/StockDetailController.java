@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: 周俊林
@@ -50,10 +51,10 @@ public class StockDetailController {
      * @return
      */
     @RequestMapping(value = "/queryPage", method = RequestMethod.GET)
-    public LayuiTableEntity<StockDetail> queryPage(Pageable page, String keywords, String pharmacyItemType) {
+    public LayuiTableEntity<Map<String, String>> queryPage(Pageable page, String keywords, String pharmacyItemType) {
         try {
 //            if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
-            return new LayuiTableEntity<StockDetail>(stockDetailService.queryPage(page, keywords, pharmacyItemType));
+            return new LayuiTableEntity<Map<String, String>>(stockDetailService.queryPage(page, keywords, pharmacyItemType));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

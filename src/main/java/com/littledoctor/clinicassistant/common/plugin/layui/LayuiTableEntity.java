@@ -1,5 +1,6 @@
 package com.littledoctor.clinicassistant.common.plugin.layui;
 
+import com.github.pagehelper.PageInfo;
 import com.littledoctor.clinicassistant.common.constant.Constant;
 import com.littledoctor.clinicassistant.common.msg.Message;
 import org.springframework.data.domain.Page;
@@ -66,6 +67,17 @@ public class LayuiTableEntity<T> {
         this.count =  Integer.parseInt(String.valueOf(page.getTotalElements()));
         this.code = 0;
         this.data = page.getContent();
+        if (this.count > 0) {
+            this.msg = Message.QUERY_SUCCESS;
+        } else {
+            this.msg = Message.NO_DATA;
+        }
+    }
+
+    public LayuiTableEntity(PageInfo<T> pageInfo) {
+        this.count =  Integer.parseInt(String.valueOf(pageInfo.getTotal()));
+        this.code = 0;
+        this.data = pageInfo.getList();
         if (this.count > 0) {
             this.msg = Message.QUERY_SUCCESS;
         } else {

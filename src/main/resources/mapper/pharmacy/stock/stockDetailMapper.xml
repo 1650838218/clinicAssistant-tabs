@@ -2,8 +2,57 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.littledoctor.clinicassistant.module.pharmacy.stock.mapper">
 
-    <select id="findAll" resultType="java.util.List">
-        select * from
+    <!-- 根据条件查询 库存信息 -->
+    <select id="findAll" resultType="java.util.Map">
+        SELECT
+            b1.pharmacy_item_id,
+            b1.pharmacy_item_name,
+            b1.pharmacy_item_type,
+            b1.specifications,
+            b1.manufacturer,
+            b1.stock_unit,
+            a1.stock_detail_id,
+            a1.expire_date,
+            a1.stock_count,
+            a1.selling_price
+        FROM
+            (
+                SELECT
+                    b.pharmacy_item_id,
+                    b.pharmacy_item_name,
+                    b.pharmacy_item_type,
+                    b.specifications,
+                    b.manufacturer,
+                    b.stock_unit
+                FROM
+                    pharmacy_item b
+                WHERE 1 = 1
+                    <if test="keywords != null">
+                        AND (
+                            b.pharmacy_item_name LIKE CONCAT('%', #{keywords}, '%')
+                            OR b.full_pinyin LIKE CONCAT('%', #{keywords}, '%')
+                            OR b.abbreviation LIKE CONCAT('%', #{keywords}, '%')
+                            OR b.barcode LIKE CONCAT('%', #{keywords}, '%')
+                        )
+                    </if>
+                    <if test="pharmacyItemType != null">
+                            AND b.pharmacy_item_type = #{pharmacyItemType}
+                    </if>
+            ) b1,
+            (
+                SELECT
+                    a.stock_detail_id,
+                    a.pharmacy_item_id,
+                    a.expire_date,
+                    a.stock_count,
+                    a.selling_price
+                FROM
+                    stock_detail a
+                WHERE
+                    a.stock_state = 1
+            ) a1
+        WHERE
+            b1.pharmacy_item_id = a1.pharmacy_item_id
     </select>
 
 </mapper>

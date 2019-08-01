@@ -1,10 +1,10 @@
 package com.littledoctor.clinicassistant.module.pharmacy.stock.mapper;
 
-import com.littledoctor.clinicassistant.module.pharmacy.stock.entity.StockDetail;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @业务信息:
@@ -28,5 +28,5 @@ public interface StockDetailMapper {
      * @param pharmacyItemType
      * @return
      */
-    List<StockDetail> findAll(@Param("keywords") String keywords, @Param("pharmacyItemType") String pharmacyItemType);
+    List<Map<String, String>> findAll(@Param("keywords") String keywords, @Param("pharmacyItemType") String pharmacyItemType);
 }

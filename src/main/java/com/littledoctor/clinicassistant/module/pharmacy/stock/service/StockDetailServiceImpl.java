@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: 周俊林
@@ -66,10 +67,10 @@ public class StockDetailServiceImpl implements StockDetailService {
      * @throws Exception
      */
     @Override
-    public PageInfo<StockDetail> queryPage(Pageable page, String keywords, String pharmacyItemType) throws Exception {
+    public PageInfo<Map<String, String>> queryPage(Pageable page, String keywords, String pharmacyItemType) throws Exception {
         PageHelper.startPage(page.getPageNumber(), page.getPageSize());
-        List<StockDetail> stockDetails = stockDetailMapper.findAll(keywords, pharmacyItemType);
-        PageInfo<StockDetail> result = new PageInfo<>(stockDetails);
+        List<Map<String, String>> stockDetails = stockDetailMapper.findAll(keywords, pharmacyItemType);
+        PageInfo<Map<String, String>> result = new PageInfo<>(stockDetails);
         return result;
     }
 }
