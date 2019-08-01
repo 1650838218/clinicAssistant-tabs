@@ -37,7 +37,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table'], function () {
                 }},
             {field: 'totalPrice', title: '总价(元)', width: '8%',templet: function (d) {
                     return parseFloat(d.totalPrice).toFixed(2);
-                }},
+                }}
         ]],
     });
 

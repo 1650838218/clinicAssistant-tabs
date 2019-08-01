@@ -1,9 +1,13 @@
 package com.littledoctor.clinicassistant.module.pharmacy.stock.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.service.PurchaseOrderService;
 import com.littledoctor.clinicassistant.module.pharmacy.stock.dao.StockDetailRepository;
 import com.littledoctor.clinicassistant.module.pharmacy.stock.entity.StockDetail;
+import com.littledoctor.clinicassistant.module.pharmacy.stock.mapper.StockDetailMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +29,9 @@ public class StockDetailServiceImpl implements StockDetailService {
 
     @Autowired
     private PurchaseOrderService purchaseOrderService;
+
+    @Autowired
+    private StockDetailMapper stockDetailMapper;
 
     /**
      * 保存入库单
@@ -48,5 +55,21 @@ public class StockDetailServiceImpl implements StockDetailService {
             return stockDetailRepository.saveAll(stockDetails);
         }
         return null;
+    }
+
+    /**
+     * 分页查询
+     * @param page
+     * @param keywords
+     * @param pharmacyItemType
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public PageInfo<StockDetail> queryPage(Pageable page, String keywords, String pharmacyItemType) throws Exception {
+        PageHelper.startPage(page.getPageNumber(), page.getPageSize());
+        List<StockDetail> stockDetails = stockDetailMapper.findAll(keywords, pharmacyItemType);
+        PageInfo<StockDetail> result = new PageInfo<>(stockDetails);
+        return result;
     }
 }
