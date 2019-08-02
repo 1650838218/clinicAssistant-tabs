@@ -13,7 +13,6 @@
             margin-right: 0px;
         }
         .center-panel form .layui-form-label {
-            width: 60px;
             padding: 9px 0px;
         }
         .center-panel form .layui-input-inline {
@@ -44,7 +43,7 @@
             width: 120px;
         }
         .layui-btn-disabled {
-            margin-left: 9px !important;
+            /*margin-left: 9px !important;*/
         }
     </style>
 </head>
@@ -59,7 +58,7 @@
                             <div class="layui-inline">
                                 <label class="layui-form-label">药品名称：</label>
                                 <div class="layui-input-inline">
-                                    <input name="pharmacyItemName" class="layui-input" placeholder="药品名称/全拼/简拼/条形码">
+                                    <input name="keywords" class="layui-input" placeholder="药品名称/全拼/简拼/条形码">
                                 </div>
                             </div>
                             <div class="layui-inline">
@@ -83,7 +82,7 @@
 <!--layui table 操作列-->
 <script type="text/html" id="operate-column">
     <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="unshelve" title="下架">下架</a>
-    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="save" title="保存">保存</a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled" lay-event="save" disabled="" title="保存">保存</a>
 </script>
 <script src="/lib/layuiadmin/layui/layui.js"></script>
 <script src="/js/common/constant.js"></script>

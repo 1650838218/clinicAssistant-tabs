@@ -29,4 +29,21 @@ public interface StockDetailService {
      * @return
      */
     PageInfo<Map<String, String>> queryPage(Pageable page, String keywords, String pharmacyItemType) throws Exception;
+
+    StockDetail queryById(Integer stockDetailId) throws Exception;
+
+    /**
+     * 更新 售价 库存数量
+     * @param stockDetail
+     * @return
+     */
+    StockDetail update(StockDetail stockDetail) throws Exception;
+
+    /**
+     * 下架
+     * @param stockDetail
+     * @return
+     * @throws Exception
+     */
+    Boolean unshelve(StockDetail stockDetail) throws Exception;
 }

@@ -53,11 +53,40 @@ public class StockDetailController {
     @RequestMapping(value = "/queryPage", method = RequestMethod.GET)
     public LayuiTableEntity<Map<String, String>> queryPage(Pageable page, String keywords, String pharmacyItemType) {
         try {
-//            if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
             return new LayuiTableEntity<Map<String, String>>(stockDetailService.queryPage(page, keywords, pharmacyItemType));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
         return null;
+    }
+
+    /**
+     * 更新 售价 库存数量
+     * @param stockDetail
+     * @return
+     */
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public StockDetail update(@RequestBody StockDetail stockDetail) {
+        try {
+            return stockDetailService.update(stockDetail);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * 下架
+     * @param stockDetail
+     * @return
+     */
+    @RequestMapping(value = "/unshelve", method = RequestMethod.POST)
+    public Boolean unshelve(@RequestBody StockDetail stockDetail) {
+        try {
+            return stockDetailService.unshelve(stockDetail);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return false;
     }
 }

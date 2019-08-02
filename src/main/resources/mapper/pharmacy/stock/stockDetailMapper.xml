@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.littledoctor.clinicassistant.module.pharmacy.stock.mapper">
+<mapper namespace="com.littledoctor.clinicassistant.module.pharmacy.stock.mapper.StockDetailMapper">
 
     <!-- 根据条件查询 库存信息 -->
     <select id="findAll" resultType="java.util.Map">
         SELECT
-            b1.pharmacy_item_id,
-            b1.pharmacy_item_name,
-            b1.pharmacy_item_type,
-            b1.specifications,
-            b1.manufacturer,
-            b1.stock_unit,
-            a1.stock_detail_id,
-            a1.expire_date,
-            a1.stock_count,
-            a1.selling_price
+            b1.pharmacy_item_id pharmacyItemId,
+            b1.pharmacy_item_name pharmacyItemName,
+            b1.pharmacy_item_type pharmacyItemType,
+            b1.specifications specifications,
+            b1.manufacturer manufacturer,
+            b1.stock_unit stockUnit,
+            a1.stock_detail_id stockDetailId,
+            a1.expire_date expireDate,
+            a1.stock_count stockCount,
+            a1.selling_price sellingPrice
         FROM
             (
                 SELECT
@@ -30,9 +30,9 @@
                     <if test="keywords != null">
                         AND (
                             b.pharmacy_item_name LIKE CONCAT('%', #{keywords}, '%')
-                            OR b.full_pinyin LIKE CONCAT('%', #{keywords}, '%')
-                            OR b.abbreviation LIKE CONCAT('%', #{keywords}, '%')
-                            OR b.barcode LIKE CONCAT('%', #{keywords}, '%')
+                            OR LOWER(b.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')
+                            OR UPPER(b.abbreviation) LIKE CONCAT('%', UPPER(#{keywords}), '%')
+                            OR b.barcode = #{keywords}
                         )
                     </if>
                     <if test="pharmacyItemType != null">

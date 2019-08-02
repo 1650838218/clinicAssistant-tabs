@@ -46,7 +46,7 @@ public class StockDetail {
     @Column(name = "SELLING_PRICE")
     private Double sellingPrice;
 
-    /** 库存状态(1：正常；2：已退货；3：已过期) */
+    /** 库存状态(1：正常；2：已退货；3：已过期；4：下架) */
     @Column(name = "STOCK_STATE")
     private Integer stockState;
 

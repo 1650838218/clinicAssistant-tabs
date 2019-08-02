@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>处方管理</title>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/lib/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/lib/layuiadmin/layui/css/extend/eleTree.css" media="all">
+    <link rel="stylesheet" href="/css/my.css" media="all">
+    <style type="text/css">
+        .layui-form-item {
+            margin-bottom: 8px;
+        }
+
+        .layui-form-label {
+            padding:  9px 5px;
+            width: 90px;
+        }
+
+        .layui-input-block {
+            margin-left: 100px;
+        }
+        .layui-textarea {
+            min-height: 70px;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-row">
+    <div class="layui-col-md3">
+        <div class="left-panel">
+            <div class="left-search">
+                <input type="text" placeholder="搜索" autocomplete="off" class="layui-input">
+                <div class="layui-btn-group">
+                    <button id="add-brother-btn" class="layui-btn layui-btn-normal layui-btn-sm" title="新增同级">
+                        <i class="layui-icon layui-icon-add-1"></i>
+                    </button>
+                    <button id="add-child-btn" class="layui-btn layui-btn-normal layui-btn-sm" title="新增下级">
+                        <i class="layui-icon layui-icon-add-1"></i>
+                    </button>
+                    <button id="add-rx-btn" class="layui-btn layui-btn-normal layui-btn-sm" title="新增处方">
+                        <i class="layui-icon layui-icon-add-1"></i>
+                    </button>
+                    <button id="del-btn" class="layui-btn layui-btn-normal layui-btn-sm" title="删除">
+                        <i class="layui-icon layui-icon-delete"></i>
+                    </button>
+                </div>
+            </div>
+            <ul class="ztree" id="catalogue"></ul>
+        </div>
+    </div>
+    <div class="layui-col-md9">
+        <div class="right-panel">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <h3><b>处方信息</b></h3>
+                </div>
+                <div class="layui-card-body">
+                    <form id="prescription-form" class="layui-form" action="" lay-filter="prescription-form">
+                        <input type="hidden" name="classicsId" value="">
+                        <input type="hidden" name="catalogueId" value="">
+                        <div class="layui-row layui-col-space10 layui-form-item">
+                            <div class="layui-col-lg6 layui-col-sm6">
+                                <label class="layui-form-label">方剂名称：</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="classicsName" autocomplete="off" class="layui-input" placeholder="请填写字典名称"
+                                           maxlength="20" lay-verify="required|repeat">
+                                </div>
+                            </div>
+                            <div class="layui-col-lg6 layui-col-sm6">
+                                <label class="layui-form-label">方剂类型：</label>
+                                <div class="layui-input-block">
+                                    <select name="classicsType"></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row layui-col-space10 layui-form-item">
+                            <div class="layui-col-lg12 layui-col-sm12">
+                                <label class="layui-form-label">方剂组成：</label>
+                                <div class="layui-input-block">
+                                    <textarea name="classicsComponent" autocomplete="off" class="layui-textarea" rows="2"
+                                              maxlength="500" lay-verify="required" placeholder="请填写组成"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row layui-col-space10 layui-form-item">
+                            <div class="layui-col-lg6 layui-col-sm6">
+                                <label class="layui-form-label">用法：</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="takingMethod" autocomplete="off" class="layui-input" placeholder="请填写字典名称"
+                                           maxlength="20" lay-verify="required|repeat">
+                                </div>
+                            </div>
+                            <div class="layui-col-lg6 layui-col-sm6">
+                                <label class="layui-form-label">功用：</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="classicsFunction" autocomplete="off" class="layui-input" placeholder="请填写字典名称"
+                                           maxlength="20" lay-verify="required">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row layui-col-space10 layui-form-item">
+                            <div class="layui-col-lg6 layui-col-sm6">
+                                <label class="layui-form-label">主治：</label>
+                                <div class="layui-input-block">
+                                    <textarea name="classicsAttending" autocomplete="off" class="layui-textarea" rows="4"
+                                              maxlength="500" lay-verify="required" placeholder="请填写主治"></textarea>
+                                </div>
+                            </div>
+                            <div class="layui-col-lg6 layui-col-sm6">
+                                <label class="layui-form-label">方解：</label>
+                                <div class="layui-input-block">
+                                    <textarea name="classicsExplain" autocomplete="off" class="layui-textarea" rows="4"
+                                              maxlength="2000" lay-verify="required" placeholder="请填写方解"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row layui-col-space10 layui-form-item">
+                            <div class="layui-col-lg6 layui-col-sm6">
+                                <label class="layui-form-label">禁忌：</label>
+                                <div class="layui-input-block">
+                                    <textarea name="classicsTaboo" autocomplete="off" class="layui-textarea" rows="2"
+                                              maxlength="2000" lay-verify="required" placeholder="请填写禁忌"></textarea>
+                                </div>
+                            </div>
+                            <div class="layui-col-lg6 layui-col-sm6">
+                                <label class="layui-form-label">方歌：</label>
+                                <div class="layui-input-block">
+                                    <textarea name="classicsSong" autocomplete="off" class="layui-textarea" rows="2"
+                                              maxlength="2000" lay-verify="required" placeholder="请填写方歌"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-row layui-col-space10">
+                            <div class="layui-col-lg-offset10 layui-col-lg2" style="text-align: right;">
+                                <button type="button" lay-filter="submit-btn" lay-submit class="layui-btn layui-btn-sm">保存</button>
+                                <button type="button" lay-filter="cancel-btn" class="layui-btn layui-btn-primary layui-btn-sm">取消</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/lib/layuiadmin/layui/layui.js"></script>
+<script src="/js/common/constant.js"></script>
+<!--<script src="/views/module/prescription/prescription.js"></script>-->
+</body>
+</html>
