@@ -34,12 +34,14 @@ layui.define(["jquery", "layer"], function (exports) {
                 callback = data;
                 data = undefined;
             }
-            
-            if (!(elem instanceof $)) {
-                elem = $(elem);
+
+            if (elem != null) {
+                if (!(elem instanceof $)) {
+                    elem = $(elem);
+                }
+                elem.addClass('layui-btn-disabled');// 按钮禁用，防止重复提交
+                elem.attr('disabled', 'disabled');
             }
-            elem.addClass('layui-btn-disabled');// 按钮禁用，防止重复提交
-            elem.attr('disabled', 'disabled');
 
             return $.ajax({
                 type: 'POST',
@@ -50,12 +52,16 @@ layui.define(["jquery", "layer"], function (exports) {
                 contentType: 'application/json',
                 error: function (e) {
                     layer.msg(MSG.save_fail);
-                    elem.removeClass('layui-btn-disabled');// 按钮可用
-                    elem.removeAttr('disabled');
+                    if (elem != null) {
+                        elem.removeClass('layui-btn-disabled');// 按钮可用
+                        elem.removeAttr('disabled');
+                    }
                 },
                 complete: function () {
-                    elem.removeClass('layui-btn-disabled');// 按钮可用
-                    elem.removeAttr('disabled');
+                    if (elem != null) {
+                        elem.removeClass('layui-btn-disabled');// 按钮可用
+                        elem.removeAttr('disabled');
+                    }
                 }
             });
         },
