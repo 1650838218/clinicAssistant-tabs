@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.littledoctor.clinicassistant.module.prescription.mapper.PrescriptionMapper">
+  <resultMap id="BaseResultMap" type="com.littledoctor.clinicassistant.module.prescription.entity.Prescription">
+    <id column="classics_id" jdbcType="INTEGER" property="classicsId" />
+    <result column="classics_name" jdbcType="VARCHAR" property="classicsName" />
+    <result column="abbreviation" jdbcType="VARCHAR" property="abbreviation" />
+    <result column="catalogue_id" jdbcType="INTEGER" property="catalogueId" />
+    <result column="classics_type" jdbcType="VARCHAR" property="classicsType" />
+    <result column="classics_source" jdbcType="VARCHAR" property="classicsSource" />
+    <result column="classics_component" jdbcType="VARCHAR" property="classicsComponent" />
+    <result column="taking_method" jdbcType="VARCHAR" property="takingMethod" />
+    <result column="classics_function" jdbcType="VARCHAR" property="classicsFunction" />
+    <result column="classics_attending" jdbcType="VARCHAR" property="classicsAttending" />
+    <result column="classics_explain" jdbcType="VARCHAR" property="classicsExplain" />
+    <result column="classics_taboo" jdbcType="VARCHAR" property="classicsTaboo" />
+    <result column="classics_song" jdbcType="VARCHAR" property="classicsSong" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    classics_id, classics_name, abbreviation, catalogue_id, classics_type, classics_source, 
+    classics_component, taking_method, classics_function, classics_attending, classics_explain, 
+    classics_taboo, classics_song
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from prescription
+    where classics_id = #{classicsId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from prescription
+    where classics_id = #{classicsId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.littledoctor.clinicassistant.module.prescription.entity.Prescription">
+    insert into prescription (classics_id, classics_name, abbreviation, 
+      catalogue_id, classics_type, classics_source, 
+      classics_component, taking_method, classics_function, 
+      classics_attending, classics_explain, classics_taboo, 
+      classics_song)
+    values (#{classicsId,jdbcType=INTEGER}, #{classicsName,jdbcType=VARCHAR}, #{abbreviation,jdbcType=VARCHAR}, 
+      #{catalogueId,jdbcType=INTEGER}, #{classicsType,jdbcType=VARCHAR}, #{classicsSource,jdbcType=VARCHAR}, 
+      #{classicsComponent,jdbcType=VARCHAR}, #{takingMethod,jdbcType=VARCHAR}, #{classicsFunction,jdbcType=VARCHAR}, 
+      #{classicsAttending,jdbcType=VARCHAR}, #{classicsExplain,jdbcType=VARCHAR}, #{classicsTaboo,jdbcType=VARCHAR}, 
+      #{classicsSong,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.littledoctor.clinicassistant.module.prescription.entity.Prescription">
+    insert into prescription
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="classicsId != null">
+        classics_id,
+      </if>
+      <if test="classicsName != null">
+        classics_name,
+      </if>
+      <if test="abbreviation != null">
+        abbreviation,
+      </if>
+      <if test="catalogueId != null">
+        catalogue_id,
+      </if>
+      <if test="classicsType != null">
+        classics_type,
+      </if>
+      <if test="classicsSource != null">
+        classics_source,
+      </if>
+      <if test="classicsComponent != null">
+        classics_component,
+      </if>
+      <if test="takingMethod != null">
+        taking_method,
+      </if>
+      <if test="classicsFunction != null">
+        classics_function,
+      </if>
+      <if test="classicsAttending != null">
+        classics_attending,
+      </if>
+      <if test="classicsExplain != null">
+        classics_explain,
+      </if>
+      <if test="classicsTaboo != null">
+        classics_taboo,
+      </if>
+      <if test="classicsSong != null">
+        classics_song,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="classicsId != null">
+        #{classicsId,jdbcType=INTEGER},
+      </if>
+      <if test="classicsName != null">
+        #{classicsName,jdbcType=VARCHAR},
+      </if>
+      <if test="abbreviation != null">
+        #{abbreviation,jdbcType=VARCHAR},
+      </if>
+      <if test="catalogueId != null">
+        #{catalogueId,jdbcType=INTEGER},
+      </if>
+      <if test="classicsType != null">
+        #{classicsType,jdbcType=VARCHAR},
+      </if>
+      <if test="classicsSource != null">
+        #{classicsSource,jdbcType=VARCHAR},
+      </if>
+      <if test="classicsComponent != null">
+        #{classicsComponent,jdbcType=VARCHAR},
+      </if>
+      <if test="takingMethod != null">
+        #{takingMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="classicsFunction != null">
+        #{classicsFunction,jdbcType=VARCHAR},
+      </if>
+      <if test="classicsAttending != null">
+        #{classicsAttending,jdbcType=VARCHAR},
+      </if>
+      <if test="classicsExplain != null">
+        #{classicsExplain,jdbcType=VARCHAR},
+      </if>
+      <if test="classicsTaboo != null">
+        #{classicsTaboo,jdbcType=VARCHAR},
+      </if>
+      <if test="classicsSong != null">
+        #{classicsSong,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.littledoctor.clinicassistant.module.prescription.entity.Prescription">
+    update prescription
+    <set>
+      <if test="classicsName != null">
+        classics_name = #{classicsName,jdbcType=VARCHAR},
+      </if>
+      <if test="abbreviation != null">
+        abbreviation = #{abbreviation,jdbcType=VARCHAR},
+      </if>
+      <if test="catalogueId != null">
+        catalogue_id = #{catalogueId,jdbcType=INTEGER},
+      </if>
+      <if test="classicsType != null">
+        classics_type = #{classicsType,jdbcType=VARCHAR},
+      </if>
+      <if test="classicsSource != null">
+        classics_source = #{classicsSource,jdbcType=VARCHAR},
+      </if>
+      <if test="classicsComponent != null">
+        classics_component = #{classicsComponent,jdbcType=VARCHAR},
+      </if>
+      <if test="takingMethod != null">
+        taking_method = #{takingMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="classicsFunction != null">
+        classics_function = #{classicsFunction,jdbcType=VARCHAR},
+      </if>
+      <if test="classicsAttending != null">
+        classics_attending = #{classicsAttending,jdbcType=VARCHAR},
+      </if>
+      <if test="classicsExplain != null">
+        classics_explain = #{classicsExplain,jdbcType=VARCHAR},
+      </if>
+      <if test="classicsTaboo != null">
+        classics_taboo = #{classicsTaboo,jdbcType=VARCHAR},
+      </if>
+      <if test="classicsSong != null">
+        classics_song = #{classicsSong,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where classics_id = #{classicsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.littledoctor.clinicassistant.module.prescription.entity.Prescription">
+    update prescription
+    set classics_name = #{classicsName,jdbcType=VARCHAR},
+      abbreviation = #{abbreviation,jdbcType=VARCHAR},
+      catalogue_id = #{catalogueId,jdbcType=INTEGER},
+      classics_type = #{classicsType,jdbcType=VARCHAR},
+      classics_source = #{classicsSource,jdbcType=VARCHAR},
+      classics_component = #{classicsComponent,jdbcType=VARCHAR},
+      taking_method = #{takingMethod,jdbcType=VARCHAR},
+      classics_function = #{classicsFunction,jdbcType=VARCHAR},
+      classics_attending = #{classicsAttending,jdbcType=VARCHAR},
+      classics_explain = #{classicsExplain,jdbcType=VARCHAR},
+      classics_taboo = #{classicsTaboo,jdbcType=VARCHAR},
+      classics_song = #{classicsSong,jdbcType=VARCHAR}
+    where classics_id = #{classicsId,jdbcType=INTEGER}
+  </update>
+</mapper>

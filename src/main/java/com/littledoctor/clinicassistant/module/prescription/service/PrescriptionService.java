@@ -1,5 +1,6 @@
 package com.littledoctor.clinicassistant.module.prescription.service;
 
+import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
 import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalogue;
 
 import java.util.List;
@@ -30,4 +31,26 @@ public interface PrescriptionService {
      * @return
      */
     boolean deleteCatalogue(String catalogueId) throws Exception;
+
+    /**
+     * 根据目录ID查询处方
+     * @param catalogueId
+     * @return
+     */
+    Prescription findPrescriptionByCatalogueId(String catalogueId) throws Exception;
+
+    /**
+     * 根据ID查询处方
+     * @param prescriptionId
+     * @return
+     */
+    Prescription findPrescriptionById(String prescriptionId) throws Exception;
+
+    /**
+     * 保存处方
+     * @param prescription
+     * @param rxCatalogue
+     * @return
+     */
+    Prescription savePrescription(Prescription prescription, RxCatalogue rxCatalogue) throws Exception;
 }

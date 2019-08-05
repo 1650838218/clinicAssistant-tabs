@@ -1,6 +1,7 @@
 package com.littledoctor.clinicassistant.module.prescription.controller;
 
 import com.littledoctor.clinicassistant.common.msg.Message;
+import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
 import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalogue;
 import com.littledoctor.clinicassistant.module.prescription.service.PrescriptionService;
 import org.slf4j.Logger;
@@ -68,5 +69,50 @@ public class PrescriptionController {
             log.error(e.getMessage(), e);
         }
         return false;
+    }
+
+    /**
+     * 根据目录ID查询处方
+     * @param catalogueId
+     * @return
+     */
+    @RequestMapping(value = "/findPrescriptionByCatalogueId", method = RequestMethod.GET)
+    public Prescription findPrescriptionByCatalogueId(@RequestParam String catalogueId) {
+        try {
+            return prescriptionService.findPrescriptionByCatalogueId(catalogueId);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * 根据ID查询处方
+     * @param prescriptionId
+     * @return
+     */
+    @RequestMapping(value = "/findPrescriptionById", method = RequestMethod.GET)
+    public Prescription findPrescriptionById(@RequestParam String prescriptionId) {
+        try {
+            return prescriptionService.findPrescriptionById(prescriptionId);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * 保存处方
+     * @param prescription
+     * @return
+     */
+    @RequestMapping(value = "/prescription/save", method = RequestMethod.POST)
+    public Prescription savePrescription(@RequestBody Prescription prescription, @RequestBody RxCatalogue rxCatalogue) {
+        try {
+            return prescriptionService.savePrescription(prescription,rxCatalogue);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
     }
 }

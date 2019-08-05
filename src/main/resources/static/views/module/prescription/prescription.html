@@ -27,12 +27,12 @@
         .layui-textarea {
             min-height: 70px;
         }
-        .layui-btn-normal {
+        .left-tree .layui-btn-normal {
             color: #0c64eb;
             background-color: rgba(233,242,251,.8);
             border-color: rgba(0,0,0,0);
         }
-        .layui-btn-normal:hover {
+        .left-tree .layui-btn-normal:hover {
             background-color: rgb(30, 159, 255);
         }
     </style>
@@ -42,12 +42,15 @@
     <div class="layui-col-md3">
         <div class="left-panel">
             <div class="left-search">
-                <input type="text" placeholder="搜索目录" autocomplete="off" class="layui-input" style="width: 100%">
+                <input type="text" placeholder="搜索目录" autocomplete="off" class="layui-input" style="width: 70%">
+                <button id="add-root-btn1" class="layui-btn layui-btn-normal layui-btn-sm layui-btn-disabled" title="新增处方目录">
+                    <i class="layui-icon layui-icon-add-1"></i>
+                </button>
             </div>
             <div class="left-tree">
                 <div id="blank-tip" style="text-align: center;display: none">
                     暂时没有处方目录。
-                    <button id="add-first-btn" class="layui-btn layui-btn-normal layui-btn-sm" title="新增">
+                    <button id="add-root-btn2" class="layui-btn layui-btn-normal layui-btn-sm" title="新增">
                         <i class="layui-icon layui-icon-add-1"></i>新增
                     </button>
                 </div>
@@ -62,8 +65,11 @@
                     <h3><b>处方信息</b></h3>
                 </div>
                 <div class="layui-card-body">
-                    <form id="prescription-form" class="layui-form" action="" lay-filter="prescription-form">
-                        <input type="hidden" name="classicsId" value="">
+                    <div class="blank-tip" style="text-align: center;padding-top: 200px">
+                        请选择一个目录。
+                    </div>
+                    <form id="prescription-form" class="layui-form" action="" lay-filter="prescription-form" style="display: none">
+                        <input type="hidden" name="prescriptionId" value="">
                         <input type="hidden" name="catalogueId" value="">
                         <div class="layui-row layui-col-space10 layui-form-item">
                             <div class="layui-col-lg4 layui-col-sm4">
