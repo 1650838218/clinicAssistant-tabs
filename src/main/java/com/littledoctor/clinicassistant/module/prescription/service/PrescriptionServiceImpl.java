@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -17,6 +18,7 @@ import java.util.List;
  * @Description: 处方管理
  */
 @Service
+@Transactional
 public class PrescriptionServiceImpl implements PrescriptionService {
 
     @Autowired
@@ -55,7 +57,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     public boolean deleteCatalogue(String catalogueId) throws Exception {
         if (StringUtils.isNotBlank(catalogueId)) {
             rxCatalogueRepository.deleteById(Integer.parseInt(catalogueId));
-            prescriptionRepository.deleteByCatalogueId(catalogueId);
+            prescriptionRepository.deleteByCatalogueId(Integer.parseInt(catalogueId));
             return true;
         }
         return false;
@@ -96,7 +98,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
      */
     @Override
     public Prescription savePrescription(Prescription prescription, RxCatalogue rxCatalogue) throws Exception {
-        rxCatalogue.setCatalogueName(prescription.getClassicsName());
+        rxCatalogue.setCatalogueName(prescription.getPrescriptionName());
         rxCatalogue.setCatalogueType(2);
         RxCatalogue newRxCatalogue = rxCatalogueRepository.saveAndFlush(rxCatalogue);// 保存目录
         prescription.setCatalogueId(newRxCatalogue.getCatalogueId());

@@ -14,12 +14,12 @@ public class Prescription {
     /** 主键 */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CATALOGUE_ID")
-    private Integer classicsId;
+    @Column(name = "PRESCRIPTION_ID")
+    private Integer prescriptionId;
 
     /** 处方名称 */
-    @Column(name = "CLASSICS_NAME")
-    private String classicsName;
+    @Column(name = "PRESCRIPTION_NAME")
+    private String prescriptionName;
 
     /** 处方简称 首字母 */
     @Column(name = "ABBREVIATION")
@@ -30,55 +30,55 @@ public class Prescription {
     private Integer catalogueId;
 
     /** 方剂类型（1：经方，2：验方，3：时方，4：单方，5：偏方，6：秘方） */
-    @Column(name = "CLASSICS_TYPE")
-    private String classicsType;
+    @Column(name = "PRESCRIPTION_TYPE")
+    private String prescriptionType;
 
     /** 处方来源 */
-    @Column(name = "CLASSICS_SOURCE")
-    private String classicsSource;
+    @Column(name = "PRESCRIPTION_SOURCE")
+    private String prescriptionSource;
 
     /** 方剂组成（JSON格式的字符串） */
-    @Column(name = "CLASSICS_COMPONENT")
-    private String classicsComponent;
+    @Column(name = "PRESCRIPTION_COMPONENT")
+    private String prescriptionComponent;
 
     /** 服用方法 */
     @Column(name = "TAKING_METHOD")
     private String takingMethod;
 
     /** 方剂功用 */
-    @Column(name = "CLASSICS_FUNCTION")
-    private String classicsFunction;
+    @Column(name = "PRESCRIPTION_FUNCTION")
+    private String prescriptionFunction;
 
     /** 方剂主治 */
-    @Column(name = "CLASSICS_ATTENDING")
-    private String classicsAttending;
+    @Column(name = "PRESCRIPTION_ATTENDING")
+    private String prescriptionAttending;
 
     /** 方解 */
-    @Column(name = "CLASSICS_EXPLAIN")
-    private String classicsExplain;
+    @Column(name = "PRESCRIPTION_EXPLAIN")
+    private String prescriptionExplain;
 
     /** 禁忌 */
-    @Column(name = "CLASSICS_TABOO")
-    private String classicsTaboo;
+    @Column(name = "PRESCRIPTION_TABOO")
+    private String prescriptionTaboo;
 
     /** 方歌 */
-    @Column(name = "CLASSICS_SONG")
-    private String classicsSong;
+    @Column(name = "PRESCRIPTION_SONG")
+    private String prescriptionSong;
 
-    public Integer getClassicsId() {
-        return classicsId;
+    public Integer getPrescriptionId() {
+        return prescriptionId;
     }
 
-    public void setClassicsId(Integer classicsId) {
-        this.classicsId = classicsId;
+    public void setPrescriptionId(Integer prescriptionId) {
+        this.prescriptionId = prescriptionId;
     }
 
-    public String getClassicsName() {
-        return classicsName;
+    public String getPrescriptionName() {
+        return prescriptionName;
     }
 
-    public void setClassicsName(String classicsName) {
-        this.classicsName = classicsName;
+    public void setPrescriptionName(String prescriptionName) {
+        this.prescriptionName = prescriptionName;
     }
 
     public String getAbbreviation() {
@@ -97,28 +97,28 @@ public class Prescription {
         this.catalogueId = catalogueId;
     }
 
-    public String getClassicsType() {
-        return classicsType;
+    public String getPrescriptionType() {
+        return prescriptionType;
     }
 
-    public void setClassicsType(String classicsType) {
-        this.classicsType = classicsType;
+    public void setPrescriptionType(String prescriptionType) {
+        this.prescriptionType = prescriptionType;
     }
 
-    public String getClassicsSource() {
-        return classicsSource;
+    public String getPrescriptionSource() {
+        return prescriptionSource;
     }
 
-    public void setClassicsSource(String classicsSource) {
-        this.classicsSource = classicsSource;
+    public void setPrescriptionSource(String prescriptionSource) {
+        this.prescriptionSource = prescriptionSource;
     }
 
-    public String getClassicsComponent() {
-        return classicsComponent;
+    public String getPrescriptionComponent() {
+        return prescriptionComponent;
     }
 
-    public void setClassicsComponent(String classicsComponent) {
-        this.classicsComponent = classicsComponent;
+    public void setPrescriptionComponent(String prescriptionComponent) {
+        this.prescriptionComponent = prescriptionComponent;
     }
 
     public String getTakingMethod() {
@@ -129,43 +129,43 @@ public class Prescription {
         this.takingMethod = takingMethod;
     }
 
-    public String getClassicsFunction() {
-        return classicsFunction;
+    public String getPrescriptionFunction() {
+        return prescriptionFunction;
     }
 
-    public void setClassicsFunction(String classicsFunction) {
-        this.classicsFunction = classicsFunction;
+    public void setPrescriptionFunction(String prescriptionFunction) {
+        this.prescriptionFunction = prescriptionFunction;
     }
 
-    public String getClassicsAttending() {
-        return classicsAttending;
+    public String getPrescriptionAttending() {
+        return prescriptionAttending;
     }
 
-    public void setClassicsAttending(String classicsAttending) {
-        this.classicsAttending = classicsAttending;
+    public void setPrescriptionAttending(String prescriptionAttending) {
+        this.prescriptionAttending = prescriptionAttending;
     }
 
-    public String getClassicsExplain() {
-        return classicsExplain;
+    public String getPrescriptionExplain() {
+        return prescriptionExplain;
     }
 
-    public void setClassicsExplain(String classicsExplain) {
-        this.classicsExplain = classicsExplain;
+    public void setPrescriptionExplain(String prescriptionExplain) {
+        this.prescriptionExplain = prescriptionExplain;
     }
 
-    public String getClassicsTaboo() {
-        return classicsTaboo;
+    public String getPrescriptionTaboo() {
+        return prescriptionTaboo;
     }
 
-    public void setClassicsTaboo(String classicsTaboo) {
-        this.classicsTaboo = classicsTaboo;
+    public void setPrescriptionTaboo(String prescriptionTaboo) {
+        this.prescriptionTaboo = prescriptionTaboo;
     }
 
-    public String getClassicsSong() {
-        return classicsSong;
+    public String getPrescriptionSong() {
+        return prescriptionSong;
     }
 
-    public void setClassicsSong(String classicsSong) {
-        this.classicsSong = classicsSong;
+    public void setPrescriptionSong(String prescriptionSong) {
+        this.prescriptionSong = prescriptionSong;
     }
 }

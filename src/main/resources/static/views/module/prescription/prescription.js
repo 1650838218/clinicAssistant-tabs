@@ -21,7 +21,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
     var bodyHeight = $(document.body).height();
     $('.left-tree').height(bodyHeight > 530 ? bodyHeight - 80 : 450);
     // 设置右侧面板高度
-    $('.right-panel .blank-tip').height(bodyHeight >530 ? bodyHeight - 80 : 450);
+    $('.right-panel .blank-tip').height(bodyHeight > 530 ? bodyHeight - 83 : 447).css('padding-top','200px');
 
     // ztree setting
     var setting = {
@@ -71,16 +71,21 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
             }
         },
         callback: {
-            onClick: function (event, treeId, treeNode) {
-                $('.right-panel .blank-tip').hide();
-                $('#' + formId).show();
-                if (treeNode.catalogueType === 1) {
-                    // 清空表单
-                    utils.clearForm('#' + formId);// 清空表单
-                    $('#' + formId).find('input[name="catalogueId"]').val(treeNode.catalogueId);
-                    form.render();
-                } else {
-                    getPrescriptionByCatalogueId(treeNode.catalogueId);// 查询处方
+            onClick: function (event, treeId, treeNode,clickFlag) {
+                if (clickFlag === 1) {
+                    $('.right-panel .blank-tip').hide();
+                    $('#' + formId).show();
+                    if (treeNode.catalogueType === 1) {
+                        // 清空表单
+                        utils.clearForm('#' + formId);// 清空表单
+                        $('#' + formId).find('input[name="catalogueId"]').val(treeNode.catalogueId);
+                        form.render();
+                    } else {
+                        getPrescriptionByCatalogueId(treeNode.catalogueId);// 查询处方
+                    }
+                } else if (clickFlag === 0) {
+                    $('#' + formId).hide();
+                    $('.right-panel .blank-tip').show();
                 }
             },
             beforeRename: function(treeId, treeNode, newName, isCancel) {
@@ -129,6 +134,8 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
                                 queryCatalogue();
                                 layer.close(index);
                             });
+                        } else {
+                            treeNode.catalogueId = result.catalogueId;
                         }
                     },
                     error: function (e) {
@@ -185,7 +192,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
     }
 
     // 新增根目录
-    $('#add-root-btn1,#all-root-btn2').click(function () {
+    $('#add-root-btn1,#add-root-btn2').click(function () {
         $('.left-tree .ztree').show();
         var leftTree = $.fn.zTree.getZTreeObj(leftTreeId);
         if (leftTree == null) {

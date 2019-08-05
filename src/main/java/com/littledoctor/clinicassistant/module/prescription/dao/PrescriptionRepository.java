@@ -27,8 +27,8 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Inte
       * @param catalogueId
      */
     @Modifying
-    @Query(value = "delete from Prescription a where a.catalogueId = ?1")
-    void deleteByCatalogueId(String catalogueId);
+    @Query(value = "delete from Prescription where catalogueId = ?1")
+    void deleteByCatalogueId(Integer catalogueId);
 
     /**
      * 根据目录ID查询处方
