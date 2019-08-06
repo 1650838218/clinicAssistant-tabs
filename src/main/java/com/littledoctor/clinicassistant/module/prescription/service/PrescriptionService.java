@@ -53,4 +53,11 @@ public interface PrescriptionService {
      * @return
      */
     Prescription savePrescription(PrescriptionVo prescriptionVo) throws Exception;
+
+    /**
+     * 根据ID查询处方分类
+     * @param catalogueId
+     * @return
+     */
+    RxCatalogue findCatalogueById(Integer catalogueId);
 }

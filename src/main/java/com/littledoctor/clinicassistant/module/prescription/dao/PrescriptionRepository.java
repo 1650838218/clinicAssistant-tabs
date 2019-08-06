@@ -35,5 +35,5 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Inte
      * @param catalogueId
      * @return
      */
-    Prescription findByCatalogueId(String catalogueId);
+    Prescription findByCatalogueId(Integer catalogueId);
 }

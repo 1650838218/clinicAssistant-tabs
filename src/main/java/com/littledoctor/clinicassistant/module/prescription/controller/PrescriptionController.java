@@ -116,4 +116,19 @@ public class PrescriptionController {
         }
         return null;
     }
+
+    /**
+     * 根据ID查询处方分类
+     * @param catalogueId
+     * @return
+     */
+    @RequestMapping(value = "/findCatalogueById", method = RequestMethod.GET)
+    public RxCatalogue findCatalogueById(Integer catalogueId) {
+        try {
+            return prescriptionService.findCatalogueById(catalogueId);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
+    }
 }

@@ -73,7 +73,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     @Override
     public Prescription findPrescriptionByCatalogueId(String catalogueId) throws Exception {
         if (StringUtils.isNotBlank(catalogueId)) {
-            return prescriptionRepository.findByCatalogueId(catalogueId);
+            return prescriptionRepository.findByCatalogueId(Integer.parseInt(catalogueId));
         }
         return null;
     }
@@ -111,6 +111,19 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                     return prescriptionRepository.saveAndFlush(prescription);// 保存处方
                 }
             }
+        }
+        return null;
+    }
+
+    /**
+     * 根据ID查询处方分类
+     * @param catalogueId
+     * @return
+     */
+    @Override
+    public RxCatalogue findCatalogueById(Integer catalogueId) {
+        if (catalogueId != null) {
+            return rxCatalogueRepository.findById(catalogueId).get();
         }
         return null;
     }

@@ -137,8 +137,9 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
                             treeNode.catalogueId = result.catalogueId;
                             // 清空表单
                             utils.clearForm('#' + formId);// 清空表单
-                            $('#' + formId).find('input[name="catalogueId"]').val(treeNode.catalogueId);
                             form.render();
+                            $('.right-panel .blank-tip').hide();
+                            $('#' + formId).show();
                         }
                     },
                     error: function (e) {
@@ -161,6 +162,9 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
                                 // 表单显示空白
                                 $('#' + formId).hide();
                                 $('.right-panel .blank-tip').show();
+                                if (leftTree.getNodes() == null) {
+                                    $('#blank-tip').show();
+                                }
                             } else {
                                 layer.msg(MSG.delete_fail);
                             }
@@ -168,10 +172,9 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
                     } else {
                         layer.msg(MSG.delete_success);
                         leftTree.removeNode(treeNode, false);
-                    }
-                    // 节点被全部删除
-                    if (leftTree.getNodes() == null) {
-                        $('#blank-tip').show();
+                        if (leftTree.getNodes() == null) {
+                            $('#blank-tip').show();
+                        }
                     }
                     layer.close(index);
                 });
@@ -209,7 +212,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
     // 根据目录ID查询处方
     function getPrescriptionByCatalogueId(catalogueId) {
         if (utils.isNotNull(catalogueId)) {
-            $.getJSON(rootMapping + '/findPrescriptionByCatalogueId', {prescriptionId: catalogueId}, function (prescription) {
+            $.getJSON(rootMapping + '/findPrescriptionByCatalogueId', {catalogueId: catalogueId}, function (prescription) {
                 if (prescription != null) {
                     form.val(formId, prescription);
                 } else {
@@ -266,14 +269,17 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
                     layer.msg(MSG.save_success);
                     form.val(formId, prescription);
                     // 手动增加目录节点
-                    $.getJSON(rootMapping + '/findCatalogueById', {catalogue: prescription.catalogueId}, function (catalogue) {
+                    $.getJSON(rootMapping + '/findCatalogueById', {catalogueId: prescription.catalogueId}, function (catalogue) {
                         var leftTree = $.fn.zTree.getZTreeObj(leftTreeId);
                         var selectNode = leftTree.getSelectedNodes();
                         if (selectNode != null && selectNode.length > 0) {
-                            if (selectNode[0].catalogueType === 1) {
-                                leftTree.addNodes(selectNode[0], catalogue);
-                            } else {
-                                leftTree.addNodes(selectNode[0].getParentNode(), catalogue);
+                            if (selectNode[0].catalogueType === 1) {// 当前处方是新增的
+                                var newNode = leftTree.addNodes(selectNode[0], catalogue);
+                                leftTree.selectNode(newNode[0]);
+                            } else {// 当前处方是修改的
+                                // leftTree.addNodes(selectNode[0].getParentNode(), catalogue);
+                                selectNode[0].catalogueName = catalogue.catalogueName;
+                                leftTree.updateNode(selectNode[0]);
                             }
                         }
                     });
