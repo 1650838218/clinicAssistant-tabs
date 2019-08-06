@@ -2,6 +2,7 @@ package com.littledoctor.clinicassistant.module.prescription.controller;
 
 import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
+import com.littledoctor.clinicassistant.module.prescription.entity.PrescriptionVo;
 import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalogue;
 import com.littledoctor.clinicassistant.module.prescription.service.PrescriptionService;
 import org.slf4j.Logger;
@@ -103,13 +104,13 @@ public class PrescriptionController {
 
     /**
      * 保存处方
-     * @param prescription
+     * @param prescriptionVo
      * @return
      */
     @RequestMapping(value = "/prescription/save", method = RequestMethod.POST)
-    public Prescription savePrescription(@RequestBody Prescription prescription, @RequestBody RxCatalogue rxCatalogue) {
+    public Prescription savePrescription(@RequestBody PrescriptionVo prescriptionVo) {
         try {
-            return prescriptionService.savePrescription(prescription,rxCatalogue);
+            return prescriptionService.savePrescription(prescriptionVo);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

@@ -3,6 +3,8 @@ package com.littledoctor.clinicassistant.module.prescription.dao;
 import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalogue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  * @Auther: 周俊林
@@ -11,4 +13,13 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  */
 public interface RxCatalogueRepository extends JpaRepository<RxCatalogue, Integer>, JpaSpecificationExecutor<RxCatalogue> {
 
+    /**
+     * 修改目录名称
+     * @param prescriptionName
+     * @param catalogueId
+     * @return
+     */
+    @Modifying
+    @Query(value = "update RxCatalogue set catalogueName = ?1 where catalogueId = ?2")
+    int updateName(String prescriptionName, Integer catalogueId);
 }

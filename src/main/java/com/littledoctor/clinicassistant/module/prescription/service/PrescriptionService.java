@@ -1,6 +1,7 @@
 package com.littledoctor.clinicassistant.module.prescription.service;
 
 import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
+import com.littledoctor.clinicassistant.module.prescription.entity.PrescriptionVo;
 import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalogue;
 
 import java.util.List;
@@ -48,9 +49,8 @@ public interface PrescriptionService {
 
     /**
      * 保存处方
-     * @param prescription
-     * @param rxCatalogue
+     * @param prescriptionVo
      * @return
      */
-    Prescription savePrescription(Prescription prescription, RxCatalogue rxCatalogue) throws Exception;
+    Prescription savePrescription(PrescriptionVo prescriptionVo) throws Exception;
 }

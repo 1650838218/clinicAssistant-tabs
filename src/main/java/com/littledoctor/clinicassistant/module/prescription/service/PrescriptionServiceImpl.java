@@ -3,6 +3,7 @@ package com.littledoctor.clinicassistant.module.prescription.service;
 import com.littledoctor.clinicassistant.module.prescription.dao.PrescriptionRepository;
 import com.littledoctor.clinicassistant.module.prescription.dao.RxCatalogueRepository;
 import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
+import com.littledoctor.clinicassistant.module.prescription.entity.PrescriptionVo;
 import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalogue;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,16 +93,25 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
     /**
      * 保存处方
-     * @param prescription
-     * @param rxCatalogue
+     * @param prescriptionVo
      * @return
      */
     @Override
-    public Prescription savePrescription(Prescription prescription, RxCatalogue rxCatalogue) throws Exception {
-        rxCatalogue.setCatalogueName(prescription.getPrescriptionName());
-        rxCatalogue.setCatalogueType(2);
-        RxCatalogue newRxCatalogue = rxCatalogueRepository.saveAndFlush(rxCatalogue);// 保存目录
-        prescription.setCatalogueId(newRxCatalogue.getCatalogueId());
-        return prescriptionRepository.saveAndFlush(prescription);// 保存处方
+    public Prescription savePrescription(PrescriptionVo prescriptionVo) throws Exception {
+        if (prescriptionVo != null) {
+            Prescription prescription = prescriptionVo.getPrescription();
+            RxCatalogue rxCatalogue = prescriptionVo.getRxCatalogue();
+            if (prescription != null) {
+                if (prescription.getPrescriptionId() == null && prescription.getCatalogueId() == null && rxCatalogue != null) {// 新增
+                    RxCatalogue newRxCatalogue = rxCatalogueRepository.saveAndFlush(rxCatalogue);// 保存目录
+                    prescription.setCatalogueId(newRxCatalogue.getCatalogueId());
+                    return prescriptionRepository.saveAndFlush(prescription);// 保存处方
+                } else { // 修改
+                    rxCatalogueRepository.updateName(prescription.getPrescriptionName(), prescription.getCatalogueId());
+                    return prescriptionRepository.saveAndFlush(prescription);// 保存处方
+                }
+            }
+        }
+        return null;
     }
 }
