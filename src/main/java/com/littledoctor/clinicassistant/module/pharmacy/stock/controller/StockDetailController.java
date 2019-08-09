@@ -1,6 +1,7 @@
 package com.littledoctor.clinicassistant.module.pharmacy.stock.controller;
 
 import com.littledoctor.clinicassistant.common.plugin.layui.LayuiTableEntity;
+import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.entity.PharmacyItem;
 import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.PurchaseOrderSingle;
 import com.littledoctor.clinicassistant.module.pharmacy.stock.entity.StockDetail;
 import com.littledoctor.clinicassistant.module.pharmacy.stock.service.StockDetailService;
@@ -9,11 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -88,5 +87,19 @@ public class StockDetailController {
             log.error(e.getMessage(), e);
         }
         return false;
+    }
+
+    /**
+     * 获取下拉表格的list
+     * @return
+     */
+    @RequestMapping(value = "/getCombogrid", method = RequestMethod.GET)
+    public List<Map<String,String>> getCombogrid(@RequestParam(value = "q", required = false) String keywords) {
+        try {
+            return stockDetailService.getCombogrid(keywords);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return new ArrayList<>();
     }
 }

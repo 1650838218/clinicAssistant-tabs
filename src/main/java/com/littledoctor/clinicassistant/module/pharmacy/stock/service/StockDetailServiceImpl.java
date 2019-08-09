@@ -145,4 +145,14 @@ public class StockDetailServiceImpl implements StockDetailService {
         }
         return false;
     }
+
+    /**
+     * 获取下拉表格的list
+     * @param keywords
+     * @return
+     */
+    @Override
+    public List<Map<String, String>> getCombogrid(String keywords) throws Exception {
+        return null;
+    }
 }

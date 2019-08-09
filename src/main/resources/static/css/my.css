@@ -134,38 +134,44 @@
 }
 
 /* sm表单 */
-.lay-form-sm .layui-input, .lay-form-sm .layui-textarea, .lay-form-sm .layui-select{
+.layui-form-sm .layui-input, .layui-form-sm .layui-textarea, .layui-form-sm .layui-select{
 	height:30px;
 }
-.lay-form-sm .layui-form-mid {
+.layui-form-sm .layui-input, .layui-textarea {
+    padding-left: 5px;
+}
+.layui-form-sm .layui-textarea {
+    min-height: 60px;
+}
+.layui-form-sm .layui-form-mid {
 	padding: 5px 0 !important;
 }
-.lay-form-sm .layui-form-label{
-	padding: 5px 10px;
+.layui-form-sm .layui-form-label{
+	padding: 5px 0px;
 	width: 70px;
 }
-.lay-form-sm .layui-input-block{
-	margin-left: 90px;
+.layui-form-sm .layui-input-block{
+	margin-left: 80px;
 	min-height: 30px;
 }
-.lay-form-sm .layui-form-radio{
+.layui-form-sm .layui-form-radio{
 	margin: 1px 0px 0 0;
 	padding-right: 5px;
 }
-.lay-form-sm .layui-form-switch{
+.layui-form-sm .layui-form-switch{
 	margin-top: 2px;
 }
 
-.lay-form-sm .layui-form-item .layui-form-checkbox[lay-skin="primary"] {
+.layui-form-sm .layui-form-item .layui-form-checkbox[lay-skin="primary"] {
 	margin-top: 6px;
 }
 
-.lay-form-sm .layui-form-item .layui-form-checkbox {
+.layui-form-sm .layui-form-item .layui-form-checkbox {
 	margin-top: 0px;
 }
-.lay-form-sm .layui-form-item{
+.layui-form-sm .layui-form-item{
 	margin-bottom: 5px;
 }
-.lay-form-sm .layui-form-item .layui-inline {
+.layui-form-sm .layui-form-item .layui-inline {
 	margin-right: 0px;
 }

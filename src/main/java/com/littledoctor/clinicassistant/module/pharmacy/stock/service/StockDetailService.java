@@ -46,4 +46,11 @@ public interface StockDetailService {
      * @throws Exception
      */
     Boolean unshelve(StockDetail stockDetail) throws Exception;
+
+    /**
+     * 获取下拉表格的list
+     * @param keywords
+     * @return
+     */
+    List<Map<String, String>> getCombogrid(String keywords) throws Exception;
 }
