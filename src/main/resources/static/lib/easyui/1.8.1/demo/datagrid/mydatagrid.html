@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Basic DataGrid - jQuery EasyUI Demo</title>
+	<link rel="stylesheet" type="text/css" href="https://www.layuicdn.com/layui/css/layui.css" />
+	<link rel="stylesheet" type="text/css" href="../../themes/bootstrap/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../../themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="../demo.css">
+	<script type="text/javascript" src="../../jquery.min.js"></script>
+	<script type="text/javascript" src="../../jquery.easyui.min.js"></script>
+</head>
+<body>
+	<h2>Basic DataGrid</h2>
+	<p>The DataGrid is created from markup, no JavaScript code needed.</p>
+	<div style="margin:20px 0;"></div>
+	
+	<table id="dg"  class="easyui-datagrid" style="width:700px;height:400px"
+			data-options="singleSelect:true,
+			collapsible:true,
+			url:'datagrid_data1.json',
+			method:'get',
+			showHeader:false,
+			scrollbarSize:0,
+			border:false,
+			onLoadSuccess:myStyle,
+			onClickCell: onClickCell,
+			onAfterEdit:myStyle">
+		<thead>
+			<tr>
+				<th data-options="field:'itemid',width:80">Item ID</th>
+				<th data-options="field:'productid',width:100">Product</th>
+				<th data-options="field:'listprice',width:80,align:'right',editor:{type:'numberbox',options:{precision:2}}">List Price</th>
+				<th data-options="field:'unitcost',width:80,align:'right'">Unit Cost</th>
+				<th data-options="field:'attr1',width:250">Attribute</th>
+				<th data-options="field:'status',width:40,align:'center'">Status</th>
+				<th data-options="field:'option',width:60,align:'center',formatter:splieBtn">操作</th>
+			</tr>
+		</thead>
+	</table>
+
+</body>
+
+<script src="https://www.layuicdn.com/layui/layui.js"></script>
+<script>
+	function myStyle() {
+        var panel = $(this).datagrid('getPanel');
+        var tr = panel.find('div.datagrid-body tr');
+        tr.each(function () {
+            var td = $(this).children('td');
+            td.css({
+                "border-width": "0 0 1px 0",
+				"border-style": "solid"
+            });
+            ;
+        });
+        panel.find('div.datagrid-header').css({"border-width": "0"});
+    }
+
+    $.extend($.fn.datagrid.methods, {
+        editCell: function(jq,param){
+            return jq.each(function(){
+                var opts = $(this).datagrid('options');
+                var fields = $(this).datagrid('getColumnFields',true).concat($(this).datagrid('getColumnFields'));
+                for(var i=0; i<fields.length; i++){
+                    var col = $(this).datagrid('getColumnOption', fields[i]);
+                    col.editor1 = col.editor;
+                    if (fields[i] != param.field){
+                        col.editor = null;
+                    }
+                }
+                $(this).datagrid('beginEdit', param.index);
+                for(var i=0; i<fields.length; i++){
+                    var col = $(this).datagrid('getColumnOption', fields[i]);
+                    col.editor = col.editor1;
+                }
+            });
+        }
+    });
+
+    var editIndex = undefined;
+    function endEditing(){
+        if (editIndex == undefined){return true}
+        if ($('#dg').datagrid('validateRow', editIndex)){
+            $('#dg').datagrid('endEdit', editIndex);
+            editIndex = undefined;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function onClickCell(index, field){
+        if (endEditing()){
+            // $('#dg').datagrid('selectRow', index)
+            //     .datagrid('editCell', {index:index,field:field});
+            $('#dg').datagrid('beginEdit', index);
+            editIndex = index;
+        }
+    }
+    
+    function splieBtn() {
+		return '<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="delete" title="删除"><i class="layui-icon layui-icon-close"></i></a>';
+    }
+
+</script>
+</html>
