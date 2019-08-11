@@ -94,7 +94,7 @@ public class StockDetailController {
      * @return
      */
     @RequestMapping(value = "/getCombogrid", method = RequestMethod.GET)
-    public List<Map<String,String>> getCombogrid(@RequestParam(value = "q", required = false) String keywords) {
+    public List<Map<String,Object>> getCombogrid(@RequestParam(value = "q", required = false) String keywords) {
         try {
             return stockDetailService.getCombogrid(keywords);
         } catch (Exception e) {

@@ -14,6 +14,7 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
     var ajax = layui.ajax;
     var utils = layui.utils;
     var laydate = layui.laydate;
+    var element = layui.element;
     var rootMapping = '/record';
     var decoctionTableId = 'decoction-table';// 中药方 grid
     var patentMedicineTableId = 'patent-medicine-table';// 中成药方 grid
@@ -22,6 +23,8 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
     var decoctionFormId = 'decoction-form'; // 中药方 表单ID
     var patentMedicineFormId = 'patent-medicine-form';// 中成药方 表单ID
     var skillFormId = 'skill-form';// 医技项目 表单ID
+    var tableInitState = [false, false, false];
+    var editIndex = [undefined, undefined, undefined];
     form.render();
 
     // 设置就诊时间
@@ -29,11 +32,8 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
 
     // 监听处方复选框的选择事件
     form.on('checkbox(prescriptionType)', function(data){
-        // console.log(data.elem); //得到checkbox原始DOM对象
-        // console.log(data.elem.checked); //是否被选中，true或者false
-        // console.log(data.value); //复选框value值，也可以通过data.elem.value得到
-        // console.log(data.othis); //得到美化后的DOM对象
         if (data.elem.checked) {
+            $('#btn-group').show();
             $('.layui-tab ul li:eq(0)').hide();
             $('.layui-tab ul li:eq(' + data.value + ')').show();
             var thisTab = $('.layui-tab ul li.layui-this');
@@ -47,6 +47,7 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
             if (checked == null || checked.length == 0) {
                 $('.layui-tab ul li:eq(0)').show();
                 $('.layui-tab .layui-tab-content .layui-tab-item:eq(0)').addClass('layui-show');
+                $('#btn-group').hide();
             } else {
                 var thisTab = $('.layui-tab ul li.layui-this');
                 if (thisTab == null || thisTab.length == 0) {
@@ -56,13 +57,27 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
         }
     });
 
+    // 监听标签页的切换
+    element.on('tab(medical-record-tabs)', function(data){
+        var tabBody = $('.layui-tab .layui-tab-content .layui-tab-item').eq(data.index);
+        if (data.index == 1 && !tableInitState[0]) {
+            initDecoctionTable();
+            tableInitState[0] = true;
+        } else if (data.index == 2 && !tableInitState[1]) {
+            initPatentMedicineTable();
+            tableInitState[1] = true;
+        } else if (data.index == 3 && !tableInitState[2]) {
+            initSkillTable();
+            tableInitState[2] = true;
+        }
+    });
+
     // 判断是否可以进行编辑，返回true 可以编辑，false 不可以编辑
-    var editIndex = undefined;
-    function endEditing(){
-        if (editIndex == undefined) return true;
-        if ($('#' + decoctionTableId).datagrid('validateRow', editIndex)){
-            $('#' + decoctionTableId).datagrid('endEdit', editIndex);
-            editIndex = undefined;
+    function endEditing(tableId, tabIndex){
+        if (editIndex[tabIndex] == undefined) return true;
+        if ($('#' + tableId).datagrid('validateRow', editIndex[tabIndex])){
+            $('#' + tableId).datagrid('endEdit', editIndex[tabIndex]);
+            editIndex[tabIndex] = undefined;
             return true;
         } else {
             return false;
@@ -70,185 +85,513 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
     }
 
     // 开始编辑一行
-    function beginEditing(rowIndex,field) {
-        editIndex = rowIndex;
-        $('#' + decoctionTableId).datagrid('selectRow', rowIndex).datagrid('beginEdit', rowIndex);
-        var ed = $('#' + decoctionTableId).datagrid('getEditor', {index:rowIndex,field:field});
+    function beginEditing(tableId, tabIndex, rowIndex,field) {
+        editIndex[tabIndex] = rowIndex;
+        $('#' + tableId).datagrid('selectRow', rowIndex).datagrid('beginEdit', rowIndex);
+        var ed = $('#' + tableId).datagrid('getEditor', {index:rowIndex,field:field});
         if (ed){
             ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
         }
     }
 
-    // 初始化表格
-    $('#' + decoctionTableId).datagrid({});
-    /*$('#' + decoctionTableId).datagrid({
-        toolbar: [
-            {
-                text: '添加',
-                iconCls: 'icon-add',
-                handler: function () {
-                    if (endEditing()) {
-                        $('#' + decoctionTableId).datagrid('appendRow', {});
-                        editIndex = $('#' + decoctionTableId).datagrid('getRows').length - 1;
-                        $('#' + decoctionTableId).datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
+    // 初始化中药方表格
+    function initDecoctionTable() {
+        $('#' + decoctionTableId).datagrid({
+            data: [{}, {}, {}, {}, {}, {}, {}, {}, {},{},{}, {}, {}, {}, {}, {}, {}, {}, {},{},{}, {}, {}, {}, {}, {}, {}, {}, {},{}],
+            onClickCell: function (rowIndex, field, value) {
+                if (editIndex[0] != rowIndex) {
+                    if (endEditing(decoctionTableId, 0)) {
+                        beginEditing(decoctionTableId, 0, rowIndex, field);
+                    } else {
+                        setTimeout(function () {
+                            $('#' + decoctionTableId).datagrid('selectRow', editIndex[0]);
+                        }, 0);
                     }
                 }
-            }, '-',
-            {
-                text: '删除',
-                iconCls: 'icon-remove',
-                handler: function () {
-                    if (editIndex == undefined) {
-                        layer.msg(MSG.select_one);
-                        return;
-                    }
-                    $('#' + decoctionTableId).datagrid('cancelEdit', editIndex).datagrid('deleteRow', editIndex);
-                    editIndex = undefined;
-                    // 如果明细行被全部删除，则新增一个空白行
-                    if ($('#' + decoctionTableId).datagrid('getData').total === 0) {
-                        $('#' + decoctionTableId).datagrid('appendRow', {});
-                    }
-                }
+            },
+            onEndEdit: function (index, row) {
+                var ed = $(this).datagrid('getEditor', {
+                    index: index,
+                    field: 'stockDetailId'
+                });
+                row.pharmacyItemName = $(ed.target).combogrid('getText');
             }
-        ],
-        data: [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}],
-        onClickCell: function (rowIndex, field, value) {
-            if (editIndex != rowIndex){
-                if (endEditing()){
-                    beginEditing(rowIndex, field);
-                } else {
-                    setTimeout(function(){
-                        $('#' + decoctionTableId).datagrid('selectRow', editIndex);
-                    },0);
-                }
-            }
-        },
-        onEndEdit: function (index, row) {
-            var ed = $(this).datagrid('getEditor', {
-                index: index,
-                field: 'stockDetailId'
-            });
-            row.pharmacyItemName = $(ed.target).combogrid('getText');
-        }
-    });*/
+        });
 
-    // 动态设置列的editor和其他属性
-/*    var columns = [
-        {
-            field: 'stockDetailId',
-            editor: {
-                type: 'combogrid',
-                options: {
-                    idField:'stockDetailId',
-                    textField:'pharmacyItemName',
-                    method: 'get',
-                    url: '/pharmacy/stock/getCombogrid',
-                    mode: 'remote',
-                    columns:[[
-                        {field:'pharmacyItemName',title:'药品名称',width:150},
-                        {field:'pharmacyItemTypeName',title:'药品类型',width:80},
-                        {field:'specifications',title:'规格',width:120},
-                        {field:'manufacturer',title:'制造商',width:200}
-                    ]],
-                    required: true,
-                    panelHeight:'auto',
-                    panelMaxHeight: 200,
-                    panelWidth:568,
-                    hasDownArrow: false,
-                    onSelect: function(index,stockDetail){
-                        // 设置库存单位（销售单位）
-                        var editor1 = $('#' + decoctionTableId).datagrid('getEditor',{index: editIndex,field: 'stockUnit'});
-                        $(editor1.target).textbox('setValue', stockDetail.stockUnitName);
-                        // 设置单价
-                        var editor2 = $('#' + decoctionTableId).datagrid('getEditor',{index: editIndex,field: 'unitPrice'});
-                        $(editor2.target).textbox('setValue', stockDetail.sellingPrice);
-                    },
-                    onChange: function (newValue, oldValue) {
-                        if (!utils.isNotNull(newValue)) {
-                            // 清空库存单位（销售单位）和单价
-                            var editor1 = $('#' + decoctionTableId).datagrid('getEditor',{index: editIndex,field: 'stockUnit'});
-                            $(editor1.target).textbox('clear');
-                            var editor2 = $('#' + decoctionTableId).datagrid('getEditor',{index: editIndex,field: 'unitPrice'});
-                            $(editor2.target).textbox('clear');
+        // 动态设置列的editor和其他属性
+        var columns = [
+            {
+                field: 'stockDetailId',
+                editor: {
+                    type: 'combogrid',
+                    options: {
+                        idField: 'stockDetailId',
+                        textField: 'pharmacyItemName',
+                        method: 'get',
+                        url: '/pharmacy/stock/getCombogrid',
+                        mode: 'remote',
+                        columns: [[
+                            {field: 'pharmacyItemName', title: '药品名称', width: 100},
+                            {field: 'sellingPrice', title: '零售价(元)', width: 80}
+                        ]],
+                        required: true,
+                        panelHeight: 'auto',
+                        panelMaxHeight: 200,
+                        panelWidth: 198,
+                        hasDownArrow: false,
+                        onSelect: function (index, stockDetail) {
+                            // 设置库存单位（销售单位）
+                            var editor1 = $('#' + decoctionTableId).datagrid('getEditor', {index: editIndex[0],field: 'stockUnitName'});
+                            $(editor1.target).textbox('setValue', stockDetail.stockUnitName);
+                            // 设置单价
+                            var editor2 = $('#' + decoctionTableId).datagrid('getEditor', {index: editIndex[0],field: 'unitPrice'});
+                            $(editor2.target).textbox('setValue', stockDetail.sellingPrice);
+                            // 是否有毒
+                            var editor3 = $('#' + decoctionTableId).datagrid('getEditor', {index: editIndex[0],field: 'poisonous'});
+                            $(editor3.target).textbox('setValue', stockDetail.poisonous);
+                        },
+                        onChange: function (newValue, oldValue) {
+                            if (!utils.isNotNull(newValue)) {
+                                // 清空库存单位（销售单位）和单价
+                                var editor1 = $('#' + decoctionTableId).datagrid('getEditor', {index: editIndex[0],field: 'stockUnitName'});
+                                $(editor1.target).textbox('clear');
+                                var editor2 = $('#' + decoctionTableId).datagrid('getEditor', {index: editIndex[0],field: 'unitPrice'});
+                                $(editor2.target).textbox('clear');
+                                var editor3 = $('#' + decoctionTableId).datagrid('getEditor', {index: editIndex[0],field: 'poisonous'});
+                                $(editor3.target).textbox('clear');
+                            }
+                        },
+                        onHidePanel: function () {
+                            // 验证药品名称是否为空
+                            var editor = $('#' + decoctionTableId).datagrid('getEditor', {index: editIndex[0],field: 'stockDetailId'});
+                            var g = $(editor.target).combogrid('grid');
+                            var r = g.datagrid('getSelected');
+                            if (r == null) {
+                                $(editor.target).combogrid('clear');
+                            }
                         }
-                    },
-                    onHidePanel: function () {
-                        // 验证药品名称是否为空
-                        var editor = $('#' + decoctionTableId).datagrid('getEditor',{index: editIndex,field: 'stockDetailId'});
-                        var stockDetailId = $(editor.target).combogrid('getValue');
-                        if (!stockDetailId) {
-                            $(editor.target).combogrid('clear');
+                    }
+                },
+                formatter: function (value, row) {
+                    return row.pharmacyItemName;
+                }
+            },
+            {
+                field: 'dose',
+                editor: {
+                    type: 'numberbox',
+                    options: {
+                        precision: 2,
+                        required: true,
+                        onChange: function (newValue, oldValue) {
+                            var unitPrice = $('#' + decoctionTableId).datagrid('getEditor', {index: editIndex[0],field: 'unitPrice'});
+                            var totalPrice = $('#' + decoctionTableId).datagrid('getEditor', {index: editIndex[0],field: 'totalMoney'});
+                            $(totalPrice.target).numberbox('setValue', newValue * $(unitPrice.target).numberbox('getValue'));
                         }
+                    }
+                },
+                formatter: function (value, row) {
+                    if (value != null) return (value - 0).toFixed(2);
+                }
+            },
+            {
+                field: 'stockUnitName',
+                editor: {
+                    type: 'textbox',
+                    options: {
+                        editable: false,
+                        readonly: true
+                    }
+                }/*,
+                formatter: function (value, row) {
+                    return row.stockUnitName;
+                }*/
+            },
+            {
+                field: 'unitPrice',
+                editor: {
+                    type: 'textbox',
+                    options: {
+                        editable: false,
+                        readonly: true,
+                        onChange: function (newValue, oldValue) {
+                            var dose = $('#' + decoctionTableId).datagrid('getEditor', {index: editIndex[0],field: 'dose'});
+                            var totalPrice = $('#' + decoctionTableId).datagrid('getEditor', {index: editIndex[0],field: 'totalMoney'});
+                            $(totalPrice.target).numberbox('setValue', newValue * $(dose.target).numberbox('getValue'));
+                        }
+                    }
+                }/*,
+                formatter: function (value, row) {
+                    return row.unitPrice;
+                }*/
+            },
+            {
+                field: 'totalMoney',
+                editor: {
+                    type: 'numberbox',
+                    options: {
+                        precision: 2,
+                        required: true
+                    }
+                },
+                formatter: function (value, row) {
+                    if (value != null) return (value - 0).toFixed(2);
+                }
+            },
+            {
+                field: 'poisonous',
+                editor: {
+                    type: 'textbox'
+                },
+                formatter: function(value, row) {
+                    if (value === 'true') {
+                        return '是'
+                    } else {
+                        return '否';
                     }
                 }
             },
-            formatter:function(value,row){
-                return row.pharmacyItemName;
-            }
-        },
-        {
-            field: 'dose',
-            editor: {
-                type: 'numberbox',
-                options: {
-                    precision:2,
-                    required: true,
-                    onChange: function (newValue,oldValue) {
-                        var unitPrice = $('#' + decoctionTableId).datagrid('getEditor',{index: editIndex, field: 'unitPrice'});
-                        var totalPrice = $('#' + decoctionTableId).datagrid('getEditor',{index: editIndex, field: 'totalPrice'});
-                        $(totalPrice.target).numberbox('setValue', newValue * $(unitPrice.target).numberbox('getValue'));
-                    }
+            {
+                field: 'operation',
+                formatter: function (value, row) {
+                    return '<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="delete" title="删除">删除</a>';
                 }
-            },
-            formatter:function(value,row){
-                if (value != null) return (value - 0).toFixed(2);
             }
-        },
-        {
-            field: 'stockUnit',
-            editor: {
-                type: 'textbox',
-                options: {
-                    editable: false,
-                    readonly: true
-                }
-            },
-            formatter:function(value,row){
-                return row.stockUnit;
-            }
-        },
-        {
-            field: 'unitPrice',
-            editor: {
-                type: 'textbox',
-                options: {
-                    editable: false,
-                    readonly: true
-                }
-            },
-            formatter:function(value,row){
-                return row.unitPrice;
-            }
-        },
-        {
-            field: 'totalMoney',
-            editor: {
-                type:'numberbox',
-                options:{
-                    precision:2,
-                    required: true
-                }
-            },
-            formatter: function (value, row) {
-                if (value != null) return (value - 0).toFixed(2);
-            }
+        ];
+        for (var i = 0, l = columns.length; i < l; i++) {
+            var e = $('#' + decoctionTableId).datagrid('getColumnOption', columns[i].field);
+            e.editor = columns[i].editor;
+            e.formatter = columns[i].formatter;
         }
-    ];
-    for (var i = 0, l = columns.length; i < l; i++) {
-        var e = $('#' + decoctionTableId).datagrid('getColumnOption', columns[i].field);
-        e.editor = columns[i].editor;
-        e.formatter = columns[i].formatter;
-    }*/
+    }
+
+    // 初始化中成药方表格
+    function initPatentMedicineTable() {
+        $('#' + patentMedicineTableId).datagrid({
+            data: [{}, {}, {}, {}, {}, {}, {}, {}, {},{},{}, {}, {}, {}, {}, {}, {}, {}, {},{},{}, {}, {}, {}, {}, {}, {}, {}, {},{}],
+            onClickCell: function (rowIndex, field, value) {
+                if (editIndex != rowIndex) {
+                    if (endEditing()) {
+                        beginEditing(rowIndex, field);
+                    } else {
+                        setTimeout(function () {
+                            $('#' + patentMedicineTableId).datagrid('selectRow', editIndex);
+                        }, 0);
+                    }
+                }
+            },
+            onEndEdit: function (index, row) {
+                var ed = $(this).datagrid('getEditor', {
+                    index: index,
+                    field: 'stockDetailId'
+                });
+                row.pharmacyItemName = $(ed.target).combogrid('getText');
+            }
+        });
+
+        // 动态设置列的editor和其他属性
+        var columns = [
+            {
+                field: 'stockDetailId',
+                editor: {
+                    type: 'combogrid',
+                    options: {
+                        idField: 'stockDetailId',
+                        textField: 'pharmacyItemName',
+                        method: 'get',
+                        url: '/pharmacy/stock/getCombogrid',
+                        mode: 'remote',
+                        columns: [[
+                            {field: 'pharmacyItemName', title: '药品名称', width: 150},
+                            {field: 'pharmacyItemTypeName', title: '药品类型', width: 80},
+                            {field: 'specifications', title: '规格', width: 120},
+                            {field: 'manufacturer', title: '制造商', width: 200}
+                        ]],
+                        required: true,
+                        panelHeight: 'auto',
+                        panelMaxHeight: 200,
+                        panelWidth: 568,
+                        hasDownArrow: false,
+                        onSelect: function (index, stockDetail) {
+                            // 设置库存单位（销售单位）
+                            var editor1 = $('#' + patentMedicineTableId).datagrid('getEditor', {
+                                index: editIndex,
+                                field: 'stockUnit'
+                            });
+                            $(editor1.target).textbox('setValue', stockDetail.stockUnitName);
+                            // 设置单价
+                            var editor2 = $('#' + patentMedicineTableId).datagrid('getEditor', {
+                                index: editIndex,
+                                field: 'unitPrice'
+                            });
+                            $(editor2.target).textbox('setValue', stockDetail.sellingPrice);
+                        },
+                        onChange: function (newValue, oldValue) {
+                            if (!utils.isNotNull(newValue)) {
+                                // 清空库存单位（销售单位）和单价
+                                var editor1 = $('#' + patentMedicineTableId).datagrid('getEditor', {
+                                    index: editIndex,
+                                    field: 'stockUnit'
+                                });
+                                $(editor1.target).textbox('clear');
+                                var editor2 = $('#' + patentMedicineTableId).datagrid('getEditor', {
+                                    index: editIndex,
+                                    field: 'unitPrice'
+                                });
+                                $(editor2.target).textbox('clear');
+                            }
+                        },
+                        onHidePanel: function () {
+                            // 验证药品名称是否为空
+                            var editor = $('#' + patentMedicineTableId).datagrid('getEditor', {
+                                index: editIndex,
+                                field: 'stockDetailId'
+                            });
+                            var stockDetailId = $(editor.target).combogrid('getValue');
+                            if (!stockDetailId) {
+                                $(editor.target).combogrid('clear');
+                            }
+                        }
+                    }
+                },
+                formatter: function (value, row) {
+                    return row.pharmacyItemName;
+                }
+            },
+            {
+                field: 'specifications',
+                editor: {
+                    type: 'textbox',
+                    options: {
+                        editable: false,
+                        readonly: true
+                    }
+                },
+                formatter:function(value,row){
+                    return row.specifications;
+                }
+            },
+            {
+                field: 'usageAndDosage',
+                editor: {
+                    type: 'textbox',
+                    options: {
+                        editable: false,
+                        readonly: true
+                    }
+                },
+                formatter:function(value,row){
+                    return row.usageAndDosage;
+                }
+            },
+            {
+                field: 'unitPrice',
+                editor: {
+                    type: 'textbox',
+                    options: {
+                        editable: false,
+                        readonly: true
+                    }
+                },
+                formatter: function (value, row) {
+                    return row.unitPrice;
+                }
+            },
+            {
+                field: 'medicineCount',
+                editor: {
+                    type:'numberbox',
+                    options:{
+                        precision:2,
+                        required: true,
+                        onChange: function (newValue,oldValue) {
+                            var unitPrice = $('#' + patentMedicineTableId).datagrid('getEditor',{index: editIndex, field: 'unitPrice'});
+                            var totalMoney = $('#' + patentMedicineTableId).datagrid('getEditor',{index: editIndex, field: 'totalMoney'});
+                            $(totalMoney.target).numberbox('setValue', newValue * $(unitPrice.target).numberbox('getValue'));
+                        }
+                    }
+                },
+                formatter: function (value, row) {
+                    if (value != null) return (value - 0).toFixed(2);
+                }
+            },
+            {
+                field: 'totalMoney',
+                editor: {
+                    type: 'numberbox',
+                    options: {
+                        precision: 2,
+                        required: true
+                    }
+                },
+                formatter: function (value, row) {
+                    if (value != null) return (value - 0).toFixed(2);
+                }
+            },
+            {
+                field: 'operation',
+                formatter: function (value, row) {
+                    return '<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="look" title="查看">查看</a>';
+                }
+            }
+        ];
+        for (var i = 0, l = columns.length; i < l; i++) {
+            var e = $('#' + patentMedicineTableId).datagrid('getColumnOption', columns[i].field);
+            e.editor = columns[i].editor;
+            e.formatter = columns[i].formatter;
+        }
+    }
+
+    // 初始化医技项目表格
+    function initSkillTable() {
+        $('#' + skillTableId).datagrid({
+            data: [{}, {}, {}, {}, {}, {}, {}, {}, {},{}],
+            onClickCell: function (rowIndex, field, value) {
+                if (editIndex != rowIndex) {
+                    if (endEditing()) {
+                        beginEditing(rowIndex, field);
+                    } else {
+                        setTimeout(function () {
+                            $('#' + skillTableId).datagrid('selectRow', editIndex);
+                        }, 0);
+                    }
+                }
+            },
+            onEndEdit: function (index, row) {
+                var ed = $(this).datagrid('getEditor', {
+                    index: index,
+                    field: 'stockDetailId'
+                });
+                row.pharmacyItemName = $(ed.target).combogrid('getText');
+            }
+        });
+
+        // 动态设置列的editor和其他属性
+        var columns = [
+            {
+                field: 'skillId',
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        idField: 'stockDetailId',
+                        textField: 'pharmacyItemName',
+                        method: 'get',
+                        url: '/pharmacy/stock/getCombogrid',
+                        mode: 'remote',
+                        columns: [[
+                            {field: 'pharmacyItemName', title: '药品名称', width: 150},
+                            {field: 'pharmacyItemTypeName', title: '药品类型', width: 80},
+                            {field: 'specifications', title: '规格', width: 120},
+                            {field: 'manufacturer', title: '制造商', width: 200}
+                        ]],
+                        required: true,
+                        panelHeight: 'auto',
+                        panelMaxHeight: 200,
+                        panelWidth: 568,
+                        hasDownArrow: false,
+                        onSelect: function (index, stockDetail) {
+                            // 设置库存单位（销售单位）
+                            var editor1 = $('#' + skillTableId).datagrid('getEditor', {
+                                index: editIndex,
+                                field: 'stockUnit'
+                            });
+                            $(editor1.target).textbox('setValue', stockDetail.stockUnitName);
+                            // 设置单价
+                            var editor2 = $('#' + skillTableId).datagrid('getEditor', {
+                                index: editIndex,
+                                field: 'unitPrice'
+                            });
+                            $(editor2.target).textbox('setValue', stockDetail.sellingPrice);
+                        },
+                        onChange: function (newValue, oldValue) {
+                            if (!utils.isNotNull(newValue)) {
+                                // 清空库存单位（销售单位）和单价
+                                var editor1 = $('#' + skillTableId).datagrid('getEditor', {
+                                    index: editIndex,
+                                    field: 'stockUnit'
+                                });
+                                $(editor1.target).textbox('clear');
+                                var editor2 = $('#' + skillTableId).datagrid('getEditor', {
+                                    index: editIndex,
+                                    field: 'unitPrice'
+                                });
+                                $(editor2.target).textbox('clear');
+                            }
+                        },
+                        onHidePanel: function () {
+                            // 验证药品名称是否为空
+                            var editor = $('#' + skillTableId).datagrid('getEditor', {
+                                index: editIndex,
+                                field: 'stockDetailId'
+                            });
+                            var stockDetailId = $(editor.target).combogrid('getValue');
+                            if (!stockDetailId) {
+                                $(editor.target).combogrid('clear');
+                            }
+                        }
+                    }
+                },
+                formatter: function (value, row) {
+                    return row.pharmacyItemName;
+                }
+            },
+            {
+                field: 'unitPrice',
+                editor: {
+                    type: 'textbox',
+                    options: {
+                        editable: false,
+                        readonly: true
+                    }
+                },
+                formatter:function(value,row){
+                    return row.specifications;
+                }
+            },
+            {
+                field: 'frequency',
+                editor: {
+                    type:'numberbox',
+                    options:{
+                        precision:2,
+                        required: true,
+                        onChange: function (newValue,oldValue) {
+                            var unitPrice = $('#' + skillTableId).datagrid('getEditor',{index: editIndex, field: 'unitPrice'});
+                            var totalMoney = $('#' + skillTableId).datagrid('getEditor',{index: editIndex, field: 'totalMoney'});
+                            $(totalMoney.target).numberbox('setValue', newValue * $(unitPrice.target).numberbox('getValue'));
+                        }
+                    }
+                },
+                formatter: function (value, row) {
+                    if (value != null) return (value - 0).toFixed(2);
+                }
+            },
+            {
+                field: 'totalMoney',
+                editor: {
+                    type: 'numberbox',
+                    options: {
+                        precision: 2,
+                        required: true
+                    }
+                },
+                formatter: function (value, row) {
+                    if (value != null) return (value - 0).toFixed(2);
+                }
+            },
+            {
+                field: 'operation',
+                formatter: function (value, row) {
+                    return '<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="look" title="查看">查看</a>';
+                }
+            }
+        ];
+        for (var i = 0, l = columns.length; i < l; i++) {
+            var e = $('#' + skillTableId).datagrid('getColumnOption', columns[i].field);
+            e.editor = columns[i].editor;
+            e.formatter = columns[i].formatter;
+        }
+    }
 
     // 明细表格校验
     function validateGrid() {

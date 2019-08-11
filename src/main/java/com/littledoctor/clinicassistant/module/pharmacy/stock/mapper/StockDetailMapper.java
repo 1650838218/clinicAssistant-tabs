@@ -29,4 +29,11 @@ public interface StockDetailMapper {
      * @return
      */
     List<Map<String, String>> findAll(@Param("keywords") String keywords, @Param("pharmacyItemType") String pharmacyItemType);
+
+    /**
+     * 用于病历开中药方时根据药品名称查询药品信息
+     * @param keywords
+     * @return
+     */
+    List<Map<String, Object>> getCombogridForDecoction(@Param("keywords") String keywords);
 }

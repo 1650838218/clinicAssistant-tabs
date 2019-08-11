@@ -7,13 +7,11 @@ import com.littledoctor.clinicassistant.module.pharmacy.stock.dao.StockDetailRep
 import com.littledoctor.clinicassistant.module.pharmacy.stock.entity.StockDetail;
 import com.littledoctor.clinicassistant.module.pharmacy.stock.mapper.StockDetailMapper;
 import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -152,7 +150,18 @@ public class StockDetailServiceImpl implements StockDetailService {
      * @return
      */
     @Override
-    public List<Map<String, String>> getCombogrid(String keywords) throws Exception {
-        return null;
+    public List<Map<String, Object>> getCombogrid(String keywords) throws Exception {
+        List<Map<String, Object>> result = stockDetailMapper.getCombogridForDecoction(keywords);
+        // 设置库存单位名称
+        if (result.size() > 0) {
+            Map<String, String> kcdw = dictionaryService.getItemMapByKey("KCDW");// 库存单位
+            for (int i = 0, len = result.size(); i < len; i++) {
+                Map<String, Object> map = result.get(i);
+                if (map.containsKey("stockUnit") && kcdw.containsKey(map.get("stockUnit"))) {
+                    map.put("stockUnitName", kcdw.get(map.get("stockUnit")));
+                }
+            }
+        }
+        return result;
     }
 }

@@ -55,4 +55,54 @@
             b1.pharmacy_item_id = a1.pharmacy_item_id
     </select>
 
+    <!-- 用于病历开中药方时根据药品名称查询药品信息 -->
+    <select id="getCombogridForDecoction" resultType="java.util.Map">
+        SELECT
+            b1.pharmacy_item_id pharmacyItemId,
+            b1.pharmacy_item_name pharmacyItemName,
+            b1.poisonous poisonous,
+            b1.usage_and_dosage usageAndDosage,
+            b1.taboo taboo,
+            b1.stock_unit stockUnit,
+            a1.selling_price sellingPrice,
+            a1.stock_detail_id stockDetailId,
+            a1.stock_count stockCount
+        FROM
+            (
+                SELECT
+                    b.pharmacy_item_id,
+                    b.pharmacy_item_name,
+                    b.poisonous,
+                    b.usage_and_dosage,
+                    b.taboo,
+                    b.stock_unit
+                FROM
+                    pharmacy_item b
+                WHERE
+                    (
+                        b.pharmacy_item_name LIKE CONCAT('%', #{keywords}, '%')
+                        OR LOWER(b.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')
+                        OR UPPER(b.abbreviation) LIKE CONCAT('%', UPPER(#{keywords}), '%')
+                    )
+                AND b.pharmacy_item_type = 1
+            ) b1,
+            (
+                SELECT
+                    a.pharmacy_item_id,
+                    a.selling_price,
+                    GROUP_CONCAT(a.stock_detail_id ORDER BY a.stock_detail_id) stock_detail_id,
+                    SUM(a.stock_count) stock_count
+                FROM
+                    stock_detail a
+                WHERE
+                    a.stock_count > 0
+                AND a.stock_state = 1
+                GROUP BY
+                    a.pharmacy_item_id,
+                    a.selling_price
+            ) a1
+        WHERE
+            b1.pharmacy_item_id = a1.pharmacy_item_id
+    </select>
+
 </mapper>

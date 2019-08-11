@@ -61,7 +61,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
                 }
             },
             {
-                field: 'totalPrice', title: '金额（元）', width: '15%',
+                field: 'totalPrice', title: '金额(元)', width: '15%',
                 templet: function (d) {
                     return parseFloat(d.totalPrice).toFixed(2);
                 }

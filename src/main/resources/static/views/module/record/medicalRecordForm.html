@@ -50,18 +50,18 @@
                     <div class="layui-col-sm6">
                         <label class="layui-form-label">日期：</label>
                         <div class="layui-input-block">
-                            <input name="arriveTime" readonly class="layui-input" placeholder="请选择日期" lay-verify="required|date">
+                            <input name="arriveTime" readonly class="layui-input" placeholder="请选择日期">
                         </div>
                     </div>
                     <div class="layui-col-sm6">
-                        <label class="layui-form-label">姓名：</label>
+                        <label class="layui-form-label"><span class="required">*</span>姓名：</label>
                         <div class="layui-input-block">
                             <input name="patientName" class="layui-input" placeholder="请填写姓名"
                                    maxlength="20" lay-verify="required">
                         </div>
                     </div>
                     <div class="layui-col-sm6">
-                        <label class="layui-form-label">性别：</label>
+                        <label class="layui-form-label"><span class="required">*</span>性别：</label>
                         <div class="layui-input-block">
                             <input type="radio" name="patientSex" value="1" title="男" checked>
                             <input type="radio" name="patientSex" value="2" title="女">
@@ -69,7 +69,7 @@
                     </div>
                     <div class="layui-col-sm6">
                         <div class="layui-inline">
-                            <label class="layui-form-label">年龄：</label>
+                            <label class="layui-form-label"><span class="required">*</span>年龄：</label>
                             <div class="layui-input-inline">
                                 <input name="patientAge" class="layui-input" placeholder="年龄"
                                        maxlength="3" lay-verify="required|number">
@@ -104,9 +104,9 @@
                         </div>
                     </div>
                     <div class="layui-col-sm12">
-                        <label class="layui-form-label">四诊：</label>
+                        <label class="layui-form-label"><span class="required">*</span>四诊：</label>
                         <div class="layui-input-block">
-                            <textarea name="lookSmellAskPress" class="layui-textarea" placeholder="请填写四诊" maxlength="500" style="min-height: 80px"></textarea>
+                            <textarea name="lookSmellAskPress" class="layui-textarea" placeholder="请填写四诊" maxlength="500" lay-verify="required" style="min-height: 80px"></textarea>
                         </div>
                     </div>
                     <div class="layui-col-sm12">
@@ -116,9 +116,9 @@
                         </div>
                     </div>
                     <div class="layui-col-sm12">
-                        <label class="layui-form-label">诊断：</label>
+                        <label class="layui-form-label"><span class="required">*</span>诊断：</label>
                         <div class="layui-input-block">
-                            <input name="diagnosis" class="layui-input" placeholder="请填写诊断" maxlength="100">
+                            <input name="diagnosis" class="layui-input" placeholder="请填写诊断" maxlength="100" lay-verify="required">
                         </div>
                     </div>
                     <div class="layui-col-sm12">
@@ -146,9 +146,9 @@
                 <div class="layui-tab layui-tab-brief" lay-filter="medical-record-tabs">
                     <ul class="layui-tab-title">
                         <li></li>
-                        <li style="display: none;">中药方</li>
-                        <li style="display: none;">中成药方</li>
-                        <li style="display: none;">医技项目</li>
+                        <li style="display: none">中药方</li>
+                        <li style="display: none">中成药方</li>
+                        <li style="display: none">医技项目</li>
                     </ul>
                     <div class="layui-tab-content">
                         <div class="layui-tab-item layui-show">
@@ -189,21 +189,100 @@
                                     </div>
                                 </div>
                             </form>
-                            <table id="decoction-table" style="max-height: 390px;width:100%"
+                            <table id="decoction-table" style="max-height: 350px;width:100%"
                                    data-options="fitColumns: true, autoRowHeight: true, singleSelect: true, rownumbers:true">
                                 <thead>
                                 <tr>
-                                    <th data-options="field: 'stockDetailId'" width="20%">药品名称</th>
-                                    <th data-options="field: 'dose'" width="7%">数量</th>
-                                    <th data-options="field: 'stockUnit'" width="7%">单位</th>
-                                    <th data-options="field: 'unitPrice'" width="8%">单价(元)</th>
-                                    <th data-options="field: 'totalMoney'" width="8%">总价(元)</th>
+                                    <th data-options="field: 'stockDetailId'" width="24%">药品名称</th>
+                                    <th data-options="field: 'dose'" width="12%">数量</th>
+                                    <th data-options="field: 'stockUnitName'" width="12%">单位</th>
+                                    <th data-options="field: 'unitPrice'" width="15%">单价(元)</th>
+                                    <th data-options="field: 'totalMoney'" width="15%">总价(元)</th>
+                                    <th data-options="field: 'poisonous'" width="12%">是否有毒</th>
+                                    <th data-options="field: 'operation',align:'center'" width="10%">操作</th>
                                 </tr>
                                 </thead>
                             </table>
                         </div>
-                        <div class="layui-tab-item">中成药方</div>
-                        <div class="layui-tab-item">医技项目</div>
+                        <div class="layui-tab-item">
+                            <form id="patent-medicine-form" lay-filter="patent-medicine-form" class="layui-form layui-form-sm">
+                                <div class="layui-row layui-col-space10 layui-form-item">
+                                    <div class="layui-col-sm4">
+                                        <label class="layui-form-label" style="width: 60px;">总金额：</label>
+                                        <div class="layui-input-block" style="margin-left: 60px;">
+                                            <input name="totalMoney" class="layui-input" placeholder="请填写总金额" lay-verify="required|number">
+                                        </div>
+                                    </div>
+                                    <div class="layui-col-sm8">
+                                        <label class="layui-form-label">医嘱：</label>
+                                        <div class="layui-input-block">
+                                            <input name="advice" class="layui-input" placeholder="请填写医嘱">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <table id="patent-medicine-table" style="max-height: 350px;width:100%"
+                                   data-options="fitColumns: true, autoRowHeight: true, singleSelect: true, rownumbers:true">
+                                <thead>
+                                <tr>
+                                    <th data-options="field: 'stockDetailId'" width="25%">药品名称</th>
+                                    <th data-options="field: 'specifications'" width="15%">规格</th>
+                                    <th data-options="field: 'usageAndDosage'" width="17%">用法用量</th>
+                                    <th data-options="field: 'unitPrice'" width="13%">单价(元)</th>
+                                    <th data-options="field: 'medicineCount'" width="7%">数量</th>
+                                    <th data-options="field: 'totalMoney'" width="13%">总价(元)</th>
+                                    <th data-options="field: 'operation',align:'center'" width="10%">操作</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <div class="layui-tab-item">
+                            <form id="skill-form" lay-filter="skill-form" class="layui-form layui-form-sm">
+                                <div class="layui-row layui-col-space10 layui-form-item">
+                                    <div class="layui-col-sm3">
+                                        <label class="layui-form-label" style="width: 60px;">总金额：</label>
+                                        <div class="layui-input-block" style="margin-left: 60px;">
+                                            <input name="totalMoney" class="layui-input" placeholder="请填写总金额" lay-verify="required|number">
+                                        </div>
+                                    </div>
+                                    <div class="layui-col-sm4">
+                                        <label class="layui-form-label">医嘱：</label>
+                                        <div class="layui-input-block">
+                                            <input name="advice" class="layui-input" placeholder="请填写医嘱">
+                                        </div>
+                                    </div>
+                                    <div class="layui-col-sm5">
+                                        <label class="layui-form-label" style="width: 70px;">付款方式：</label>
+                                        <div class="layui-input-block" style="margin-left: 70px;">
+                                            <input type="radio" name="paymentMethod" value="1" title="一次付清" checked>
+                                            <input type="radio" name="paymentMethod" value="2" title="只付本次">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <table id="skill-table" style="max-height: 350px;width:100%"
+                                   data-options="fitColumns: true, autoRowHeight: true, singleSelect: true, rownumbers:true">
+                                <thead>
+                                <tr>
+                                    <th data-options="field: 'skillId'" width="30%">项目</th>
+                                    <th data-options="field: 'unitPrice'" width="20%">单次价格</th>
+                                    <th data-options="field: 'frequency'" width="20%">次数</th>
+                                    <th data-options="field: 'totalMoney'" width="20%">总价</th>
+                                    <th data-options="field: 'operation',align:'center'" width="10%">操作</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="btn-group" class="layui-row" style="display: none;">
+                    <div class="layui-col-md-offset5 layui-col-md3">
+                        ￥：0.00元
+                    </div>
+                    <div class="layui-col-md-offset1 layui-col-md3 layui-btn-container">
+                        <button type="button" class="layui-btn layui-btn-sm">保存</button>
+                        <button type="button" class="layui-btn layui-btn-sm">结算</button>
+                        <button type="button" class="layui-btn layui-btn-sm">下一位</button>
                     </div>
                 </div>
             </div>

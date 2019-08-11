@@ -52,5 +52,5 @@ public interface StockDetailService {
      * @param keywords
      * @return
      */
-    List<Map<String, String>> getCombogrid(String keywords) throws Exception;
+    List<Map<String, Object>> getCombogrid(String keywords) throws Exception;
 }
