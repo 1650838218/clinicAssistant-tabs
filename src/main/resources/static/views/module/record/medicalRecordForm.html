@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/lib/layuiadmin/layui/css/layui.css" media="all">
     <link rel="stylesheet" href="/lib/easyui/1.8.1/themes/bootstrap/easyui.css" media="all">
     <link rel="stylesheet" href="/lib/easyui/1.8.1/themes/icon.css" media="all">
+    <link rel="stylesheet" href="/lib/easyui/1.8.1/themes/color.css" media="all">
     <link rel="stylesheet" href="/css/my.css" media="all">
     <style>
         .center-panel {
@@ -34,6 +35,10 @@
         .layui-col-md8 .layui-card-body {
             padding-top: 2px;
             padding-bottom: 0px;
+        }
+        .datagrid-row-selected {
+            background: #e6e6e6;
+            color: #00438a;
         }
     </style>
 </head>
@@ -145,16 +150,16 @@
             <div class="layui-card-body">
                 <div class="layui-tab layui-tab-brief" lay-filter="medical-record-tabs">
                     <ul class="layui-tab-title">
-                        <li style="display: none"></li>
-                        <li class="layui-this">中药方</li>
+                        <li></li>
+                        <li style="display: none">中药方</li>
                         <li style="display: none">中成药方</li>
                         <li style="display: none">医技项目</li>
                     </ul>
                     <div class="layui-tab-content">
-                        <div class="layui-tab-item">
+                        <div class="layui-tab-item layui-show">
                             <div style="text-align: center;margin-top: 200px">请选择一个或多个处方!</div>
                         </div>
-                        <div class="layui-tab-item layui-show">
+                        <div class="layui-tab-item">
                             <form id="decoction-form" lay-filter="decoction-form" class="layui-form layui-form-sm">
                                 <div class="layui-form-item">
                                     <div class="layui-inline">
@@ -189,68 +194,52 @@
                                     </div>
                                 </div>
                             </form>
-                            <!--<table id="decoction-table" style="max-height: 350px;width:100%"
-                                   data-options="fitColumns: true, autoRowHeight: true, singleSelect: true, rownumbers:true">
-                                <thead>
-                                <tr>
-                                    <th data-options="field: 'stockDetailId'" width="15%">药品名称</th>
-                                    <th data-options="field: 'dose'" width="7%">剂量</th>
-                                    <th data-options="field: 'stockUnitName'" width="8%">单位</th>
-                                    <th data-options="field:'jiange'" width="3%"></th>
-                                    <th data-options="field: 'stockDetailId'" width="15%">药品名称</th>
-                                    <th data-options="field: 'dose'" width="7%">剂量</th>
-                                    <th data-options="field: 'stockUnitName'" width="8%">单位</th>
-                                    <th data-options="field:'jiange'" width="3%"></th>
-                                    <th data-options="field: 'stockDetailId'" width="15%">药品名称</th>
-                                    <th data-options="field: 'dose'" width="7%">剂量</th>
-                                    <th data-options="field: 'stockUnitName'" width="8%">单位</th>
-                                    &lt;!&ndash;<th data-options="field: 'operation',align:'center'" width="10%">操作</th>&ndash;&gt;
-                                </tr>
-                                </thead>
-                            </table>
-                            <div id="search-prescription">
-                                搜索处方：<input class="easyui-searchbox" data-options="prompt:'处方名称',searcher:doSearch" style="width:170px"></input>
-                            </div>-->
-                            <div id="p" class="easyui-panel" style="width:100%;height:350px;">
+                            <div id="p" class="easyui-panel" style="width:100%;height:370px;">
                                 <div id="search-prescription" class="datagrid-toolbar">
+                                    搜索药材：<input class="easyui-searchbox" data-options="prompt:'药材名称',searcher:doSearch" style="width:170px"></input>
+                                    <input type="text" class="easyui-numberbox" value="10" data-options="prompt:'剂量',min:0,precision:2,width:50">
+                                    <a href="#" class="easyui-linkbutton c8">添加</a>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     搜索处方：<input class="easyui-searchbox" data-options="prompt:'处方名称',searcher:doSearch" style="width:170px"></input>
                                 </div>
                                 <div class="layui-row layui-col-space10">
                                     <div class="layui-col-md4">
-                                        <table class="easyui-datagrid" style="width:100%;height:300px" data-options="showHeader:false,scrollbarSize:0,border:true">
+                                        <table id="decoction-table-1" style="width:100%;height:325px">
                                             <thead>
                                                 <tr>
-                                                    <th data-options="field: 'stockDetailId'" width="40%">药品名称</th>
-                                                    <th data-options="field: 'dose'" width="30%">剂量</th>
-                                                    <th data-options="field: 'stockUnitName'" width="30%">单位</th>
+                                                    <th data-options="field: 'stockDetailId'" width="35%">药品名称</th>
+                                                    <th data-options="field: 'dose'" width="25%">剂量</th>
+                                                    <th data-options="field: 'stockUnitName'" width="25%">单位</th>
+                                                    <th data-options="field: 'operation',align:'center'", width="15%">操作</th>
                                                 </tr>
                                             </thead>
                                         </table>
                                     </div>
                                     <div class="layui-col-md4">
-                                        <table class="easyui-datagrid" style="width:100%;height:300px" data-options="showHeader:false,scrollbarSize:0,border:true">
+                                        <table id="decoction-table-2" style="width:100%;height:325px">
                                             <thead>
                                             <tr>
-                                                <th data-options="field: 'stockDetailId'" width="40%">药品名称</th>
-                                                <th data-options="field: 'dose'" width="30%">剂量</th>
-                                                <th data-options="field: 'stockUnitName'" width="30%">单位</th>
+                                                <th data-options="field: 'stockDetailId'" width="35%">药品名称</th>
+                                                <th data-options="field: 'dose'" width="25%">剂量</th>
+                                                <th data-options="field: 'stockUnitName'" width="25%">单位</th>
+                                                <th data-options="field: 'operation',align:'center'", width="15%">操作</th>
                                             </tr>
                                             </thead>
                                         </table>
                                     </div>
                                     <div class="layui-col-md4">
-                                        <table class="easyui-datagrid" style="width:100%;height:300px" data-options="showHeader:false,scrollbarSize:0,border:true">
+                                        <table id="decoction-table-3" style="width:100%;height:325px">
                                             <thead>
                                             <tr>
-                                                <th data-options="field: 'stockDetailId'" width="40%">药品名称</th>
-                                                <th data-options="field: 'dose'" width="30%">剂量</th>
-                                                <th data-options="field: 'stockUnitName'" width="30%">单位</th>
+                                                <th data-options="field: 'stockDetailId'" width="35%">药品名称</th>
+                                                <th data-options="field: 'dose'" width="25%">剂量</th>
+                                                <th data-options="field: 'stockUnitName'" width="25%">单位</th>
+                                                <th data-options="field: 'operation',align:'center'", width="15%">操作</th>
                                             </tr>
                                             </thead>
                                         </table>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                         <div class="layui-tab-item">
