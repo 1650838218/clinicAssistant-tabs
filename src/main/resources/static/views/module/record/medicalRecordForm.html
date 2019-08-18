@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/lib/easyui/1.8.1/themes/icon.css" media="all">
     <link rel="stylesheet" href="/lib/easyui/1.8.1/themes/color.css" media="all">
     <link rel="stylesheet" href="/css/my.css" media="all">
+    <link rel="stylesheet" href="/lib/layuiadmin/layui/css/extend/tcmTag.css" media="all">
     <style>
         .center-panel {
             padding: 0px;
@@ -39,6 +40,10 @@
         .datagrid-row-selected {
             background: #e6e6e6;
             color: #00438a;
+        }
+        #search-toolbar .show-count {
+            float: right;
+            margin-right: 10px;
         }
     </style>
 </head>
@@ -165,19 +170,19 @@
                                     <div class="layui-inline">
                                         <label class="layui-form-label" style="width: 45px;">剂数：</label>
                                         <div class="layui-input-inline" style="width: 40px;">
-                                            <input type="number" name="prescriptionType" value="3" class="layui-input">
+                                            <input type="number" name="doseCount" value="3" class="layui-input">
                                         </div>
                                     </div>
                                     <div class="layui-inline">
                                         <label class="layui-form-label" style="width: 70px;">单剂金额：</label>
                                         <div class="layui-input-inline" style="width: 70px;">
-                                            <input type="number" name="prescriptionType" class="layui-input">
+                                            <input type="number" name="singleMoney" class="layui-input" value="0.00" readonly>
                                         </div>
                                     </div>
                                     <div class="layui-inline">
                                         <label class="layui-form-label" style="width: 60px;">总金额：</label>
                                         <div class="layui-input-inline" style="width: 75px;">
-                                            <input type="number" name="prescriptionType" class="layui-input">
+                                            <input type="number" name="totalMoney" class="layui-input" value="0.00">
                                         </div>
                                     </div>
                                     <div class="layui-inline">
@@ -195,51 +200,16 @@
                                 </div>
                             </form>
                             <div id="p" class="easyui-panel" style="width:100%;height:370px;">
-                                <div id="search-prescription" class="datagrid-toolbar">
-                                    搜索药材：<input class="easyui-searchbox" data-options="prompt:'药材名称',searcher:doSearch" style="width:170px"></input>
-                                    <input type="text" class="easyui-numberbox" value="10" data-options="prompt:'剂量',min:0,precision:2,width:50">
-                                    <a href="#" class="easyui-linkbutton c8">添加</a>
+                                <div id="search-toolbar" class="datagrid-toolbar">
+                                    搜索药材：<input id="search-medicinal" style="width:170px"></input>
+                                    <!--<input type="text" class="easyui-numberbox" value="10" data-options="prompt:'剂量',min:0,precision:2,width:50">-->
+                                    <!--<a href="#" class="easyui-linkbutton c8">添加</a>-->
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    搜索处方：<input class="easyui-searchbox" data-options="prompt:'处方名称',searcher:doSearch" style="width:170px"></input>
+                                    搜索处方：<input id="search-prescription" style="width:170px"></input>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <div class="show-count">共0味药材</div>
                                 </div>
-                                <div class="layui-row layui-col-space10">
-                                    <div class="layui-col-md4">
-                                        <table id="decoction-table-1" style="width:100%;height:325px">
-                                            <thead>
-                                                <tr>
-                                                    <th data-options="field: 'stockDetailId'" width="35%">药品名称</th>
-                                                    <th data-options="field: 'dose'" width="25%">剂量</th>
-                                                    <th data-options="field: 'stockUnitName'" width="25%">单位</th>
-                                                    <th data-options="field: 'operation',align:'center'", width="15%">操作</th>
-                                                </tr>
-                                            </thead>
-                                        </table>
-                                    </div>
-                                    <div class="layui-col-md4">
-                                        <table id="decoction-table-2" style="width:100%;height:325px">
-                                            <thead>
-                                            <tr>
-                                                <th data-options="field: 'stockDetailId'" width="35%">药品名称</th>
-                                                <th data-options="field: 'dose'" width="25%">剂量</th>
-                                                <th data-options="field: 'stockUnitName'" width="25%">单位</th>
-                                                <th data-options="field: 'operation',align:'center'", width="15%">操作</th>
-                                            </tr>
-                                            </thead>
-                                        </table>
-                                    </div>
-                                    <div class="layui-col-md4">
-                                        <table id="decoction-table-3" style="width:100%;height:325px">
-                                            <thead>
-                                            <tr>
-                                                <th data-options="field: 'stockDetailId'" width="35%">药品名称</th>
-                                                <th data-options="field: 'dose'" width="25%">剂量</th>
-                                                <th data-options="field: 'stockUnitName'" width="25%">单位</th>
-                                                <th data-options="field: 'operation',align:'center'", width="15%">操作</th>
-                                            </tr>
-                                            </thead>
-                                        </table>
-                                    </div>
-                                </div>
+                                <div class="tcm-tag-panel"></div>
                             </div>
                         </div>
                         <div class="layui-tab-item">

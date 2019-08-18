@@ -1,5 +1,6 @@
 package com.littledoctor.clinicassistant.module.prescription.service;
 
+import com.littledoctor.clinicassistant.common.plugin.select.SelectOption;
 import com.littledoctor.clinicassistant.module.prescription.dao.PrescriptionRepository;
 import com.littledoctor.clinicassistant.module.prescription.dao.RxCatalogueRepository;
 import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
@@ -126,5 +127,19 @@ public class PrescriptionServiceImpl implements PrescriptionService {
             return rxCatalogueRepository.findById(catalogueId).get();
         }
         return null;
+    }
+
+    /**
+     * 获取下拉框的option list
+     * @param keywords 处方名称或简称
+     * @return
+     */
+    @Override
+    public List<SelectOption> getSelectOption(String keywords) {
+        if (StringUtils.isBlank(keywords)) {
+            return prescriptionRepository.getSelectOption();
+        } else {
+            return prescriptionRepository.getSelectOption(keywords.trim());
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.littledoctor.clinicassistant.module.prescription.service;
 
+import com.littledoctor.clinicassistant.common.plugin.select.SelectOption;
 import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
 import com.littledoctor.clinicassistant.module.prescription.entity.PrescriptionVo;
 import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalogue;
@@ -60,4 +61,11 @@ public interface PrescriptionService {
      * @return
      */
     RxCatalogue findCatalogueById(Integer catalogueId);
+
+    /**
+     * 获取下拉框的option list
+     * @return
+     * @param keywords
+     */
+    List<SelectOption> getSelectOption(String keywords);
 }

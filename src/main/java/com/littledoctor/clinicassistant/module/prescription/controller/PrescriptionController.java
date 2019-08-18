@@ -1,6 +1,7 @@
 package com.littledoctor.clinicassistant.module.prescription.controller;
 
 import com.littledoctor.clinicassistant.common.msg.Message;
+import com.littledoctor.clinicassistant.common.plugin.select.SelectOption;
 import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
 import com.littledoctor.clinicassistant.module.prescription.entity.PrescriptionVo;
 import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalogue;
@@ -126,6 +127,21 @@ public class PrescriptionController {
     public RxCatalogue findCatalogueById(Integer catalogueId) {
         try {
             return prescriptionService.findCatalogueById(catalogueId);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * 获取下拉框的option list
+     * @param keywords 处方名称或简称
+     * @return
+     */
+    @RequestMapping(value = "/getSelectOption", method = RequestMethod.GET)
+    public List<SelectOption> getSelectOption(@RequestParam(value = "q", required = false) String keywords) {
+        try {
+            return prescriptionService.getSelectOption(keywords);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

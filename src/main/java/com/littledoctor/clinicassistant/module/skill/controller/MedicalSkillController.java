@@ -28,7 +28,7 @@ public class MedicalSkillController {
     private MedicalSkillService medicalSkillService;
 
     /**
-     * 查询所有的供货商
+     * 查询所有的医技项目
      * @return
      */
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
@@ -42,7 +42,7 @@ public class MedicalSkillController {
     }
 
     /**
-     * 保存供货商
+     * 保存医技项目
      * @param medicalSkill
      * @return
      */

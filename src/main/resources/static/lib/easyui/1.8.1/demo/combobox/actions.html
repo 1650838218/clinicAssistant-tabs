@@ -21,7 +21,7 @@
 	</div>
 	<div class="easyui-panel" style="width:100%;max-width:400px;padding:30px 60px;">
 		<div style="margin-bottom:20px">
-			<select id="state" class="easyui-combobox" name="state" label="State:" labelPosition="top" style="width:100%;">
+			<select id="state" class="easyui-combobox" name="state" label="State:" labelPosition="top" style="width:100%;" data-options="onChange:change,onSelect:select">
 				<option value="AL">Alabama</option>
 				<option value="AK">Alaska</option>
 				<option value="AZ">Arizona</option>
@@ -83,6 +83,12 @@
 				}
 			});
 		}
+		function change() {
+			console.log('change');
+        }
+        function select() {
+			console.log('select');
+        }
 	</script>
 </body>
 </html>

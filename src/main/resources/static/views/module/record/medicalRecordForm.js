@@ -5,8 +5,9 @@ layui.config({
 }).extend({
     utils: 'utils' //扩展模块
     ,ajax: 'ajax'
+    ,tcmTag: 'tcmTag'
 });
-layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], function () {
+layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate','tcmTag'], function () {
     var $ = layui.jquery;
     var form = layui.form;
     var layer = layui.layer;
@@ -15,6 +16,7 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
     var utils = layui.utils;
     var laydate = layui.laydate;
     var element = layui.element;
+    var tcmTag = layui.tcmTag;
     var rootMapping = '/record';
     var decoctionTableId = 'decoction-table';// 中药方 grid
     var patentMedicineTableId = 'patent-medicine-table';// 中成药方 grid
@@ -23,7 +25,7 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
     var decoctionFormId = 'decoction-form'; // 中药方 表单ID
     var patentMedicineFormId = 'patent-medicine-form';// 中成药方 表单ID
     var skillFormId = 'skill-form';// 医技项目 表单ID
-    var tableInitState = [false, false, false];
+    var tabInitState = [false, false, false];
     var editIndex = [undefined, undefined, undefined, undefined, undefined];
     form.render();
 
@@ -60,17 +62,18 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
     // 监听标签页的切换
     element.on('tab(medical-record-tabs)', function(data){
         var tabBody = $('.layui-tab .layui-tab-content .layui-tab-item').eq(data.index);
-        if (data.index == 1 && !tableInitState[0]) {
-            initDecoctionTable();
-            tableInitState[0] = true;
-        } else if (data.index == 2 && !tableInitState[1]) {
+        if (data.index == 1 && !tabInitState[0]) {
+            initDecoctionTab();
+            tabInitState[0] = true;
+        } else if (data.index == 2 && !tabInitState[1]) {
             initPatentMedicineTable();
-            tableInitState[1] = true;
-        } else if (data.index == 3 && !tableInitState[2]) {
+            tabInitState[1] = true;
+        } else if (data.index == 3 && !tabInitState[2]) {
             initSkillTable();
-            tableInitState[2] = true;
+            tabInitState[2] = true;
         }
     });
+
 
     // 判断是否可以进行编辑，返回true 可以编辑，false 不可以编辑
     function endEditing(tableId, tabIndex){
@@ -94,85 +97,91 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
         }
     }
 
-    // 初始化中药方表格
-    function initDecoctionTable() {
-        for (var i = 1; i <= 3; i++) {
-            $('#' + decoctionTableId + '-' + i).datagrid({
-                fitColumns: true,
-                autoRowHeight: true,
-                singleSelect: true,
-                showHeader: false,
-                scrollbarSize: 0,
-                border: false,
-                data: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-                /*onLoadSuccess: function () {
-                    var panel = $(this).datagrid('getPanel');
-                    var tr = panel.find('div.datagrid-body tr');
-                    tr.each(function () {
-                        var td = $(this).children('td');
-                        td.css({
-                            "border-width": "0 0 1px 0",
-                            "border-style": "solid"
-                        });
-                    });
-                    panel.find('div.datagrid-header').css({"border-width": "0"});
-                },*/
-                onClickCell: function (index, field, value) {
-                    if (endEditing(decoctionTableId, index)) {
-                        if (field === 'dose') {
-                            $('#dg').datagrid('beginEdit', index);
-                            editIndex[i - 1] = index;
-                        }
-                    }
-                }
-                /*onAfterEdit: function () {
-                    var panel = $(this).datagrid('getPanel');
-                    var tr = panel.find('div.datagrid-body tr');
-                    tr.each(function () {
-                        var td = $(this).children('td');
-                        td.css({
-                            "border-width": "0 0 1px 0",
-                            "border-style": "solid"
-                        });
-                        ;
-                    });
-                    panel.find('div.datagrid-header').css({"border-width": "0"});
-                }*/
-            });
+    // 初始化药材搜索框
+    function initDecoctionTab() {
+        $('#search-medicinal').combobox({
+            delay:500,
+            prompt:'药材名称',
+            panelHeight:'auto',
+            panelMaxHeight: 200,
+            valueField: 'stockDetailId',
+            textField: 'pharmacyItemName',
+            mode: 'remote',
+            url: '/pharmacy/stock/getCombogrid',
+            method: 'get',
+            formatter: function (row) {
+                return row.pharmacyItemName + ' ' + parseFloat(row.sellingPrice).toFixed(2) + '元/' + row.stockUnitName;
+            },
+            onHidePanel: function () {
+                var selectValue = $('#search-medicinal').combobox('getValue');
+                if (selectValue) {
+                    var data = $('#search-medicinal').combobox('getData');
+                    $.each(data, function (i, n) {
+                        if (n.stockDetailId === selectValue) {
+                            n.dose = 0;// 将剂量初始化为0，避免后面的计算报错
+                            // 增加标签
+                            var option = {
+                                elem : '.tcm-tag-panel',
+                                key : {name: 'pharmacyItemName', unit: 'stockUnitName'},
+                                data: n,
+                                afterAdd: function () {
+                                    $('#search-toolbar .show-count').text('共' + tcmTag.getCount('.tcm-tag-panel') + '味药材');
+                                    $('#search-medicinal').combobox('clear');
+                                },
+                                afterDelete: function (allData) {
+                                    // 修改单剂金额
+                                    var money = 0;
+                                    for (var j = 0; j < allData.length; j++) {
+                                        money = money + allData[j].sellingPrice * allData[j].dose;
+                                    }
+                                    $('#' + decoctionFormId).find('input[name="singleMoney"]').val(money.toFixed(2));
+                                    var doseCount = $('#' + decoctionFormId).find('input[name="doseCount"]').val();
+                                    $('#' + decoctionFormId).find('input[name="totalMoney"]').val((money * doseCount).toFixed(2));
 
-            // 动态设置列的editor和其他属性
-            var columns = [
-                {
-                    field: 'dose',
-                    editor: {
-                        type: 'numberbox',
-                        options: {
-                            precision: 2,
-                            required: true,
-                            onChange: function (newValue, oldValue) {
-                                // var unitPrice = $('#' + decoctionTableId).datagrid('getEditor', {index: editIndex[0],field: 'unitPrice'});
-                                // var totalPrice = $('#' + decoctionTableId).datagrid('getEditor', {index: editIndex[0],field: 'totalMoney'});
-                                // $(totalPrice.target).numberbox('setValue', newValue * $(unitPrice.target).numberbox('getValue'));
+                                    $('#search-toolbar .show-count').text('共' + tcmTag.getCount('.tcm-tag-panel') + '味药材');// 修改药味
+                                },
+                                onChange: function (allData) {
+                                    // 修改金额
+                                    var money = 0;
+                                    for (var j = 0; j < allData.length; j++) {
+                                        money = money + allData[j].sellingPrice * allData[j].dose;
+                                    }
+                                    $('#' + decoctionFormId).find('input[name="singleMoney"]').val(money.toFixed(2));
+                                    var doseCount = $('#' + decoctionFormId).find('input[name="doseCount"]').val();
+                                    $('#' + decoctionFormId).find('input[name="totalMoney"]').val((money * doseCount).toFixed(2));
+                                }
                             }
+                            tcmTag.addTag(option);
+                            return;
                         }
-                    },
-                    formatter: function (value, row) {
-                        if (value != null) return (value - 0).toFixed(2);
-                    }
-                },
-                {
-                    field: 'operation',
-                    formatter: function (value, row) {
-                        return '<i class="layui-icon layui-icon-close" title="删除" style="cursor:pointer;"></i>';
-                    }
+                    });
                 }
-            ];
-            for (var j = 0, l = columns.length; j < l; j++) {
-                var e = $('#' + decoctionTableId + '-' + i).datagrid('getColumnOption', columns[j].field);
-                e.editor = columns[j].editor;
-                e.formatter = columns[j].formatter;
             }
-        }
+        });
+        $('#search-prescription').combobox({
+            delay:500,
+            prompt: '处方名称',
+            panelHeight:'auto',
+            panelMaxHeight: 200,
+            valueField: 'realValue',
+            textField: 'displayValue',
+            mode: 'remote',
+            url: '/prescription/getSelectOption',
+            method: 'get',
+            onHidePanel: function () {
+                var selectValue = $('#search-prescription').combobox('getValue');
+                if (selectValue) {
+                    // 根据处方ID查询处方，并添加
+                    $.getJSON('/prescription/findPrescriptionById',{prescriptionId: selectValue},function (prescription) {
+                        if (prescription) {
+
+                            var component = prescription.prescriptionComponent;// 方剂组成
+                            // 方剂解析
+                        }
+                    });
+                }
+            }
+        });
     }
 
     // 初始化中成药方表格
