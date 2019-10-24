@@ -1,6 +1,6 @@
 package com.littledoctor.clinicassistant.module.system.menu.dao;
 
-import com.littledoctor.clinicassistant.common.plugin.tree.TreeEntity;
+import com.littledoctor.clinicassistant.common.plugin.TreeEntity;
 import com.littledoctor.clinicassistant.module.system.menu.entity.Menu;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

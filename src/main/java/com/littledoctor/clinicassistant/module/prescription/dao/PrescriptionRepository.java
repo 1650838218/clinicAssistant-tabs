@@ -1,8 +1,7 @@
 package com.littledoctor.clinicassistant.module.prescription.dao;
 
-import com.littledoctor.clinicassistant.common.plugin.select.SelectOption;
+import com.littledoctor.clinicassistant.common.plugin.SelectOption;
 import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
-import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalogue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;

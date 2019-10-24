@@ -1,11 +1,12 @@
 package com.littledoctor.clinicassistant.module.prescription.service;
 
-import com.littledoctor.clinicassistant.common.plugin.select.SelectOption;
+import com.littledoctor.clinicassistant.common.plugin.SelectOption;
 import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
 import com.littledoctor.clinicassistant.module.prescription.entity.PrescriptionVo;
 import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalogue;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: 周俊林
@@ -68,4 +69,12 @@ public interface PrescriptionService {
      * @param keywords
      */
     List<SelectOption> getSelectOption(String keywords);
+
+    /**
+     * 根据处方ID查询处方组成，并将处方组成转换成药材信息
+     * 包括：药材名称，品目ID，单价，库存单位，剂量等
+     * @param prescriptionId
+     * @return
+     */
+    Map<String, Object> getMedicalByPrescriptionId(String prescriptionId) throws Exception;
 }

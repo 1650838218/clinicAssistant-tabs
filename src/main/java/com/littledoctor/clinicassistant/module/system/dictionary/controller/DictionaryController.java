@@ -1,8 +1,8 @@
 package com.littledoctor.clinicassistant.module.system.dictionary.controller;
 
 import com.littledoctor.clinicassistant.common.msg.Message;
-import com.littledoctor.clinicassistant.common.plugin.tree.TreeEntity;
-import com.littledoctor.clinicassistant.common.plugin.tree.TreeUtils;
+import com.littledoctor.clinicassistant.common.plugin.TreeEntity;
+import com.littledoctor.clinicassistant.common.plugin.TreeUtils;
 import com.littledoctor.clinicassistant.common.util.ControllerUtils;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryItem;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryType;

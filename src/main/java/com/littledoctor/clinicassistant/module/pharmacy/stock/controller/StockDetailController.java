@@ -1,14 +1,11 @@
 package com.littledoctor.clinicassistant.module.pharmacy.stock.controller;
 
-import com.littledoctor.clinicassistant.common.plugin.layui.LayuiTableEntity;
-import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.entity.PharmacyItem;
-import com.littledoctor.clinicassistant.module.pharmacy.purchaseorder.entity.PurchaseOrderSingle;
+import com.littledoctor.clinicassistant.common.plugin.LayuiTableEntity;
 import com.littledoctor.clinicassistant.module.pharmacy.stock.entity.StockDetail;
 import com.littledoctor.clinicassistant.module.pharmacy.stock.service.StockDetailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
@@ -94,9 +91,11 @@ public class StockDetailController {
      * @return
      */
     @RequestMapping(value = "/getCombogrid", method = RequestMethod.GET)
-    public List<Map<String,Object>> getCombogrid(@RequestParam(value = "q", required = false) String keywords) {
+    public List<Map<String, Object>> getCombogrid(
+            @RequestParam(value = "q", required = false) String keywords,
+            @RequestParam(value = "type", required = false) String pharmacyItemType) {
         try {
-            return stockDetailService.getCombogrid(keywords);
+            return stockDetailService.getCombogrid(keywords, pharmacyItemType);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

@@ -1,5 +1,22 @@
-.tcm-tag-panel {
+.tcm-tag-body {
     padding: 10px;
+}
+
+.tcm-tag-panel .datagrid-toolbar label {
+    margin-left: 10px
+}
+
+.tcm-tag-panel .datagrid-toolbar label.show-count, .tcm-tag-panel .datagrid-toolbar label.show-money{
+    float: right;
+    margin-right: 10px;
+}
+
+.tcm-tag-panel .datagrid-toolbar .search-medicinal {
+    width: 150px;
+}
+
+.tcm-tag-panel .datagrid-toolbar .search-prescription {
+    width: 150px;
 }
 
 .tcm-tag {
@@ -30,6 +47,7 @@
     border-color: #e6e6e6;
     padding-left: 5px;
 }
+
 .tcm-tag .layui-icon {
     line-height: 30px;
     cursor: pointer;

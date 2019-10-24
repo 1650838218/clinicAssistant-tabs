@@ -1,7 +1,7 @@
 package com.littledoctor.clinicassistant.module.system.dictionary.controller;
 
 import com.littledoctor.clinicassistant.common.msg.Message;
-import com.littledoctor.clinicassistant.common.plugin.layui.LayuiTableEntity;
+import com.littledoctor.clinicassistant.common.plugin.LayuiTableEntity;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictManyLevelType;
 import com.littledoctor.clinicassistant.module.system.dictionary.service.DictManyLevelService;
 import org.slf4j.Logger;

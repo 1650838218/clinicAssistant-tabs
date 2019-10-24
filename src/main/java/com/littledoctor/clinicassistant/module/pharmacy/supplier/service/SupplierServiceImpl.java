@@ -1,7 +1,6 @@
 package com.littledoctor.clinicassistant.module.pharmacy.supplier.service;
 
-import com.littledoctor.clinicassistant.common.plugin.select.SelectOption;
-import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.entity.PharmacyItem;
+import com.littledoctor.clinicassistant.common.plugin.SelectOption;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.dao.SupplierRepository;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.entity.Supplier;
 import org.apache.commons.lang.StringUtils;
@@ -15,7 +14,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

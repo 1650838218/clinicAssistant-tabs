@@ -1,10 +1,8 @@
 package com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.service;
 
-import com.littledoctor.clinicassistant.common.plugin.select.SelectOption;
+import com.littledoctor.clinicassistant.common.plugin.SelectOption;
 import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.dao.PharmacyItemRepository;
 import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.entity.PharmacyItem;
-import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryItem;
-import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryType;
 import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

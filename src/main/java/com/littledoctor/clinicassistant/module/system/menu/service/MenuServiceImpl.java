@@ -1,9 +1,9 @@
 package com.littledoctor.clinicassistant.module.system.menu.service;
 
 import com.littledoctor.clinicassistant.common.constant.Constant;
-import com.littledoctor.clinicassistant.common.plugin.tree.TreeEntity;
-import com.littledoctor.clinicassistant.common.plugin.tree.TreeNodeType;
-import com.littledoctor.clinicassistant.common.plugin.tree.TreeUtils;
+import com.littledoctor.clinicassistant.common.plugin.TreeEntity;
+import com.littledoctor.clinicassistant.common.plugin.TreeNodeType;
+import com.littledoctor.clinicassistant.common.plugin.TreeUtils;
 import com.littledoctor.clinicassistant.module.system.menu.dao.MenuRepository;
 import com.littledoctor.clinicassistant.module.system.menu.entity.Menu;
 import org.apache.commons.lang.StringUtils;

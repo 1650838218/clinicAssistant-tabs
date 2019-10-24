@@ -1,6 +1,6 @@
 package com.littledoctor.clinicassistant.module.skill.dao;
 
-import com.littledoctor.clinicassistant.common.plugin.select.SelectOption;
+import com.littledoctor.clinicassistant.common.plugin.SelectOption;
 import com.littledoctor.clinicassistant.module.skill.entity.MedicalSkill;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

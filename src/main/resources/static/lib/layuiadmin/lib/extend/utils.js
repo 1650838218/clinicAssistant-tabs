@@ -1,6 +1,24 @@
 layui.define(['jquery', 'form'], function (exports) {
     var form = layui.form;
         $ = layui.jquery;
+
+    // 获取表单值
+    $.fn.serializeObject = function() {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function() {
+            if (o[this.name] !== undefined) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
+
     var utils = {
         error: function (msg) {
             console.error(msg);

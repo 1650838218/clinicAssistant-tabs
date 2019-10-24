@@ -50,7 +50,15 @@ public interface StockDetailService {
     /**
      * 获取下拉表格的list
      * @param keywords
+     * @param pharmacyItemType
      * @return
      */
-    List<Map<String, Object>> getCombogrid(String keywords) throws Exception;
+    List<Map<String, Object>> getCombogrid(String keywords, String pharmacyItemType) throws Exception;
+
+    /**
+     * 根据药材名称查询药材信息
+     * @param medicalName
+     * @return
+     */
+    Map<String, Object> findByName(String medicalName) throws Exception;
 }

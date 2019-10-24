@@ -1,4 +1,4 @@
-package com.littledoctor.clinicassistant.common.plugin.tree;
+package com.littledoctor.clinicassistant.common.plugin;
 
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryType;
 

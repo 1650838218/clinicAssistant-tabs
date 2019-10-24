@@ -1,4 +1,4 @@
-package com.littledoctor.clinicassistant.common.plugin.select;
+package com.littledoctor.clinicassistant.common.plugin;
 
 /**
  * @Auther: 周俊林

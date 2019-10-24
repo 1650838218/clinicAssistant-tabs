@@ -1,10 +1,8 @@
-package com.littledoctor.clinicassistant.common.plugin.tree;
+package com.littledoctor.clinicassistant.common.plugin;
 
 import com.littledoctor.clinicassistant.common.constant.Constant;
-import com.littledoctor.clinicassistant.module.system.menu.entity.Menu;
 import org.springframework.util.CollectionUtils;
 
-import javax.validation.constraints.Max;
 import java.util.ArrayList;
 import java.util.List;
 

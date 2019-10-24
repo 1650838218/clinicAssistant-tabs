@@ -1,6 +1,4 @@
-package com.littledoctor.clinicassistant.common.plugin.tree;
-
-import org.springframework.scheduling.support.SimpleTriggerContext;
+package com.littledoctor.clinicassistant.common.plugin;
 
 import java.util.List;
 

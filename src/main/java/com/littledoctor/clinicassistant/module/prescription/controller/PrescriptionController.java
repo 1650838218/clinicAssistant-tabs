@@ -1,7 +1,7 @@
 package com.littledoctor.clinicassistant.module.prescription.controller;
 
 import com.littledoctor.clinicassistant.common.msg.Message;
-import com.littledoctor.clinicassistant.common.plugin.select.SelectOption;
+import com.littledoctor.clinicassistant.common.plugin.SelectOption;
 import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
 import com.littledoctor.clinicassistant.module.prescription.entity.PrescriptionVo;
 import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalogue;
@@ -13,6 +13,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: 周俊林
@@ -142,6 +143,22 @@ public class PrescriptionController {
     public List<SelectOption> getSelectOption(@RequestParam(value = "q", required = false) String keywords) {
         try {
             return prescriptionService.getSelectOption(keywords);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * 根据处方ID查询处方组成，并将处方组成转换成药材信息
+     * 包括：药材名称，品目ID，单价，库存单位，剂量等
+     * @param prescriptionId
+     * @return
+     */
+    @RequestMapping(value = "/getMedicalByPrescriptionId", method = RequestMethod.GET)
+    public Map<String, Object> getMedicalByPrescriptionId(@RequestParam String prescriptionId) {
+        try {
+            return prescriptionService.getMedicalByPrescriptionId(prescriptionId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

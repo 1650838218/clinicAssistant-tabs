@@ -33,7 +33,15 @@ public interface StockDetailMapper {
     /**
      * 用于病历开中药方时根据药品名称查询药品信息
      * @param keywords
+     * @param pharmacyItemType
      * @return
      */
-    List<Map<String, Object>> getCombogridForDecoction(@Param("keywords") String keywords);
+    List<Map<String, Object>> getCombogridForDecoction(@Param("keywords") String keywords, @Param("pharmacyItemType") String pharmacyItemType);
+
+    /**
+     * 根据药材名称查询药材信息
+     * @param medicalName
+     * @return
+     */
+    Map<String, Object> findByName(@Param("medicalName") String medicalName);
 }

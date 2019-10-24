@@ -26,11 +26,11 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
     var patentMedicineFormId = 'patent-medicine-form';// 中成药方 表单ID
     var skillFormId = 'skill-form';// 医技项目 表单ID
     var tabInitState = [false, false, false];
-    var editIndex = [undefined, undefined, undefined, undefined, undefined];
+    var editIndex = {};
     form.render();
 
     // 设置就诊时间
-    $('#' + recordFormId + ' input[name="arriveTime"]').val(new Date().format('yyyy/M/d h:m'));
+    $('#' + recordFormId + ' input[name="arriveTime"]').val(new Date().format('yyyy-M-d h:m'));
 
     // 监听处方复选框的选择事件
     form.on('checkbox(prescriptionType)', function(data){
@@ -65,22 +65,44 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
         if (data.index == 1 && !tabInitState[0]) {
             initDecoctionTab();
             tabInitState[0] = true;
+            bindInputForTotalMoney();// 监听总金额的变化
+            // 监听剂数的变化
+            $('#' + decoctionFormId).find('input[name="doseCount"]').on('input propertychange', function () {
+                var doseCount = parseInt($(this).val());
+                if (!isNaN(doseCount)) {
+                    $('#' + decoctionFormId + ' input[name="totalMoney"]').val((doseCount * tcmTag.getSingleMoney('tcm-tag-panel')).toFixed(2)).trigger('change');// 修改总金额
+                }
+            })
         } else if (data.index == 2 && !tabInitState[1]) {
             initPatentMedicineTable();
             tabInitState[1] = true;
+            bindInputForTotalMoney();
         } else if (data.index == 3 && !tabInitState[2]) {
             initSkillTable();
             tabInitState[2] = true;
+            bindInputForTotalMoney();
         }
     });
 
+    // 监听总金额的变化
+    function bindInputForTotalMoney() {
+        $('.layui-tab-item form input[name="totalMoney"]')
+            .unbind('change input propertychange')
+            .on('change input propertychange', function () {
+            var money = 0;
+            $('.layui-tab-item form input[name="totalMoney"]').each(function (i) {
+                money += parseFloat($(this).val());
+            });
+            $('#btn-group label').text(money.toFixed(2));
+        });
+    }
 
     // 判断是否可以进行编辑，返回true 可以编辑，false 不可以编辑
-    function endEditing(tableId, tabIndex){
-        if (editIndex[tabIndex] == undefined) return true;
-        if ($('#' + tableId).datagrid('validateRow', editIndex[tabIndex])){
-            $('#' + tableId).datagrid('endEdit', editIndex[tabIndex]);
-            editIndex[tabIndex] = undefined;
+    function endEditing(tableId){
+        if (editIndex[tableId] == undefined) return true;
+        if ($('#' + tableId).datagrid('validateRow', editIndex[tableId])){
+            $('#' + tableId).datagrid('endEdit', editIndex[tableId]);
+            editIndex[tableId] = undefined;
             return true;
         } else {
             return false;
@@ -88,8 +110,8 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
     }
 
     // 开始编辑一行
-    function beginEditing(tableId, tabIndex, rowIndex,field) {
-        editIndex[tabIndex] = rowIndex;
+    function beginEditing(tableId, rowIndex,field) {
+        editIndex[tableId] = rowIndex;
         $('#' + tableId).datagrid('selectRow', rowIndex).datagrid('beginEdit', rowIndex);
         var ed = $('#' + tableId).datagrid('getEditor', {index:rowIndex,field:field});
         if (ed){
@@ -99,524 +121,310 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
 
     // 初始化药材搜索框
     function initDecoctionTab() {
-        $('#search-medicinal').combobox({
-            delay:500,
-            prompt:'药材名称',
-            panelHeight:'auto',
-            panelMaxHeight: 200,
-            valueField: 'stockDetailId',
-            textField: 'pharmacyItemName',
-            mode: 'remote',
-            url: '/pharmacy/stock/getCombogrid',
-            method: 'get',
-            formatter: function (row) {
-                return row.pharmacyItemName + ' ' + parseFloat(row.sellingPrice).toFixed(2) + '元/' + row.stockUnitName;
-            },
-            onHidePanel: function () {
-                var selectValue = $('#search-medicinal').combobox('getValue');
-                if (selectValue) {
-                    var data = $('#search-medicinal').combobox('getData');
-                    $.each(data, function (i, n) {
-                        if (n.stockDetailId === selectValue) {
-                            n.dose = 0;// 将剂量初始化为0，避免后面的计算报错
-                            // 增加标签
-                            var option = {
-                                elem : '.tcm-tag-panel',
-                                key : {name: 'pharmacyItemName', unit: 'stockUnitName'},
-                                data: n,
-                                afterAdd: function () {
-                                    $('#search-toolbar .show-count').text('共' + tcmTag.getCount('.tcm-tag-panel') + '味药材');
-                                    $('#search-medicinal').combobox('clear');
-                                },
-                                afterDelete: function (allData) {
-                                    // 修改单剂金额
-                                    var money = 0;
-                                    for (var j = 0; j < allData.length; j++) {
-                                        money = money + allData[j].sellingPrice * allData[j].dose;
-                                    }
-                                    $('#' + decoctionFormId).find('input[name="singleMoney"]').val(money.toFixed(2));
-                                    var doseCount = $('#' + decoctionFormId).find('input[name="doseCount"]').val();
-                                    $('#' + decoctionFormId).find('input[name="totalMoney"]').val((money * doseCount).toFixed(2));
-
-                                    $('#search-toolbar .show-count').text('共' + tcmTag.getCount('.tcm-tag-panel') + '味药材');// 修改药味
-                                },
-                                onChange: function (allData) {
-                                    // 修改金额
-                                    var money = 0;
-                                    for (var j = 0; j < allData.length; j++) {
-                                        money = money + allData[j].sellingPrice * allData[j].dose;
-                                    }
-                                    $('#' + decoctionFormId).find('input[name="singleMoney"]').val(money.toFixed(2));
-                                    var doseCount = $('#' + decoctionFormId).find('input[name="doseCount"]').val();
-                                    $('#' + decoctionFormId).find('input[name="totalMoney"]').val((money * doseCount).toFixed(2));
-                                }
-                            }
-                            tcmTag.addTag(option);
-                            return;
-                        }
-                    });
-                }
-            }
-        });
-        $('#search-prescription').combobox({
-            delay:500,
-            prompt: '处方名称',
-            panelHeight:'auto',
-            panelMaxHeight: 200,
-            valueField: 'realValue',
-            textField: 'displayValue',
-            mode: 'remote',
-            url: '/prescription/getSelectOption',
-            method: 'get',
-            onHidePanel: function () {
-                var selectValue = $('#search-prescription').combobox('getValue');
-                if (selectValue) {
-                    // 根据处方ID查询处方，并添加
-                    $.getJSON('/prescription/findPrescriptionById',{prescriptionId: selectValue},function (prescription) {
-                        if (prescription) {
-
-                            var component = prescription.prescriptionComponent;// 方剂组成
-                            // 方剂解析
-                        }
-                    });
-                }
-            }
-        });
+        var option = {
+            id: 'tcm-tag-panel',
+            width: '100%',
+            height: '370px',
+            doseCountSelecter: '#' + decoctionFormId + ' input[name="doseCount"]', // 剂数，jQuery选择器
+            totalMoneySelecter: '#' + decoctionFormId + ' input[name="totalMoney"]' // 总金额，jQuery选择器
+        }
+        tcmTag.render(option);// 初始化中药材标签
     }
 
     // 初始化中成药方表格
     function initPatentMedicineTable() {
+        // 初始化搜索框
+        $('#patent-medicine-toolbar select').combogrid({
+            delay:500,
+            prompt: '中成药名称',
+            panelHeight:'auto',
+            panelMaxHeight: 200,
+            panelWidth: 488,
+            idField: 'stockDetailId',
+            textField: 'pharmacyItemName',
+            method: 'get',
+            url: '/pharmacy/stock/getCombogrid',
+            queryParams: {type: 2},
+            mode: 'remote',
+            columns: [[
+                {field: 'pharmacyItemName', title: '药品名称', width: 150},
+                {field: 'specifications', title: '规格', width: 120},
+                {field: 'manufacturer', title: '制造商', width: 200}
+            ]],
+            onHidePanel: function () {
+                var combogrid = $(this);
+                var grid = combogrid.combogrid('grid');	// get datagrid object
+                var selectRow = grid.datagrid('getSelected');	// get the selected row
+                if (selectRow) {
+                    var allData = $('#'+patentMedicineTableId).datagrid('getData');
+                    for (var i = 0; i < allData.total; i++) {
+                        var row = allData.rows[i];
+                        if (row.pharmacyItemId === selectRow.pharmacyItemId) {
+                            combogrid.combogrid('clear');// 清空搜索框
+                            layer.msg('此药品已存在！');
+                            return false;
+                        }
+                    }
+                    $('#' + patentMedicineTableId).datagrid('appendRow', selectRow);// 将被选中的行添加到表格中
+                    combogrid.combogrid('clear');// 清空搜索框
+                }
+            }
+        });
+
+        // 初始化表格
         $('#' + patentMedicineTableId).datagrid({
-            data: [{}, {}, {}, {}, {}, {}, {}, {}, {},{},{}, {}, {}, {}, {}, {}, {}, {}, {},{},{}, {}, {}, {}, {}, {}, {}, {}, {},{}],
+            toolbar: '#patent-medicine-toolbar',
+            data: [],
+            emptyMsg:'无数据！',
             onClickCell: function (rowIndex, field, value) {
-                if (editIndex != rowIndex) {
-                    if (endEditing()) {
-                        beginEditing(rowIndex, field);
+                if (field == 'medicineCount' && editIndex[patentMedicineTableId] != rowIndex) {
+                    if (endEditing(patentMedicineTableId)) {
+                        beginEditing(patentMedicineTableId, rowIndex, field);
                     } else {
                         setTimeout(function () {
-                            $('#' + patentMedicineTableId).datagrid('selectRow', editIndex);
+                            $('#' + patentMedicineTableId).datagrid('selectRow', editIndex[patentMedicineTableId]);
                         }, 0);
                     }
                 }
-            },
-            onEndEdit: function (index, row) {
-                var ed = $(this).datagrid('getEditor', {
-                    index: index,
-                    field: 'stockDetailId'
-                });
-                row.pharmacyItemName = $(ed.target).combogrid('getText');
             }
         });
 
         // 动态设置列的editor和其他属性
-        var columns = [
-            {
-                field: 'stockDetailId',
-                editor: {
-                    type: 'combogrid',
-                    options: {
-                        idField: 'stockDetailId',
-                        textField: 'pharmacyItemName',
-                        method: 'get',
-                        url: '/pharmacy/stock/getCombogrid',
-                        mode: 'remote',
-                        columns: [[
-                            {field: 'pharmacyItemName', title: '药品名称', width: 150},
-                            {field: 'pharmacyItemTypeName', title: '药品类型', width: 80},
-                            {field: 'specifications', title: '规格', width: 120},
-                            {field: 'manufacturer', title: '制造商', width: 200}
-                        ]],
-                        required: true,
-                        panelHeight: 'auto',
-                        panelMaxHeight: 200,
-                        panelWidth: 568,
-                        hasDownArrow: false,
-                        onSelect: function (index, stockDetail) {
-                            // 设置库存单位（销售单位）
-                            var editor1 = $('#' + patentMedicineTableId).datagrid('getEditor', {
-                                index: editIndex,
-                                field: 'stockUnit'
-                            });
-                            $(editor1.target).textbox('setValue', stockDetail.stockUnitName);
-                            // 设置单价
-                            var editor2 = $('#' + patentMedicineTableId).datagrid('getEditor', {
-                                index: editIndex,
-                                field: 'unitPrice'
-                            });
-                            $(editor2.target).textbox('setValue', stockDetail.sellingPrice);
-                        },
-                        onChange: function (newValue, oldValue) {
-                            if (!utils.isNotNull(newValue)) {
-                                // 清空库存单位（销售单位）和单价
-                                var editor1 = $('#' + patentMedicineTableId).datagrid('getEditor', {
-                                    index: editIndex,
-                                    field: 'stockUnit'
-                                });
-                                $(editor1.target).textbox('clear');
-                                var editor2 = $('#' + patentMedicineTableId).datagrid('getEditor', {
-                                    index: editIndex,
-                                    field: 'unitPrice'
-                                });
-                                $(editor2.target).textbox('clear');
+        var e = $('#' + patentMedicineTableId).datagrid('getColumnOption', 'medicineCount');
+        e.editor = {
+            type:'numberbox',
+            options:{
+                // precision:2,
+                required: true,
+                onChange: function (newValue,oldValue) {
+                    var rowIndex = editIndex[patentMedicineTableId];
+                    var allData = $('#' + patentMedicineTableId).datagrid('getData');
+                    var rowData = allData.rows[rowIndex];
+                    rowData.totalMoney = (newValue * rowData.sellingPrice).toFixed(2);
+                    if (!rowData.medicineCount || oldValue) {
+                        setTimeout(function () {
+                            if (endEditing(patentMedicineTableId)) {
+                                // 结束编辑后，修改总金额
+                                var totalMoney = 0;
+                                for (var i = 0; i < allData.total; i++) {
+                                    totalMoney += Number(allData.rows[i].totalMoney);
+                                }
+                                $('#' + patentMedicineFormId).find('input[name="totalMoney"]').val(totalMoney.toFixed(2)).trigger('change');
                             }
-                        },
-                        onHidePanel: function () {
-                            // 验证药品名称是否为空
-                            var editor = $('#' + patentMedicineTableId).datagrid('getEditor', {
-                                index: editIndex,
-                                field: 'stockDetailId'
-                            });
-                            var stockDetailId = $(editor.target).combogrid('getValue');
-                            if (!stockDetailId) {
-                                $(editor.target).combogrid('clear');
-                            }
-                        }
+                        }, 0);
                     }
-                },
-                formatter: function (value, row) {
-                    return row.pharmacyItemName;
-                }
-            },
-            {
-                field: 'specifications',
-                editor: {
-                    type: 'textbox',
-                    options: {
-                        editable: false,
-                        readonly: true
-                    }
-                },
-                formatter:function(value,row){
-                    return row.specifications;
-                }
-            },
-            {
-                field: 'usageAndDosage',
-                editor: {
-                    type: 'textbox',
-                    options: {
-                        editable: false,
-                        readonly: true
-                    }
-                },
-                formatter:function(value,row){
-                    return row.usageAndDosage;
-                }
-            },
-            {
-                field: 'unitPrice',
-                editor: {
-                    type: 'textbox',
-                    options: {
-                        editable: false,
-                        readonly: true
-                    }
-                },
-                formatter: function (value, row) {
-                    return row.unitPrice;
-                }
-            },
-            {
-                field: 'medicineCount',
-                editor: {
-                    type:'numberbox',
-                    options:{
-                        precision:2,
-                        required: true,
-                        onChange: function (newValue,oldValue) {
-                            var unitPrice = $('#' + patentMedicineTableId).datagrid('getEditor',{index: editIndex, field: 'unitPrice'});
-                            var totalMoney = $('#' + patentMedicineTableId).datagrid('getEditor',{index: editIndex, field: 'totalMoney'});
-                            $(totalMoney.target).numberbox('setValue', newValue * $(unitPrice.target).numberbox('getValue'));
-                        }
-                    }
-                },
-                formatter: function (value, row) {
-                    if (value != null) return (value - 0).toFixed(2);
-                }
-            },
-            {
-                field: 'totalMoney',
-                editor: {
-                    type: 'numberbox',
-                    options: {
-                        precision: 2,
-                        required: true
-                    }
-                },
-                formatter: function (value, row) {
-                    if (value != null) return (value - 0).toFixed(2);
-                }
-            },
-            {
-                field: 'operation',
-                formatter: function (value, row) {
-                    return '<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="look" title="查看">查看</a>';
                 }
             }
-        ];
-        for (var i = 0, l = columns.length; i < l; i++) {
-            var e = $('#' + patentMedicineTableId).datagrid('getColumnOption', columns[i].field);
-            e.editor = columns[i].editor;
-            e.formatter = columns[i].formatter;
-        }
+        };
     }
 
     // 初始化医技项目表格
     function initSkillTable() {
-        $('#' + skillTableId).datagrid({
-            data: [{}, {}, {}, {}, {}, {}, {}, {}, {},{}],
-            onClickCell: function (rowIndex, field, value) {
-                if (editIndex != rowIndex) {
-                    if (endEditing()) {
-                        beginEditing(rowIndex, field);
-                    } else {
-                        setTimeout(function () {
-                            $('#' + skillTableId).datagrid('selectRow', editIndex);
-                        }, 0);
+        table.render({
+            elem: '#' + skillTableId
+            ,id: skillTableId
+            ,height: 'full-190'
+            ,url: '/skill/findAll' //数据接口
+            ,text: {
+                none: '无数据！'
+            }
+            ,size: 'sm' //小尺寸的表格
+            ,cols: [[ //表头
+                {field: 'skillId', type: 'checkbox'}
+                ,{field: 'skillName', title: '项目名称'}
+                ,{field: 'unitPrice', title: '单价(元)'}
+                ,{field: 'dose', title: '治疗次数', edit: 'text'}
+                ,{field: 'totalMoney', title: '总价(元)'}
+            ]]
+            ,parseData: function (res) {
+                if (res.code === 0 && res.count > 0) {
+                    for (var i = 0; i < res.count; i++) {
+                        res.data[i].totalMoney = '';
                     }
                 }
-            },
-            onEndEdit: function (index, row) {
-                var ed = $(this).datagrid('getEditor', {
-                    index: index,
-                    field: 'stockDetailId'
-                });
-                row.pharmacyItemName = $(ed.target).combogrid('getText');
+                return res;
             }
         });
-
-        // 动态设置列的editor和其他属性
-        var columns = [
-            {
-                field: 'skillId',
-                editor: {
-                    type: 'combobox',
-                    options: {
-                        idField: 'stockDetailId',
-                        textField: 'pharmacyItemName',
-                        method: 'get',
-                        url: '/pharmacy/stock/getCombogrid',
-                        mode: 'remote',
-                        columns: [[
-                            {field: 'pharmacyItemName', title: '药品名称', width: 150},
-                            {field: 'pharmacyItemTypeName', title: '药品类型', width: 80},
-                            {field: 'specifications', title: '规格', width: 120},
-                            {field: 'manufacturer', title: '制造商', width: 200}
-                        ]],
-                        required: true,
-                        panelHeight: 'auto',
-                        panelMaxHeight: 200,
-                        panelWidth: 568,
-                        hasDownArrow: false,
-                        onSelect: function (index, stockDetail) {
-                            // 设置库存单位（销售单位）
-                            var editor1 = $('#' + skillTableId).datagrid('getEditor', {
-                                index: editIndex,
-                                field: 'stockUnit'
-                            });
-                            $(editor1.target).textbox('setValue', stockDetail.stockUnitName);
-                            // 设置单价
-                            var editor2 = $('#' + skillTableId).datagrid('getEditor', {
-                                index: editIndex,
-                                field: 'unitPrice'
-                            });
-                            $(editor2.target).textbox('setValue', stockDetail.sellingPrice);
-                        },
-                        onChange: function (newValue, oldValue) {
-                            if (!utils.isNotNull(newValue)) {
-                                // 清空库存单位（销售单位）和单价
-                                var editor1 = $('#' + skillTableId).datagrid('getEditor', {
-                                    index: editIndex,
-                                    field: 'stockUnit'
-                                });
-                                $(editor1.target).textbox('clear');
-                                var editor2 = $('#' + skillTableId).datagrid('getEditor', {
-                                    index: editIndex,
-                                    field: 'unitPrice'
-                                });
-                                $(editor2.target).textbox('clear');
-                            }
-                        },
-                        onHidePanel: function () {
-                            // 验证药品名称是否为空
-                            var editor = $('#' + skillTableId).datagrid('getEditor', {
-                                index: editIndex,
-                                field: 'stockDetailId'
-                            });
-                            var stockDetailId = $(editor.target).combogrid('getValue');
-                            if (!stockDetailId) {
-                                $(editor.target).combogrid('clear');
-                            }
-                        }
-                    }
-                },
-                formatter: function (value, row) {
-                    return row.pharmacyItemName;
-                }
-            },
-            {
-                field: 'unitPrice',
-                editor: {
-                    type: 'textbox',
-                    options: {
-                        editable: false,
-                        readonly: true
-                    }
-                },
-                formatter:function(value,row){
-                    return row.specifications;
-                }
-            },
-            {
-                field: 'frequency',
-                editor: {
-                    type:'numberbox',
-                    options:{
-                        precision:2,
-                        required: true,
-                        onChange: function (newValue,oldValue) {
-                            var unitPrice = $('#' + skillTableId).datagrid('getEditor',{index: editIndex, field: 'unitPrice'});
-                            var totalMoney = $('#' + skillTableId).datagrid('getEditor',{index: editIndex, field: 'totalMoney'});
-                            $(totalMoney.target).numberbox('setValue', newValue * $(unitPrice.target).numberbox('getValue'));
-                        }
-                    }
-                },
-                formatter: function (value, row) {
-                    if (value != null) return (value - 0).toFixed(2);
-                }
-            },
-            {
-                field: 'totalMoney',
-                editor: {
-                    type: 'numberbox',
-                    options: {
-                        precision: 2,
-                        required: true
-                    }
-                },
-                formatter: function (value, row) {
-                    if (value != null) return (value - 0).toFixed(2);
-                }
-            },
-            {
-                field: 'operation',
-                formatter: function (value, row) {
-                    return '<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="look" title="查看">查看</a>';
-                }
-            }
-        ];
-        for (var i = 0, l = columns.length; i < l; i++) {
-            var e = $('#' + skillTableId).datagrid('getColumnOption', columns[i].field);
-            e.editor = columns[i].editor;
-            e.formatter = columns[i].formatter;
-        }
     }
 
-    // 明细表格校验
-    function validateGrid() {
-        var gridData = $('#' + decoctionTableId).datagrid('getData');
-        var rowCount = gridData.total;
-        if (rowCount === 0) {
-            layer.msg("采购单至少要有一条明细数据！");
-            return false;
+    // 医技项目 监听表格编辑事件
+    table.on('edit(skill-table)', function (obj) {
+        var value = obj.value;
+        var re = new RegExp(/^([1-9][0-9]{0,1}|100)$/);
+        var msg = '';
+        if (!re.test(value)) {
+            msg = '请输入1-100之间的整数';
         }
-        if (endEditing()) {
-            for (var i = 0; i < rowCount; i++) {
-                var pharmacyItemId = gridData.rows[i].pharmacyItemId;
-                var totalPrice = gridData.rows[i].totalPrice;
-                if (!utils.isNotNull(pharmacyItemId) || !utils.isNotNull(totalPrice)) {
-                    beginEditing(i, 'pharmacyItemId');
-                    layer.msg("请将明细数据补充完整！");
-                    return false;
-                }
-            }
+        if (msg) {
+            layer.msg(msg);
+            var trElem = obj.tr;
+            var tdElem = trElem.find('td[data-field="dose"]');
+            var oldValue = tdElem.find('div').text();
+            $(this).blur();
+            obj.update({dose: oldValue});
+            tdElem.click();
         } else {
-            setTimeout(function(){
-                $('#' + decoctionTableId).datagrid('selectRow', editIndex);
+            setTimeout(function () {
+                // 修改总价
+                obj.update({totalMoney: (value * obj.data.unitPrice).toFixed(2)});
+                var totalMoney = 0, allData = table.cache[skillTableId];
+                for (var i = 0; i < allData.length; i++) {
+                    totalMoney += Number(allData[i].totalMoney);
+                }
+                $('#' + skillFormId).find('input[name="totalMoney"]').val(totalMoney.toFixed(2)).trigger('change');
             },0);
-            layer.msg("请将明细数据补充完整！");
-            return false;
         }
-        return true;
-    }
+    });
 
-    // 根据ID查询采购单
-    function queryPurchaseOrderById(purchaseOrderId) {
-        if (utils.isNotNull(purchaseOrderId)) {
-            $.getJSON(rootMapping + "/queryById",{purchaseOrderId: purchaseOrderId}, function (purchaseOrder) {
-                if (purchaseOrder != null) {
-                    purchaseOrder.totalPrice = parseFloat(purchaseOrder.totalPrice).toFixed(2);
-                    form.val('purchaseorder-form', purchaseOrder);// 表单赋值
-                    form.render();
-                    $('#' + decoctionTableId).datagrid('loadData', purchaseOrder.purchaseOrderDetails);// 加载采购单明细
+    // 统一事件处理
+    var eventFunction = {
+        // 中成药方，删除行
+        delete: function () {
+            // alert($(this).attr('row-index')); .datagrid('appendRow',{})
+            var row = $('#' + patentMedicineTableId).datagrid('getSelected');
+            if (row) {
+                var index = $('#' + patentMedicineTableId).datagrid('getRowIndex', row);
+                $('#' + patentMedicineTableId).datagrid('deleteRow', index);
+                var totalMoney = 0;
+                var allData = $('#' + patentMedicineTableId).datagrid('getData');
+                for (var i = 0; i < allData.total; i++) {
+                    totalMoney += Number(allData.rows[i].totalMoney);
                 }
-            });
-        } else {
-            layer.alert('采购单ID为空！', {icon: LAYER_ICON.error});
-        }
-    }
-
-
-    // 保存采购单
-    function savePurchaseOrder(obj, purchaseOrder) {
-        purchaseOrder.purchaseOrderType = 1;// 采购单类型，药品采购单
-        ajax.postJSON(rootMapping + '/save', purchaseOrder, function (order) {
-            if (order != null && order.purchaseOrderId != null) {
-                queryPurchaseOrderById(order.purchaseOrderId);// 根据ID查询采购单，并赋值
-                layer.msg(MSG.save_success);
+                $('#' + patentMedicineFormId).find('input[name="totalMoney"]').val(totalMoney.toFixed(2)).trigger('change');
             } else {
-                layer.msg(MSG.save_fail);
+                layer.msg('请选择药品！');
             }
-            utils.btnEnabled($(obj.elem));
-        }, $(obj.elem));
-    }
-
-    /**
-     * 保存采购单
-     * @param data
-     * @returns {boolean}
-     */
-    form.on('submit(submit-btn)', function(obj){
-        utils.btnDisabled($(obj.elem));
-        if (validateGrid()) {
-            var purchaseOrder = obj.field;// 表单值
-            var orderItems = $('#' + decoctionTableId).datagrid('getData');// 获取表格数据
-            // console.log(orderItems);
-            purchaseOrder.purchaseOrderDetails = orderItems.rows;
-            if (!generalBranchCheck(purchaseOrder.totalPrice, purchaseOrder.purchaseOrderDetails)) {
-                layer.confirm('采购单总金额大于明细总价之和，数据存在错误风险，确认保存吗？',
-                    {
-                        icon: LAYER_ICON.question,
-                        btn2: function(index, layero) {
-                            utils.btnEnabled($(obj.elem));
-                        },
-                        cancel: function (index, layero) {
-                            utils.btnEnabled($(obj.elem));
+        },
+        // 校验
+        validateRecord: function () {
+            // 不对患者信息进行校验
+            var recordFormData = $('#' + recordFormId).serializeObject();
+            var prescriptionType = recordFormData.prescriptionType;//
+            if (prescriptionType) {
+                for (var i = 0; i < prescriptionType.length; i++) {
+                    if (prescriptionType[i] === '1') {
+                        if (!tabInitState[0]) {
+                            layer.msg('请添加中药方或取消勾选中药处方！');
+                            return false;
                         }
-                    },
-                    function (index) {
-                        savePurchaseOrder(obj, purchaseOrder);
-                        layer.close(index);
-                });
-            }else {
-                savePurchaseOrder(obj, purchaseOrder);
+                        var tagData = tcmTag.getData('tcm-tag-panel');
+                        if (!tagData) {
+                            layer.msg('请添加中药方或取消勾选中药处方！');
+                            return false;
+                        } else {
+                            // 校验十八反，十九畏，妊娠禁忌和小儿禁忌
+
+                        }
+                    } else if (prescriptionType[i] === '2') {
+                        if (!tabInitState[1]) {
+                            layer.msg('请添加中成药或取消勾选中成药处方！');
+                            return false;
+                        }
+                        var tableData = $('#' + patentMedicineTableId).datagrid('getData');
+                        if (tableData.total == 0) {
+                            layer.msg('请添加中成药或取消勾选中成药处方！');
+                            return false;
+                        } else {
+                            // 校验妊娠禁忌和小儿禁忌
+
+                        }
+                    } else if (prescriptionType[i] === '3') {
+                        if (!tabInitState[2]) {
+                            layer.msg('请选择医技项目或取消勾选医技项目处方！');
+                            return false;
+                        }
+                        var checkStatus = table.checkStatus(skillTableId); //idTest 即为基础参数 id 对应的值
+                        if (checkStatus.data.length == 0) {
+                            layer.msg('请选择医技项目或取消勾选医技项目处方！');
+                            return false;
+                        } else {
+                            // 校验被勾选的医技项目是否填写了治疗次数
+                            var checkData = checkStatus.data;
+                            for (var j = 0; j < checkData.length; j++) {
+                                if (!checkData[j].dose) {
+                                    layer.msg('医技项目的诊疗次数不能为空且必须大于0！');
+                                    flag = false;
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
             }
-        } else {
-            utils.btnEnabled($(obj.elem));
+            return true;
+        },
+        // 获取病历数据
+        getRecordData: function () {
+            var medicalRecord = {};
+            // 患者信息
+            var recordFormData = $('#' + recordFormId).serializeObject();
+            medicalRecord.medicalRecord = recordFormData;
+            // 处方信息
+            var prescriptionType = recordFormData.prescriptionType;
+            var prescriptionTypeStr = '';
+            var rxVoList = [];
+            if (prescriptionType) {
+                for (var i = 0; i < prescriptionType.length; i++) {
+                    if (prescriptionType[i] === '1') {
+                        prescriptionTypeStr += '1,';
+                        var rxVo = {};
+                        rxVo.medicalRecordRx = $('.layui-tab-item:eq(1)').find('form').serializeObject();
+                        rxVo.detailList = $.extend(tcmTag.getData('tcm-tag-panel'));
+                        rxVoList.push(rxVo);
+                    } else if (prescriptionType[i] === '2') {
+                        prescriptionTypeStr += '2,';
+                        var rxVo = {};
+                        rxVo.medicalRecordRx = $('.layui-tab-item:eq(2)').find('form').serializeObject();
+                        var tableData = $('#' + patentMedicineTableId).datagrid('getData');
+                        rxVo.detailList = tableData.rows;
+                        rxVoList.push(rxVo);
+                    } else if (prescriptionType[i] === '3') {
+                        prescriptionTypeStr += '3,';
+                        var rxVo = {};
+                        rxVo.medicalRecordRx = $('.layui-tab-item:eq(3)').find('form').serializeObject();
+                        var checkStatus = table.checkStatus(skillTableId); //idTest 即为基础参数 id 对应的值
+                        rxVo.detailList = checkStatus.data;
+                        rxVoList.push(rxVo);
+                    }
+                }
+            }
+            // 总金额
+            medicalRecord.medicalRecord.totalMoney = $('#btn-group label').text();
+            // 处方类型
+            medicalRecord.medicalRecord.prescriptionType = prescriptionTypeStr.length > 0 ? prescriptionTypeStr.substr(0, prescriptionTypeStr.length - 1) : '';
+            medicalRecord.rxVoList = rxVoList;// 处方
+            console.log(medicalRecord);
+            return medicalRecord;
+        },
+        // 保存病历
+        save: function () {
+            if (eventFunction.validateRecord()) {
+                var recordData = eventFunction.getRecordData();
+                ajax.postJSON(rootMapping + '/save', recordData, function (result) {
+                    if (record)
+                    layer.msg('保存成功！');
+                }, $('button[lay-event="save"]'));
+            }
+        },
+        // 结算
+        pay: function () {
+            
+        },
+        // 下一位
+        next: function () {
+            
         }
-        return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+    };
+
+    // 按钮绑定单击事件
+    $(document).on('click','.layui-btn[lay-event]',function(){
+        // layer.msg($(this).attr('lay-event'));
+        var event = $(this).attr('lay-event');
+        if (typeof eventFunction[event] === 'function') {
+            eventFunction[event].call(this);
+        }
     });
 
-    // 取消按钮点击事件
-    $('button[lay-filter="cancel-btn"]').click(function () {
-        window.location.reload();
-    });
-
-    // 关闭按钮点击事件
-    $('button[lay-filter="close-btn"]').click(function () {
-        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-        parent.layer.close(index); //再执行关闭
-    });
 
     // 转到采购单列表
 /*    $('button[lay-filter="golist-btn"]').click(function () {
@@ -647,21 +455,4 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
     }
 });
 
-function doSearch(value){
-    alert('You input: ' + value);
-}
-
-function borderStyle() {
-    var panel = $(this).datagrid('getPanel');
-    var tr = panel.find('div.datagrid-body tr');
-    tr.each(function () {
-        var td = $(this).children('td');
-        td.css({
-            "border-width": "0 0 1px 0",
-            "border-style": "solid"
-        });
-        ;
-    });
-    panel.find('div.datagrid-header').css({"border-width": "0"});
-}
 

@@ -25,7 +25,7 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
         page: {
             limit: 20,
             groups: 3,
-            layout: ['count','refresh']
+            layout: ['prev', 'page', 'next','count','refresh']
         },
         request: {
             limitName: 'size' //每页数据量的参数名，默认：limit

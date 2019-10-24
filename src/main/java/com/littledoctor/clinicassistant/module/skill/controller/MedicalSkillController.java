@@ -1,8 +1,8 @@
 package com.littledoctor.clinicassistant.module.skill.controller;
 
 import com.littledoctor.clinicassistant.common.msg.Message;
-import com.littledoctor.clinicassistant.common.plugin.layui.LayuiTableEntity;
-import com.littledoctor.clinicassistant.common.plugin.select.SelectOption;
+import com.littledoctor.clinicassistant.common.plugin.LayuiTableEntity;
+import com.littledoctor.clinicassistant.common.plugin.SelectOption;
 import com.littledoctor.clinicassistant.module.skill.entity.MedicalSkill;
 import com.littledoctor.clinicassistant.module.skill.service.MedicalSkillService;
 import org.slf4j.Logger;

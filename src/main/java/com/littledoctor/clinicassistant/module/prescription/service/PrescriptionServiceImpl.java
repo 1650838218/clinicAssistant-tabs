@@ -1,6 +1,7 @@
 package com.littledoctor.clinicassistant.module.prescription.service;
 
-import com.littledoctor.clinicassistant.common.plugin.select.SelectOption;
+import com.littledoctor.clinicassistant.common.plugin.SelectOption;
+import com.littledoctor.clinicassistant.module.pharmacy.stock.service.StockDetailService;
 import com.littledoctor.clinicassistant.module.prescription.dao.PrescriptionRepository;
 import com.littledoctor.clinicassistant.module.prescription.dao.RxCatalogueRepository;
 import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
@@ -10,9 +11,13 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: 周俊林
@@ -28,6 +33,9 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
     @Autowired
     private PrescriptionRepository prescriptionRepository;
+
+    @Autowired
+    private StockDetailService stockDetailService;
 
     /**
      * 查询处方目录
@@ -141,5 +149,44 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         } else {
             return prescriptionRepository.getSelectOption(keywords.trim());
         }
+    }
+
+    /**
+     * 根据处方ID查询处方组成，并将处方组成转换成药材信息
+     * 包括：药材名称，品目ID，单价，库存单位，剂量等
+     * @param prescriptionId
+     * @return
+     */
+    @Override
+    public Map<String, Object> getMedicalByPrescriptionId(String prescriptionId) throws Exception {
+        if (StringUtils.isNotBlank(prescriptionId)) {
+            Prescription p = this.findPrescriptionById(prescriptionId);
+            if (p != null) {
+                String component = p.getPrescriptionComponent();
+                if (StringUtils.isNotBlank(component)) {
+                    String[] medicals = component.split("\\s+");// 将处方组成用空格分割成数组
+                    if (!ObjectUtils.isEmpty(medicals)) {
+                        List<Map<String, Object>> medicalList = new ArrayList<>();// 库存有药
+                        List<String> notExist = new ArrayList<>();// 库存不存在的药材
+                        for (int i = 0, len = medicals.length; i < len; i++) {
+                            String medicalName = medicals[i].split("\\d+")[0];// 提取药材名称
+                            String dose = medicals[i].replaceAll("[^0-9]", "");// 提取剂量
+                            Map<String, Object> medicalInfo = stockDetailService.findByName(medicalName);// 根据药材名称查询药材信息
+                            if (ObjectUtils.isEmpty(medicalInfo)) {
+                                notExist.add(medicalName);// 库存中没有此药材
+                            } else {
+                                medicalInfo.put("dose", dose);// 剂量
+                                medicalList.add(medicalInfo);
+                            }
+                        }
+                        Map<String, Object> result = new HashMap<>();
+                        result.put("medicals", medicalList);
+                        result.put("notExist", notExist);
+                        return result;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

@@ -1,18 +1,16 @@
 package com.littledoctor.clinicassistant.module.system.menu.controller;
 
 import com.littledoctor.clinicassistant.common.msg.Message;
-import com.littledoctor.clinicassistant.common.plugin.tree.TreeEntity;
-import com.littledoctor.clinicassistant.common.plugin.tree.TreeUtils;
+import com.littledoctor.clinicassistant.common.plugin.TreeEntity;
+import com.littledoctor.clinicassistant.common.plugin.TreeUtils;
 import com.littledoctor.clinicassistant.module.system.menu.entity.Menu;
 import com.littledoctor.clinicassistant.module.system.menu.service.MenuService;
-import net.sf.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

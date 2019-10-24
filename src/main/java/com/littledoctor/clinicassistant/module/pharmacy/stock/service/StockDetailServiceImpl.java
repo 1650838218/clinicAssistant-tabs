@@ -7,10 +7,12 @@ import com.littledoctor.clinicassistant.module.pharmacy.stock.dao.StockDetailRep
 import com.littledoctor.clinicassistant.module.pharmacy.stock.entity.StockDetail;
 import com.littledoctor.clinicassistant.module.pharmacy.stock.mapper.StockDetailMapper;
 import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -147,11 +149,12 @@ public class StockDetailServiceImpl implements StockDetailService {
     /**
      * 获取下拉表格的list
      * @param keywords
+     * @param pharmacyItemType
      * @return
      */
     @Override
-    public List<Map<String, Object>> getCombogrid(String keywords) throws Exception {
-        List<Map<String, Object>> result = stockDetailMapper.getCombogridForDecoction(keywords);
+    public List<Map<String, Object>> getCombogrid(String keywords, String pharmacyItemType) throws Exception {
+        List<Map<String, Object>> result = stockDetailMapper.getCombogridForDecoction(keywords, pharmacyItemType);
         // 设置库存单位名称
         if (result.size() > 0) {
             Map<String, String> kcdw = dictionaryService.getItemMapByKey("KCDW");// 库存单位
@@ -163,5 +166,27 @@ public class StockDetailServiceImpl implements StockDetailService {
             }
         }
         return result;
+    }
+
+    /**
+     * 根据药材名称查询药材信息
+     * @param medicalName
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map<String, Object> findByName(String medicalName) throws Exception {
+        if (StringUtils.isNotBlank(medicalName)) {
+            Map<String, Object> result = stockDetailMapper.findByName(medicalName);
+            // 设置库存单位名称
+            if (!ObjectUtils.isEmpty(result)) {
+                Map<String, String> kcdw = dictionaryService.getItemMapByKey("KCDW");// 库存单位
+                if (result.containsKey("stockUnit") && kcdw.containsKey(result.get("stockUnit"))) {
+                    result.put("stockUnitName", kcdw.get(result.get("stockUnit")));
+                }
+            }
+            return result;
+        }
+        return null;
     }
 }

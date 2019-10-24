@@ -1,4 +1,4 @@
-package com.littledoctor.clinicassistant.common.plugin.layui;
+package com.littledoctor.clinicassistant.common.plugin;
 
 import com.github.pagehelper.PageInfo;
 import com.littledoctor.clinicassistant.common.constant.Constant;
