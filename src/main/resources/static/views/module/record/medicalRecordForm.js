@@ -358,6 +358,7 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
             var medicalRecord = {};
             // 患者信息
             var recordFormData = $('#' + recordFormId).serializeObject();
+            recordFormData.patientAge = recordFormData.patientAge + recordFormData.ageUnit;
             medicalRecord.medicalRecord = recordFormData;
             // 处方信息
             var prescriptionType = recordFormData.prescriptionType;
@@ -401,8 +402,11 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
             if (eventFunction.validateRecord()) {
                 var recordData = eventFunction.getRecordData();
                 ajax.postJSON(rootMapping + '/save', recordData, function (result) {
-                    if (record)
-                    layer.msg('保存成功！');
+                    layer.msg(result.msg);
+                    if (result.success) {
+                        $('#' + recordFormId + ' input[name="recordId"]').val(result.object.recordId);// 设置ID值
+                        // eventFunction.queryRecord(result.object.recordId);// 重新查询渲染一遍
+                    }
                 }, $('button[lay-event="save"]'));
             }
         },
@@ -413,6 +417,20 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
         // 下一位
         next: function () {
             
+        },
+        // 根据id查询患者病历，并赋值，主要用于保存后的回显
+        queryRecord: function (recordId) {
+            if (!recordId) return false;
+            ajax.getJSON(rootMapping + '/findById', {recordId: recordId}, function (recordVo) {
+                if (recordVo && recordVo.medicalRecord.recordId) {
+                    // 患者信息回显
+                    var medicalRecord = recordVo.medicalRecord;
+                    medicalRecord.patientAge =medicalRecord.patientAge.substr(0, medicalRecord.patientAge.length - 1);
+                    medicalRecord.ageUnit = medicalRecord.patientAge.charAt(medicalRecord.patientAge.length - 1);
+                    form.val(recordFormId, medicalRecord);
+                    //
+                }
+            });
         }
     };
 
@@ -424,35 +442,6 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
             eventFunction[event].call(this);
         }
     });
-
-
-    // 转到采购单列表
-/*    $('button[lay-filter="golist-btn"]').click(function () {
-        var treeMenu = $('#LAY-system-side-menu', parent.document);
-        treeMenu.find('li[data-name="pharmacy"] dl dd[data-name="supplier"] a').click();
-    });*/
-
-    // 格式化总金额
-/*    $('#'+ formId + ' input[name="totalPrice"]').bind('change', function () {
-        var value = $(this).val();
-        $(this).val((value - 0).toFixed(2));
-    });*/
-
-
-    // 解析url中的参数，如果包含采购单id，则自动查询采购单详情
-    var search = window.location.search;
-    if (search.length > 0) {
-        var condition = search.substr(1).split('&');
-        for (var i = 0; i < condition.length; i++) {
-            var keyVal = condition[i].split('=');
-            if (keyVal[0] === 'purchaseOrderId') {
-                $('button[lay-filter="cancel-btn"]').hide();
-                $('button[lay-filter="close-btn"]').show();
-                queryPurchaseOrderById(keyVal[1]);
-                break;
-            }
-        }
-    }
 });
 
 

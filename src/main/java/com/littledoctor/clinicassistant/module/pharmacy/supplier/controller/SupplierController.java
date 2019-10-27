@@ -1,8 +1,8 @@
 package com.littledoctor.clinicassistant.module.pharmacy.supplier.controller;
 
 import com.littledoctor.clinicassistant.common.msg.Message;
-import com.littledoctor.clinicassistant.common.plugin.LayuiTableEntity;
-import com.littledoctor.clinicassistant.common.plugin.SelectOption;
+import com.littledoctor.clinicassistant.common.entity.LayuiTableEntity;
+import com.littledoctor.clinicassistant.common.entity.SelectOption;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.entity.Supplier;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.service.SupplierService;
 import org.slf4j.Logger;

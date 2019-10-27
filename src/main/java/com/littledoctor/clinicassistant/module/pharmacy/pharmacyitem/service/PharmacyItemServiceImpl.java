@@ -1,6 +1,6 @@
 package com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.service;
 
-import com.littledoctor.clinicassistant.common.plugin.SelectOption;
+import com.littledoctor.clinicassistant.common.entity.SelectOption;
 import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.dao.PharmacyItemRepository;
 import com.littledoctor.clinicassistant.module.pharmacy.pharmacyitem.entity.PharmacyItem;
 import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;

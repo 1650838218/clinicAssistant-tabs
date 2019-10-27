@@ -1,6 +1,4 @@
-package com.littledoctor.clinicassistant.common.plugin;
-
-import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryType;
+package com.littledoctor.clinicassistant.common.entity;
 
 /**
  * @Auther: 周俊林

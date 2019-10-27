@@ -1,4 +1,4 @@
-package com.littledoctor.clinicassistant.common.plugin;
+package com.littledoctor.clinicassistant.common.entity;
 
 import java.util.List;
 

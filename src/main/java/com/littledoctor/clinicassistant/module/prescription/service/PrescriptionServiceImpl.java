@@ -1,6 +1,6 @@
 package com.littledoctor.clinicassistant.module.prescription.service;
 
-import com.littledoctor.clinicassistant.common.plugin.SelectOption;
+import com.littledoctor.clinicassistant.common.entity.SelectOption;
 import com.littledoctor.clinicassistant.module.pharmacy.stock.service.StockDetailService;
 import com.littledoctor.clinicassistant.module.prescription.dao.PrescriptionRepository;
 import com.littledoctor.clinicassistant.module.prescription.dao.RxCatalogueRepository;

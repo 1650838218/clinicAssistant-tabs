@@ -1,6 +1,6 @@
 package com.littledoctor.clinicassistant.module.skill.dao;
 
-import com.littledoctor.clinicassistant.common.plugin.SelectOption;
+import com.littledoctor.clinicassistant.common.entity.SelectOption;
 import com.littledoctor.clinicassistant.module.skill.entity.MedicalSkill;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -19,7 +19,7 @@ public interface MedicalSkillRepository extends JpaRepository<MedicalSkill, Inte
      * 获取selecOption
      * @return
      */
-    @Query(value = "select new com.littledoctor.clinicassistant.common.plugin.select.SelectOption(t.skillId, t.skillName) from MedicalSkill t")
+    @Query(value = "select new com.littledoctor.clinicassistant.common.entity.SelectOption(t.skillId, t.skillName) from MedicalSkill t")
     List<SelectOption> getSelectOption();
 }
 

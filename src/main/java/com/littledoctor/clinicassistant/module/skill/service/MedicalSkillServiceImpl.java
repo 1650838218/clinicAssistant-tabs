@@ -1,6 +1,6 @@
 package com.littledoctor.clinicassistant.module.skill.service;
 
-import com.littledoctor.clinicassistant.common.plugin.SelectOption;
+import com.littledoctor.clinicassistant.common.entity.SelectOption;
 import com.littledoctor.clinicassistant.module.skill.dao.MedicalSkillRepository;
 import com.littledoctor.clinicassistant.module.skill.entity.MedicalSkill;
 import org.apache.commons.lang.StringUtils;

@@ -1,6 +1,6 @@
 package com.littledoctor.clinicassistant.module.pharmacy.supplier.service;
 
-import com.littledoctor.clinicassistant.common.plugin.SelectOption;
+import com.littledoctor.clinicassistant.common.entity.SelectOption;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.entity.Supplier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

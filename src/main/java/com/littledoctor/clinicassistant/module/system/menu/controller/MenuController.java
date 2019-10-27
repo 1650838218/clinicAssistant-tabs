@@ -1,8 +1,8 @@
 package com.littledoctor.clinicassistant.module.system.menu.controller;
 
 import com.littledoctor.clinicassistant.common.msg.Message;
-import com.littledoctor.clinicassistant.common.plugin.TreeEntity;
-import com.littledoctor.clinicassistant.common.plugin.TreeUtils;
+import com.littledoctor.clinicassistant.common.entity.TreeEntity;
+import com.littledoctor.clinicassistant.common.util.TreeUtils;
 import com.littledoctor.clinicassistant.module.system.menu.entity.Menu;
 import com.littledoctor.clinicassistant.module.system.menu.service.MenuService;
 import org.slf4j.Logger;

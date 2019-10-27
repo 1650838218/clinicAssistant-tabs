@@ -1,7 +1,7 @@
 package com.littledoctor.clinicassistant.module.system.dictionary.service;
 
-import com.littledoctor.clinicassistant.common.plugin.TreeEntity;
-import com.littledoctor.clinicassistant.common.plugin.TreeNodeType;
+import com.littledoctor.clinicassistant.common.entity.TreeEntity;
+import com.littledoctor.clinicassistant.common.entity.TreeNodeType;
 import com.littledoctor.clinicassistant.module.system.dictionary.dao.DictionaryRepository;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryItem;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryType;

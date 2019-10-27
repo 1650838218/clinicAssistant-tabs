@@ -1,7 +1,6 @@
-package com.littledoctor.clinicassistant.common.plugin;
+package com.littledoctor.clinicassistant.common.entity;
 
 import com.github.pagehelper.PageInfo;
-import com.littledoctor.clinicassistant.common.constant.Constant;
 import com.littledoctor.clinicassistant.common.msg.Message;
 import org.springframework.data.domain.Page;
 import org.springframework.util.CollectionUtils;

@@ -1,6 +1,6 @@
 package com.littledoctor.clinicassistant.module.pharmacy.supplier.dao;
 
-import com.littledoctor.clinicassistant.common.plugin.SelectOption;
+import com.littledoctor.clinicassistant.common.entity.SelectOption;
 import com.littledoctor.clinicassistant.module.pharmacy.supplier.entity.Supplier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -19,6 +19,6 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer>, Jp
      * 获取selecOption
      * @return
      */
-    @Query(value = "select new com.littledoctor.clinicassistant.common.plugin.select.SelectOption(t.supplierId, t.supplierName) from Supplier t")
+    @Query(value = "select new com.littledoctor.clinicassistant.common.entity.SelectOption(t.supplierId, t.supplierName) from Supplier t")
     List<SelectOption> getSelectOption();
 }

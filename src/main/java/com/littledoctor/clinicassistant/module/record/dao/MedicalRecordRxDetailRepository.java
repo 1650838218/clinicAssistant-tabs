@@ -10,6 +10,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  * @Date: 2019-08-24 10:27
  * @Description:
  */
-public interface MedicalRecordRxDetailRepository extends JpaRepository<MedicalRecordRxDetail, Integer>, JpaSpecificationExecutor<MedicalRecordRxDetail> {
+public interface MedicalRecordRxDetailRepository extends JpaRepository<MedicalRecordRxDetail, Long>, JpaSpecificationExecutor<MedicalRecordRxDetail> {
 
 }

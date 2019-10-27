@@ -1,6 +1,6 @@
 package com.littledoctor.clinicassistant.module.prescription.dao;
 
-import com.littledoctor.clinicassistant.common.plugin.SelectOption;
+import com.littledoctor.clinicassistant.common.entity.SelectOption;
 import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -43,7 +43,7 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Inte
      * 获取selecOption
      * @return
      */
-    @Query(value = "select new com.littledoctor.clinicassistant.common.plugin.select.SelectOption(t.prescriptionId, t.prescriptionName) from Prescription t ")
+    @Query(value = "select new com.littledoctor.clinicassistant.common.entity.SelectOption(t.prescriptionId, t.prescriptionName) from Prescription t ")
     List<SelectOption> getSelectOption();
 
     /**
@@ -51,7 +51,7 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Inte
      * @return
      * @param keywords
      */
-    @Query(value = "select new com.littledoctor.clinicassistant.common.plugin.select.SelectOption(t.prescriptionId, t.prescriptionName) " +
+    @Query(value = "select new com.littledoctor.clinicassistant.common.entity.SelectOption(t.prescriptionId, t.prescriptionName) " +
             "from Prescription t where t.prescriptionName like concat('%',?1,'%') or t.abbreviation like concat('%',?1,'%') ")
     List<SelectOption> getSelectOption(String keywords);
 }

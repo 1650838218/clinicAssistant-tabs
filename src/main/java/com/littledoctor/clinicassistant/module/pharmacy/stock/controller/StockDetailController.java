@@ -1,6 +1,6 @@
 package com.littledoctor.clinicassistant.module.pharmacy.stock.controller;
 
-import com.littledoctor.clinicassistant.common.plugin.LayuiTableEntity;
+import com.littledoctor.clinicassistant.common.entity.LayuiTableEntity;
 import com.littledoctor.clinicassistant.module.pharmacy.stock.entity.StockDetail;
 import com.littledoctor.clinicassistant.module.pharmacy.stock.service.StockDetailService;
 import org.slf4j.Logger;

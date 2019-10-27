@@ -1,7 +1,7 @@
 package com.littledoctor.clinicassistant.module.prescription.controller;
 
 import com.littledoctor.clinicassistant.common.msg.Message;
-import com.littledoctor.clinicassistant.common.plugin.SelectOption;
+import com.littledoctor.clinicassistant.common.entity.SelectOption;
 import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
 import com.littledoctor.clinicassistant.module.prescription.entity.PrescriptionVo;
 import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalogue;

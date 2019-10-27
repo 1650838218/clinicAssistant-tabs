@@ -22,4 +22,16 @@ public interface Message {
 
     public static final String NO_DATA = "暂无数据！";
 
+    public static final String OPERATE_SUCCESS = "操作成功！";
+
+    public static final String OPERATE_FAILED = "操作失败！";
+
+    public static final String SAVE_SUCCESS = "保存成功！";
+
+    public static final String SAVE_FAILED = "保存失败！";
+
+    public static final String DELETE_SUCCESS = "删除成功！";
+
+    public static final String DELETE_FAILED = "删除失败！";
+
 }

@@ -1,4 +1,4 @@
-package com.littledoctor.clinicassistant.common.plugin;
+package com.littledoctor.clinicassistant.common.entity;
 
 /**
  * @Auther: 周俊林

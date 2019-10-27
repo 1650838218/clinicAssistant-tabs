@@ -1,6 +1,7 @@
-package com.littledoctor.clinicassistant.common.plugin;
+package com.littledoctor.clinicassistant.common.util;
 
 import com.littledoctor.clinicassistant.common.constant.Constant;
+import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
