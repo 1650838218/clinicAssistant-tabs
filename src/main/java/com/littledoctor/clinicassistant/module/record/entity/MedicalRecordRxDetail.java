@@ -38,35 +38,35 @@ public class MedicalRecordRxDetail implements java.io.Serializable {
     private Long recordId;
 
     /** 处方类型 */
-    @Column(name = "RX_TYPE", nullable = true)
+    @Column(name = "RX_TYPE")
     private Integer rxType;
 
     /** 医技项目ID */
-    @Column(name = "SKILL_ID", nullable = false, length = 20)
+    @Column(name = "SKILL_ID")
     private Long skillId;
 
-    /** 药品ID，库存明细ID */
-    @Column(name = "STOCK_DETAIL_ID", nullable = true, length = 19)
-    private Long stockDetailId;
+    /** 药房品目ID */
+    @Column(name = "PHARMACY_ITEM_ID")
+    private Long pharmacyItemId;
 
     /** 剂量/数量/诊疗次数 */
-    @Column(name = "DOSE", nullable = true, length = 12)
+    @Column(name = "DOSE")
     private BigDecimal dose;
 
     /** 单位 */
-    @Column(name = "UNIT_NAME", nullable = true, length = 10)
+    @Column(name = "UNIT_NAME")
     private String unitName;
 
     /** 用法用量 */
-    @Column(name = "USAGE_DOSE", nullable = true, length = 50)
+    @Column(name = "USAGE_DOSE")
     private String usageDose;
 
     /** 单价 */
-    @Column(name = "UNIT_PRICE", nullable = true, length = 12)
+    @Column(name = "UNIT_PRICE")
     private BigDecimal unitPrice;
 
     /** 金额 */
-    @Column(name = "TOTAL_MONEY", nullable = true, length = 12)
+    @Column(name = "TOTAL_MONEY")
     private BigDecimal totalMoney;
 
     /**
@@ -145,23 +145,12 @@ public class MedicalRecordRxDetail implements java.io.Serializable {
         this.skillId = skillId;
     }
 
-    /**
-     * 获取药品ID，库存明细ID
-     *
-     * @return 药品ID
-     */
-    public Long getStockDetailId() {
-        return this.stockDetailId;
+    public Long getPharmacyItemId() {
+        return pharmacyItemId;
     }
 
-    /**
-     * 设置药品ID，库存明细ID
-     *
-     * @param stockDetailId
-     *          药品ID
-     */
-    public void setStockDetailId(Long stockDetailId) {
-        this.stockDetailId = stockDetailId;
+    public void setPharmacyItemId(Long pharmacyItemId) {
+        this.pharmacyItemId = pharmacyItemId;
     }
 
     /**

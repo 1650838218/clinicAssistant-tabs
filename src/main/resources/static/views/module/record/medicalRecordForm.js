@@ -72,7 +72,7 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
                 if (!isNaN(doseCount)) {
                     $('#' + decoctionFormId + ' input[name="totalMoney"]').val((doseCount * tcmTag.getSingleMoney('tcm-tag-panel')).toFixed(2)).trigger('change');// 修改总金额
                 }
-            })
+            });
         } else if (data.index == 2 && !tabInitState[1]) {
             initPatentMedicineTable();
             tabInitState[1] = true;
@@ -370,7 +370,7 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
                         prescriptionTypeStr += '1,';
                         var rxVo = {};
                         rxVo.medicalRecordRx = $('.layui-tab-item:eq(1)').find('form').serializeObject();
-                        rxVo.detailList = $.extend(tcmTag.getData('tcm-tag-panel'));
+                        rxVo.detailList = $.extend({},tcmTag.getData('tcm-tag-panel'));
                         rxVoList.push(rxVo);
                     } else if (prescriptionType[i] === '2') {
                         prescriptionTypeStr += '2,';
@@ -416,7 +416,16 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
         },
         // 下一位
         next: function () {
-            
+            if (eventFunction.validateRecord()) {
+                var recordData = eventFunction.getRecordData();
+                ajax.postJSON(rootMapping + '/save', recordData, function (result) {
+                    if (result.success) {
+                        window.location.reload();
+                    } else {
+                        layer.msg(result.msg);
+                    }
+                }, $('button[lay-event="next"]'));
+            }
         },
         // 根据id查询患者病历，并赋值，主要用于保存后的回显
         queryRecord: function (recordId) {
