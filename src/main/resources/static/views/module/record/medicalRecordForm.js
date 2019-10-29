@@ -412,7 +412,60 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
         },
         // 结算
         pay: function () {
-            
+            var content = '';
+            content += '<form class="layui-form layui-form-sm" lay-filter="payForm">';
+            content += '<div class="layui-form-item">';
+            content += '<label class="layui-form-label">会员：</label>';
+            content += '<div class="layui-input-inline">';
+            content += '<input name="vipCardNumber" placeholder="会员卡号/手机号" autocomplete="off" class="layui-input">';
+            content += '</div>';
+            content += '<div class="layui-form-mid layui-word-aux">此会员不存在</div>';
+            content += '</div>';
+            content += '<div class="layui-form-item">';
+            content += '<label class="layui-form-label">应收：</label>';
+            content += '<div class="layui-form-mid layui-word-aux">' + $('#btn-group label').text() + '元</div>';
+            content += '</div>';
+            content += '<div class="layui-form-item">';
+            content += '<label class="layui-form-label">折扣：</label>';
+            content += '<div class="layui-form-mid layui-word-aux">' + 0.95 + '</div>';
+            content += '</div>';
+            content += '<div class="layui-form-item">';
+            content += '<label class="layui-form-label">实收：</label>';
+            content += '<div class="layui-input-inline">';
+            content += '<input name="vipCardNumber" placeholder="实收" autocomplete="off" class="layui-input">';
+            content += '</div>';
+            content += '</div>';
+            content += '<div class="layui-form-item">';
+            content += '<label class="layui-form-label">找零：</label>';
+            content += '<div class="layui-form-mid layui-word-aux">' + 0.23 + '</div>';
+            content += '</div>';
+            content += '<div class="layui-form-item">';
+            content += '<label class="layui-form-label">支付：</label>';
+            content += '<div class="layui-input-inline">';
+            content += '<input type="radio" name="payType" value="1" title="现金">';
+            content += '<input type="radio" name="payType" value="2" title="支付宝">';
+            content += '<input type="radio" name="payType" value="3" title="微信">';
+            content += '<input type="radio" name="payType" value="4" title="会员卡">';
+            content += '</div>';
+            content += '</div>';
+            content += '</form>';
+            layer.open({
+                title: '结算',
+                content: content,
+                area: ['700px','400px'],
+                btn: ['确定','取消'],
+                btnAlign: 'c',
+                resize: false,
+                success: function(layero, index) {
+                    form.render('radio', 'payForm');
+                },
+                yes: function (index, layero) {
+                    // 获取表单信息，保存
+                },
+                btn2: function (index, layero) {
+                    layer.close(index);
+                }
+            });
         },
         // 下一位
         next: function () {
