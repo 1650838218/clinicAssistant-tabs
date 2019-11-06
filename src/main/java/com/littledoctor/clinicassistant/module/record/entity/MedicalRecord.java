@@ -34,6 +34,10 @@ public class MedicalRecord implements java.io.Serializable {
     @Column(name = "RECORD_ID", unique = true, nullable = false, length = 20)
     private Long recordId;
 
+    /** 就诊号 */
+    @Column(name = "REGISTER_NUMBER")
+    private String registerNumber;
+
     /** 就诊时间 */
     @Column(name = "ARRIVE_TIME", nullable = true, length = 19)
     private String arriveTime;
@@ -90,18 +94,6 @@ public class MedicalRecord implements java.io.Serializable {
     @Column(name = "PRESCRIPTION_TYPE", nullable = true, length = 10)
     private String prescriptionType;
 
-    /** 总金额 */
-    @Column(name = "TOTAL_MONEY", nullable = true, length = 12)
-    private BigDecimal totalMoney;
-
-    /** 结算状态（1：未结算；2：已结算） */
-    @Column(name = "PAYMENT_STATE", nullable = true)
-    private Integer paymentState;
-
-    /** 结算时间 */
-    @Column(name = "PAYMENT_TIME", nullable = true, length = 19)
-    private Date paymentTime;
-
     /** 创建时间 */
     @Column(name = "CREATE_TIME", nullable = true, length = 19)
     private Date createTime;
@@ -123,6 +115,14 @@ public class MedicalRecord implements java.io.Serializable {
      */
     public void setRecordId(Long recordId) {
         this.recordId = recordId;
+    }
+
+    public String getRegisterNumber() {
+        return registerNumber;
+    }
+
+    public void setRegisterNumber(String registerNumber) {
+        this.registerNumber = registerNumber;
     }
 
     /**
@@ -389,63 +389,6 @@ public class MedicalRecord implements java.io.Serializable {
      */
     public void setPrescriptionType(String prescriptionType) {
         this.prescriptionType = prescriptionType;
-    }
-
-    /**
-     * 获取总金额
-     *
-     * @return 总金额
-     */
-    public BigDecimal getTotalMoney() {
-        return this.totalMoney;
-    }
-
-    /**
-     * 设置总金额
-     *
-     * @param totalMoney
-     *          总金额
-     */
-    public void setTotalMoney(BigDecimal totalMoney) {
-        this.totalMoney = totalMoney;
-    }
-
-    /**
-     * 获取结算状态（1：未结算；2：已结算）
-     * 
-     * @return 结算状态（1
-     */
-    public Integer getPaymentState() {
-        return this.paymentState;
-    }
-
-    /**
-     * 设置结算状态（1：未结算；2：已结算）
-     * 
-     * @param paymentState
-     *          结算状态（1
-     */
-    public void setPaymentState(Integer paymentState) {
-        this.paymentState = paymentState;
-    }
-
-    /**
-     * 获取结算时间
-     * 
-     * @return 结算时间
-     */
-    public Date getPaymentTime() {
-        return this.paymentTime;
-    }
-
-    /**
-     * 设置结算时间
-     * 
-     * @param paymentTime
-     *          结算时间
-     */
-    public void setPaymentTime(Date paymentTime) {
-        this.paymentTime = paymentTime;
     }
 
     /**

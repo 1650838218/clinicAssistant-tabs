@@ -2,6 +2,9 @@ package com.littledoctor.clinicassistant.module.record.service;
 
 import com.littledoctor.clinicassistant.common.entity.ReturnResult;
 import com.littledoctor.clinicassistant.module.record.entity.MedicalRecordVo;
+import com.littledoctor.clinicassistant.module.record.entity.SettleAccount;
+
+import java.util.List;
 
 /**
  * @Auther: 周俊林
@@ -23,4 +26,13 @@ public interface MedicalRecordService {
      * @return
      */
     MedicalRecordVo findById(String recordId) throws Exception;
+
+    /**
+     * 保存结算信息
+     * @param settleAccount
+     * @return
+     */
+    ReturnResult settleAccount(SettleAccount settleAccount) throws Exception;
+
+    List<SettleAccount> findSettleAccountByRecordId(Long recordId) throws Exception;
 }

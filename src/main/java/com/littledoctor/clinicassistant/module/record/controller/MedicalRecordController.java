@@ -3,6 +3,7 @@ package com.littledoctor.clinicassistant.module.record.controller;
 import com.littledoctor.clinicassistant.common.entity.ReturnResult;
 import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.module.record.entity.MedicalRecordVo;
+import com.littledoctor.clinicassistant.module.record.entity.SettleAccount;
 import com.littledoctor.clinicassistant.module.record.service.MedicalRecordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,5 +57,22 @@ public class MedicalRecordController {
             log.error(e.getMessage(), e);
         }
         return new MedicalRecordVo();
+    }
+
+    /**
+     * 保存结算信息
+     * @param settleAccount
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/settleAccount", method = RequestMethod.POST)
+    public ReturnResult settleAccount(@RequestBody SettleAccount settleAccount) {
+        try {
+            Assert.notNull(settleAccount, Message.PARAMETER_IS_NULL);
+            return medicalRecordService.settleAccount(settleAccount);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return new ReturnResult(false, Message.SAVE_FAILED);
     }
 }

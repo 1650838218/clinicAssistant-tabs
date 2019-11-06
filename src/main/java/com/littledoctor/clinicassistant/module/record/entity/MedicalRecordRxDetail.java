@@ -22,7 +22,7 @@ import javax.persistence.*;
  * @version 1.0.0 2019-09-21
  */
 @Entity
-@Table(name = "MEDICAL_RECORD_RX_DETAIL", schema = "CLINICASSISTANT")
+@Table(name = "MEDICAL_RECORD_RX_DETAIL")
 public class MedicalRecordRxDetail implements java.io.Serializable {
     /** 版本号 */
     private static final long serialVersionUID = 1374057787208065742L;

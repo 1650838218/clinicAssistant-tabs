@@ -15,6 +15,9 @@ public class MedicalRecordVo {
     // 处方
     private List<RxVo> rxVoList;
 
+    // 结算
+    private SettleAccount settleAccount;
+
     public MedicalRecord getMedicalRecord() {
         return medicalRecord;
     }
@@ -29,5 +32,13 @@ public class MedicalRecordVo {
 
     public void setRxVoList(List<RxVo> rxVoList) {
         this.rxVoList = rxVoList;
+    }
+
+    public SettleAccount getSettleAccount() {
+        return settleAccount;
+    }
+
+    public void setSettleAccount(SettleAccount settleAccount) {
+        this.settleAccount = settleAccount;
     }
 }

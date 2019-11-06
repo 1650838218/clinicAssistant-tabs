@@ -389,11 +389,14 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
                     }
                 }
             }
-            // 总金额
-            medicalRecord.medicalRecord.totalMoney = $('#btn-group label').text();
             // 处方类型
             medicalRecord.medicalRecord.prescriptionType = prescriptionTypeStr.length > 0 ? prescriptionTypeStr.substr(0, prescriptionTypeStr.length - 1) : '';
             medicalRecord.rxVoList = rxVoList;// 处方
+            // 结算信息
+            var account = {};
+            account.receivable = $('#btn-group label').text();
+            account.paymentState = 1;
+            medicalRecord.settleAccount = account;
             console.log(medicalRecord);
             return medicalRecord;
         },
@@ -412,55 +415,116 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
         },
         // 结算
         pay: function () {
+            if (eventFunction.validateRecord()) {
+                var recordData = eventFunction.getRecordData();
+                ajax.postJSON(rootMapping + '/save', recordData, function (result) {
+                    if (result.success) {
+                        $('#' + recordFormId + ' input[name="recordId"]').val(result.object.recordId);// 设置ID值
+                        eventFunction.showPayModal();
+                    } else {
+                        layer.msg(result.msg);
+                    }
+                }, $('button[lay-event="pay"]'));
+            }
+
+
+        },
+        showPayModal: function () {
             var content = '';
-            content += '<form class="layui-form layui-form-sm" lay-filter="payForm">';
+            content += '<form class="layui-form" lay-filter="payForm">';
             content += '<div class="layui-form-item">';
-            content += '<label class="layui-form-label">会员：</label>';
+            content += '<label class="layui-form-label">会&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;员：</label>';
             content += '<div class="layui-input-inline">';
             content += '<input name="vipCardNumber" placeholder="会员卡号/手机号" autocomplete="off" class="layui-input">';
             content += '</div>';
-            content += '<div class="layui-form-mid layui-word-aux">此会员不存在</div>';
+            content += '<div class="layui-form-mid layui-word-aux" style="display: none">此会员不存在</div>';
             content += '</div>';
             content += '<div class="layui-form-item">';
-            content += '<label class="layui-form-label">应收：</label>';
-            content += '<div class="layui-form-mid layui-word-aux">' + $('#btn-group label').text() + '元</div>';
-            content += '</div>';
-            content += '<div class="layui-form-item">';
-            content += '<label class="layui-form-label">折扣：</label>';
-            content += '<div class="layui-form-mid layui-word-aux">' + 0.95 + '</div>';
-            content += '</div>';
-            content += '<div class="layui-form-item">';
-            content += '<label class="layui-form-label">实收：</label>';
+            content += '<label class="layui-form-label">应&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;收：</label>';
             content += '<div class="layui-input-inline">';
-            content += '<input name="vipCardNumber" placeholder="实收" autocomplete="off" class="layui-input">';
+            content += '<input name="receivable" placeholder="应收" readonly class="layui-input">';
             content += '</div>';
             content += '</div>';
             content += '<div class="layui-form-item">';
-            content += '<label class="layui-form-label">找零：</label>';
-            content += '<div class="layui-form-mid layui-word-aux">' + 0.23 + '</div>';
-            content += '</div>';
-            content += '<div class="layui-form-item">';
-            content += '<label class="layui-form-label">支付：</label>';
+            content += '<label class="layui-form-label">折&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;扣：</label>';
             content += '<div class="layui-input-inline">';
-            content += '<input type="radio" name="payType" value="1" title="现金">';
-            content += '<input type="radio" name="payType" value="2" title="支付宝">';
-            content += '<input type="radio" name="payType" value="3" title="微信">';
-            content += '<input type="radio" name="payType" value="4" title="会员卡">';
+            content += '<input name="discount" placeholder="折扣" readonly class="layui-input" value="0.00">';
+            content += '</div>';
+            content += '</div>';
+            content += '<div class="layui-form-item">';
+            content += '<label class="layui-form-label">实&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;收：</label>';
+            content += '<div class="layui-input-inline">';
+            content += '<input name="actualReceivable" placeholder="实收" autocomplete="off" class="layui-input">';
+            content += '</div>';
+            content += '</div>';
+            content += '<div class="layui-form-item">';
+            content += '<label class="layui-form-label">找&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;零：</label>';
+            content += '<div class="layui-input-inline">';
+            content += '<input name="giveChange" placeholder="找零" readonly class="layui-input" value="0.00">';
+            content += '</div>';
+            content += '</div>';
+            content += '<div class="layui-form-item">';
+            content += '<label class="layui-form-label">支付方式：</label>';
+            content += '<div class="layui-input-block">';
+            content += '<input type="radio" name="paymentType" value="1" title="现金" checked>';
+            content += '<input type="radio" name="paymentType" value="2" title="支付宝">';
+            content += '<input type="radio" name="paymentType" value="3" title="微信">';
+            content += '<input type="radio" name="paymentType" value="4" title="会员卡">';
             content += '</div>';
             content += '</div>';
             content += '</form>';
             layer.open({
                 title: '结算',
                 content: content,
-                area: ['700px','400px'],
+                area: ['500px','350px'],
                 btn: ['确定','取消'],
                 btnAlign: 'c',
                 resize: false,
                 success: function(layero, index) {
+                    layero.find('div.layui-layer-content').css('padding', '10px 0px 10px 40px');
+                    layero.find('.layui-form-item').css('margin-bottom','0px');
+                    layero.find('.layui-form-label').css('padding','9px 5px');
+                    layero.find('.layui-input-block').css('margin-left','0px');
+                    layero.find('input[readonly]').css('border-width','0px');
+                    layero.find('input[name="receivable"]').val($('#btn-group label').text());
                     form.render('radio', 'payForm');
+                    // 会员卡号验证，若验证通过则对折扣进行赋值
+                    layero.find('input[name="vipCardNumber"]').change(function () {
+                        layero.find('.layui-form-mid').show().html('0.95折');
+                        layero.find('input[name="discount"]').val('23.50');
+                        var receivable = layero.find('input[name="receivable"]').val();
+                        layero.find('input[name="actualReceivable"]').val((Number(receivable) - 23.5).toFixed(2));
+                    });
+                    // 修改实收后
+                    layero.find('input[name="actualReceivable"]').change(function () {
+                        var actualReceivable = $(this).val();
+                        actualReceivable = Number(actualReceivable).toFixed(2);
+                        $(this).val(actualReceivable);
+                        var discount = layero.find('input[name="discount"]').val();
+                        var receivable = layero.find('input[name="receivable"]').val();
+                        var giveChange = Number(actualReceivable) - (Number(receivable) - Number(discount));
+                        if (giveChange > 0) {
+                            layero.find('input[name="giveChange"]').val(giveChange.toFixed(2));
+                        } else {
+                            layero.find('input[name="giveChange"]').val(0.00);
+                        }
+                    });
                 },
                 yes: function (index, layero) {
                     // 获取表单信息，保存
+                    var settleAccount = layero.find('form').serializeObject();
+                    var recordId = $('#' + recordFormId).find('input[name="recordId"]').val();
+                    settleAccount.recordId = recordId;
+                    settleAccount.paymentState = 2;
+                    ajax.postJSON(rootMapping + '/settleAccount', settleAccount, function (result) {
+                        if (result.success) {
+                            layer.close(index);
+                            window.location.reload();
+                        } else {
+                            layer.msg(result.msg);
+                        }
+                    }, layero.find('a.layui-layer-btn0'));
+                    return false;
                 },
                 btn2: function (index, layero) {
                     layer.close(index);

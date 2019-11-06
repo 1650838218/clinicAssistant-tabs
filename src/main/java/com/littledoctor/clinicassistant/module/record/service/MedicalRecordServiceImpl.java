@@ -5,6 +5,7 @@ import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.module.record.dao.MedicalRecordRepository;
 import com.littledoctor.clinicassistant.module.record.dao.MedicalRecordRxDetailRepository;
 import com.littledoctor.clinicassistant.module.record.dao.MedicalRecordRxRepository;
+import com.littledoctor.clinicassistant.module.record.dao.SettleAccountRepository;
 import com.littledoctor.clinicassistant.module.record.entity.*;
 import com.littledoctor.clinicassistant.module.record.mapper.MedicalRecordMapper;
 import org.apache.commons.lang.StringUtils;
@@ -19,6 +20,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -42,6 +44,9 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     @Autowired(required = false)
     private MedicalRecordMapper medicalRecordMapper;
 
+    @Autowired
+    private SettleAccountRepository settleAccountRepository;
+
     /**
      * 保存病历
      * @param medicalRecordVo
@@ -53,8 +58,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         if (!ObjectUtils.isEmpty(medicalRecordVo)) {
             MedicalRecord medicalRecord = medicalRecordVo.getMedicalRecord();// 患者信息
             if (!ObjectUtils.isEmpty(medicalRecord)) {
-                medicalRecord.setPaymentState(1);
-//                medicalRecord.setCreateTime(new Date());
+                medicalRecord.setCreateTime(new Date());
                 medicalRecord = medicalRecordRepository.saveAndFlush(medicalRecord);// 保存患者信息
                 List<RxVo> rxVoList = medicalRecordVo.getRxVoList();// 处方信息
                 if (!ObjectUtils.isEmpty(rxVoList)) {
@@ -74,10 +78,15 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
                             medicalRecordRxDetailRepository.saveAll(detailList);// 保存处方具体内容
                         }
                     }
-                    ReturnResult result = new ReturnResult(true, Message.SAVE_SUCCESS);
-                    result.setObject(medicalRecord);
-                    return result;
                 }
+                // 结算信息
+                SettleAccount settleAccount = medicalRecordVo.getSettleAccount();
+                settleAccount.setRecordId(medicalRecord.getRecordId());
+                settleAccountRepository.saveAndFlush(settleAccount);
+                // 返回信息
+                ReturnResult result = new ReturnResult(true, Message.SAVE_SUCCESS);
+                result.setObject(medicalRecord);
+                return result;
             }
         }
         return new ReturnResult(false, Message.SAVE_FAILED);
@@ -107,6 +116,48 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
             return vo;
         }
         return new MedicalRecordVo();
+    }
+
+    /**
+     * 保存结算信息
+     * @param settleAccount
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public ReturnResult settleAccount(SettleAccount settleAccount) throws Exception {
+        if (!ObjectUtils.isEmpty(settleAccount) && !ObjectUtils.isEmpty(settleAccount.getRecordId())) {
+            List<SettleAccount> settleAccountList = this.findSettleAccountByRecordId(settleAccount.getRecordId());
+            if (!ObjectUtils.isEmpty(settleAccountList)) {
+                SettleAccount old = settleAccountList.get(0);
+                settleAccount.setSettleAccountId(old.getSettleAccountId());
+                settleAccount.setPaymentTime(new Date());
+                settleAccount.setPaymentState(2);
+                settleAccountRepository.saveAndFlush(settleAccount);
+                ReturnResult result = new ReturnResult(true, Message.SAVE_SUCCESS);
+                result.setObject(settleAccount);
+                return result;
+            }
+        }
+        return new ReturnResult(false, Message.SAVE_FAILED);
+    }
+
+    /**
+     * 根据病历ID查询结算信息
+     * @param recordId
+     * @return
+     */
+    @Override
+    public List<SettleAccount> findSettleAccountByRecordId(Long recordId) throws Exception {
+        if (!ObjectUtils.isEmpty(recordId)) {
+            return settleAccountRepository.findAll(new Specification<SettleAccount>() {
+                @Override
+                public Predicate toPredicate(Root<SettleAccount> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                    return criteriaBuilder.equal(root.get("recordId"), recordId);
+                }
+            });
+        }
+        return new ArrayList<>();
     }
 
     /**
