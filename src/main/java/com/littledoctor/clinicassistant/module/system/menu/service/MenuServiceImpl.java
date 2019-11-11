@@ -30,6 +30,11 @@ public class MenuServiceImpl implements MenuService {
         if (menu != null) {
             if (menu.getParentMenuId() == null) menu.setParentMenuId(0);
             return menuRepository.saveAndFlush(menu);
+            /*if (result.getParentMenuId() != Constant.ROOT_NODE_ID) {
+                Menu parentMenu = menuRepository.findById(result.getParentMenuId()).get();
+                result.setParentMenuName(parentMenu.getMenuName());
+            }
+            return result;*/
         }
         return new Menu();
     }
@@ -57,12 +62,12 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     public Menu getById(String menuId) throws Exception {
-        Menu result =  menuRepository.findById(Integer.parseInt(menuId)).get();
-        if (result.getParentMenuId() != Constant.ROOT_NODE_ID) {
+        return   menuRepository.findById(Integer.parseInt(menuId)).get();
+        /*if (result.getParentMenuId() != Constant.ROOT_NODE_ID) {
             Menu parentMenu = menuRepository.findById(result.getParentMenuId()).get();
             result.setParentMenuName(parentMenu.getMenuName());
         }
-        return result;
+        return result;*/
     }
 
     /**

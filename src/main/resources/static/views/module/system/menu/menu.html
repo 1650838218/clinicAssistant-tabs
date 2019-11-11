@@ -31,7 +31,7 @@
         <div class="right-panel">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    <h3><b>菜单详情</b></h3>
+                    <h3><b>新增菜单</b></h3>
                 </div>
                 <div class="layui-card-body">
                     <form id="menu-info" class="layui-form" action="" lay-filter="component-form-element">
@@ -50,7 +50,7 @@
                             <div class="layui-col-lg6">
                                 <label class="layui-form-label">上级菜单：</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="parentMenuName" readonly="" autocomplete="off" class="layui-input" value="" placeholder="请选择上级菜单">
+                                    <input type="text" name="parentMenuName" readonly class="layui-input" placeholder="请选择上级菜单">
                                     <div class="eleTree select-tree" lay-filter="eleTree-parent-menu"></div>
                                 </div>
                             </div>
@@ -78,7 +78,7 @@
                         <div class="layui-form-item" style="margin-bottom: 0px">
                             <div class="layui-input-block" style="text-align: right;">
                                 <button lay-filter="submit-btn" lay-submit class="layui-btn layui-btn-sm">提交</button>
-                                <button id="reset-btn" type="reset" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
+                                <button id="reset-btn" type="reset" class="layui-btn layui-btn-primary layui-btn-sm">取消</button>
                             </div>
                         </div>
                     </form>

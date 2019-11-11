@@ -54,11 +54,11 @@ public class MenuController {
         Map<String, Object> map = new HashMap<>();
         try {
             List<TreeEntity> data = menuService.findTreeEntity();
-            map.put("code", "200");
+            map.put("code", "0");
             map.put("data", TreeUtils.listToTree(data));
             return map;
         } catch (Exception e) {
-            map.put("code", "500");
+            map.put("code", "1");
             map.put("data", null);
             log.error(e.getMessage(), e);
         }
@@ -75,11 +75,11 @@ public class MenuController {
         Map<String, Object> map = new HashMap<>();
         try {
             List<TreeEntity> data = menuService.querySelectTree(menuIds);
-            map.put("code", "200");
+            map.put("code", "0");
             map.put("data", data);
             return map;
         } catch (Exception e) {
-            map.put("code", "500");
+            map.put("code", "1");
             map.put("data", null);
             log.error(e.getMessage(), e);
         }

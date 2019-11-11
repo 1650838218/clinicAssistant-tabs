@@ -11,6 +11,8 @@ layui.use(['form', 'eleTree', 'jquery', 'layer'], function () {
     var form = layui.form;
     var layer = layui.layer;
     var leftMenuTree;// 左侧菜单树
+    var selectMenuTree = '';// 下拉树
+    var currentMenuId = '';// 当前选中的菜单ID
     form.render('checkbox', 'component-form-element');
 
     $('#add-menu-btn').on('click', resetForm);// 新增菜单
@@ -25,6 +27,7 @@ layui.use(['form', 'eleTree', 'jquery', 'layer'], function () {
         elem: '.ele1',
         url: "/system/menu/queryTree",
         method: "get",
+        emptText: '暂无数据！',
         highlightCurrent: true,// 高亮显示当前节点
         defaultExpandAll: true,// 默认展开所有节点
         expandOnClickNode: false,// 单击展开
@@ -33,22 +36,41 @@ layui.use(['form', 'eleTree', 'jquery', 'layer'], function () {
         searchNodeMethod: function(value,data) {
             if (!value) return true;
             return data.label.indexOf(value) !== -1;
+        },
+        done: function (res) {
+            if (currentMenuId) {
+                $('.ele1 div.eleTree-node[data-id="' + currentMenuId + '"] > .eleTree-node-content').trigger('click');
+            }
         }
     });
 
     // 搜索
-    $(".left-panel .left-search .eleTree-search").on("change",function() {
-        if (!!leftMenuTree) leftMenuTree.search($(this).val());
+    $(".left-panel .left-search .eleTree-search").on("input change",function() {
+        if (!!leftMenuTree) leftMenuTree.search($.trim($(this).val()));
     });
+
+    function renderSelectTree(menuId) {
+        selectMenuTree = eleTree.render({
+            elem: '.select-tree',
+            url: "/system/menu/querySelectTree",
+            where: {"menuIds": menuId},
+            method: "get",
+            defaultExpandAll: true,
+            expandOnClickNode: false,
+            highlightCurrent: true
+        });
+    }
 
     // 左侧菜单树的点击事件 根据ID查询菜单详情
     function menuTreeClick(d) {
         var menuId = d.data.currentData.id;
+        currentMenuId = menuId;
         $(".select-tree").hide();// 隐藏下拉树
         try {
+            renderSelectTree(menuId);
             $.getJSON('/system/menu/getById', {menuId:menuId}, function (menuData) {
                 if (!!menuData && !!menuData.menuId) {
-                    assigForm(menuData);// 给表单赋值
+                    assigForm(menuData, '编辑菜单');// 给表单赋值
                 } else {
                     layer.alert('查询失败！');
                 }
@@ -64,6 +86,8 @@ layui.use(['form', 'eleTree', 'jquery', 'layer'], function () {
      */
     function resetForm() {
         // 表单清空
+        currentMenuId = '';
+        renderSelectTree();
         assigForm({
             menuId : '',
             menuName: '',
@@ -72,30 +96,27 @@ layui.use(['form', 'eleTree', 'jquery', 'layer'], function () {
             menuUrl: '',
             menuOrder: '',
             isUse:1
-        });
+        }, '新增菜单');
         // 删除高亮
-        leftMenuTree.unHighLight();
+        if (!!leftMenuTree) leftMenuTree.reload();
     }
 
     /**
      * 给表单赋值
      * @param data
      */
-    function assigForm(data) {
+    function assigForm(data, title) {
         // 表单赋值
-        form.val("component-form-element", {
-            "menuId": data.menuId,
-            "parentMenuId": data.parentMenuId,
-            "menuName": data.menuName,
-            "parentMenuName": data.parentMenuName,
-            "menuUrl": data.menuUrl,
-            "menuOrder": data.menuOrder
-        });
+        form.val("component-form-element", data);
         if (data.isUse == "1") {
             $('#menu-info input[name="isUse"]').attr('checked', 'checked');
         } else {
             $('#menu-info input[name="isUse"]').removeAttr('checked');
         }
+        if (data.parentMenuId) {
+            $('.select-tree div.eleTree-node[data-id="' + data.parentMenuId + '"] > .eleTree-node-content').trigger('click');
+        }
+        $('.layui-card-header h3 b').html(title);
     }
 
     /**
@@ -112,7 +133,6 @@ layui.use(['form', 'eleTree', 'jquery', 'layer'], function () {
                         success:function (data, textStatus, jqXHR) {
                             if (data) {
                                 layer.msg('删除成功！');
-                                if (!!leftMenuTree) leftMenuTree.reload();
                                 resetForm();
                             } else {
                                 layer.msg('删除失败！');
@@ -143,9 +163,9 @@ layui.use(['form', 'eleTree', 'jquery', 'layer'], function () {
             data.field.isUse = data.field.isUse == "on" ? "1" : "0";
             $.post('/system/menu/save', data.field, function (menu) {
                 if (!!menu && !!menu.menuId) {
-                    assigForm(menu);// 赋值
-                    if (!!leftMenuTree) leftMenuTree.reload({async:false});
-                    leftMenuTree.setHighLight(menu.menuId);// 高亮显示当前菜单
+                    assigForm(menu, '编辑菜单');// 赋值
+                    currentMenuId = menu.menuId;
+                    if (!!leftMenuTree) leftMenuTree.reload();
                     layer.msg('保存成功！');
                 } else {
                     layer.msg('保存失败！');
@@ -164,15 +184,9 @@ layui.use(['form', 'eleTree', 'jquery', 'layer'], function () {
     function loadSelectTree(e) {
         e.stopPropagation();
         var menuId = $('#menu-info input[name="menuId"]').val();
-        var selectMenuTree = eleTree.render({
-            elem: '.select-tree',
-            url: "/system/menu/querySelectTree",
-            where: {"menuIds": menuId},
-            method: "get",
-            defaultExpandAll: true,
-            expandOnClickNode: false,
-            highlightCurrent: true
-        });
+        if (!selectMenuTree) {
+            renderSelectTree(menuId);
+        }
         $(".select-tree").toggle();
     };
 
