@@ -3,10 +3,9 @@ package com.littledoctor.clinicassistant.module.system.dictionary.service;
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.common.entity.TreeNodeType;
 import com.littledoctor.clinicassistant.module.system.dictionary.dao.DictionaryRepository;
-import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryItem;
-import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryType;
-import com.littledoctor.clinicassistant.module.system.menu.entity.Menu;
+import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryEntity;
 import com.littledoctor.clinicassistant.module.system.menu.service.MenuService;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -44,22 +42,21 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     /**
      * 分页查询
-     * @param code
-     * @param text
+     * @param keyword
      * @param page
      * @return
      */
     @Override
-    public Page<DictionaryType> queryPage(String code, String text, Pageable page) {
-        return dictionaryRepository.findAll(new Specification<DictionaryType>() {
+    public Page<DictionaryEntity> queryPage(String keyword, Pageable page) {
+        return dictionaryRepository.findAll(new Specification<DictionaryEntity>() {
             @Override
-            public Predicate toPredicate(Root<DictionaryType> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            public Predicate toPredicate(Root<DictionaryEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> list = new ArrayList<>();
-                if (!StringUtils.isEmpty(code)) {
-                    list.add(criteriaBuilder.like(root.get("key").get("code"), "%" + code + "%"));
-                }
-                if (!StringUtils.isEmpty(text)) {
-                    list.add(criteriaBuilder.like(root.get("text"), "%" + text + "%"));
+                list.add(criteriaBuilder.equal(root.get("dictType"), 1));
+                if (StringUtils.isNotBlank(keyword)) {
+                    Predicate preDictName = criteriaBuilder.like(root.get("dictName"), "%" + keyword.trim() + "%");
+                    Predicate preDictKey = criteriaBuilder.like(root.get("dictKey"), "%" + keyword.trim() + "%");
+                    list.add(criteriaBuilder.or(preDictName,preDictKey));
                 }
                 return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
             }

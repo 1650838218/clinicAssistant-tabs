@@ -13,7 +13,7 @@
 	<h2>Context Menu on DataGrid</h2>
 	<div class="demo-info">
 		<div class="demo-tip icon-tip"></div>
-		<div>Right click on the header of DataGrid to display context menu.</div>
+		<div>Right click on the header of DataGrid to display context menuEntity.</div>
 	</div>
 	<div style="margin:10px 0;"></div>
 	<table id="dg"></table>
@@ -40,7 +40,7 @@
 					if (!cmenu){
 						createColumnMenu();
 					}
-					cmenu.menu('show', {
+					cmenu.menuEntity('show', {
 						left:e.pageX,
 						top:e.pageY
 					});
@@ -50,17 +50,17 @@
 		var cmenu;
 		function createColumnMenu(){
 			cmenu = $('<div/>').appendTo('body');
-			cmenu.menu({
+			cmenu.menuEntity({
 				onClick: function(item){
 					if (item.iconCls == 'icon-ok'){
 						$('#dg').datagrid('hideColumn', item.name);
-						cmenu.menu('setIcon', {
+						cmenu.menuEntity('setIcon', {
 							target: item.target,
 							iconCls: 'icon-empty'
 						});
 					} else {
 						$('#dg').datagrid('showColumn', item.name);
-						cmenu.menu('setIcon', {
+						cmenu.menuEntity('setIcon', {
 							target: item.target,
 							iconCls: 'icon-ok'
 						});
@@ -71,7 +71,7 @@
 			for(var i=0; i<fields.length; i++){
 				var field = fields[i];
 				var col = $('#dg').datagrid('getColumnOption', field);
-				cmenu.menu('appendItem', {
+				cmenu.menuEntity('appendItem', {
 					text: col.title,
 					name: field,
 					iconCls: 'icon-ok'

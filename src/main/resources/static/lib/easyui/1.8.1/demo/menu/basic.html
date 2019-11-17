@@ -11,10 +11,10 @@
 </head>
 <body>
 	<h2>Basic Menu</h2>
-	<p>Right click on page to display menu.</p>
+	<p>Right click on page to display menuEntity.</p>
 	<div style="margin:20px 0;"></div>
 	
-	<div id="mm" class="easyui-menu" style="width:120px;">
+	<div id="mm" class="easyui-menuEntity" style="width:120px;">
 		<div onclick="javascript:alert('new')">New</div>
 		<div>
 			<span>Open</span>
@@ -50,14 +50,14 @@
 		</div>
 		<div data-options="iconCls:'icon-save'">Save</div>
 		<div data-options="iconCls:'icon-print',disabled:true">Print</div>
-		<div class="menu-sep"></div>
+		<div class="menuEntity-sep"></div>
 		<div>Exit</div>
 	</div>
 	<script>
 		$(function(){
 			$(document).bind('contextmenu',function(e){
 				e.preventDefault();
-				$('#mm').menu('show', {
+				$('#mm').menuEntity('show', {
 					left: e.pageX,
 					top: e.pageY
 				});

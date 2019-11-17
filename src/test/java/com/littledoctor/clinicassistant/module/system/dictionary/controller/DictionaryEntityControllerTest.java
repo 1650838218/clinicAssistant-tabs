@@ -1,7 +1,5 @@
 package com.littledoctor.clinicassistant.module.system.dictionary.controller;
 
-import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryItem;
-import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryType;
 import net.sf.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,16 +14,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class DictionaryControllerTest {
+public class DictionaryEntityControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

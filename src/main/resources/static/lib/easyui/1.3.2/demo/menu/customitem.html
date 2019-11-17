@@ -13,14 +13,14 @@
 	<h2>Custom Menu Item</h2>
 	<div class="demo-info">
 		<div class="demo-tip icon-tip"></div>
-		<div>Right click on page to display menu, move to the 'Open' item to display its custom sub content.</div>
+		<div>Right click on page to display menuEntity, move to the 'Open' item to display its custom sub content.</div>
 	</div>
 	<div style="margin:10px 0;"></div>
-	<div id="mm" class="easyui-menu" style="width:120px;">
+	<div id="mm" class="easyui-menuEntity" style="width:120px;">
 		<div>New</div>
 		<div>
 			<span>Open</span>
-			<div class="menu-content" style="text-align:left;padding:10px">
+			<div class="menuEntity-content" style="text-align:left;padding:10px">
 				<div style="font-weight:bold;font-size:16px">Select your Language:</div>
 				<ul style="margin:0;padding:0 0 0 40px">
 					<li><a href="javascript:void(0)">Java</a></li>
@@ -39,14 +39,14 @@
 		</div>
 		<div data-options="iconCls:'icon-save'">Save</div>
 		<div data-options="iconCls:'icon-print'">Print</div>
-		<div class="menu-sep"></div>
+		<div class="menuEntity-sep"></div>
 		<div>Exit</div>
 	</div>
 	<script>
 		$(function(){
 			$(document).bind('contextmenu',function(e){
 				e.preventDefault();
-				$('#mm').menu('show', {
+				$('#mm').menuEntity('show', {
 					left: e.pageX,
 					top: e.pageY
 				});

@@ -11,13 +11,13 @@
 </head>
 <body>
 	<h2>Menu Events</h2>
-	<p>Right click on page to display menu and click an item.</p>
+	<p>Right click on page to display menuEntity and click an item.</p>
 	<div style="margin:20px 0;"></div>
-	<div id="mm" class="easyui-menu" data-options="onClick:menuHandler" style="width:120px;">
+	<div id="mm" class="easyui-menuEntity" data-options="onClick:menuHandler" style="width:120px;">
 		<div data-options="name:'new'">New</div>
 		<div data-options="name:'save',iconCls:'icon-save'">Save</div>
 		<div data-options="name:'print',iconCls:'icon-print'">Print</div>
-		<div class="menu-sep"></div>
+		<div class="menuEntity-sep"></div>
 		<div data-options="name:'exit'">Exit</div>
 	</div>
 	<div id="log" class="easyui-panel" title="Event Log" style="height:250px;padding:10px">
@@ -29,7 +29,7 @@
 		$(function(){
 			$(document).bind('contextmenu',function(e){
 				e.preventDefault();
-				$('#mm').menu('show', {
+				$('#mm').menuEntity('show', {
 					left: e.pageX,
 					top: e.pageY
 				});

@@ -11,7 +11,7 @@
 </head>
 <body>
 	<h2>Context Menu on DataGrid</h2>
-	<p>Right click on the header of DataGrid to display context menu.</p>
+	<p>Right click on the header of DataGrid to display context menuEntity.</p>
 	<div style="margin:20px 0;"></div>
 	<table id="dg"></table>
 	<script type="text/javascript">
@@ -20,17 +20,17 @@
 				var state = $(target).data('datagrid');
 				if (!state.columnMenu){
 					state.columnMenu = $('<div></div>').appendTo('body');
-					state.columnMenu.menu({
+					state.columnMenu.menuEntity({
 						onClick: function(item){
 							if (item.iconCls == 'tree-checkbox1'){
 								$(target).datagrid('hideColumn', item.name);
-								$(this).menu('setIcon', {
+								$(this).menuEntity('setIcon', {
 									target: item.target,
 									iconCls: 'tree-checkbox0'
 								});
 							} else {
 								$(target).datagrid('showColumn', item.name);
-								$(this).menu('setIcon', {
+								$(this).menuEntity('setIcon', {
 									target: item.target,
 									iconCls: 'tree-checkbox1'
 								});
@@ -41,7 +41,7 @@
 					for(var i=0; i<fields.length; i++){
 						var field = fields[i];
 						var col = $(target).datagrid('getColumnOption', field);
-						state.columnMenu.menu('appendItem', {
+						state.columnMenu.menuEntity('appendItem', {
 							text: col.title,
 							name: field,
 							iconCls: 'tree-checkbox1'
@@ -77,7 +77,7 @@
 				]],
 				onHeaderContextMenu: function(e, field){
 					e.preventDefault();
-					$(this).datagrid('columnMenu').menu('show', {
+					$(this).datagrid('columnMenu').menuEntity('show', {
 						left:e.pageX,
 						top:e.pageY
 					});

@@ -1,59 +1,70 @@
 /** 菜单管理 */
-//@ sourceURL=oneLevel.js
+//@ sourceURL=dictionary.js
 layui.config({
     base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
 }).extend({
-    eleTree: 'eleTree' //扩展模块
-    ,ajax: 'ajax'
+    ajax: 'ajax'
     ,utils: 'utils'
 });
-layui.use(['form', 'eleTree', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
+layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
     var $ = layui.jquery;
-    var eleTree = layui.eleTree;
     var form = layui.form;
     var layer = layui.layer;
     var table = layui.table;
     var ajax = layui.ajax;
     var utils = layui.utils;
-    var rootMappint = '/system/dictionary/oneLevel';
-    var leftTree;// 左侧菜单树
-    var dictItemTableId = 'dict-item-table';
+    var rootMappint = '/system/dictionary';
+    var detailTable = 'detail-table';
     var currentDictTypeId = '';
     form.render();
 
     $('#add-btn').on('click', resetForm);// 新增字典
     $('#del-btn').on('click', delDictionaryFun);// 删除字典
     form.on('submit(submit-btn)', saveDictionary);// 保存字典
-    $("#dictionary-info input[name='menuName']").on("click", loadSelectTree); // 加载下拉树
-    eleTree.on("nodeClick(eleTree-menu)", leftTreeClick);// 左侧菜单树点击事件
 
-    // 加载左侧菜单树
-    leftTree = eleTree.render({
-        elem: '.left-tree',
-        url: rootMappint + "/queryTree",
-        method: "get",
-        highlightCurrent: true,// 高亮显示当前节点
-        defaultExpandAll: true,// 默认展开所有节点
-        expandOnClickNode: false,// 单击展开
-        checkOnClickNode: true,// 单击选中
-        showCheckbox: false,// 是否显示复选框
-        searchNodeMethod: function (value, data) {
-            if (!value) return true;
-            return data.label.indeeleTree-menuxOf(value) !== -1;
+    // 初始化表格
+    var leftTable = table.render({
+        elem: '#left-table',
+        url: rootMapping + '/queryPage',
+        height: 'full-85',
+        page: {
+            limit: 20,
+            groups: 3,
+            layout: ['prev', 'page', 'next','count','refresh']
         },
-        done: function (res) {
-            console.log(res);
+        request: {
+            limitName: 'size' //每页数据量的参数名，默认：limit
+        },
+        cols: [[
+            {field: 'pharmacyItemName', title: '药品名称'}
+        ]],
+        done: function (res, curr, count) {
+            $('#add-btn').click();// 清空表单
+            $('#del-btn').addClass('layui-btn-disabled').attr('disabled','disabled');// 禁用 删除按钮
+            // 选中当前行
+            var pharmacyItemId = $('#pharmacyitem-form input[name="pharmacyItemId"]').val();
+            if (utils.isNotNull(pharmacyItemId)) {
+                var tableData = table.cache[leftTableId];
+                if (utils.isNotEmpty(tableData)) {
+                    for (var i = 0; i < tableData.length; i++) {
+                        if (parseInt(tableData[i].pharmacyItemId) === parseInt(pharmacyItemId)) {
+                            var rowIndex = tableData[i][table.config.indexName];
+                            $('.left-panel .layui-table tbody tr[data-index="' + rowIndex + '"]').find('div').addClass('select');
+                        }
+                    }
+                }
+            }
         }
     });
 
     // 搜索
     $(".left-panel .left-search .eleTree-search").on("change", function () {
-        if (!!leftTree) leftTree.search($(this).val());
+
     });
 
     // 初始化表格
-    table.render({
-        elem: '#dict-item-table',
+    var detailTable = table.render({
+        elem: '#detail-table',
         limit: 15,// 每个字典类型最多可以录入30个字典项
         cols: [[
             {field: 'dictItemName', title: '字典项名称', width: '35%', edit: 'text'},
@@ -69,11 +80,11 @@ layui.use(['form', 'eleTree', 'jquery', 'layer', 'table', 'ajax','utils'], funct
     });
 
     //监听表格操作列
-    table.on('tool(' + dictItemTableId + ')', function (obj) {
+    table.on('tool(' + detailTable + ')', function (obj) {
         var data = obj.data;
         if (obj.event === 'create') {
             var dataBak = [];// 缓存表格已有的数据
-            var oldData = table.cache[dictItemTableId];
+            var oldData = table.cache[detailTable];
             var newRow = {
                 "dictItemName": "",
                 "dictItemValue": "",
@@ -97,7 +108,7 @@ layui.use(['form', 'eleTree', 'jquery', 'layer', 'table', 'ajax','utils'], funct
             } else {
                 dataBak.push(newRow);
             }
-            table.reload(dictItemTableId, {
+            table.reload(detailTable, {
                 data: dataBak   // 将新数据重新载入表格
             });
         } else if (obj.event === 'delete') {
@@ -105,7 +116,7 @@ layui.use(['form', 'eleTree', 'jquery', 'layer', 'table', 'ajax','utils'], funct
             // 不去后台删除的原因是：表格会统一跟随字典类型统一保存，页面上被删除的字典项会在保存时自动跟字典类型解除外键关系
             obj.del();// 先删除行
             // 再判断表格行是否全部删除
-            var oldData = table.cache[dictItemTableId];
+            var oldData = table.cache[detailTable];
             if (oldData.length > 0) {
                 // 做for循环的原因：obj.del只是把该行数据删掉，但是oldData的长度不变，必须要判断行数据是否为空
                 for (var i = 0; i < oldData.length; i++) {
@@ -122,7 +133,7 @@ layui.use(['form', 'eleTree', 'jquery', 'layer', 'table', 'ajax','utils'], funct
                 "isUse": "1",
                 "dictItemId": ''
             }];
-            table.reload(dictItemTableId, {
+            table.reload(detailTable, {
                 data: newRow   // 将新数据重新载入表格
             });
         }
@@ -133,10 +144,10 @@ layui.use(['form', 'eleTree', 'jquery', 'layer', 'table', 'ajax','utils'], funct
         var selectIfKey = obj.othis;// 获取当前控件
         var parentTr = selectIfKey.parents("tr");// 获取当前所在行
         var parentTrIndex = parentTr.attr("data-index");// 获取当前所在行的索引
-        var tableData = table.cache[dictItemTableId];
+        var tableData = table.cache[detailTable];
         if (tableData.length > parentTrIndex) {
             tableData[parentTrIndex].isUse = obj.elem.checked ? 1 : 0;
-            table.reload(dictItemTableId, {
+            table.reload(detailTable, {
                 data: tableData   // 将新数据重新载入表格
             });
         }
@@ -155,7 +166,7 @@ layui.use(['form', 'eleTree', 'jquery', 'layer', 'table', 'ajax','utils'], funct
                 $.getJSON(rootMappint + '/getById', {"dictionaryId": dictionaryId}, function (dictionaryData) {
                     if (!!dictionaryData && !!dictionaryData.dictTypeId) {
                         assigForm(dictionaryData);// 给表单赋值
-                        table.reload(dictItemTableId, {data: dictionaryData.dictItem})// 加载表格
+                        table.reload(detailTable, {data: dictionaryData.dictItem})// 加载表格
                     } else {
                         layer.alert(MSG.query_fail, {icon: 2});
                     }
@@ -188,7 +199,7 @@ layui.use(['form', 'eleTree', 'jquery', 'layer', 'table', 'ajax','utils'], funct
             "isUse": "1",
             "dictItemId": ''
         }];
-        table.reload(dictItemTableId, {
+        table.reload(detailTable, {
             data: newRow   // 将新数据重新载入表格
         });
     }
@@ -314,7 +325,7 @@ layui.use(['form', 'eleTree', 'jquery', 'layer', 'table', 'ajax','utils'], funct
         $(obj.elem).addClass('layui-btn-disabled');// 按钮禁用，防止重复提交
         $(obj.elem).attr('disabled', 'disabled');
         var dictionary = obj.field;// 表单值
-        var dictItems = table.cache[dictItemTableId];// 获取表格数据
+        var dictItems = table.cache[detailTable];// 获取表格数据
         dictItems = verifyTable(dictItems);// 表格数据校验
         if (!dictItems) {
             $(obj.elem).removeClass('layui-btn-disabled');// 按钮可用
@@ -325,7 +336,7 @@ layui.use(['form', 'eleTree', 'jquery', 'layer', 'table', 'ajax','utils'], funct
         ajax.postJSON(rootMappint + '/save', dictionary, function (dict) {
             if (!!dict && !!dict.dictTypeId) {
                 assigForm(dict);// 赋值
-                table.reload(dictItemTableId, {data: dict.dictItem});
+                table.reload(detailTable, {data: dict.dictItem});
                 if (!!leftTree) leftTree = leftTree.reload({async: false});
                 leftTree.setHighLight(dict.dictTypeId);// 高亮显示当前菜单
                 currentDictTypeId = dict.dictTypeId;
@@ -338,32 +349,5 @@ layui.use(['form', 'eleTree', 'jquery', 'layer', 'table', 'ajax','utils'], funct
         });
         return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
     };
-
-    // 查询加载树形下拉框的内容
-    function loadSelectTree(e) {
-        e.stopPropagation();
-        var selectMenuTree = eleTree.render({
-            elem: '.select-tree',
-            url: "/system/menu/querySelectTree",
-            method: "get",
-            defaultExpandAll: true,
-            expandOnClickNode: false,
-            highlightCurrent: true
-        });
-        $(".select-tree").toggle();
-    };
-
-    // 下拉树选中事件
-    eleTree.on("nodeClick(menu-eleTree)", function (d) {
-        $("[name='menuId']").val(d.data.currentData.id);
-        $("[name='menuName']").val(d.data.currentData.label);
-        $(".select-tree").hide();
-    });
-
-    // 下拉树隐藏
-    $(document).on("click", function () {
-        $(".select-tree").hide();
-    });
-
 });
 

@@ -1,12 +1,14 @@
 package com.littledoctor.clinicassistant.module.system.dictionary.controller;
 
+import com.littledoctor.clinicassistant.common.entity.LayuiTableEntity;
+import com.littledoctor.clinicassistant.common.entity.ReturnResult;
 import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.common.util.TreeUtils;
 import com.littledoctor.clinicassistant.common.util.ControllerUtils;
-import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryItem;
-import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryType;
+import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryEntity;
 import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
+import com.littledoctor.clinicassistant.module.system.dictionary.vo.DictionaryVo;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Auther: 周俊林
@@ -27,7 +26,7 @@ import java.util.Map;
  * @Description: 数据字典
  */
 @RestController
-@RequestMapping(value = "/system/dictionary/oneLevel")
+@RequestMapping(value = "/system/dictionary")
 public class DictionaryController {
 
     private Logger log = LoggerFactory.getLogger(DictionaryController.class);
@@ -36,56 +35,35 @@ public class DictionaryController {
     private DictionaryService dictionaryService;
 
     /**
-     * 获取字典树
-     * @return
-     */
-    @RequestMapping(value = "/queryTree", method = RequestMethod.GET)
-    public Map<String, Object> queryTree() {
-        Map<String, Object> map = new HashMap<>();
-        try {
-            List<TreeEntity> data = dictionaryService.findTreeEntity();
-            map.put("code", "200");
-            map.put("data", TreeUtils.listToTree(data));
-            return map;
-        } catch (Exception e) {
-            map.put("code", "500");
-            map.put("data", null);
-            log.error(e.getMessage(), e);
-        }
-        return map;
-    }
-
-    /**
      * 分页查询
-     * @param code
-     * @param text
+     * @param keyword
      * @param page
      * @return
      */
     @RequestMapping(value = "/queryPage")
-    public JSONObject queryPage(String code, String text, Pageable page) {
+    public LayuiTableEntity<DictionaryEntity> queryPage(String keyword, Pageable page) {
         try {
-            Page<DictionaryType> result = dictionaryService.queryPage(code,text,page);
-            return ControllerUtils.pageToJSON(result);
+            Page<DictionaryEntity> result = dictionaryService.queryPage(keyword,page);
+            return new LayuiTableEntity<DictionaryEntity>(result);
         } catch (Exception e) {
             log.error(e.getMessage(),e);
-            return ControllerUtils.errorJSON();
+            return new LayuiTableEntity<DictionaryEntity>();
         }
     }
 
     /**
      * 保存数据字典
-     * @param dictionaryType
+     * @param dictionaryVo
      * @return
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public DictionaryType save(@RequestBody DictionaryType dictionaryType) {
+    public ReturnResult save(@RequestBody DictionaryVo dictionaryVo) {
         try {
-            Assert.notNull(dictionaryType,"保存数据字典时实体不能为空");
-            return dictionaryService.save(dictionaryType);
+            Assert.notNull(dictionaryVo,"保存数据字典时实体不能为空！");
+            return dictionaryService.save(dictionaryVo);
         } catch (Exception e) {
             log.error(e.getMessage(),e);
-            return null;
+            return new ReturnResult(false, Message.SAVE_FAILED, e.getMessage());
         }
     }
 

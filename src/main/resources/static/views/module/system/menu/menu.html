@@ -16,15 +16,15 @@
             <div class="left-search">
                 <input type="text" placeholder="搜索" autocomplete="off" class="layui-input eleTree-search">
                 <div class="layui-btn-group">
-                    <button id="add-menu-btn" class="layui-btn layui-btn-normal layui-btn-sm" title="新增">
+                    <button id="add-menuEntity-btn" class="layui-btn layui-btn-normal layui-btn-sm" title="新增">
                         <i class="layui-icon layui-icon-add-1"></i>
                     </button>
-                    <button id="del-menu-btn" class="layui-btn layui-btn-normal layui-btn-sm" title="删除">
+                    <button id="del-menuEntity-btn" class="layui-btn layui-btn-normal layui-btn-sm" title="删除">
                         <i class="layui-icon layui-icon-delete"></i>
                     </button>
                 </div>
             </div>
-            <div class="eleTree ele1" lay-filter="eleTree-menu"></div>
+            <div class="eleTree ele1" lay-filter="eleTree-menuEntity"></div>
         </div>
     </div>
     <div class="layui-col-md9">
@@ -34,7 +34,7 @@
                     <h3><b>新增菜单</b></h3>
                 </div>
                 <div class="layui-card-body">
-                    <form id="menu-info" class="layui-form" action="" lay-filter="component-form-element">
+                    <form id="menuEntity-info" class="layui-form" action="" lay-filter="component-form-element">
                         <input type="hidden" name="menuId" value="">
                         <input type="hidden" name="parentMenuId" value="">
                         <div class="layui-row layui-col-space10 layui-form-item">
@@ -51,7 +51,7 @@
                                 <label class="layui-form-label">上级菜单：</label>
                                 <div class="layui-input-block">
                                     <input type="text" name="parentMenuName" readonly class="layui-input" placeholder="请选择上级菜单">
-                                    <div class="eleTree select-tree" lay-filter="eleTree-parent-menu"></div>
+                                    <div class="eleTree select-tree" lay-filter="eleTree-parent-menuEntity"></div>
                                 </div>
                             </div>
                         </div>
@@ -89,6 +89,6 @@
 </div>
 <!--<script src="/jquery/jquery-1.8.3.js"></script>-->
 <script src="/lib/layuiadmin/layui/layui.js"></script>
-<script src="/views/module/system/menu/menu.js"></script>
+<script src="/views/module/system/menuEntity/menuEntity.js"></script>
 </body>
 </html>

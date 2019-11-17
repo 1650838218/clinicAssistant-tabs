@@ -5,7 +5,7 @@ import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.common.entity.TreeNodeType;
 import com.littledoctor.clinicassistant.common.util.TreeUtils;
 import com.littledoctor.clinicassistant.module.system.menu.dao.MenuRepository;
-import com.littledoctor.clinicassistant.module.system.menu.entity.Menu;
+import com.littledoctor.clinicassistant.module.system.menu.entity.MenuEntity;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,17 +26,12 @@ public class MenuServiceImpl implements MenuService {
     private MenuRepository menuRepository;
 
     @Override
-    public Menu save(Menu menu) {
-        if (menu != null) {
-            if (menu.getParentMenuId() == null) menu.setParentMenuId(0);
-            return menuRepository.saveAndFlush(menu);
-            /*if (result.getParentMenuId() != Constant.ROOT_NODE_ID) {
-                Menu parentMenu = menuRepository.findById(result.getParentMenuId()).get();
-                result.setParentMenuName(parentMenu.getMenuName());
-            }
-            return result;*/
+    public MenuEntity save(MenuEntity menuEntity) {
+        if (menuEntity != null) {
+            if (menuEntity.getParentMenuId() == null) menuEntity.setParentMenuId((long)0);
+            return menuRepository.saveAndFlush(menuEntity);
         }
-        return new Menu();
+        return new MenuEntity();
     }
 
     /**
@@ -61,13 +56,8 @@ public class MenuServiceImpl implements MenuService {
      * @return
      */
     @Override
-    public Menu getById(String menuId) throws Exception {
-        return   menuRepository.findById(Integer.parseInt(menuId)).get();
-        /*if (result.getParentMenuId() != Constant.ROOT_NODE_ID) {
-            Menu parentMenu = menuRepository.findById(result.getParentMenuId()).get();
-            result.setParentMenuName(parentMenu.getMenuName());
-        }
-        return result;*/
+    public MenuEntity getById(String menuId) throws Exception {
+        return   menuRepository.findById(Long.parseLong(menuId)).get();
     }
 
     /**
@@ -100,7 +90,7 @@ public class MenuServiceImpl implements MenuService {
      * @return
      */
     @Override
-    public boolean delete(Integer menuId) throws Exception {
+    public boolean delete(Long menuId) throws Exception {
         if (menuId != null) {
             menuRepository.deleteById(menuId);
             return true;

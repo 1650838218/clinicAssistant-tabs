@@ -13,7 +13,7 @@
 	<h2>Tree Context Menu</h2>
 	<div class="demo-info">
 		<div class="demo-tip icon-tip"></div>
-		<div>Right click on a node to display context menu.</div>
+		<div>Right click on a node to display context menuEntity.</div>
 	</div>
 	<div style="margin:10px 0;">
 	</div>
@@ -23,16 +23,16 @@
 			onContextMenu: function(e,node){
 				e.preventDefault();
 				$(this).tree('select',node.target);
-				$('#mm').menu('show',{
+				$('#mm').menuEntity('show',{
 					left: e.pageX,
 					top: e.pageY
 				});
 			}
 		"></ul>
-	<div id="mm" class="easyui-menu" style="width:120px;">
+	<div id="mm" class="easyui-menuEntity" style="width:120px;">
 		<div onclick="append()" data-options="iconCls:'icon-add'">Append</div>
 		<div onclick="remove()" data-options="iconCls:'icon-remove'">Remove</div>
-		<div class="menu-sep"></div>
+		<div class="menuEntity-sep"></div>
 		<div onclick="expand()">Expand</div>
 		<div onclick="collapse()">Collapse</div>
 	</div>

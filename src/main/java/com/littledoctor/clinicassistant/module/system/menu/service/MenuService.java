@@ -1,7 +1,7 @@
 package com.littledoctor.clinicassistant.module.system.menu.service;
 
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
-import com.littledoctor.clinicassistant.module.system.menu.entity.Menu;
+import com.littledoctor.clinicassistant.module.system.menu.entity.MenuEntity;
 
 import java.util.List;
 
@@ -13,9 +13,9 @@ import java.util.List;
 public interface MenuService {
     /**
      * 保存一个菜单项
-     * @param menu
+     * @param menuEntity
      */
-    Menu save(Menu menu);
+    MenuEntity save(MenuEntity menuEntity);
 
     /**
      * 查询所有菜单项
@@ -28,7 +28,7 @@ public interface MenuService {
      * @param menuId
      * @return
      */
-    Menu getById(String menuId) throws Exception;
+    MenuEntity getById(String menuId) throws Exception;
 
     /**
      * 查询下拉树
@@ -42,5 +42,5 @@ public interface MenuService {
      * @param menuId
      * @return
      */
-    boolean delete(Integer menuId) throws Exception;
+    boolean delete(Long menuId) throws Exception;
 }

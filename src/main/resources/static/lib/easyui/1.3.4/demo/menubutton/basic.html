@@ -13,23 +13,23 @@
 	<h2>Basic MenuButton</h2>
 	<div class="demo-info">
 		<div class="demo-tip icon-tip"></div>
-		<div>Move mouse over the button to drop down menu.</div>
+		<div>Move mouse over the button to drop down menuEntity.</div>
 	</div>
 	<div style="margin:10px 0;"></div>
 	<div style="padding:5px;border:1px solid #ddd">
 		<a href="#" class="easyui-linkbutton" data-options="plain:true">Home</a>
-		<a href="#" class="easyui-menubutton" data-options="menu:'#mm1',iconCls:'icon-edit'">Edit</a>
-		<a href="#" class="easyui-menubutton" data-options="menu:'#mm2',iconCls:'icon-help'">Help</a>
-		<a href="#" class="easyui-menubutton" data-options="menu:'#mm3'">About</a>
+		<a href="#" class="easyui-menubutton" data-options="menuEntity:'#mm1',iconCls:'icon-edit'">Edit</a>
+		<a href="#" class="easyui-menubutton" data-options="menuEntity:'#mm2',iconCls:'icon-help'">Help</a>
+		<a href="#" class="easyui-menubutton" data-options="menuEntity:'#mm3'">About</a>
 	</div>
 	<div id="mm1" style="width:150px;">
 		<div data-options="iconCls:'icon-undo'">Undo</div>
 		<div data-options="iconCls:'icon-redo'">Redo</div>
-		<div class="menu-sep"></div>
+		<div class="menuEntity-sep"></div>
 		<div>Cut</div>
 		<div>Copy</div>
 		<div>Paste</div>
-		<div class="menu-sep"></div>
+		<div class="menuEntity-sep"></div>
 		<div>
 			<span>Toolbar</span>
 			<div style="width:150px;">
@@ -37,7 +37,7 @@
 				<div>Link</div>
 				<div>Navigation Toolbar</div>
 				<div>Bookmark Toolbar</div>
-				<div class="menu-sep"></div>
+				<div class="menuEntity-sep"></div>
 				<div>New Toolbar...</div>
 			</div>
 		</div>
@@ -49,7 +49,7 @@
 		<div>Update</div>
 		<div>About</div>
 	</div>
-	<div id="mm3" class="menu-content" style="background:#f0f0f0;padding:10px;text-align:left">
+	<div id="mm3" class="menuEntity-content" style="background:#f0f0f0;padding:10px;text-align:left">
 		<img src="http://www.jeasyui.com/images/logo1.png" style="width:150px;height:50px">
 		<p style="font-size:14px;color:#444;">Try jQuery EasyUI to build your modern, interactive, javascript applications.</p>
 	</div>

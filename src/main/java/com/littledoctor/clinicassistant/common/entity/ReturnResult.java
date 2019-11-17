@@ -23,6 +23,9 @@ public class ReturnResult {
     /* 返回的列表数据 */
     private List<Object> listObj;
 
+    /** 错误日志 */
+    private String errorMsg;
+
     public ReturnResult() {
 
     }
@@ -30,6 +33,12 @@ public class ReturnResult {
     public ReturnResult(boolean success, String msg) {
         this.success = success;
         this.msg = msg;
+    }
+
+    public ReturnResult(boolean success, String msg, String errorMsg) {
+        this.success = success;
+        this.msg = msg;
+        this.errorMsg = errorMsg;
     }
 
     public Boolean getSuccess() {

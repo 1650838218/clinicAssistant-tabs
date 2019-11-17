@@ -98,7 +98,7 @@ layui.use(['form', 'eleTree', 'jquery', 'layer'], function () {
             isUse:1
         }, '新增菜单');
         // 删除高亮
-        if (!!leftMenuTree) leftMenuTree.reload();
+        if (!!leftMenuTree) leftMenuTree = leftMenuTree.reload();
     }
 
     /**
@@ -165,7 +165,7 @@ layui.use(['form', 'eleTree', 'jquery', 'layer'], function () {
                 if (!!menu && !!menu.menuId) {
                     assigForm(menu, '编辑菜单');// 赋值
                     currentMenuId = menu.menuId;
-                    if (!!leftMenuTree) leftMenuTree.reload();
+                    if (!!leftMenuTree) leftMenuTree = leftMenuTree.reload();
                     layer.msg('保存成功！');
                 } else {
                     layer.msg('保存失败！');

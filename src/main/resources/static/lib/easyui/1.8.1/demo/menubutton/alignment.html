@@ -11,7 +11,7 @@
 </head>
 <body>
 	<h2>Menu Alignment on MenuButton</h2>
-	<p>This example shows how to change the alignment of the top level menu.</p>
+	<p>This example shows how to change the alignment of the top level menuEntity.</p>
 	<div style="margin:20px 0;">
 		<span>Change Alignment: </span>
 		<select onchange="setalign(this.value)">
@@ -21,19 +21,19 @@
 	</div>
 	<div class="easyui-panel" style="padding:5px;">
 		<a href="#" class="easyui-linkbutton" data-options="plain:true">Home</a>
-		<a href="#" class="easyui-menubutton" data-options="menu:'#mm1',iconCls:'icon-edit'">Edit</a>
-		<a href="#" class="easyui-menubutton" data-options="menu:'#mm2',iconCls:'icon-help'">Help</a>
-		<a href="#" class="easyui-menubutton" data-options="menu:'#mm3'">About</a>
+		<a href="#" class="easyui-menubutton" data-options="menuEntity:'#mm1',iconCls:'icon-edit'">Edit</a>
+		<a href="#" class="easyui-menubutton" data-options="menuEntity:'#mm2',iconCls:'icon-help'">Help</a>
+		<a href="#" class="easyui-menubutton" data-options="menuEntity:'#mm3'">About</a>
 		
 	</div>
 	<div id="mm1" style="width:150px;">
 		<div data-options="iconCls:'icon-undo'">Undo</div>
 		<div data-options="iconCls:'icon-redo'">Redo</div>
-		<div class="menu-sep"></div>
+		<div class="menuEntity-sep"></div>
 		<div>Cut</div>
 		<div>Copy</div>
 		<div>Paste</div>
-		<div class="menu-sep"></div>
+		<div class="menuEntity-sep"></div>
 		<div>
 			<span>Toolbar</span>
 			<div>
@@ -41,7 +41,7 @@
 				<div>Link</div>
 				<div>Navigation Toolbar</div>
 				<div>Bookmark Toolbar</div>
-				<div class="menu-sep"></div>
+				<div class="menuEntity-sep"></div>
 				<div>New Toolbar...</div>
 			</div>
 		</div>

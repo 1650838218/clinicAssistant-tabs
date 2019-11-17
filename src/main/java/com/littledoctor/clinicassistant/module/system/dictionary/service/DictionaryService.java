@@ -1,11 +1,12 @@
 package com.littledoctor.clinicassistant.module.system.dictionary.service;
 
-import com.littledoctor.clinicassistant.common.entity.TreeEntity;
-import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryItem;
-import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryType;
+import com.littledoctor.clinicassistant.common.entity.ReturnResult;
+import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryEntity;
+import com.littledoctor.clinicassistant.module.system.dictionary.vo.DictionaryVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Dictionary;
 import java.util.List;
 import java.util.Map;
 
@@ -17,39 +18,32 @@ import java.util.Map;
 public interface DictionaryService {
     /**
      * 分页查询
-     * @param code
-     * @param text
+     * @param keyword
      * @param page
      * @return
      */
-    Page<DictionaryType> queryPage(String code, String text, Pageable page);
+    Page<DictionaryEntity> queryPage(String keyword, Pageable page);
 
     /**
      * 保存数据字典
-     * @param dictionaryType
+     * @param dictionary
      * @return
      */
-    DictionaryType save(DictionaryType dictionaryType) throws Exception;
+    ReturnResult save(DictionaryVo dictionary) throws Exception;
 
     /**
      * 删除数据字典
      * @param id
      * @return
      */
-    boolean delete(Integer id) throws Exception;
-
-    /**
-     * 获取字典树
-     * @return
-     */
-    List<TreeEntity> findTreeEntity() throws Exception;
+    boolean delete(Long id) throws Exception;
 
     /**
      * 根据id查询字典
-     * @param dictionaryId
+     * @param dictId
      * @return
      */
-    DictionaryType getById(Integer dictionaryId) throws Exception;
+    Dictionary getById(Long dictId) throws Exception;
 
     /**
      * 检查字典名称是否重复
@@ -72,7 +66,7 @@ public interface DictionaryService {
      * @param dictTypeKey
      * @return
      */
-    DictionaryType getByKey(String dictTypeKey) throws Exception;
+    Dictionary getByKey(String dictTypeKey) throws Exception;
 
     /**
      * 根据字典键查询字典

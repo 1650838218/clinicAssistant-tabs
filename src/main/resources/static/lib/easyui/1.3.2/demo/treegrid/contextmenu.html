@@ -13,7 +13,7 @@
 	<h2>TreeGrid ContextMenu</h2>
 	<div class="demo-info">
 		<div class="demo-tip icon-tip"></div>
-		<div>Right click to display the context menu.</div>
+		<div>Right click to display the context menuEntity.</div>
 	</div>
 	<div style="margin:10px 0;"></div>
 	<table id="tg" class="easyui-treegrid" title="TreeGrid ContextMenu" style="width:700px;height:250px"
@@ -38,10 +38,10 @@
 			</tr>
 		</thead>
 	</table>
-	<div id="mm" class="easyui-menu" style="width:120px;">
+	<div id="mm" class="easyui-menuEntity" style="width:120px;">
 		<div onclick="append()" data-options="iconCls:'icon-add'">Append</div>
 		<div onclick="remove()" data-options="iconCls:'icon-remove'">Remove</div>
-		<div class="menu-sep"></div>
+		<div class="menuEntity-sep"></div>
 		<div onclick="collapse()">Collapse</div>
 		<div onclick="expand()">Expand</div>
 	</div>
@@ -59,7 +59,7 @@
 		function onContextMenu(e,row){
 			e.preventDefault();
 			$(this).treegrid('select', row.id);
-			$('#mm').menu('show',{
+			$('#mm').menuEntity('show',{
 				left: e.pageX,
 				top: e.pageY
 			});

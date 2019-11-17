@@ -3,7 +3,7 @@ package com.littledoctor.clinicassistant.module.system.menu.controller;
 import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.common.util.TreeUtils;
-import com.littledoctor.clinicassistant.module.system.menu.entity.Menu;
+import com.littledoctor.clinicassistant.module.system.menu.entity.MenuEntity;
 import com.littledoctor.clinicassistant.module.system.menu.service.MenuService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,18 +31,18 @@ public class MenuController {
 
     /**
      * 保存菜单信息
-     * @param menu
+     * @param menuEntity
      * @return
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public Menu save(Menu menu) {
+    public MenuEntity save(MenuEntity menuEntity) {
         try {
-            Assert.notNull(menu, Message.PARAMETER_IS_NULL);
-            return menuService.save(menu);// 保存
+            Assert.notNull(menuEntity, Message.PARAMETER_IS_NULL);
+            return menuService.save(menuEntity);// 保存
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return new Menu();
+        return new MenuEntity();
     }
 
     /**
@@ -92,14 +92,14 @@ public class MenuController {
      * @return
      */
     @RequestMapping(value = "/getById", method = RequestMethod.GET)
-    public Menu getById(String menuId) {
+    public MenuEntity getById(String menuId) {
         try {
             Assert.notNull(menuId, Message.PARAMETER_IS_NULL);
             return menuService.getById(menuId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return new Menu();
+        return new MenuEntity();
     }
 
     /**
@@ -108,7 +108,7 @@ public class MenuController {
      * @return
      */
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public boolean delete(@PathVariable("id") Integer menuId) {
+    public boolean delete(@PathVariable("id") Long menuId) {
         try {
             Assert.notNull(menuId, Message.PARAMETER_IS_NULL);
             return menuService.delete(menuId);
