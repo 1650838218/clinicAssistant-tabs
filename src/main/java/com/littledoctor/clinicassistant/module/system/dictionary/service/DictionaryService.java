@@ -36,14 +36,16 @@ public interface DictionaryService {
      * @param id
      * @return
      */
-    boolean delete(Long id) throws Exception;
+    boolean delete(Long dictId) throws Exception;
 
     /**
      * 根据id查询字典
      * @param dictId
      * @return
      */
-    Dictionary getById(Long dictId) throws Exception;
+    DictionaryVo getById(Long dictId) throws Exception;
+
+    boolean deleteByDictKey(String dictKey) throws Exception;
 
     /**
      * 检查字典名称是否重复
@@ -63,24 +65,24 @@ public interface DictionaryService {
 
     /**
      * 根据字典键查询字典，常用于下拉框
-     * @param dictTypeKey
+     * @param dictKey
      * @return
      */
-    Dictionary getByKey(String dictTypeKey) throws Exception;
+    DictionaryVo getByDictKey(String dictKey) throws Exception;
 
     /**
      * 根据字典键查询字典
-     * @param dictTypeKey
+     * @param dictKey
      * @return
      */
-    List<DictionaryItem> getItemListByKey(String dictTypeKey) throws Exception;
+    List<DictionaryEntity> getDictItemByDictKey(String dictKey) throws Exception;
 
     /**
      * 根据字典键查询字典
-     * @param dictTypeKey
+     * @param dictKey
      * @return
      */
-    Map<String, String> getItemMapByKey(String dictTypeKey) throws Exception;
+    Map<String, String> getItemMapByKey(String dictKey) throws Exception;
 
     /**
      * 根据字典键和真实值，查询显示值

@@ -73,7 +73,7 @@ public class DictionaryController {
      * @return
      */
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public boolean delete(@PathVariable("id") Integer id) {
+    public boolean delete(@PathVariable("id") Long id) {
         try {
             Assert.notNull(id,"删除数据字典时id不能为空");
             return dictionaryService.delete(id);
@@ -89,7 +89,7 @@ public class DictionaryController {
      * @return
      */
     @RequestMapping(value = "/getById", method = RequestMethod.GET)
-    public DictionaryType getById(Integer dictionaryId) {
+    public DictionaryVo getById(Long dictionaryId) {
         try {
             Assert.notNull(dictionaryId, Message.PARAMETER_IS_NULL);
             return dictionaryService.getById(dictionaryId);

@@ -25,11 +25,11 @@ public class DictionaryVo {
         this.dictType = dictType;
     }
 
-    public List<DictionaryEntity> getDictiDetail() {
+    public List<DictionaryEntity> getDictiItem() {
         return dictiItem;
     }
 
-    public void setDictiDetail(List<DictionaryEntity> dictiItem) {
+    public void setDictiItem(List<DictionaryEntity> dictiItem) {
         this.dictiItem = dictiItem;
     }
 }

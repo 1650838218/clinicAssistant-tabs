@@ -1,9 +1,12 @@
 package com.littledoctor.clinicassistant.module.system.dictionary.service;
 
+import com.littledoctor.clinicassistant.common.entity.ReturnResult;
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.common.entity.TreeNodeType;
+import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.module.system.dictionary.dao.DictionaryRepository;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryEntity;
+import com.littledoctor.clinicassistant.module.system.dictionary.vo.DictionaryVo;
 import com.littledoctor.clinicassistant.module.system.menu.service.MenuService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -14,15 +17,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Auther: 周俊林
@@ -65,72 +66,87 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     /**
      * 保存数据字典
-     * @param dictionaryType
+     * @param dictionaryVo
      * @return
      */
     @Override
-    public DictionaryType save(DictionaryType dictionaryType) throws Exception {
-        dictionaryType.setDictTypeKey(dictionaryType.getDictTypeKey().trim());
-        dictionaryType.setDictTypeName(dictionaryType.getDictTypeName().trim());
-        DictionaryType dt = dictionaryRepository.saveAndFlush(dictionaryType);
-        // 设置菜单名称
-        if (dt.getMenuId() != null) {
-            Menu menu = menuService.getById(dt.getMenuId().toString());
-            dt.setMenuName(menu.getMenuName());
+    public ReturnResult save(DictionaryVo dictionaryVo) throws Exception {
+        if (!ObjectUtils.isEmpty(dictionaryVo)) {
+            DictionaryEntity dictType = dictionaryVo.getDictType();
+            List<DictionaryEntity> dictItem = dictionaryVo.getDictiItem();
+            if (!ObjectUtils.isEmpty(dictType) && !ObjectUtils.isEmpty(dictItem)) {
+                // 先删除后插入
+                this.deleteByDictKey(dictType.getDictKey());
+                List<DictionaryEntity> entityList = new ArrayList<>();
+                dictType.setDictType(1);
+                dictType.setIsValid(1);
+                entityList.add(dictType);
+                for (int i = 0; i < dictItem.size(); i++) {
+                    DictionaryEntity de = dictItem.get(i);
+                    de.setIsValid(1);
+                    de.setDictType(2);
+                    de.setDictKey(dictType.getDictKey());
+                    entityList.add(de);
+                }
+                List<DictionaryEntity> result = dictionaryRepository.saveAll(entityList);
+                ReturnResult<DictionaryEntity> returnResult = new ReturnResult(true, Message.SAVE_SUCCESS);
+                returnResult.setListObj(result);
+                return returnResult;
+            }
         }
-        return dt;
+        return new ReturnResult(false, Message.SAVE_FAILED);
     }
 
     /**
-     * 删除数据字典
-     * @param id
+     * 根据ID删除数据字典
+     * @param dictId
      * @return
      */
     @Override
-    public boolean delete(Integer id) throws Exception {
-        dictionaryRepository.deleteById(id);
+    public boolean delete(Long dictId) throws Exception {
+        dictionaryRepository.deleteById(dictId);
         return true;
     }
 
     /**
-     * 获取字典树
-     * @return
-     */
-    @Override
-    public List<TreeEntity> findTreeEntity() throws Exception {
-        List<TreeEntity> result = new ArrayList<>();
-        // 查询菜单
-        List<TreeEntity> menuList = menuService.findTreeEntity();
-        if (!CollectionUtils.isEmpty(menuList)) result.addAll(menuList);
-        // 查询字典类型
-        List<TreeEntity> dictionaryList = dictionaryRepository.findTreeEntity();
-        if (!CollectionUtils.isEmpty(dictionaryList)) {
-            // 设置节点类型
-            for (int i = 0; i < dictionaryList.size(); i++) {
-                dictionaryList.get(i).setNodeType(TreeNodeType.DICTIONARY_TYPE);
-            }
-            result.addAll(dictionaryList);
-        }
-        return result;
-    }
-
-    /**
-     * 根据ID查询字典
-     * @param dictionaryId
+     * 根据字典键删除数据字典
+     * @param dictKey
      * @return
      * @throws Exception
      */
     @Override
-    public DictionaryType getById(Integer dictionaryId) throws Exception {
-        if (dictionaryId != null) {
-            DictionaryType dt = dictionaryRepository.findById(dictionaryId).get();
-            if (dt.getMenuId() != null) {
-                Menu menu = menuService.getById(dt.getMenuId().toString());
-                dt.setMenuName(menu.getMenuName());
+    public boolean deleteByDictKey(String dictKey) throws Exception {
+        dictionaryRepository.deleteByDictKey(dictKey);
+        return true;
+    }
+
+    /**
+     * 根据ID查询字典
+     * @param dictId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public DictionaryVo getById(Long dictId) throws Exception {
+        if (!ObjectUtils.isEmpty(dictId)) {
+            DictionaryEntity de = dictionaryRepository.findById(dictId).get();// 根据ID查询字典
+            if (!ObjectUtils.isEmpty(de)) {
+                List<DictionaryEntity> result = dictionaryRepository.getByDictKey(de.getDictKey());
+                if (!ObjectUtils.isEmpty(result)) {
+                    DictionaryVo dvo = new DictionaryVo();
+                    dvo.setDictiItem(new ArrayList<>());
+                    for (int i = 0; i < result.size(); i++) {
+                        if (result.get(i).getDictType() == 1) {
+                            dvo.setDictType(result.get(i));
+                        } else {
+                            dvo.getDictiItem().add(result.get(i));
+                        }
+                    }
+                    return dvo;
+                }
             }
-            return dt;
         }
-        return new DictionaryType();
+        return new DictionaryVo();
     }
 
     /**
@@ -158,53 +174,41 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     /**
-     * 检查多级字典键是否重复
-     * @param dictTypeId
-     * @param dictTypeKey
-     * @return false 重复 true 不重复
-     */
-    @Override
-    public boolean repeatTypeKey(String dictTypeId, String dictTypeKey) {
-        if (org.apache.commons.lang.StringUtils.isNotBlank(dictTypeKey)) {
-            return dictionaryRepository.count(new Specification<DictionaryType>() {
-                @Override
-                public Predicate toPredicate(Root<DictionaryType> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                    List<Predicate> list = new ArrayList<>();
-                    list.add(criteriaBuilder.equal(root.get("dictTypeKey"), dictTypeKey));
-                    if (org.apache.commons.lang.StringUtils.isNotBlank(dictTypeId)) {
-                        list.add(criteriaBuilder.notEqual(root.get("dictTypeId"), dictTypeId));
-                    }
-                    return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
-                }
-            }) <= 0;
-        }
-        return false;
-    }
-
-    /**
      * 根据字典键查询字典，常用于下拉框
-     * @param dictTypeKey
+     * @param dictKey
      * @return
      */
     @Override
-    public DictionaryType getByKey(String dictTypeKey) throws Exception {
-        if (!StringUtils.isEmpty(dictTypeKey)) {
-            return dictionaryRepository.getByKey(dictTypeKey);
+    public DictionaryVo getByDictKey(String dictKey) throws Exception {
+        if (!StringUtils.isEmpty(dictKey)) {
+            List<DictionaryEntity> result = dictionaryRepository.getByDictKey(dictKey);
+            if (!ObjectUtils.isEmpty(result)) {
+                DictionaryVo dvo = new DictionaryVo();
+                dvo.setDictiItem(new ArrayList<>());
+                for (int i = 0; i < result.size(); i++) {
+                    if (result.get(i).getDictType() == 1) {
+                        dvo.setDictType(result.get(i));
+                    } else {
+                        dvo.getDictiItem().add(result.get(i));
+                    }
+                }
+                return dvo;
+            }
         }
-        return null;
+        return new DictionaryVo();
     }
 
     /**
      * 根据字典键查询字典
-     * @param dictTypeKey
+     * @param dictKey
      * @return
      */
     @Override
-    public List<DictionaryItem> getItemListByKey(String dictTypeKey) throws Exception {
-        if (!StringUtils.isEmpty(dictTypeKey)) {
-            return dictionaryRepository.getByKey(dictTypeKey).getDictItem();
+    public List<DictionaryEntity> getDictItemByDictKey(String dictKey) throws Exception {
+        if (!StringUtils.isEmpty(dictKey)) {
+            return dictionaryRepository.getDictItemByDictKey(dictKey);
         }
-        return null;
+        return new ArrayList<>();
     }
 
     /**

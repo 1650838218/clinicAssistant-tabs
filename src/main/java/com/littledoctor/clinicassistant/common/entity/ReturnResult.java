@@ -9,7 +9,7 @@ import java.util.List;
  * @Date: 2019-10-27 11:35
  * @Description: 返回结果
  */
-public class ReturnResult {
+public class ReturnResult<T> {
 
     /* 操作成功或失败 */
     private Boolean success;
@@ -21,7 +21,7 @@ public class ReturnResult {
     private Object object;
 
     /* 返回的列表数据 */
-    private List<Object> listObj;
+    private List<T> listObj;
 
     /** 错误日志 */
     private String errorMsg;
@@ -65,11 +65,19 @@ public class ReturnResult {
         this.object = object;
     }
 
-    public List<Object> getListObj() {
+    public List<T> getListObj() {
         return listObj;
     }
 
-    public void setListObj(List<Object> listObj) {
+    public void setListObj(List<T> listObj) {
         this.listObj = listObj;
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
     }
 }
