@@ -33,6 +33,8 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
         cols: [[
             {field: 'pharmacyItemName', title: '药品名称'}
         ]],
+        skin: 'nob',
+        // size: 'sm',
         done: function (res, curr, count) {
             $('#add-btn').click();// 清空表单
             $('#del-btn').addClass('layui-btn-disabled').attr('disabled','disabled');// 禁用 删除按钮

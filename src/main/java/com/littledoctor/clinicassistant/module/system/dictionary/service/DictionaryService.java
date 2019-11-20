@@ -49,19 +49,19 @@ public interface DictionaryService {
 
     /**
      * 检查字典名称是否重复
-     * @param dictTypeId
-     * @param dictTypeName
+     * @param dictId
+     * @param dictName
      * @return
      */
-    boolean repeatTypeName(String dictTypeId, String dictTypeName);
+    boolean repeatDictName(Long dictId, String dictName);
 
     /**
      * 检查字典键是否重复
-     * @param dictTypeId
-     * @param dictTypeKey
+     * @param dictId
+     * @param dictKey
      * @return
      */
-    boolean repeatTypeKey(String dictTypeId, String dictTypeKey);
+    boolean repeatDictKey(Long dictId, String dictKey);
 
     /**
      * 根据字典键查询字典，常用于下拉框
@@ -86,9 +86,9 @@ public interface DictionaryService {
 
     /**
      * 根据字典键和真实值，查询显示值
-     * @param dictTypeKey
-     * @param dictItemValue
+     * @param dictKey
+     * @param dictValue
      * @return
      */
-    String queryItemName(String dictTypeKey, Integer dictItemValue) throws Exception;
+    String getDictNameByDictKeyAndDictValue(String dictKey, String dictValue) throws Exception;
 }

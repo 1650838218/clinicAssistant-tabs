@@ -15,7 +15,7 @@ public class DictionaryVo {
     private DictionaryEntity dictType;
 
     /** 字典项 */
-    private List<DictionaryEntity> dictiItem;
+    private List<DictionaryEntity> dictItem;
 
     public DictionaryEntity getDictType() {
         return dictType;
@@ -25,11 +25,11 @@ public class DictionaryVo {
         this.dictType = dictType;
     }
 
-    public List<DictionaryEntity> getDictiItem() {
-        return dictiItem;
+    public List<DictionaryEntity> getDictItem() {
+        return dictItem;
     }
 
-    public void setDictiItem(List<DictionaryEntity> dictiItem) {
-        this.dictiItem = dictiItem;
+    public void setDictItem(List<DictionaryEntity> dictItem) {
+        this.dictItem = dictItem;
     }
 }

@@ -38,9 +38,6 @@ public class DictionaryServiceImpl implements DictionaryService {
     @Autowired
     private DictionaryRepository dictionaryRepository;
 
-    @Autowired
-    private MenuService menuService;
-
     /**
      * 分页查询
      * @param keyword
@@ -73,7 +70,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     public ReturnResult save(DictionaryVo dictionaryVo) throws Exception {
         if (!ObjectUtils.isEmpty(dictionaryVo)) {
             DictionaryEntity dictType = dictionaryVo.getDictType();
-            List<DictionaryEntity> dictItem = dictionaryVo.getDictiItem();
+            List<DictionaryEntity> dictItem = dictionaryVo.getDictItem();
             if (!ObjectUtils.isEmpty(dictType) && !ObjectUtils.isEmpty(dictItem)) {
                 // 先删除后插入
                 this.deleteByDictKey(dictType.getDictKey());
@@ -131,19 +128,7 @@ public class DictionaryServiceImpl implements DictionaryService {
         if (!ObjectUtils.isEmpty(dictId)) {
             DictionaryEntity de = dictionaryRepository.findById(dictId).get();// 根据ID查询字典
             if (!ObjectUtils.isEmpty(de)) {
-                List<DictionaryEntity> result = dictionaryRepository.getByDictKey(de.getDictKey());
-                if (!ObjectUtils.isEmpty(result)) {
-                    DictionaryVo dvo = new DictionaryVo();
-                    dvo.setDictiItem(new ArrayList<>());
-                    for (int i = 0; i < result.size(); i++) {
-                        if (result.get(i).getDictType() == 1) {
-                            dvo.setDictType(result.get(i));
-                        } else {
-                            dvo.getDictiItem().add(result.get(i));
-                        }
-                    }
-                    return dvo;
-                }
+                return this.getByDictKey(de.getDictKey());
             }
         }
         return new DictionaryVo();
@@ -151,20 +136,44 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     /**
      * 检查多级字典名称是否重复
-     * @param dictTypeId
-     * @param dictTypeName
+     * @param dictId
+     * @param dictName
      * @return false 重复 true 不重复
      */
     @Override
-    public boolean repeatTypeName(String dictTypeId, String dictTypeName) {
-        if (org.apache.commons.lang.StringUtils.isNotBlank(dictTypeName)) {
-            return dictionaryRepository.count(new Specification<DictionaryType>() {
+    public boolean repeatDictName(Long dictId, String dictName) {
+        if (org.apache.commons.lang.StringUtils.isNotBlank(dictName)) {
+            return dictionaryRepository.count(new Specification<DictionaryEntity>() {
                 @Override
-                public Predicate toPredicate(Root<DictionaryType> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                public Predicate toPredicate(Root<DictionaryEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                     List<Predicate> list = new ArrayList<>();
-                    list.add(criteriaBuilder.equal(root.get("dictTypeName"), dictTypeName));
-                    if (org.apache.commons.lang.StringUtils.isNotBlank(dictTypeId)) {
-                        list.add(criteriaBuilder.notEqual(root.get("dictTypeId"), dictTypeId));
+                    list.add(criteriaBuilder.equal(root.get("dictName"), dictName));
+                    if (!ObjectUtils.isEmpty(dictId)) {
+                        list.add(criteriaBuilder.notEqual(root.get("dictId"), dictId));
+                    }
+                    return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
+                }
+            }) <= 0;
+        }
+        return false;
+    }
+
+    /**
+     * 检查多级字典键是否重复
+     * @param dictId
+     * @param dictKey
+     * @return false 重复 true 不重复
+     */
+    @Override
+    public boolean repeatDictKey(Long dictId, String dictKey) {
+        if (StringUtils.isNotBlank(dictKey)) {
+            return dictionaryRepository.count(new Specification<DictionaryEntity>() {
+                @Override
+                public Predicate toPredicate(Root<DictionaryEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                    List<Predicate> list = new ArrayList<>();
+                    list.add(criteriaBuilder.equal(root.get("dictKey"), dictKey));
+                    if (!ObjectUtils.isEmpty(dictId)) {
+                        list.add(criteriaBuilder.notEqual(root.get("dictId"), dictId));
                     }
                     return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
                 }
@@ -184,12 +193,12 @@ public class DictionaryServiceImpl implements DictionaryService {
             List<DictionaryEntity> result = dictionaryRepository.getByDictKey(dictKey);
             if (!ObjectUtils.isEmpty(result)) {
                 DictionaryVo dvo = new DictionaryVo();
-                dvo.setDictiItem(new ArrayList<>());
+                dvo.setDictItem(new ArrayList<>());
                 for (int i = 0; i < result.size(); i++) {
                     if (result.get(i).getDictType() == 1) {
                         dvo.setDictType(result.get(i));
                     } else {
-                        dvo.getDictiItem().add(result.get(i));
+                        dvo.getDictItem().add(result.get(i));
                     }
                 }
                 return dvo;
@@ -199,7 +208,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     /**
-     * 根据字典键查询字典
+     * 根据字典键查询字典项
      * @param dictKey
      * @return
      */
@@ -213,44 +222,36 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     /**
      * 根据字典键查询字典
-     * @param dictTypeKey
+     * @param dictKey
      * @return
      */
     @Override
-    public Map<String, String> getItemMapByKey(String dictTypeKey) throws Exception {
-        if (!StringUtils.isEmpty(dictTypeKey)) {
-            List<DictionaryItem> items = dictionaryRepository.getByKey(dictTypeKey).getDictItem();
+    public Map<String, String> getItemMapByKey(String dictKey) throws Exception {
+        if (!StringUtils.isEmpty(dictKey)) {
+            List<DictionaryEntity> items = this.getDictItemByDictKey(dictKey);
             if (items != null && items.size() > 0) {
                 Map<String, String> map = new HashMap<>();
                 for (int i = 0; i < items.size(); i++) {
-                    map.put(items.get(i).getDictItemValue(), items.get(i).getDictItemName());
+                    map.put(items.get(i).getDictValue(), items.get(i).getDictName());
                 }
                 return map;
             }
         }
-        return null;
+        return new HashMap<>();
     }
 
     /**
      * 根据字典键和真实值查询显示值
-     * @param dictTypeKey
-     * @param dictItemValue
+     * @param dictKey
+     * @param dictValue
      * @return
      * @throws Exception
      */
     @Override
-    public String queryItemName(String dictTypeKey, Integer dictItemValue) throws Exception {
-        if (!StringUtils.isEmpty(dictTypeKey) && dictItemValue != null) {
-            DictionaryType dt = this.getByKey(dictTypeKey);
-            if (dt.getDictItem() != null && dt.getDictItem().size() > 0) {
-                for (int i = 0; i < dt.getDictItem().size(); i++) {
-                    DictionaryItem di = dt.getDictItem().get(i);
-                    if (dictItemValue.equals(di.getDictItemId())) {
-                        return di.getDictItemName();
-                    }
-                }
-            }
+    public String getDictNameByDictKeyAndDictValue(String dictKey, String dictValue) throws Exception {
+        if (!StringUtils.isEmpty(dictKey) && !StringUtils.isEmpty(dictValue)) {
+            return dictionaryRepository.getDictNameByDictKeyAndDictValue(dictKey, dictValue);
         }
-        return null;
+        return "";
     }
 }

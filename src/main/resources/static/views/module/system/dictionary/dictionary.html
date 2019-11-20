@@ -31,23 +31,23 @@
         <div class="right-panel">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    <h3><b>字典信息</b></h3>
+                    <h3><b>新增字典</b></h3>
                 </div>
                 <div class="layui-card-body">
-                    <form id="dictionary-info" class="layui-form" action="" lay-filter="dictionary-form">
-                        <input type="hidden" name="dictTypeId" value="">
+                    <form id="dictionary-info" class="layui-form" lay-filter="dictionary-form">
+                        <input type="hidden" name="dictId" value="">
                         <div class="layui-row layui-col-space10 layui-form-item">
                             <div class="layui-col-lg4 layui-col-sm6">
                                 <label class="layui-form-label">字典名称：</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="dictTypeName" autocomplete="off" class="layui-input" placeholder="请填写字典名称"
+                                    <input type="text" name="dictName" autocomplete="off" class="layui-input" placeholder="请填写字典名称"
                                            maxlength="20" lay-verify="required|repeat">
                                 </div>
                             </div>
                             <div class="layui-col-lg4 layui-col-sm6">
                                 <label class="layui-form-label">字典键：</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="dictTypeKey" autocomplete="off" class="layui-input" placeholder="请填写字典键"
+                                    <input type="text" name="dictKey" autocomplete="off" class="layui-input" placeholder="请填写字典键"
                                            maxlength="50" lay-verify="required|repeat|regExp">
                                 </div>
                             </div>
@@ -71,11 +71,11 @@
 </script>
 <!--layui table 操作列-->
 <script type="text/html" id="operate-column">
-    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="create">新增</a>
-    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="delete">删除</a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="create">添加行</a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="delete">删除行</a>
 </script>
 <script src="/lib/layuiadmin/layui/layui.js"></script>
 <script src="/js/common/constant.js"></script>
-<script src="/views/module/system/dictionary/oneLevel.js"></script>
+<script src="/views/module/system/dictionary/dictionary.js"></script>
 </body>
 </html>

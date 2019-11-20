@@ -25,7 +25,7 @@ public interface Constant {
     public static final short CONTROLLER_TABLE_COUNT = 0;
 
     /** 所有树形结构的根节点ID */
-    public static final Integer ROOT_NODE_ID = 0;
+    public static final Long ROOT_NODE_ID = (long) 0;
 
     /** 字符串分隔符 */
     public static final String SPLIT_STR = ",";

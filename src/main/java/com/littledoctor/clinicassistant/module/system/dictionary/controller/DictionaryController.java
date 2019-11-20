@@ -101,30 +101,29 @@ public class DictionaryController {
 
     /**
      * 根据字典键查询字典，常用于下拉框
-     * @param dictTypeKey
+     * @param dictKey
      * @return
      */
-    @RequestMapping(value = "/getByKey", method = RequestMethod.GET)
-    public DictionaryType getByKey(@RequestParam String dictTypeKey) {
+    @RequestMapping(value = "/getByDictKey", method = RequestMethod.GET)
+    public DictionaryVo getByDictKey(@RequestParam String dictKey) {
         try {
-//            Assert.notNull(dictionaryId, Message.PARAMETER_IS_NULL);
-            return dictionaryService.getByKey(dictTypeKey);
+            Assert.hasLength(dictKey, Message.PARAMETER_IS_NULL);
+            return dictionaryService.getByDictKey(dictKey);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return new DictionaryType();
+        return new DictionaryVo();
     }
 
     /**
-     * 根据字典键查询字典，常用于下拉框
-     * @param dictTypeKey
+     * 根据字典键查询字典项，常用于下拉框
+     * @param dictKey
      * @return
      */
-    @RequestMapping(value = "/getItemByKey", method = RequestMethod.GET)
-    public List<DictionaryItem> getItemByKey(@RequestParam String dictTypeKey) {
+    @RequestMapping(value = "/getDictItemByDictKey", method = RequestMethod.GET)
+    public List<DictionaryEntity> getDictItemByDictKey(@RequestParam String dictKey) {
         try {
-            DictionaryType dictionaryType = dictionaryService.getByKey(dictTypeKey);
-            if (dictionaryType != null) return dictionaryType.getDictItem();
+            return dictionaryService.getDictItemByDictKey(dictKey);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -133,15 +132,15 @@ public class DictionaryController {
 
     /**
      * 检查字典名称是否重复
-     * @param dictTypeId
-     * @param dictTypeName
+     * @param dictId
+     * @param dictName
      * @return false 重复 true 不重复
      */
-    @RequestMapping(value = "/repeatTypeName", method = RequestMethod.GET)
-    public boolean repeatTypeName(String dictTypeId, String dictTypeName) {
+    @RequestMapping(value = "/repeatDictName", method = RequestMethod.GET)
+    public boolean repeatDictName(Long dictId, String dictName) {
         try {
-            Assert.notNull(dictTypeName, Message.PARAMETER_IS_NULL);
-            return dictionaryService.repeatTypeName(dictTypeId, dictTypeName);
+            Assert.notNull(dictName, Message.PARAMETER_IS_NULL);
+            return dictionaryService.repeatDictName(dictId, dictName);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -150,15 +149,15 @@ public class DictionaryController {
 
     /**
      * 检查字典键是否重复
-     * @param dictTypeId
-     * @param dictTypeKey
+     * @param dictId
+     * @param dictKey
      * @return false 重复 true 不重复
      */
-    @RequestMapping(value = "/repeatTypeKey", method = RequestMethod.GET)
-    public boolean repeatTypeKey(String dictTypeId, String dictTypeKey) {
+    @RequestMapping(value = "/repeatDictKey", method = RequestMethod.GET)
+    public boolean repeatDictKey(Long dictId, String dictKey) {
         try {
-            Assert.notNull(dictTypeKey, Message.PARAMETER_IS_NULL);
-            return dictionaryService.repeatTypeKey(dictTypeId, dictTypeKey);
+            Assert.notNull(dictKey, Message.PARAMETER_IS_NULL);
+            return dictionaryService.repeatDictKey(dictId, dictKey);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

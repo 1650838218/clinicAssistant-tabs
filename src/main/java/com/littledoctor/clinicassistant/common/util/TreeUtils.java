@@ -31,7 +31,7 @@ public class TreeUtils {
         List<TreeEntity> result = new ArrayList<>();
         if (!CollectionUtils.isEmpty(source)) {
             for (TreeEntity treeEntity : source) {
-                if (treeEntity.getpId() == Constant.ROOT_NODE_ID) {// 根节点
+                if (treeEntity.getpId().equals(Constant.ROOT_NODE_ID)) {// 根节点
                     result.add(treeEntity);
                 }
                 // 找每个节点的子节点
