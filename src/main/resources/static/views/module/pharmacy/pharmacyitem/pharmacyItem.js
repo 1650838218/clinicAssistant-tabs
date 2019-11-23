@@ -23,9 +23,9 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
         url: rootMapping + '/queryPage',
         height: 'full-85',
         page: {
-            limit: 20,
+            limit: 10,
             groups: 3,
-            layout: ['prev', 'page', 'next','count','refresh']
+            layout: ['prev', 'page', 'next','count']
         },
         request: {
             limitName: 'size' //每页数据量的参数名，默认：limit

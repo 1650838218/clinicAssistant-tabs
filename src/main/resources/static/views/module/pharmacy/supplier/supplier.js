@@ -15,6 +15,7 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
     var utils = layui.utils;
     var leftTableId = 'left-table';
     var rootMapping = '/pharmacy/supplier';
+    var currentSupplierId = '';// 当前选中的供应商的ID
     form.render();
 
     // 初始化表格
@@ -23,24 +24,41 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
         url: rootMapping + '/queryPage',
         height: 'full-85',
         page: {
-            limit: 20,
-            groups: 3,
-            layout: ['count','refresh']
+            limit: 10,
+            groups: 2,
+            layout: ['prev','page','next','count']
         },
         request: {
             limitName: 'size' //每页数据量的参数名，默认：limit
         },
+        text: {
+            none: '暂无数据！'
+        },
         cols: [[
             {field: 'supplierName', title: '供应商名称'}
         ]],
+        skin: 'nob',
+        // size: 'sm',
         done: function (res, curr, count) {
             $('#add-btn').click();// 清空表单
             $('#del-btn').addClass('layui-btn-disabled').attr('disabled','disabled');// 禁用 删除按钮
+            if (currentSupplierId) {
+                var tableData = table.cache[leftTableId];
+                for (var i = 0; i < tableData.length; i++) {
+                    if (Number(tableData[i].supplierId) === Number(currentSupplierId)) {
+                        var rowIndex = tableData[i][table.config.indexName];
+                        $('.left-panel .layui-table tbody tr div').removeClass('select');
+                        $('.left-panel .layui-table tbody tr[data-index="' + rowIndex + '"]').find('div').addClass('select');
+                        getById(currentSupplierId);
+                    }
+                }
+            }
         }
     });
 
     // 新增 供应商
     $('#add-btn').click(function () {
+        $('.layui-card-header h3 b').text('新增供应商');
         utils.clearForm('#supplier-form');// 清空表单
         form.render();
     });
@@ -53,10 +71,8 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
                 ajax.delete(rootMapping + '/delete/' + supplierId, function (success) {
                     if (success) {
                         layer.msg(MSG.delete_success);
-                        table.reload(leftTableId, {done: function (res, curr, count) {
-                                $('#add-btn').click();// 清空表单
-                                $('#del-btn').addClass('layui-btn-disabled').attr('disabled','disabled');// 禁用 删除按钮
-                            }});
+                        currentSupplierId = undefined;
+                        table.reload(leftTableId);
                     } else {
                         layer.msg(MSG.delete_fail);
                     }
@@ -87,44 +103,14 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
         }
     });
 
-    // 选中一条记录
-    function selectOne(supplierId) {
-        var tableData = table.cache[leftTableId];
-        if (utils.isNotEmpty(tableData)) {
-            if (utils.isNotNull(supplierId)) {
-                for (var i = 0; i < tableData.length; i++) {
-                    if (parseInt(tableData[i].supplierId) === parseInt(supplierId)) {
-                        var rowIndex = tableData[i][table.config.indexName];
-                        $('.left-panel .layui-table tbody tr div').removeClass('select');
-                        $('.left-panel .layui-table tbody tr[data-index="' + rowIndex + '"]').find('div').addClass('select');
-                        getById(supplierId);
-                    }
-                }
-            } else {
-                $('#add-btn').click();// 清空表单
-            }
-        } else {
-            $('#add-btn').click();// 清空表单
-        }
-    }
-
     // 保存
     form.on('submit(submit-btn)', function (data) {
         var formData = data.field;
         ajax.postJSON(rootMapping + '/save', formData, function (suppliers) {
             if (suppliers != null && utils.isNotNull(suppliers.supplierId)) {
                 layer.msg(MSG.save_success);
-                table.reload(leftTableId, {done: function (res, curr, count) {
-                    var tableData = table.cache[leftTableId];
-                    for (var i = 0; i < tableData.length; i++) {
-                        if (parseInt(tableData[i].supplierId) === parseInt(suppliers.supplierId)) {
-                            var rowIndex = tableData[i][table.config.indexName];
-                            $('.left-panel .layui-table tbody tr div').removeClass('select');
-                            $('.left-panel .layui-table tbody tr[data-index="' + rowIndex + '"]').find('div').addClass('select');
-                            getById(suppliers.supplierId);
-                        }
-                    }
-                }});
+                currentSupplierId = suppliers.supplierId;
+                table.reload(leftTableId);
             } else {
                 layer.msg(MSG.save_fail);
             }
@@ -138,6 +124,7 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
         if (supplierId !== null && supplierId !== undefined && supplierId !== '') {
             getById(supplierId);// 重新查询
         } else {
+            currentSupplierId = undefined;
             $('#add-btn').click();// 清空表单
         }
     });
@@ -148,8 +135,8 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
         $(obj.tr).find('div').addClass('select');
         $('#del-btn').removeClass('layui-btn-disabled').removeAttr('disabled');
         // 获取id，根据ID查询多级字典，表单设置值
-        var supplierId = obj.data.supplierId;
-        getById(supplierId);
+        currentSupplierId = obj.data.supplierId;
+        getById(currentSupplierId);
 
     });
 
@@ -158,14 +145,11 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
         if (utils.isNotNull(supplierId)) {
             $.getJSON(rootMapping + '/findById', {supplierId: supplierId}, function (supplier) {
                 if (supplier != null) {
-                    // console.log(suppliers);
+                    $('.layui-card-header h3 b').text('修改供应商')
                     form.val('supplier-form', supplier);
                 } else {
                     layer.alert('未找到该供应商，请重试！',{icon: 0}, function (index) {
-                        table.reload(leftTableId, {done: function (res, curr, count) {
-                                $('#add-btn').click();// 清空表单
-                                $('#del-btn').addClass('layui-btn-disabled').attr('disabled','disabled');// 禁用 删除按钮
-                            }});
+                        table.reload(leftTableId);
                         layer.close(index);
                     });
                 }
@@ -187,17 +171,7 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'table', 'ajax'], function () {
             if (lastKeyword === _keywords) {
                 return;
             }
-            table.reload(leftTableId,
-                {
-                    where: {
-                        keywords: _keywords
-                    },
-                    done: function (res, curr, count) {
-                        $('#add-btn').click();// 清空表单
-                        $('#del-btn').addClass('layui-btn-disabled').attr('disabled', 'disabled');// 禁用 删除按钮
-                    }
-                }
-            );
+            table.reload(leftTableId,{where:{keywords: _keywords}});
             lastKeyword = _keywords;
         }, 500);
     });

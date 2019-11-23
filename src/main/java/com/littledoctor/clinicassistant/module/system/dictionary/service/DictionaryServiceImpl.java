@@ -1,13 +1,10 @@
 package com.littledoctor.clinicassistant.module.system.dictionary.service;
 
 import com.littledoctor.clinicassistant.common.entity.ReturnResult;
-import com.littledoctor.clinicassistant.common.entity.TreeEntity;
-import com.littledoctor.clinicassistant.common.entity.TreeNodeType;
 import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.module.system.dictionary.dao.DictionaryRepository;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryEntity;
 import com.littledoctor.clinicassistant.module.system.dictionary.vo.DictionaryVo;
-import com.littledoctor.clinicassistant.module.system.menu.service.MenuService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;

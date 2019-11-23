@@ -94,8 +94,9 @@ layui.use(['form', 'eleTree', 'jquery', 'layer'], function () {
             parentMenuId: '',
             parentMenuName: '',
             menuUrl: '',
+            menuIcon: '',
             menuOrder: '',
-            isUse:1
+            isValid:1
         }, '新增菜单');
         // 删除高亮
         if (!!leftMenuTree) leftMenuTree = leftMenuTree.reload();
@@ -108,13 +109,15 @@ layui.use(['form', 'eleTree', 'jquery', 'layer'], function () {
     function assigForm(data, title) {
         // 表单赋值
         form.val("component-form-element", data);
-        if (data.isUse == "1") {
-            $('#menu-info input[name="isUse"]').attr('checked', 'checked');
+        if (data.isValid == "1") {
+            $('#menu-info input[name="isValid"]').attr('checked', 'checked');
         } else {
-            $('#menu-info input[name="isUse"]').removeAttr('checked');
+            $('#menu-info input[name="isValid"]').removeAttr('checked');
         }
         if (data.parentMenuId) {
             $('.select-tree div.eleTree-node[data-id="' + data.parentMenuId + '"] > .eleTree-node-content').trigger('click');
+        } else {
+            $('#menu-info input[name="parentMenuName"]').val('');
         }
         $('.layui-card-header h3 b').html(title);
     }
@@ -160,7 +163,7 @@ layui.use(['form', 'eleTree', 'jquery', 'layer'], function () {
     function saveMenu(data) {
         try {
             $(data.elem).addClass('layui-btn-disabled');// 按钮禁用，防止重复提交
-            data.field.isUse = data.field.isUse == "on" ? "1" : "0";
+            data.field.isValid = data.field.isValid == "on" ? "1" : "0";
             $.post('/system/menu/save', data.field, function (menu) {
                 if (!!menu && !!menu.menuId) {
                     assigForm(menu, '编辑菜单');// 赋值

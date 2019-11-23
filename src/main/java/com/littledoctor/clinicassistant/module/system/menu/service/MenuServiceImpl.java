@@ -2,14 +2,13 @@ package com.littledoctor.clinicassistant.module.system.menu.service;
 
 import com.littledoctor.clinicassistant.common.constant.Constant;
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
-import com.littledoctor.clinicassistant.common.entity.TreeNodeType;
 import com.littledoctor.clinicassistant.common.util.TreeUtils;
 import com.littledoctor.clinicassistant.module.system.menu.dao.MenuRepository;
 import com.littledoctor.clinicassistant.module.system.menu.entity.MenuEntity;
+import com.littledoctor.clinicassistant.module.system.menu.vo.MenuVo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +28,7 @@ public class MenuServiceImpl implements MenuService {
     public MenuEntity save(MenuEntity menuEntity) {
         if (menuEntity != null) {
             if (menuEntity.getParentMenuId() == null) menuEntity.setParentMenuId((long)0);
+            menuEntity.setIsValid(1);
             return menuRepository.saveAndFlush(menuEntity);
         }
         return new MenuEntity();
@@ -41,12 +41,6 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public List<TreeEntity> findTreeEntity() throws Exception {
         List<TreeEntity> list = menuRepository.findTreeEntity();
-        if (!CollectionUtils.isEmpty(list)) {
-            // 设置节点类型
-            for (int i = 0; i < list.size(); i++) {
-                list.get(i).setNodeType(TreeNodeType.MENU);
-            }
-        }
         return list;
     }
 
@@ -71,9 +65,9 @@ public class MenuServiceImpl implements MenuService {
         if (StringUtils.isNotBlank(menuIds)) {
             // id串转换
             String[] ids = menuIds.split(Constant.SPLIT_STR);
-            Integer[] id = new Integer[ids.length];
+            Long[] id = new Long[ids.length];
             for (int i = 0; i < ids.length; i++) {
-                id[i] = Integer.parseInt(ids[i]);
+                id[i] = Long.parseLong(ids[i]);
             }
             // 查询
             list  = menuRepository.findSelectTree(id);
@@ -96,5 +90,15 @@ public class MenuServiceImpl implements MenuService {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 根据角色查询菜单
+     * @param roleId
+     * @return
+     */
+    @Override
+    public List<MenuVo> findAllByRole(Long roleId) throws Exception {
+        return menuRepository.findAllByRole(roleId);
     }
 }

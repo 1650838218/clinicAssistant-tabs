@@ -2,6 +2,7 @@ package com.littledoctor.clinicassistant.module.system.menu.service;
 
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.module.system.menu.entity.MenuEntity;
+import com.littledoctor.clinicassistant.module.system.menu.vo.MenuVo;
 
 import java.util.List;
 
@@ -43,4 +44,11 @@ public interface MenuService {
      * @return
      */
     boolean delete(Long menuId) throws Exception;
+
+    /**
+     * 根据角色查询菜单
+     * @param roleId
+     * @return
+     */
+    List<MenuVo> findAllByRole(Long roleId) throws Exception;
 }

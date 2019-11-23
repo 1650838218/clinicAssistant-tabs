@@ -5,12 +5,14 @@ import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.common.util.TreeUtils;
 import com.littledoctor.clinicassistant.module.system.menu.entity.MenuEntity;
 import com.littledoctor.clinicassistant.module.system.menu.service.MenuService;
+import com.littledoctor.clinicassistant.module.system.menu.vo.MenuVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +65,21 @@ public class MenuController {
             log.error(e.getMessage(), e);
         }
         return map;
+    }
+
+    /**
+     * 根据角色查询菜单
+     * @param roleId
+     */
+    @RequestMapping(value = "/queryTreeByRole", method = RequestMethod.GET)
+    public List<MenuVo> queryTreeByRole(Long roleId) {
+        try {
+            // 后续若有需要再改成根据角色查询菜单
+            return TreeUtils.listToTree(menuService.findAllByRole(roleId));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return new ArrayList<>();
     }
 
     /**

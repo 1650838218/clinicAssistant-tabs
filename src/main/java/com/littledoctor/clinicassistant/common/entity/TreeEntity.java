@@ -18,18 +18,15 @@ import java.util.List;
 public class TreeEntity {
 
     /*节点名称*/
-    private String label;
+    protected String label;
 
     /*节点Id*/
-    private Long id;
+    protected Long id;
 
     /*节点pId*/
-    private Long pId;
+    protected Long pId;
 
-    /*节点类型*/
-    private TreeNodeType nodeType;
-
-    private List<TreeEntity> children;
+    protected List<TreeEntity> children;
 
     public TreeEntity() {
 
@@ -39,13 +36,6 @@ public class TreeEntity {
         this.label = label;
         this.id = id;
         this.pId = pId;
-    }
-
-    public TreeEntity(String label, Long id, Long pId, TreeNodeType nodeType) {
-        this.label = label;
-        this.id = id;
-        this.pId = pId;
-        this.nodeType = nodeType;
     }
 
     public String getLabel() {
@@ -78,13 +68,5 @@ public class TreeEntity {
 
     public void setChildren(List<TreeEntity> children) {
         this.children = children;
-    }
-
-    public TreeNodeType getNodeType() {
-        return nodeType;
-    }
-
-    public void setNodeType(TreeNodeType nodeType) {
-        this.nodeType = nodeType;
     }
 }

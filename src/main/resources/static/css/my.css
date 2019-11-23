@@ -49,6 +49,10 @@
     margin: 0px;
 }
 
+.left-panel .layui-table-view .layui-table td, .layui-table-view .layui-table th {
+    padding: 4px 0px;
+}
+
 /*右侧面板*/
 .right-panel {
     padding: 0px 10px;

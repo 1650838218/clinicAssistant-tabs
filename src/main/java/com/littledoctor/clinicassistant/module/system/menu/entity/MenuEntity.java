@@ -37,6 +37,10 @@ public class MenuEntity implements java.io.Serializable {
     @Column(name = "MENU_URL", nullable = true, length = 255)
     private String menuUrl;
 
+    /** 菜单图标 */
+    @Column(name = "MENU_ICON", nullable = true, length = 50)
+    private String menuIcon;
+
     /** 菜单顺序号 */
     @Column(name = "MENU_ORDER", nullable = true, length = 10)
     private BigDecimal menuOrder;
@@ -123,6 +127,14 @@ public class MenuEntity implements java.io.Serializable {
      */
     public void setMenuUrl(String menuUrl) {
         this.menuUrl = menuUrl;
+    }
+
+    public String getMenuIcon() {
+        return menuIcon;
+    }
+
+    public void setMenuIcon(String menuIcon) {
+        this.menuIcon = menuIcon;
     }
 
     /**
