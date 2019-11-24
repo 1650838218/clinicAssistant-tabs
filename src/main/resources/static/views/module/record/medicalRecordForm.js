@@ -143,7 +143,7 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
             idField: 'stockDetailId',
             textField: 'pharmacyItemName',
             method: 'get',
-            url: '/pharmacy/stock/getCombogrid',
+            url: '/purchase/stock/getCombogrid',
             queryParams: {type: 2},
             mode: 'remote',
             columns: [[

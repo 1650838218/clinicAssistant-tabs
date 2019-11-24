@@ -46,7 +46,7 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
             $('#add-btn').click();// 清空表单
             $('#del-btn').addClass('layui-btn-disabled').attr('disabled','disabled');// 禁用 删除按钮
             // 选中当前行
-            /*var pharmacyItemId = $('#pharmacyitem-form input[name="pharmacyItemId"]').val();
+            /*var pharmacyItemId = $('#item-form input[name="pharmacyItemId"]').val();
             if (utils.isNotNull(pharmacyItemId)) {
                 var tableData = table.cache[leftTableId];
                 if (utils.isNotEmpty(tableData)) {

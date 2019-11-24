@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>库存盘点</title>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/lib/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/my.css" media="all">
+    <style>
+        .center-panel form .layui-inline {
+            margin-right: 0px;
+        }
+        .center-panel form .layui-form-label {
+            padding: 9px 0px;
+        }
+        .center-panel form .layui-input-inline {
+            margin-right: 0px;
+        }
+        .layui-card-body {
+            padding: 10px;
+        }
+        .layui-table-view {
+            margin: 5px 0px;
+        }
+        .layui-layer-setwin .layui-layer-close2 {
+            right: -15px !important;
+            top: -10px !important;
+        }
+        .supplierEntity-name-icon {
+            float: right;
+            color: #D3D3D3;
+            cursor:pointer;
+        }
+        .supplierEntity-name-icon:hover {
+            color: black;
+        }
+        .layui-layer .layui-form-item {
+            margin-bottom: 0px;
+        }
+        .layui-layer .layui-form-label {
+            width: 120px;
+        }
+        .layui-btn-disabled {
+            /*margin-left: 9px !important;*/
+        }
+    </style>
+</head>
+<body>
+<div class="layui-row">
+    <div class="layui-col-md12">
+        <div class="center-panel">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <form id="query-form" class="layui-form" lay-filter="query-form">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">药品名称：</label>
+                                <div class="layui-input-inline">
+                                    <input name="keywords" class="layui-input" placeholder="药品名称/全拼/简拼/条形码">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">药品类型：</label>
+                                <div class="layui-input-inline">
+                                    <select name="pharmacyItemType"></select>
+                                </div>
+                            </div>
+                            <div class="layui-inline" style="margin-left: 15px">
+                                <button type="button" lay-filter="submit-btn" lay-submit class="layui-btn layui-btn-sm" title="查询">查询</button>
+                                <button type="reset" lay-filter="cancel-btn" class="layui-btn layui-btn-primary layui-btn-sm" title="重置">重置</button>
+                            </div>
+                        </div>
+                    </form>
+                    <table class="layui-hide" lay-filter="stockdetail-table" id="stockdetail-table"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--layui table 操作列-->
+<script type="text/html" id="operate-column">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="unshelve" title="下架">下架</a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled" lay-event="save" disabled="" title="保存">保存</a>
+</script>
+<script src="/lib/layuiadmin/layui/layui.js"></script>
+<script src="/js/common/constant.js"></script>
+<script src="/views/module/purchase/stock/stockDetailQuery.js"></script>
+</body>
+</html>

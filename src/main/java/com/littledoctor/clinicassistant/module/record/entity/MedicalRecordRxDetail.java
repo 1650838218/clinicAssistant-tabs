@@ -45,7 +45,7 @@ public class MedicalRecordRxDetail implements java.io.Serializable {
     @Column(name = "SKILL_ID")
     private Long skillId;
 
-    /** 药房品目ID */
+    /** 采购品目ID */
     @Column(name = "PHARMACY_ITEM_ID")
     private Long pharmacyItemId;
 

@@ -68,7 +68,7 @@ layui.define(["jquery", "layer"], function (exports) {
             valueField: 'stockDetailId',
             textField: 'pharmacyItemName',
             mode: 'remote',
-            url: '/pharmacy/stock/getCombogrid',
+            url: '/purchase/stock/getCombogrid',
             queryParams: {
                 type: 1
             },
