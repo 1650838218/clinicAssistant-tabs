@@ -14,8 +14,9 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
     var ajax = layui.ajax;
     var utils = layui.utils;
     var rootMapping = '/system/dictionary';
+    var leftTableId = 'left-table';
     var detailTableId = 'detail-table';
-    var currentDictTypeId = '';
+    var currentDictKey = '';
     form.render();
 
     $('#add-btn').on('click', resetForm);// 新增字典
@@ -28,9 +29,9 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
         url: rootMapping + '/queryPage',
         height: 'full-85',
         page: {
-            limit: 20,
-            groups: 3,
-            layout: ['prev', 'page', 'next','count','refresh']
+            limit: 10,
+            groups: 2,
+            layout: ['prev', 'page', 'next','count']
         },
         text: {
             none: '暂无数据！'
@@ -46,20 +47,52 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
             $('#add-btn').click();// 清空表单
             $('#del-btn').addClass('layui-btn-disabled').attr('disabled','disabled');// 禁用 删除按钮
             // 选中当前行
-            /*var pharmacyItemId = $('#item-form input[name="pharmacyItemId"]').val();
-            if (utils.isNotNull(pharmacyItemId)) {
+            if (utils.isNotNull(currentDictKey)) {
                 var tableData = table.cache[leftTableId];
                 if (utils.isNotEmpty(tableData)) {
                     for (var i = 0; i < tableData.length; i++) {
-                        if (parseInt(tableData[i].pharmacyItemId) === parseInt(pharmacyItemId)) {
+                        if (tableData[i].dictKey === currentDictKey) {
                             var rowIndex = tableData[i][table.config.indexName];
                             $('.left-panel .layui-table tbody tr[data-index="' + rowIndex + '"]').find('div').addClass('select');
                         }
                     }
                 }
-            }*/
+            }
         }
     });
+
+    // 监听行单击事件
+    table.on('row(left-table)', function (obj) {
+        $('.left-panel .layui-table tbody tr div').removeClass('select');
+        $(obj.tr).find('div').addClass('select');
+        $('#del-btn').removeClass('layui-btn-disabled').removeAttr('disabled');
+        // 获取id，根据ID查询多级字典，表单设置值
+        var dictKey = obj.data.dictKey;
+        getByDictKey(dictKey);
+
+    });
+
+    // 左侧列表的点击事件 根据key查询字典
+    function getByDictKey(dictKey) {
+        if (dictKey) {
+            currentDictKey = dictKey;
+            try {
+                $.getJSON(rootMapping + '/findAllByDictKey', {"dictKey": dictKey}, function (dictionaryVo) {
+                    if (dictionaryVo) {
+                        assigForm(dictionaryVo.dictType, '编辑字典');// 给表单赋值
+                        detailTable.reload({data: dictionaryVo.dictItem})// 加载表格
+                    } else {
+                        layer.alert(MSG.query_fail, {icon: 2});
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+                layer.alert(MSG.query_fail, {icon: 2});
+            }
+        } else {
+            layer.msg(MSG.select_one);
+        }
+    };
 
     // 搜索
     $(".left-panel .left-search .eleTree-search").on("change", function () {
@@ -286,16 +319,13 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
             $(obj.elem).removeAttr('disabled');
             return false;
         }
-        ajax.postJSON(rootMapping + '/save', {dictType: dictionary,dictItem: dictItems}, function (dict) {
-            if (!!dict && !!dict.dictId) {
-                assigForm(dict);// 赋值
-                table.reload(detailTableId, {data: dict.dictItem});
-                if (!!leftTree) leftTree = leftTree.reload({async: false});
-                leftTree.setHighLight(dict.dictTypeId);// 高亮显示当前菜单
-                currentDictTypeId = dict.dictTypeId;
-                layer.msg(MSG.save_success);
+        ajax.postJSON(rootMapping + '/save', {dictType: dictionary,dictItem: dictItems}, function (returnResult) {
+            layer.msg(returnResult.msg);
+            if (returnResult.success) {
+                currentDictKey = returnResult.listObj[0].dictKey;
+                leftTable.reload();
             } else {
-                layer.msg(MSG.save_fail);
+                console.log(returnResult.errorMsg);
             }
             $(obj.elem).removeClass('layui-btn-disabled');// 按钮可用
             $(obj.elem).removeAttr('disabled');

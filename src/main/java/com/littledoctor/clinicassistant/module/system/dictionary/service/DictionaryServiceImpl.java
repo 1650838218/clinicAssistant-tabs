@@ -1,5 +1,6 @@
 package com.littledoctor.clinicassistant.module.system.dictionary.service;
 
+import com.littledoctor.clinicassistant.common.constant.Constant;
 import com.littledoctor.clinicassistant.common.entity.ReturnResult;
 import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.module.system.dictionary.dao.DictionaryRepository;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -19,7 +21,11 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.*;
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: 周俊林
@@ -27,6 +33,7 @@ import java.util.*;
  * @Description: 数据字典
  */
 @Service
+@Transactional
 public class DictionaryServiceImpl implements DictionaryService {
 
     private Logger log = LoggerFactory.getLogger(DictionaryServiceImpl.class);
@@ -42,6 +49,11 @@ public class DictionaryServiceImpl implements DictionaryService {
      */
     @Override
     public Page<DictionaryEntity> queryPage(String keyword, Pageable page) {
+        if (page != null) {
+            page = PageRequest.of(page.getPageNumber() - 1,page.getPageSize());
+        } else {
+            page = PageRequest.of(0, Constant.PAGE_SIZE);
+        }
         return dictionaryRepository.findAll(new Specification<DictionaryEntity>() {
             @Override
             public Predicate toPredicate(Root<DictionaryEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -72,11 +84,10 @@ public class DictionaryServiceImpl implements DictionaryService {
                 this.deleteByDictKey(dictType.getDictKey());
                 List<DictionaryEntity> entityList = new ArrayList<>();
                 dictType.setDictType(1);
-                dictType.setIsValid(1);
+                dictType.setIsUse(1);
                 entityList.add(dictType);
                 for (int i = 0; i < dictItem.size(); i++) {
                     DictionaryEntity de = dictItem.get(i);
-                    de.setIsValid(1);
                     de.setDictType(2);
                     de.setDictKey(dictType.getDictKey());
                     entityList.add(de);
@@ -96,7 +107,7 @@ public class DictionaryServiceImpl implements DictionaryService {
      * @return
      */
     @Override
-    public boolean delete(Long dictId) throws Exception {
+    public boolean deleteByDictId(Long dictId) throws Exception {
         dictionaryRepository.deleteById(dictId);
         return true;
     }
@@ -120,14 +131,11 @@ public class DictionaryServiceImpl implements DictionaryService {
      * @throws Exception
      */
     @Override
-    public DictionaryVo getById(Long dictId) throws Exception {
+    public DictionaryEntity getById(Long dictId) throws Exception {
         if (!ObjectUtils.isEmpty(dictId)) {
-            DictionaryEntity de = dictionaryRepository.findById(dictId).get();// 根据ID查询字典
-            if (!ObjectUtils.isEmpty(de)) {
-                return this.getByDictKey(de.getDictKey());
-            }
+            return dictionaryRepository.findById(dictId).get();// 根据ID查询字典
         }
-        return new DictionaryVo();
+        return new DictionaryEntity();
     }
 
     /**
@@ -179,14 +187,40 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     /**
-     * 根据字典键查询字典，常用于下拉框
+     * 根据字典键查询字典（包含所有的）
+     * @param dictKey
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public DictionaryVo findAllByDictKey(String dictKey) throws Exception {
+        if (!StringUtils.isEmpty(dictKey)) {
+            List<DictionaryEntity> result = dictionaryRepository.findAllByDictKey(dictKey);
+            if (!ObjectUtils.isEmpty(result)) {
+                DictionaryVo dvo = new DictionaryVo();
+                dvo.setDictItem(new ArrayList<>());
+                for (int i = 0; i < result.size(); i++) {
+                    if (result.get(i).getDictType() == 1) {
+                        dvo.setDictType(result.get(i));
+                    } else {
+                        dvo.getDictItem().add(result.get(i));
+                    }
+                }
+                return dvo;
+            }
+        }
+        return new DictionaryVo();
+    }
+
+    /**
+     * 根据字典键查询字典（只包含可用的）
      * @param dictKey
      * @return
      */
     @Override
-    public DictionaryVo getByDictKey(String dictKey) throws Exception {
+    public DictionaryVo findUsedByDictKey(String dictKey) throws Exception {
         if (!StringUtils.isEmpty(dictKey)) {
-            List<DictionaryEntity> result = dictionaryRepository.getByDictKey(dictKey);
+            List<DictionaryEntity> result = dictionaryRepository.findUsedByDictKey(dictKey);
             if (!ObjectUtils.isEmpty(result)) {
                 DictionaryVo dvo = new DictionaryVo();
                 dvo.setDictItem(new ArrayList<>());

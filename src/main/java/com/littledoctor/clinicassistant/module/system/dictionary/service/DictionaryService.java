@@ -6,7 +6,6 @@ import com.littledoctor.clinicassistant.module.system.dictionary.vo.DictionaryVo
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Dictionary;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +21,7 @@ public interface DictionaryService {
      * @param page
      * @return
      */
-    Page<DictionaryEntity> queryPage(String keyword, Pageable page);
+    Page<DictionaryEntity> queryPage(String keyword, Pageable page) throws Exception;
 
     /**
      * 保存数据字典
@@ -33,18 +32,24 @@ public interface DictionaryService {
 
     /**
      * 删除数据字典
-     * @param id
+     * @param dictId
      * @return
      */
-    boolean delete(Long dictId) throws Exception;
+    boolean deleteByDictId(Long dictId) throws Exception;
 
     /**
      * 根据id查询字典
      * @param dictId
      * @return
      */
-    DictionaryVo getById(Long dictId) throws Exception;
+    DictionaryEntity getById(Long dictId) throws Exception;
 
+    /**
+     * 根据字典键删除字典
+     * @param dictKey
+     * @return
+     * @throws Exception
+     */
     boolean deleteByDictKey(String dictKey) throws Exception;
 
     /**
@@ -53,7 +58,7 @@ public interface DictionaryService {
      * @param dictName
      * @return
      */
-    boolean repeatDictName(Long dictId, String dictName);
+    boolean repeatDictName(Long dictId, String dictName) throws Exception;
 
     /**
      * 检查字典键是否重复
@@ -61,17 +66,24 @@ public interface DictionaryService {
      * @param dictKey
      * @return
      */
-    boolean repeatDictKey(Long dictId, String dictKey);
+    boolean repeatDictKey(Long dictId, String dictKey) throws Exception;
 
     /**
-     * 根据字典键查询字典，常用于下拉框
+     * 根据字典键查询字典（所有的）
      * @param dictKey
      * @return
      */
-    DictionaryVo getByDictKey(String dictKey) throws Exception;
+    DictionaryVo findAllByDictKey(String dictKey) throws Exception;
 
     /**
-     * 根据字典键查询字典
+     * 根据字典键查询字典（只包含可用的）
+     * @param dictKey
+     * @return
+     */
+    DictionaryVo findUsedByDictKey(String dictKey) throws Exception;
+
+    /**
+     * 根据字典键查询字典（只包含可用的）
      * @param dictKey
      * @return
      */

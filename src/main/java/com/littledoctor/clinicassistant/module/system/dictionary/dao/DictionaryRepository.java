@@ -16,12 +16,20 @@ import java.util.List;
 public interface DictionaryRepository extends JpaRepository<DictionaryEntity, Long>, JpaSpecificationExecutor<DictionaryEntity> {
 
     /**
-     * 根据字典键查询字典
+     * 根据字典键查询字典(只包含可用的)
      * @param dictKey
      * @return
      */
-    @Query(value = "select t from DictionaryEntity t where t.dictKey = ?1 and t.isValid = 1 order by t.dictOrder")
-    List<DictionaryEntity> getByDictKey(String dictKey);
+    @Query(value = "select t from DictionaryEntity t where t.dictKey = ?1 and t.isUse = 1 order by t.dictOrder")
+    List<DictionaryEntity> findUsedByDictKey(String dictKey);
+
+    /**
+     * 根据字典键查询字典(只包含可用的)
+     * @param dictKey
+     * @return
+     */
+    @Query(value = "select t from DictionaryEntity t where t.dictKey = ?1 order by t.dictOrder")
+    List<DictionaryEntity> findAllByDictKey(String dictKey);
 
     /**
      * 根据字典键删除字典
@@ -37,7 +45,7 @@ public interface DictionaryRepository extends JpaRepository<DictionaryEntity, Lo
      * @param dictKey
      * @return
      */
-    @Query(value = "select t from DictionaryEntity t where t.dictKey = ?1 and t.isValid = 1 and t.dictType = 2 order by t.dictOrder")
+    @Query(value = "select t from DictionaryEntity t where t.dictKey = ?1 and t.isUse = 1 and t.dictType = 2 order by t.dictOrder")
     List<DictionaryEntity> getDictItemByDictKey(String dictKey);
 
     /**
@@ -46,6 +54,6 @@ public interface DictionaryRepository extends JpaRepository<DictionaryEntity, Lo
      * @param dictValue
      * @return
      */
-    @Query(value = "select t.dictName from DictionaryEntity t where t.dictKey = ?1 and t.dictValue = ?2 and t.isValid = 1 and t.dictType = 2")
+    @Query(value = "select t.dictName from DictionaryEntity t where t.dictKey = ?1 and t.dictValue = ?2 and t.dictType = 2")
     String getDictNameByDictKeyAndDictValue(String dictKey, String dictValue);
 }

@@ -29,4 +29,8 @@ public interface Constant {
 
     /** 字符串分隔符 */
     public static final String SPLIT_STR = ",";
+
+    /** 每页记录数 */
+    public static final int PAGE_SIZE = 20;
+
 }

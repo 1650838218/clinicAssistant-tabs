@@ -69,14 +69,14 @@ public class DictionaryController {
 
     /**
      * 删除数据字典
-     * @param id
+     * @param dictId
      * @return
      */
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public boolean delete(@PathVariable("id") Long id) {
+    @RequestMapping(value = "/deleteByDictId/{dictId}", method = RequestMethod.DELETE)
+    public boolean deleteByDictId(@PathVariable("dictId") Long dictId) {
         try {
-            Assert.notNull(id,"删除数据字典时id不能为空");
-            return dictionaryService.delete(id);
+            Assert.notNull(dictId,"删除数据字典时id不能为空");
+            return dictionaryService.deleteByDictId(dictId);
         } catch (Exception e) {
             log.error(e.getMessage(),e);
             return false;
@@ -84,15 +84,32 @@ public class DictionaryController {
     }
 
     /**
-     * 根据ID查询字典
-     * @param dictionaryId
+     * 删除数据字典
+     * @param dictKey
      * @return
      */
-    @RequestMapping(value = "/getById", method = RequestMethod.GET)
-    public DictionaryVo getById(Long dictionaryId) {
+    @RequestMapping(value = "/deleteByDictKey/{dictKey}", method = RequestMethod.DELETE)
+    public boolean deleteByDictKey(@PathVariable("dictKey") String dictKey) {
         try {
-            Assert.notNull(dictionaryId, Message.PARAMETER_IS_NULL);
-            return dictionaryService.getById(dictionaryId);
+            Assert.hasLength(dictKey,"删除数据字典时字典键不能为空");
+            return dictionaryService.deleteByDictKey(dictKey);
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
+            return false;
+        }
+    }
+
+
+    /**
+     * 根据ID查询字典
+     * @param dictId
+     * @return
+     */
+    @RequestMapping(value = "/getByDictId", method = RequestMethod.GET)
+    public DictionaryEntity getByDictId(Long dictId) {
+        try {
+            Assert.notNull(dictId, Message.PARAMETER_IS_NULL);
+            return dictionaryService.getById(dictId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -100,15 +117,31 @@ public class DictionaryController {
     }
 
     /**
-     * 根据字典键查询字典，常用于下拉框
+     * 根据字典键查询字典（包含不启用的）
      * @param dictKey
      * @return
      */
-    @RequestMapping(value = "/getByDictKey", method = RequestMethod.GET)
-    public DictionaryVo getByDictKey(@RequestParam String dictKey) {
+    @RequestMapping(value = "/findAllByDictKey", method = RequestMethod.GET)
+    public DictionaryVo findAllByDictKey(@RequestParam String dictKey) {
         try {
             Assert.hasLength(dictKey, Message.PARAMETER_IS_NULL);
-            return dictionaryService.getByDictKey(dictKey);
+            return dictionaryService.findAllByDictKey(dictKey);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return new DictionaryVo();
+    }
+
+    /**
+     * 根据字典键查询字典（只包含启用的）
+     * @param dictKey
+     * @return
+     */
+    @RequestMapping(value = "/findUsedByDictKey", method = RequestMethod.GET)
+    public DictionaryVo findUsedByDictKey(@RequestParam String dictKey) {
+        try {
+            Assert.hasLength(dictKey, Message.PARAMETER_IS_NULL);
+            return dictionaryService.findUsedByDictKey(dictKey);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
