@@ -54,6 +54,8 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
                         if (tableData[i].dictKey === currentDictKey) {
                             var rowIndex = tableData[i][table.config.indexName];
                             $('.left-panel .layui-table tbody tr[data-index="' + rowIndex + '"]').find('div').addClass('select');
+                            $('#del-btn').removeClass('layui-btn-disabled').removeAttr('disabled');
+                            getByDictKey(currentDictKey);
                         }
                     }
                 }
@@ -95,8 +97,13 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
     };
 
     // 搜索
-    $(".left-panel .left-search .eleTree-search").on("change", function () {
-
+    var lastKeyword = ''
+    $(".left-panel .left-search .search-input").on("change", function () {
+        var keyword = $(this).val();
+        if (keyword != lastKeyword) {
+            lastKeyword = keyword;
+            leftTable.reload({where:{keyword:keyword}});
+        }
     });
 
     // 初始化表格
@@ -153,7 +160,7 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
                 }
             }
             // 如果表格行全部被删除，则新增一个空白行
-            var newRow = [{"dictItemName": "","dictItemValue": "","isUse": "1","dictItemId": ''}];
+            var newRow = [{"dictName": "","dictValue": "","isUse": "1","dictId": ''}];
             detailTable.reload({data: newRow});   // 将新数据重新载入表格
         }
     });
@@ -178,18 +185,16 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
     function resetForm() {
         // 表单清空
         assigForm({
-            dictionaryId: '',
-            menuId: '',
-            menuName: '',
-            dictionaryName: '',
-            dictionaryKey: ''
+            dictId: '',
+            dictName: '',
+            dictKey: ''
         },"新增字典");
         // 重置表格
         var newRow = [{
-            "dictItemName": "",
-            "dictItemValue": "",
+            "dictName": "",
+            "dictValue": "",
             "isUse": "1",
-            "dictItemId": ''
+            "dictId": ''
         }];
         table.reload(detailTableId, {
             data: newRow   // 将新数据重新载入表格
@@ -247,12 +252,14 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
      * 删除菜单
      */
     function delDictionaryFun() {
-        if (!!currentDictTypeId) {
+        if (currentDictKey) {
             layer.confirm(MSG.delete_confirm + '此字典吗？', {icon: 3, title: '提示'}, function (index) {
-                ajax.delete(rootMapping + '/delete/' + currentDictTypeId, function (data, textStatus, jqXHR) {
+                ajax.delete(rootMapping + '/deleteByDictKey/' + currentDictKey, function (data, textStatus, jqXHR) {
                     if (data) {
                         layer.msg(MSG.delete_success);
-                        if (!!leftTree) leftTree = leftTree.reload();
+                        currentDictKey = undefined;
+                        $('.left-search .search-input').val('');
+                        leftTable.reload({where:{keyword:''}});
                         resetForm();
                     } else {
                         layer.msg(MSG.delete_fail);
@@ -312,6 +319,7 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
         $(obj.elem).addClass('layui-btn-disabled');// 按钮禁用，防止重复提交
         $(obj.elem).attr('disabled', 'disabled');
         var dictionary = obj.field;// 表单值
+        dictionary.isUse = 1;
         var dictItems = table.cache[detailTableId];// 获取表格数据
         dictItems = verifyTable(dictItems);// 表格数据校验
         if (!dictItems) {
@@ -323,13 +331,14 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
             layer.msg(returnResult.msg);
             if (returnResult.success) {
                 currentDictKey = returnResult.listObj[0].dictKey;
-                leftTable.reload();
+                $('.left-search .search-input').val('');
+                leftTable.reload({where:{keyword: ''}});
             } else {
                 console.log(returnResult.errorMsg);
             }
             $(obj.elem).removeClass('layui-btn-disabled');// 按钮可用
             $(obj.elem).removeAttr('disabled');
-        });
+        },obj.elem);
         return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
     };
 });
