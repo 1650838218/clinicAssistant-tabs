@@ -27,34 +27,6 @@ public class TreeUtils {
      * @param source
      * @return
      */
-    public static List<TreeEntity> listToTree1(List<TreeEntity> source) {
-        List<TreeEntity> result = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(source)) {
-            for (TreeEntity treeEntity : source) {
-                if (treeEntity.getpId().equals(Constant.ROOT_NODE_ID)) {// 根节点
-                    result.add(treeEntity);
-                }
-                // 找每个节点的子节点
-                for (TreeEntity it : source) {
-                    /*1. Integer 类型的值在[-128,127] 期间,Integer 用 “==”是可以的   ， Integer  与 int 类型比较（==）比较的是值。
-                      2. 如果要比较Integer的值，比较靠谱的是通过Integer.intValue();这样出来的就是int值，就可以直接比较了；或者equals()比较*/
-                    if (it.getpId().equals(treeEntity.getId())) {
-                        if (treeEntity.getChildren() == null) {
-                            treeEntity.setChildren(new ArrayList<>());
-                        }
-                        treeEntity.getChildren().add(it);
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
-    /**
-     * 将list转换为树形结构
-     * @param source
-     * @return
-     */
     public static <T extends TreeEntity> List<T> listToTree(List<T> source) {
         List<T> result = new ArrayList<>();
         if (!CollectionUtils.isEmpty(source)) {

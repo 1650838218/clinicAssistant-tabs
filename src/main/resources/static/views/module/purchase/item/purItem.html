@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="/lib/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/lib/layuiadmin/layui/css/extend/eleTree.css" media="all">
     <link rel="stylesheet" href="/css/my.css" media="all">
     <style type="text/css">
         .layui-form-item {
@@ -31,10 +32,10 @@
             <div class="left-search">
                 <input type="text" placeholder="品目名称" autocomplete="off" class="layui-input">
                 <div class="layui-btn-group">
-                    <button id="add-btn" class="layui-btn layui-btn-normal layui-btn-sm" title="新增">
+                    <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="addPurItem" title="新增">
                         <i class="layui-icon layui-icon-add-1"></i>
                     </button>
-                    <button id="del-btn" class="layui-btn layui-btn-normal layui-btn-sm layui-btn-disabled" title="删除" disabled="disabled">
+                    <button class="layui-btn layui-btn-normal layui-btn-sm layui-btn-disabled" lay-event="deletePurItem" title="删除" disabled="disabled">
                         <i class="layui-icon layui-icon-delete"></i>
                     </button>
                 </div>
@@ -51,7 +52,7 @@
                 </div>
                 <div class="layui-card-body">
                     <!--中药材-->
-                    <form id="type1-form" class="layui-form" lay-filter="type1-form">
+                    <form id="type1-form" class="layui-form" lay-filter="type1-form" style="display: none">
                         <input type="hidden" name="purItemId" value="">
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm4">
@@ -157,7 +158,7 @@
                         </div>
                     </form>
                     <!--中成药-->
-                    <form id="type2-form" class="layui-form" lay-filter="type2-form">
+                    <form id="type2-form" class="layui-form" lay-filter="type2-form" style="display: none">
                         <input type="hidden" name="purItemId" value="">
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm4">
@@ -290,7 +291,7 @@
                         </div>
                     </form>
                     <!--中药饮片-->
-                    <form id="type3-form" class="layui-form" lay-filter="type3-form">
+                    <form id="type3-form" class="layui-form" lay-filter="type3-form" style="display: none">
                         <input type="hidden" name="purItemId" value="">
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm4">
@@ -407,7 +408,7 @@
                         </div>
                     </form>
                     <!--医疗用品 可卖可自己用-->
-                    <form id="type4-form" class="layui-form" lay-filter="type4-form">
+                    <form id="type4-form" class="layui-form" lay-filter="type4-form" style="display: none">
                         <input type="hidden" name="purItemId" value="">
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm4">
@@ -499,7 +500,7 @@
                         </div>
                     </form>
                     <!--其他耗材 非卖品-->
-                    <form id="type5-form" class="layui-form" lay-filter="type5-form">
+                    <form id="type5-form" class="layui-form" lay-filter="type5-form" style="display: none">
                         <input type="hidden" name="purItemId" value="">
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm4">
@@ -540,6 +541,12 @@
                             </div>
                         </div>
                     </form>
+                    <!--新增品目-->
+                    <div class="blank-tip" style="display: flex;align-items: center;justify-content: center;">
+                        <button type="button" class="layui-btn layui-btn-lg layui-btn-normal" lay-event="addPurItem">
+                            <i class="layui-icon layui-icon-add-1"></i> 新增品目
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -547,9 +554,9 @@
 </div>
 <script src="/lib/layuiadmin/layui/layui.js"></script>
 <script src="/js/common/constant.js"></script>
+<script src="/views/module/purchase/item/purItem.js"></script>
 <script src="/lib/pinyin/pinyin_dict_withtone.js"></script>
 <script src="/lib/pinyin/pinyin_dict_polyphone.js"></script>
 <script src="/lib/pinyin/pinyinUtil.js"></script>
-<script src="/views/module/purchase/item/purItem.js"></script>
 </body>
 </html>

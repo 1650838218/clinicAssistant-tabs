@@ -126,7 +126,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                     if (pbi.getPharmacyItemId() != null) {
                         PurItemEntity pi = purItemService.getById(String.valueOf(pbi.getPharmacyItemId()));
                         if (pi != null) {
-                            pbi.setPharmacyItemName(pi.getPharmacyItemName());
+                            /*pbi.setPharmacyItemName(pi.getPharmacyItemName());
                             pbi.setManufacturer(pi.getManufacturer());
                             pbi.setSpecifications(pi.getSpecifications());
                             pbi.setUnitConvert(pi.getUnitConvert());
@@ -136,7 +136,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                             }
                             // 设置数量单位名称
                             if (sldw != null) pbi.setPurchaseUnitName(sldw.get(pi.getPurchaseUnit()));
-                            if (kcdw != null) pbi.setStockUnitName(kcdw.get(pi.getStockUnit()));
+                            if (kcdw != null) pbi.setStockUnitName(kcdw.get(pi.getStockUnit()));*/
                         }
                     }
                 }

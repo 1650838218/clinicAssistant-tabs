@@ -1,19 +1,28 @@
 package com.littledoctor.clinicassistant.module.purchase.item.controller;
 
+import com.littledoctor.clinicassistant.common.constant.Constant;
+import com.littledoctor.clinicassistant.common.constant.DictionaryKey;
+import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.common.entity.LayuiTableEntity;
 import com.littledoctor.clinicassistant.common.entity.SelectOption;
+import com.littledoctor.clinicassistant.common.util.TreeUtils;
 import com.littledoctor.clinicassistant.module.purchase.item.entity.PurItemEntity;
 import com.littledoctor.clinicassistant.module.purchase.item.service.PurItemService;
+import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryEntity;
+import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: 周俊林
@@ -28,6 +37,9 @@ public class PurItemController {
 
     @Autowired
     private PurItemService purItemService;
+
+    @Autowired
+    private DictionaryService dictionaryService;
 
     /**
      * 分页查询
@@ -45,6 +57,56 @@ public class PurItemController {
             log.error(e.getMessage(),e);
         }
         return new LayuiTableEntity<>();
+    }
+
+    /**
+     * 查询所有品目目录
+     * @return
+     */
+    @RequestMapping(value = "/queryTree", method = RequestMethod.GET)
+    public Map<String, Object> queryTree() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", "0");
+        map.put("data", new ArrayList<>());
+        try {
+            // 查询采购品目分类
+            List<DictionaryEntity> dictItems = dictionaryService.getDictItemByDictKey(DictionaryKey.PUR_ITEM_CGPMFL);
+            if (!ObjectUtils.isEmpty(dictItems)) {
+                // 查询所有的品目
+                List<PurItemEntity> purItemList = purItemService.findTreeEntity();
+                if (!ObjectUtils.isEmpty(purItemList)) {
+                    Map<String, Integer> indexMap = new HashMap<>();
+                    List<TreeEntity> result = new ArrayList<>();
+                    for (int i = 0; i < dictItems.size(); i++) {
+                        TreeEntity te = new TreeEntity();
+                        te.setId("dictVal_" + dictItems.get(i).getDictValue());
+                        te.setLabel(dictItems.get(i).getDictName());
+                        te.setpId(Constant.ROOT_NODE_ID);
+                        te.setChildren(new ArrayList<>());
+                        result.add(te);
+                        // key dictValue, value: 索引
+                        indexMap.put(dictItems.get(i).getDictValue(), i);
+                    }
+                    for (int i = 0; i < purItemList.size(); i++) {
+                        String key = purItemList.get(i).getPurItemType();
+                        if (indexMap.containsKey(key)) {
+                            Integer index = indexMap.get(key);
+                            TreeEntity te = new TreeEntity();
+                            te.setpId("dictVal_" + key);
+                            te.setId(String.valueOf(purItemList.get(i).getPurItemId()));
+                            te.setLabel(purItemList.get(i).getPurItemName());
+                            result.get(index).getChildren().add(te);
+                        }
+                    }
+                    map.put("data", result);
+                }
+            }
+        } catch (Exception e) {
+            map.put("code", "1");
+            map.put("data", null);
+            log.error(e.getMessage(), e);
+        }
+        return map;
     }
 
     /**

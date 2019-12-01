@@ -88,4 +88,11 @@ public interface PurItemService {
      * @return
      */
     List<PurItemEntity> getCombogrid(String keywords) throws Exception;
+
+    /**
+     * 查询品目的id和名称，并装配到TreeEntity中
+     * @return
+     * @throws Exception
+     */
+    List<PurItemEntity> findTreeEntity() throws Exception;
 }

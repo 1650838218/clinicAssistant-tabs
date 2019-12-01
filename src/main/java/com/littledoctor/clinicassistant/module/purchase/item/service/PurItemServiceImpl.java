@@ -1,5 +1,6 @@
 package com.littledoctor.clinicassistant.module.purchase.item.service;
 
+import com.littledoctor.clinicassistant.common.constant.DictionaryKey;
 import com.littledoctor.clinicassistant.common.entity.SelectOption;
 import com.littledoctor.clinicassistant.module.purchase.item.dao.PurItemRepository;
 import com.littledoctor.clinicassistant.module.purchase.item.entity.PurItemEntity;
@@ -215,15 +216,25 @@ public class PurItemServiceImpl implements PurItemService {
         } else {
             result = this.queryByName(keywords);
         }
-        if (result != null && result.size() > 0) {
+        /*if (result != null && result.size() > 0) {
             // 查询药品类型字典，将显示值set进去
-            Map<String, String> ypfl = dictionaryService.getItemMapByKey("YPFL");// 药品分类
+            Map<String, String> ypfl = dictionaryService.getItemMapByKey(DictionaryKey.PUR_ITEM_CGPMFL);// 采购品目分类
             Map<String, String> sldw = dictionaryService.getItemMapByKey("SLDW");// 数量单位
             for (int i = 0, len = result.size(); i < len; i++) {
-                if (ypfl != null) result.get(i).setPharmacyItemTypeName(ypfl.get(result.get(i).getPharmacyItemType()));
-                if (sldw != null) result.get(i).setPurchaseUnitName(sldw.get(result.get(i).getPurchaseUnit()));
+                if (ypfl != null) result.get(i).setPurItemTypeName(ypfl.get(result.get(i).getPurItemType()));
+                if (sldw != null) result.get(i).setPurUnitName(sldw.get(result.get(i).getPurUnit()));
             }
-        }
+        }*/
         return result;
+    }
+
+    /**
+     * 查询品目的id和名称，并装配到TreeEntity中
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<PurItemEntity> findTreeEntity() throws Exception {
+        return purItemRepository.findAll();
     }
 }

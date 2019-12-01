@@ -21,10 +21,10 @@ public class TreeEntity {
     protected String label;
 
     /*节点Id*/
-    protected Long id;
+    protected String id;
 
     /*节点pId*/
-    protected Long pId;
+    protected String pId;
 
     protected List<TreeEntity> children;
 
@@ -32,10 +32,21 @@ public class TreeEntity {
 
     }
 
-    public TreeEntity(String label, Long id, Long pId) {
+    public TreeEntity(String label, String id) {
+        this.label = label;
+        this.id = id;
+    }
+
+    public TreeEntity(String label, String id, String pId) {
         this.label = label;
         this.id = id;
         this.pId = pId;
+    }
+
+    public TreeEntity(String label, Long id, Long pId) {
+        this.label = label;
+        this.id = String.valueOf(id);
+        this.pId = String.valueOf(pId);
     }
 
     public String getLabel() {
@@ -46,19 +57,19 @@ public class TreeEntity {
         this.label = label;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Long getpId() {
+    public String getpId() {
         return pId;
     }
 
-    public void setpId(Long pId) {
+    public void setpId(String pId) {
         this.pId = pId;
     }
 

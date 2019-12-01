@@ -53,6 +53,10 @@
     padding: 4px 0px;
 }
 
+.left-panel .eleTree {
+    overflow: auto;
+}
+
 /*右侧面板*/
 .right-panel {
     padding: 0px 10px;

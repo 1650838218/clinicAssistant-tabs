@@ -1,6 +1,7 @@
 package com.littledoctor.clinicassistant.module.purchase.item.dao;
 
 import com.littledoctor.clinicassistant.common.entity.SelectOption;
+import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.module.purchase.item.entity.PurItemEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -19,7 +20,7 @@ public interface PurItemRepository extends JpaRepository<PurItemEntity,Integer>,
      * 获取selecOption
      * @return
      */
-    @Query(value = "select new com.littledoctor.clinicassistant.common.entity.SelectOption(t.pharmacyItemId, t.pharmacyItemName) from PurItemEntity t ")
+    @Query(value = "select new com.littledoctor.clinicassistant.common.entity.SelectOption(t.purItemId, t.purItemName) from PurItemEntity t ")
     List<SelectOption> getSelectOption();
 
     /**
@@ -27,8 +28,9 @@ public interface PurItemRepository extends JpaRepository<PurItemEntity,Integer>,
      * @return
      * @param keywords
      */
-    @Query(value = "select new com.littledoctor.clinicassistant.common.entity.SelectOption(t.pharmacyItemId, t.pharmacyItemName) " +
-            "from PurItemEntity t where t.pharmacyItemName like concat('%',?1,'%') or t.fullPinyin like concat('%',?1,'%') " +
-            "or t.abbreviation like concat('%',?1,'%')")
+    @Query(value = "select new com.littledoctor.clinicassistant.common.entity.SelectOption(t.purItemId, t.purItemName) " +
+            "from PurItemEntity t where t.purItemName like concat('%',?1,'%') or t.fullPinyin like concat('%',?1,'%') " +
+            "or t.abbrPinyin like concat('%',?1,'%')")
     List<SelectOption> getSelectOption(String keywords);
+
 }
