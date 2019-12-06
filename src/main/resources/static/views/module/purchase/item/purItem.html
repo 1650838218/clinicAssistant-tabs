@@ -23,6 +23,19 @@
         .layui-textarea {
             min-height: 70px;
         }
+        .layui-layer-page .layui-layer-content {
+            position: relative;
+            overflow: visible !important;
+        }
+        .subhead-red {
+            color: red;
+            font-size: 10px;
+        }
+        .subhead-black {
+            color: black;
+            font-size: 1.17em;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -48,7 +61,7 @@
         <div class="right-panel">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    <h3><b>新增品目</b></h3>
+                    <h3><b>新增品目</b><span class="subhead-red">（请选择品目分类）</span></h3>
                 </div>
                 <div class="layui-card-body">
                     <!--中药材-->
@@ -542,16 +555,18 @@
                         </div>
                     </form>
                     <!--新增品目-->
-                    <div class="blank-tip" style="display: flex;align-items: center;justify-content: center;">
-                        <button type="button" class="layui-btn layui-btn-lg layui-btn-normal" lay-event="addPurItem">
-                            <i class="layui-icon layui-icon-add-1"></i> 新增品目
-                        </button>
-                    </div>
+                    <form id="add-form" class="layui-form">
+                        <label class="layui-form-label">品目分类：</label>
+                        <div class="layui-input-block">
+                            <select name="purItemType" lay-filter="purItemType"></select>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <script src="/lib/layuiadmin/layui/layui.js"></script>
 <script src="/js/common/constant.js"></script>
 <script src="/views/module/purchase/item/purItem.js"></script>

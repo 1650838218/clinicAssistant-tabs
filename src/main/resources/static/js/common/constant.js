@@ -76,6 +76,11 @@ Date.prototype.format = function(fmt)
     return fmt;
 }
 
+/** 字典键 */
+var DICT_KEY = {
+    PUR_ITEM_CGPMFL : "CGPMFL" // 采购品目分类
+}
+
 //扩展datagrid:动态添加删除editor
 /*$.extend($.fn.datagrid.methods, {
     addEditor : function(jq, param) {

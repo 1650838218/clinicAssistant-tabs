@@ -55,14 +55,21 @@ layui.define(['jquery', 'form'], function (exports) {
             $(elem).filter(":input[type!='button'][type!='file'][type!='image'][type!='radio'][type!='checkbox'][type!='reset'][type!='submit']").val("");
             $(elem).filter(":checkbox,:radio").prop("checked",false);
         },
-        // 拼接下拉框option，数据来源于数据字典；elem：select JQuery对象，dictTypekey：字典键
+        // 根据字典键查询字典项
+        queryDictItem: function (dictKey,success) {
+            if (!this.isNotNull(dictKey)) return [];
+            $.getJSON('/system/dictionary/getDictItemByDictKey', {dictKey:dictKey}, function (dictItemList) {
+                if ($.type(success) === 'function') success(dictItemList);
+            });
+        },
+        // 拼接下拉框option，数据来源于数据字典；elem：select JQuery对象，dictKey：字典键
         splicingOption: function (param) {
             var config = {
                 elem: '',//select JQuery对象
                 tips: '',// 提示信息
                 realValueName: 'dictItemValue',
                 displayValueName: 'dictItemName',
-                url: '/system/dictionary/oneLevel/getItemByKey',
+                url: '/system/dictionary/getDictItemByDictKey',
                 where: {},
                 defaultValue: ''
             };
