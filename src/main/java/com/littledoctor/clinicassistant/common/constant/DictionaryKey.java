@@ -9,4 +9,10 @@ public class DictionaryKey {
 
     /** 采购品目分类 */
     public static final String PUR_ITEM_CGPMFL = "CGPMFL";
+
+    /** 进货包装 采购单位 */
+    public static final String PUR_ITEM_JHBZ = "JHBZ";
+
+    /** 零售单位 库存单位 */
+    public static final String PUR_ITEM_LSDW = "LSDW";
 }

@@ -109,6 +109,7 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
     // 初始化表格
     var detailTable = table.render({
         elem: '#detail-table',
+        height: 'full-186',
         limit: 30,// 每个字典类型最多可以录入30个字典项
         cols: [[
             {field: 'dictName', title: '字典项名称', width: '35%', edit: 'text'},
@@ -144,7 +145,9 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
             } else {
                 dataBak.push(newRow);
             }
+            var scrollTop = $('div[lay-id="' + detailTableId + '"] .layui-table-body').scrollTop();// 获取滚动条位置
             detailTable.reload({data: dataBak});   // 将新数据重新载入表格
+            $('div[lay-id="' + detailTableId + '"] .layui-table-body').scrollTop(scrollTop + 39);// 滚动条滚动到可视区域
         } else if (obj.event === 'delete') {
             // 此处的删除是假删除，必须要将表格保存后才会生效
             // 不去后台删除的原因是：表格会统一跟随字典类型统一保存，页面上被删除的字典项会在保存时自动跟字典类型解除外键关系
@@ -173,9 +176,6 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
         var tableData = table.cache[detailTableId];
         if (tableData.length > parentTrIndex) {
             tableData[parentTrIndex].isUse = obj.elem.checked ? 1 : 0;
-            table.reload(detailTableId, {
-                data: tableData   // 将新数据重新载入表格
-            });
         }
     });
 
@@ -289,7 +289,7 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
             return false;
         }
         for (var i = 0; i < tableData.length; i++) {
-            // 判断是否是空行
+            // 判断是否是空行  TODO 好像有bug
             if (!tableData[i].dictName || !tableData[i].dictValue) {// 表格数据校验
                 layer.alert('表格数据不完整，请补充完整！', {icon: 2});
                 return false;

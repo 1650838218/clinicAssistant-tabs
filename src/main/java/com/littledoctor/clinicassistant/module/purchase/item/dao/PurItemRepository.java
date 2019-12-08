@@ -14,7 +14,7 @@ import java.util.List;
  * @Date: 2018/10/19 20:34
  * @Description: 采购品目
  */
-public interface PurItemRepository extends JpaRepository<PurItemEntity,Integer>, JpaSpecificationExecutor<PurItemEntity> {
+public interface PurItemRepository extends JpaRepository<PurItemEntity,Long>, JpaSpecificationExecutor<PurItemEntity> {
 
     /**
      * 获取selecOption

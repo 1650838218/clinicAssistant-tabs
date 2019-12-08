@@ -67,8 +67,8 @@ layui.define(['jquery', 'form'], function (exports) {
             var config = {
                 elem: '',//select JQuery对象
                 tips: '',// 提示信息
-                realValueName: 'dictItemValue',
-                displayValueName: 'dictItemName',
+                realValueName: 'dictValue',
+                displayValueName: 'dictName',
                 url: '/system/dictionary/getDictItemByDictKey',
                 where: {},
                 defaultValue: ''

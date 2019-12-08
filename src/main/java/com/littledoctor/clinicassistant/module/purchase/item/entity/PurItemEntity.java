@@ -30,8 +30,6 @@ public class PurItemEntity implements java.io.Serializable {
     /** 版本号 */
     private static final long serialVersionUID = 1783651102759294002L;
 
-    /*  */
-
     /** 主键ID */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

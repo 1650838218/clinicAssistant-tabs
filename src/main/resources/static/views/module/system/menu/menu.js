@@ -166,7 +166,6 @@ layui.use(['form', 'eleTree', 'jquery', 'layer'], function () {
             data.field.isValid = data.field.isValid == "on" ? "1" : "0";
             $.post('/system/menu/save', data.field, function (menu) {
                 if (!!menu && !!menu.menuId) {
-                    assigForm(menu, '编辑菜单');// 赋值
                     currentMenuId = menu.menuId;
                     if (!!leftMenuTree) leftMenuTree = leftMenuTree.reload();
                     layer.msg('保存成功！');

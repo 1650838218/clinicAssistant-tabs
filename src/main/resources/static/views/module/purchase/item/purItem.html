@@ -31,10 +31,8 @@
             color: red;
             font-size: 10px;
         }
-        .subhead-black {
-            color: black;
-            font-size: 1.17em;
-            font-weight: bold;
+        .subhead-green {
+            color: green;
         }
     </style>
 </head>
@@ -43,7 +41,7 @@
     <div class="layui-col-md3">
         <div class="left-panel">
             <div class="left-search">
-                <input type="text" placeholder="品目名称" autocomplete="off" class="layui-input">
+                <input type="text" placeholder="品目名称" autocomplete="off" class="layui-input eleTree-search">
                 <div class="layui-btn-group">
                     <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="addPurItem" title="新增">
                         <i class="layui-icon layui-icon-add-1"></i>
@@ -53,7 +51,6 @@
                     </button>
                 </div>
             </div>
-            <!--<table class="layui-hide" lay-filter="left-table" id="left-table"></table>-->
             <div class="eleTree" id="left-tree" lay-filter="left-tree"></div>
         </div>
     </div>
@@ -67,6 +64,7 @@
                     <!--中药材-->
                     <form id="type1-form" class="layui-form" lay-filter="type1-form" style="display: none">
                         <input type="hidden" name="purItemId" value="">
+                        <input type="hidden" name="purItemType">
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm4">
                                 <label class="layui-form-label"><span class="required">*</span>品目名称：</label>
@@ -92,38 +90,32 @@
                         </div>
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm4">
-                                <label class="layui-form-label"><span class="required">*</span>品目分类：</label>
+                                <label class="layui-form-label"><span class="required">*</span>是否有毒：</label>
                                 <div class="layui-input-block">
-                                    <input name="purItemType" class="layui-input" readonly>
-                                </div>
-                            </div>
-                            <div class="layui-col-sm4">
-                                <label class="layui-form-label">是否有毒：</label>
-                                <div class="layui-input-block">
-                                    <input type="radio" name="isPoison" value="true" title="是">
-                                    <input type="radio" name="isPoison" value="false" title="否" checked>
+                                    <input type="radio" name="isPoison" value="1" title="是" lay-verify="required">
+                                    <input type="radio" name="isPoison" value="0" title="否" checked lay-verify="required">
                                 </div>
                             </div>
                         </div>
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm6">
-                                <label class="layui-form-label">性味归经：</label>
+                                <label class="layui-form-label"><span class="required">*</span>性味归经：</label>
                                 <div class="layui-input-block">
-                                    <input name="flavorMeridianTropism" class="layui-input" placeholder="请填写性味归经" autocomplete="off" maxlength="100">
+                                    <input name="flavorMeridianTropism" class="layui-input" placeholder="请填写性味归经" autocomplete="off" maxlength="100" lay-verify="required">
                                 </div>
                             </div>
                             <div class="layui-col-sm6">
-                                <label class="layui-form-label">功效：</label>
+                                <label class="layui-form-label"><span class="required">*</span>功效：</label>
                                 <div class="layui-input-block">
-                                    <input name="efficacy" class="layui-input" placeholder="请填写功效" autocomplete="off" maxlength="100">
+                                    <input name="efficacy" class="layui-input" placeholder="请填写功效" autocomplete="off" maxlength="100" lay-verify="required">
                                 </div>
                             </div>
                         </div>
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm6">
-                                <label class="layui-form-label">用法用量：</label>
+                                <label class="layui-form-label"><span class="required">*</span>用法用量：</label>
                                 <div class="layui-input-block">
-                                    <textarea name="usageDosage" class="layui-textarea" rows="2" maxlength="100" placeholder="请填写用法用量" autocomplete="off" ></textarea>
+                                    <textarea name="usageDosage" class="layui-textarea" rows="2" maxlength="100" placeholder="请填写用法用量" autocomplete="off" lay-verify="required"></textarea>
                                 </div>
                             </div>
                             <div class="layui-col-sm6">
@@ -135,15 +127,15 @@
                         </div>
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm4">
-                                <label class="layui-form-label"><span class="required">*</span>采购单位：</label>
+                                <label class="layui-form-label"><span class="required">*</span>进货包装：</label>
                                 <div class="layui-input-block">
-                                    <select name="purUnit" lay-verify="required" placeholder="请选择采购单位"></select>
+                                    <select name="purUnit" lay-search lay-verify="required" placeholder="请选择进货包装"></select>
                                 </div>
                             </div>
                             <div class="layui-col-sm4">
-                                <label class="layui-form-label"><span class="required">*</span>库存单位：</label>
+                                <label class="layui-form-label"><span class="required">*</span>零售单位：</label>
                                 <div class="layui-input-block">
-                                    <select name="stockUnit" lay-verify="required" placeholder="请选择库存单位"></select>
+                                    <select name="stockUnit" lay-filter="stockUnit" lay-search lay-verify="required" placeholder="请选择零售单位"></select>
                                 </div>
                             </div>
                             <div class="layui-col-sm4">
@@ -155,12 +147,13 @@
                             </div>
                         </div>
                         <div class="layui-row layui-col-space5 layui-form-item">
-                            <div class="layui-col-sm4">
+                            <div class="layui-col-sm6">
                                 <label class="layui-form-label"><span class="required">*</span>库存预警：</label>
-                                <div class="layui-input-block">
+                                <div class="layui-input-inline">
                                     <input name="stockWarn" class="layui-input" placeholder="请填写库存预警"
                                            autocomplete="off" maxlength="10" lay-verify="required|number">
                                 </div>
+                                <div class="layui-form-mid layui-word-aux stockWarnUnit">&lt;零售单位&gt;</div>
                             </div>
                         </div>
                         <div class="layui-row layui-col-space5">
@@ -173,6 +166,7 @@
                     <!--中成药-->
                     <form id="type2-form" class="layui-form" lay-filter="type2-form" style="display: none">
                         <input type="hidden" name="purItemId" value="">
+                        <input type="hidden" name="purItemType">
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm4">
                                 <label class="layui-form-label"><span class="required">*</span>品目名称：</label>
@@ -205,16 +199,10 @@
                                 </div>
                             </div>
                             <div class="layui-col-sm4">
-                                <label class="layui-form-label"><span class="required">*</span>品目分类：</label>
-                                <div class="layui-input-block">
-                                    <select name="purItemType" lay-verify="required" placeholder="请选择品目分类"></select>
-                                </div>
-                            </div>
-                            <div class="layui-col-sm4">
                                 <label class="layui-form-label">是否有毒：</label>
                                 <div class="layui-input-block">
-                                    <input type="radio" name="isPoison" value="true" title="是">
-                                    <input type="radio" name="isPoison" value="false" title="否" checked>
+                                    <input type="radio" name="isPoison" value="1" title="是">
+                                    <input type="radio" name="isPoison" value="0" title="否" checked>
                                 </div>
                             </div>
                         </div>
@@ -268,15 +256,15 @@
                         </div>
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm4">
-                                <label class="layui-form-label"><span class="required">*</span>采购单位：</label>
+                                <label class="layui-form-label"><span class="required">*</span>进货包装：</label>
                                 <div class="layui-input-block">
-                                    <select name="purUnit" lay-verify="required" placeholder="请选择采购单位"></select>
+                                    <select name="purUnit" lay-search lay-verify="required" placeholder="请选择进货包装"></select>
                                 </div>
                             </div>
                             <div class="layui-col-sm4">
-                                <label class="layui-form-label"><span class="required">*</span>库存单位：</label>
+                                <label class="layui-form-label"><span class="required">*</span>零售单位：</label>
                                 <div class="layui-input-block">
-                                    <select name="stockUnit" lay-verify="required" placeholder="请选择库存单位"></select>
+                                    <select name="stockUnit" lay-filter="stockUnit" lay-search lay-verify="required" placeholder="请选择零售单位"></select>
                                 </div>
                             </div>
                             <div class="layui-col-sm4">
@@ -288,12 +276,13 @@
                             </div>
                         </div>
                         <div class="layui-row layui-col-space5 layui-form-item">
-                            <div class="layui-col-sm4">
+                            <div class="layui-col-sm6">
                                 <label class="layui-form-label"><span class="required">*</span>库存预警：</label>
-                                <div class="layui-input-block">
+                                <div class="layui-input-inline">
                                     <input name="stockWarn" class="layui-input" placeholder="请填写库存预警"
                                            autocomplete="off" maxlength="10" lay-verify="required|number">
                                 </div>
+                                <div class="layui-form-mid layui-word-aux stockWarnUnit">&lt;零售单位&gt;</div>
                             </div>
                         </div>
                         <div class="layui-row layui-col-space5">
@@ -306,6 +295,7 @@
                     <!--中药饮片-->
                     <form id="type3-form" class="layui-form" lay-filter="type3-form" style="display: none">
                         <input type="hidden" name="purItemId" value="">
+                        <input type="hidden" name="purItemType">
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm4">
                                 <label class="layui-form-label"><span class="required">*</span>品目名称：</label>
@@ -338,16 +328,10 @@
                                 </div>
                             </div>
                             <div class="layui-col-sm4">
-                                <label class="layui-form-label"><span class="required">*</span>品目分类：</label>
-                                <div class="layui-input-block">
-                                    <select name="purItemType" lay-verify="required" placeholder="请选择品目分类"></select>
-                                </div>
-                            </div>
-                            <div class="layui-col-sm4">
                                 <label class="layui-form-label">是否有毒：</label>
                                 <div class="layui-input-block">
-                                    <input type="radio" name="isPoison" value="true" title="是">
-                                    <input type="radio" name="isPoison" value="false" title="否" checked>
+                                    <input type="radio" name="isPoison" value="1" title="是">
+                                    <input type="radio" name="isPoison" value="0" title="否" checked>
                                 </div>
                             </div>
                         </div>
@@ -385,15 +369,15 @@
                         </div>
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm4">
-                                <label class="layui-form-label"><span class="required">*</span>采购单位：</label>
+                                <label class="layui-form-label"><span class="required">*</span>进货包装：</label>
                                 <div class="layui-input-block">
-                                    <select name="purUnit" lay-verify="required" placeholder="请选择采购单位"></select>
+                                    <select name="purUnit" lay-search lay-verify="required" placeholder="请选择进货包装"></select>
                                 </div>
                             </div>
                             <div class="layui-col-sm4">
-                                <label class="layui-form-label"><span class="required">*</span>库存单位：</label>
+                                <label class="layui-form-label"><span class="required">*</span>零售单位：</label>
                                 <div class="layui-input-block">
-                                    <select name="stockUnit" lay-verify="required" placeholder="请选择库存单位"></select>
+                                    <select name="stockUnit" lay-search lay-filter="stockUnit" lay-verify="required" placeholder="请选择零售单位"></select>
                                 </div>
                             </div>
                             <div class="layui-col-sm4">
@@ -405,12 +389,13 @@
                             </div>
                         </div>
                         <div class="layui-row layui-col-space5 layui-form-item">
-                            <div class="layui-col-sm4">
+                            <div class="layui-col-sm6">
                                 <label class="layui-form-label"><span class="required">*</span>库存预警：</label>
-                                <div class="layui-input-block">
+                                <div class="layui-input-inline">
                                     <input name="stockWarn" class="layui-input" placeholder="请填写库存预警"
                                            autocomplete="off" maxlength="10" lay-verify="required|number">
                                 </div>
+                                <div class="layui-form-mid layui-word-aux stockWarnUnit">&lt;零售单位&gt;</div>
                             </div>
                         </div>
                         <div class="layui-row layui-col-space5">
@@ -423,6 +408,7 @@
                     <!--医疗用品 可卖可自己用-->
                     <form id="type4-form" class="layui-form" lay-filter="type4-form" style="display: none">
                         <input type="hidden" name="purItemId" value="">
+                        <input type="hidden" name="purItemType">
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm4">
                                 <label class="layui-form-label"><span class="required">*</span>品目名称：</label>
@@ -454,12 +440,6 @@
                                            autocomplete="off" maxlength="50" lay-verify="repeat|regExp">
                                 </div>
                             </div>
-                            <div class="layui-col-sm4">
-                                <label class="layui-form-label"><span class="required">*</span>品目分类：</label>
-                                <div class="layui-input-block">
-                                    <select name="purItemType" lay-verify="required" placeholder="请选择品目分类"></select>
-                                </div>
-                            </div>
                         </div>
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm6">
@@ -479,15 +459,15 @@
                         </div>
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm4">
-                                <label class="layui-form-label">采购单位：</label>
+                                <label class="layui-form-label">进货包装：</label>
                                 <div class="layui-input-block">
-                                    <select name="purUnit" placeholder="请选择采购单位"></select>
+                                    <select name="purUnit" lay-search placeholder="请选择进货包装"></select>
                                 </div>
                             </div>
                             <div class="layui-col-sm4">
-                                <label class="layui-form-label">库存单位：</label>
+                                <label class="layui-form-label">零售单位：</label>
                                 <div class="layui-input-block">
-                                    <select name="stockUnit" placeholder="请选择库存单位"></select>
+                                    <select name="stockUnit" lay-search lay-filter="stockUnit" placeholder="请选择零售单位"></select>
                                 </div>
                             </div>
                             <div class="layui-col-sm4">
@@ -498,11 +478,12 @@
                             </div>
                         </div>
                         <div class="layui-row layui-col-space5 layui-form-item">
-                            <div class="layui-col-sm4">
+                            <div class="layui-col-sm6">
                                 <label class="layui-form-label">库存预警：</label>
-                                <div class="layui-input-block">
+                                <div class="layui-input-inline">
                                     <input name="stockWarn" class="layui-input" placeholder="请填写库存预警" autocomplete="off" maxlength="10" lay-verify="number">
                                 </div>
+                                <div class="layui-form-mid layui-word-aux stockWarnUnit">&lt;零售单位&gt;</div>
                             </div>
                         </div>
                         <div class="layui-row layui-col-space5">
@@ -515,18 +496,13 @@
                     <!--其他耗材 非卖品-->
                     <form id="type5-form" class="layui-form" lay-filter="type5-form" style="display: none">
                         <input type="hidden" name="purItemId" value="">
+                        <input type="hidden" name="purItemType">
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm4">
                                 <label class="layui-form-label"><span class="required">*</span>品目名称：</label>
                                 <div class="layui-input-block">
                                     <input type="text" name="purItemName" autocomplete="off" class="layui-input"
                                            maxlength="50" placeholder="请填写品目名称" lay-verify="required|repeat">
-                                </div>
-                            </div>
-                            <div class="layui-col-sm4">
-                                <label class="layui-form-label"><span class="required">*</span>品目分类：</label>
-                                <div class="layui-input-block">
-                                    <select name="purItemType" lay-verify="required" placeholder="请选择品目分类"></select>
                                 </div>
                             </div>
                         </div>
@@ -555,7 +531,7 @@
                         </div>
                     </form>
                     <!--新增品目-->
-                    <form id="add-form" class="layui-form">
+                    <form id="add-form" class="layui-form" lay-filter="add-form">
                         <label class="layui-form-label">品目分类：</label>
                         <div class="layui-input-block">
                             <select name="purItemType" lay-filter="purItemType"></select>

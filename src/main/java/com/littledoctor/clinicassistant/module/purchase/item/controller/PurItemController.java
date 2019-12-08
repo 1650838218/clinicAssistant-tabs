@@ -87,15 +87,23 @@ public class PurItemController {
                         // key dictValue, value: 索引
                         indexMap.put(dictItems.get(i).getDictValue(), i);
                     }
+                    // 遍历品目
                     for (int i = 0; i < purItemList.size(); i++) {
-                        String key = purItemList.get(i).getPurItemType();
-                        if (indexMap.containsKey(key)) {
+                        String key = purItemList.get(i).getPurItemType();// 品目分类
+                        if (indexMap.containsKey(key)) { // 根据 品目分类 找到 字典
                             Integer index = indexMap.get(key);
                             TreeEntity te = new TreeEntity();
                             te.setpId("dictVal_" + key);
                             te.setId(String.valueOf(purItemList.get(i).getPurItemId()));
                             te.setLabel(purItemList.get(i).getPurItemName());
                             result.get(index).getChildren().add(te);
+                        }
+                    }
+                    // 设置数量
+                    for (int i = 0; i < result.size(); i++) {
+                        int childrenSize = result.get(i).getChildren().size();
+                        if (childrenSize > 0) {
+                            result.get(i).setLabel(result.get(i).getLabel() + "（" + childrenSize + "）");
                         }
                     }
                     map.put("data", result);
@@ -127,14 +135,14 @@ public class PurItemController {
 
     /**
      * 根据ID删除
-     * @param pharmacyItemId
+     * @param purItemId
      * @return
      */
-    @RequestMapping(value = "/delete/{pharmacyItemId}", method = RequestMethod.DELETE)
-    public boolean delete(@PathVariable(value = "pharmacyItemId") String pharmacyItemId) {
+    @RequestMapping(value = "/delete/{purItemId}", method = RequestMethod.DELETE)
+    public boolean delete(@PathVariable(value = "purItemId") String purItemId) {
         try {
-            Assert.hasLength(pharmacyItemId, Message.PARAMETER_IS_NULL);
-            return purItemService.delete(pharmacyItemId);
+            Assert.hasLength(purItemId, Message.PARAMETER_IS_NULL);
+            return purItemService.delete(purItemId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -143,31 +151,29 @@ public class PurItemController {
 
     /**
      * 根据ID查询
-     * @param pharmacyItemId
+     * @param purItemId
      * @return
      */
     @RequestMapping(value = "/getById", method = RequestMethod.GET)
-    public PurItemEntity getById(@RequestParam String pharmacyItemId) {
+    public PurItemEntity getById(@RequestParam String purItemId) {
         try {
-//            Assert.hasLength(medicineListId, Message.PARAMETER_IS_NULL);
-            return purItemService.getById(pharmacyItemId);
+            return purItemService.getById(purItemId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return null;
+        return new PurItemEntity();
     }
 
     /**
      * 判断条形码是否不重复，是否不存在
-     * @param pharmacyItemId
+     * @param purItemId
      * @param barcode
      * @return true 不存在  false 已存在，默认false
      */
     @RequestMapping(value = "/notRepeatBarcode", method = RequestMethod.GET)
-    public boolean notRepeatBarcode(String pharmacyItemId, @RequestParam String barcode) {
+    public boolean notRepeatBarcode(String purItemId, @RequestParam String barcode) {
         try {
-//            Assert.hasLength(barcode, Message.PARAMETER_IS_NULL);
-            return purItemService.notRepeatBarcode(pharmacyItemId, barcode);
+            return purItemService.notRepeatBarcode(purItemId, barcode);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -175,16 +181,15 @@ public class PurItemController {
     }
 
     /**
-     * 判断药品名称是否不重复，是否不存在
-     * @param pharmacyItemId
-     * @param pharmacyItemName
+     * 判断品目名称是否不重复，是否不存在
+     * @param purItemId
+     * @param purItemName
      * @return true 不存在  false 已存在，默认false
      */
     @RequestMapping(value = "/notRepeatName", method = RequestMethod.GET)
-    public boolean notRepeatName(String pharmacyItemId, @RequestParam String pharmacyItemName) {
+    public boolean notRepeatName(String purItemId, @RequestParam String purItemName) {
         try {
-//            Assert.hasLength(midicineName, Message.PARAMETER_IS_NULL);
-            return purItemService.notRepeatName(pharmacyItemId, pharmacyItemName);
+            return purItemService.notRepeatName(purItemId, purItemName);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -237,13 +242,13 @@ public class PurItemController {
 
     /**
      * 根据品目ID判断该品目是否存在
-     * @param pharmacyItemId
+     * @param purItemId
      * @return
      */
     @RequestMapping(value = "/isExist", method = RequestMethod.GET)
-    public boolean isExist(@RequestParam(value = "") String pharmacyItemId) {
+    public boolean isExist(@RequestParam(value = "") String purItemId) {
         try {
-            return purItemService.isExist(pharmacyItemId);
+            return purItemService.isExist(purItemId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

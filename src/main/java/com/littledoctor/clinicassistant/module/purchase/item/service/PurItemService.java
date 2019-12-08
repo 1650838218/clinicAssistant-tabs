@@ -31,35 +31,35 @@ public interface PurItemService {
 
     /**
      * 根据ID删除
-     * @param pharmacyItemId
+     * @param purItemId
      * @return
      */
-    boolean delete(String pharmacyItemId);
+    boolean delete(String purItemId);
 
     /**
      * 根据ID查询
-     * @param pharmacyItemId
+     * @param purItemId
      * @return
      */
-    PurItemEntity getById(String pharmacyItemId);
+    PurItemEntity getById(String purItemId);
 
     /**
      * 判断条形码是否不重复，是否不存在
      *
-     * @param pharmacyItemId
+     * @param purItemId
      * @param barcode
      * @return true 不存在  false 已存在，默认false
      */
-    boolean notRepeatBarcode(String pharmacyItemId, String barcode);
+    boolean notRepeatBarcode(String purItemId, String barcode);
 
     /**
      * 判断药品名称是否不重复，是否不存在
      *
-     * @param pharmacyItemId
-     * @param pharmacyItemName
+     * @param purItemId
+     * @param purItemName
      * @return true 不存在  false 已存在，默认false
      */
-    boolean notRepeatName(String pharmacyItemId, String pharmacyItemName);
+    boolean notRepeatName(String purItemId, String purItemName);
 
     /**
      * 根据名称查询药品清单
@@ -77,10 +77,10 @@ public interface PurItemService {
 
     /**
      * 根据品目ID判断该品目是否存在
-     * @param pharmacyItemId
+     * @param purItemId
      * @return
      */
-    boolean isExist(String pharmacyItemId);
+    boolean isExist(String purItemId);
 
     /**
      * 获取下拉表格

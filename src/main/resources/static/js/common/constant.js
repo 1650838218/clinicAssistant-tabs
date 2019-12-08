@@ -78,7 +78,9 @@ Date.prototype.format = function(fmt)
 
 /** 字典键 */
 var DICT_KEY = {
-    PUR_ITEM_CGPMFL : "CGPMFL" // 采购品目分类
+    PUR_ITEM_CGPMFL : 'CGPMFL' // 采购品目分类
+    ,PUR_ITEM_JHBZ : 'JHBZ' // 进货包装
+    ,PUR_ITEM_LSDW : 'LSDW' // 零售单位
 }
 
 //扩展datagrid:动态添加删除editor

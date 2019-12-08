@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import sun.rmi.runtime.Log;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -48,7 +49,7 @@ public class PurItemServiceImpl implements PurItemService {
                 List<Predicate> list = new ArrayList<>();
                 if (StringUtils.isNotBlank(keywords)) {
                     list.add(criteriaBuilder.equal(root.get("barcode"), keywords));
-                    list.add(criteriaBuilder.like(root.get("pharmacyItemName"), "%" + keywords + "%"));
+                    list.add(criteriaBuilder.like(root.get("purItemName"), "%" + keywords + "%"));
                     list.add(criteriaBuilder.like(root.get("abbreviation"), keywords.toUpperCase() + "%"));
                     list.add(criteriaBuilder.like(root.get("fullPinyin"), keywords.toLowerCase() + "%"));
                 }
@@ -75,13 +76,13 @@ public class PurItemServiceImpl implements PurItemService {
 
     /**
      * 根据ID删除
-     * @param pharmacyItemId
+     * @param purItemId
      * @return
      */
     @Override
-    public boolean delete(String pharmacyItemId) {
-        if (StringUtils.isNotBlank(pharmacyItemId)) {
-            purItemRepository.deleteById(Integer.parseInt(pharmacyItemId));
+    public boolean delete(String purItemId) {
+        if (StringUtils.isNotBlank(purItemId)) {
+            purItemRepository.deleteById(Long.parseLong(purItemId));
             return true;
         }
         return false;
@@ -89,33 +90,33 @@ public class PurItemServiceImpl implements PurItemService {
 
     /**
      * 根据ID查询
-     * @param pharmacyItemId
+     * @param purItemId
      * @return
      */
     @Override
-    public PurItemEntity getById(String pharmacyItemId) {
-        if (StringUtils.isNotBlank(pharmacyItemId)) {
-            return purItemRepository.findById(Integer.parseInt(pharmacyItemId)).get();
+    public PurItemEntity getById(String purItemId) {
+        if (StringUtils.isNotBlank(purItemId)) {
+            return purItemRepository.findById(Long.parseLong(purItemId)).get();
         }
         return null;
     }
 
     /**
      * 判断条形码是否不重复，是否不存在
-     * @param pharmacyItemId
+     * @param purItemId
      * @param barcode
      * @return true 不存在  false 已存在，默认false
      */
     @Override
-    public boolean notRepeatBarcode(String pharmacyItemId, String barcode) {
+    public boolean notRepeatBarcode(String purItemId, String barcode) {
         if (StringUtils.isNotBlank(barcode)) {
             return purItemRepository.count(new Specification<PurItemEntity>() {
                 @Override
                 public Predicate toPredicate(Root<PurItemEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                     List<Predicate> list = new ArrayList<>();
                     list.add(criteriaBuilder.equal(root.get("barcode"), barcode));
-                    if (StringUtils.isNotBlank(pharmacyItemId)) {
-                        list.add(criteriaBuilder.notEqual(root.get("pharmacyItemId"), pharmacyItemId));
+                    if (StringUtils.isNotBlank(purItemId)) {
+                        list.add(criteriaBuilder.notEqual(root.get("purItemId"), purItemId));
                     }
                     return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
                 }
@@ -127,20 +128,20 @@ public class PurItemServiceImpl implements PurItemService {
     /**
      * 判断药品名称是否不重复，是否不存在
      *
-     * @param pharmacyItemId
-     * @param pharmacyItemName
+     * @param purItemId
+     * @param purItemName
      * @return true 不存在  false 已存在，默认false
      */
     @Override
-    public boolean notRepeatName(String pharmacyItemId, String pharmacyItemName) {
-        if (StringUtils.isNotBlank(pharmacyItemName)) {
+    public boolean notRepeatName(String purItemId, String purItemName) {
+        if (StringUtils.isNotBlank(purItemName)) {
             return purItemRepository.count(new Specification<PurItemEntity>() {
                 @Override
                 public Predicate toPredicate(Root<PurItemEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                     List<Predicate> list = new ArrayList<>();
-                    list.add(criteriaBuilder.equal(root.get("pharmacyItemName"), pharmacyItemName));
-                    if (StringUtils.isNotBlank(pharmacyItemId)) {
-                        list.add(criteriaBuilder.notEqual(root.get("pharmacyItemId"), pharmacyItemId));
+                    list.add(criteriaBuilder.equal(root.get("purItemName"), purItemName));
+                    if (StringUtils.isNotBlank(purItemId)) {
+                        list.add(criteriaBuilder.notEqual(root.get("purItemId"), purItemId));
                     }
                     return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
                 }
@@ -161,7 +162,7 @@ public class PurItemServiceImpl implements PurItemService {
                 @Override
                 public Predicate toPredicate(Root<PurItemEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                     List<Predicate> list = new ArrayList<>();
-                    list.add(criteriaBuilder.like(root.get("pharmacyItemName"), "%" + name + "%"));
+                    list.add(criteriaBuilder.like(root.get("purItemName"), "%" + name + "%"));
                     list.add(criteriaBuilder.like(root.get("abbreviation"), name + "%"));
                     list.add(criteriaBuilder.like(root.get("fullPinyin"), name + "%"));
                     return criteriaBuilder.or(list.toArray(new Predicate[list.size()]));
@@ -187,16 +188,16 @@ public class PurItemServiceImpl implements PurItemService {
 
     /**
      * 根据品目ID判断该品目是否存在
-     * @param pharmacyItemId
+     * @param purItemId
      * @return
      */
     @Override
-    public boolean isExist(String pharmacyItemId) {
-        if (StringUtils.isBlank(pharmacyItemId)) {
+    public boolean isExist(String purItemId) {
+        if (StringUtils.isBlank(purItemId)) {
             return purItemRepository.count(new Specification<PurItemEntity>() {
                 @Override
                 public Predicate toPredicate(Root<PurItemEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                    return criteriaBuilder.equal(root.get("pharmacyItemId"), pharmacyItemId);
+                    return criteriaBuilder.equal(root.get("purItemId"), purItemId);
                 }
             }) > 0;
         }
