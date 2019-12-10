@@ -1,7 +1,7 @@
-package com.littledoctor.clinicassistant.module.purchase.purchaseorder.service;
+package com.littledoctor.clinicassistant.module.purchase.order.service;
 
-import com.littledoctor.clinicassistant.module.purchase.purchaseorder.entity.PurchaseOrder;
-import com.littledoctor.clinicassistant.module.purchase.purchaseorder.entity.PurchaseOrderSingle;
+import com.littledoctor.clinicassistant.module.purchase.order.entity.PurOrder;
+import com.littledoctor.clinicassistant.module.purchase.order.entity.PurOrderSingle;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,7 +12,7 @@ import java.util.HashSet;
  * @Date: 2019-05-04 16:42
  * @Description: 采购单
  */
-public interface PurchaseOrderService {
+public interface PurOrderService {
 
     /**
      * 分页查询订单
@@ -22,21 +22,21 @@ public interface PurchaseOrderService {
      * @param supplierId
      * @return
      */
-    Page<PurchaseOrderSingle> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) throws Exception;
+    Page<PurOrderSingle> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) throws Exception;
 
     /**
      * 保存采购单
-     * @param purchaseOrder
+     * @param purOrder
      * @return
      */
-    PurchaseOrder save(PurchaseOrder purchaseOrder);
+    PurOrder save(PurOrder purOrder);
 
     /**
      * 根据采购单id查询采购单
      * @param purchaseOrderId
      * @return
      */
-    PurchaseOrder queryById(String purchaseOrderId) throws Exception;
+    PurOrder queryById(String purchaseOrderId) throws Exception;
 
     /**
      * 删除采购单

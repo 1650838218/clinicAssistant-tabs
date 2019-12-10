@@ -11,9 +11,9 @@ layui.use(['form','utils', 'jquery', 'layer', 'table'], function () {
     var layer = layui.layer;
     var table = layui.table;
     var utils = layui.utils;
-    var rootMapping = '/purchase/purchaseorder';
-    var itemTableId = 'purchaseorder-table';
-    var formId = 'purchaseorder-form';
+    var rootMapping = '/purchase/order';
+    var itemTableId = 'order-table';
+    var formId = 'order-form';
     form.render();
 
     // 初始化表格
@@ -47,7 +47,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table'], function () {
             $.getJSON(rootMapping + "/queryById",{purchaseOrderId: purchaseOrderId}, function (purchaseOrder) {
                 if (purchaseOrder != null) {
                     purchaseOrder.totalPrice = purchaseOrder.totalPrice.toFixed(2) + ' 元';
-                    form.val('purchaseorder-form', purchaseOrder);// 表单赋值
+                    form.val('order-form', purchaseOrder);// 表单赋值
                     form.render();
                     table.reload(itemTableId,{data:purchaseOrder.purchaseOrderDetails});// 加载采购单明细
                 }

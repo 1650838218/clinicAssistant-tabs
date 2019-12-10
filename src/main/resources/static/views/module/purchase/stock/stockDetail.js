@@ -77,7 +77,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     // 根据ID查询采购单
     function queryPurchaseOrderById(purchaseOrderId) {
         if (utils.isNotNull(purchaseOrderId)) {
-            $.getJSON("/purchase/purchaseorder/queryById",{purchaseOrderId: purchaseOrderId}, function (purchaseOrder) {
+            $.getJSON("/purchase/order/queryById",{purchaseOrderId: purchaseOrderId}, function (purchaseOrder) {
                 if (purchaseOrder != null) {
                     purchaseOrder.totalPrice = purchaseOrder.totalPrice.toFixed(2) + ' 元';
                     form.val('stockdetail-form', purchaseOrder);// 表单赋值

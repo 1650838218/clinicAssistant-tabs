@@ -1,4 +1,4 @@
-package com.littledoctor.clinicassistant.module.purchase.purchaseorder.entity;
+package com.littledoctor.clinicassistant.module.purchase.order.entity;
 
 import javax.persistence.*;
 import java.sql.Blob;
@@ -11,7 +11,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "PURCHASE_ORDER")
-public class PurchaseOrderSingle {
+public class PurOrderSingle {
     /** 主键ID */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

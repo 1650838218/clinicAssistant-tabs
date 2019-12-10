@@ -15,8 +15,8 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
     var utils = layui.utils;
     var laydate = layui.laydate;
     var form = layui.form;
-    var rootMappint = '/purchase/purchaseorder';
-    var purchaseOrderTableId = 'purchaseorder-table';
+    var rootMappint = '/purchase/order';
+    var purchaseOrderTableId = 'order-table';
     var formId = 'query-form';
 
     // 动态加载供应商
@@ -102,7 +102,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
             area: [width+'px', height+'px'],
             title: false,
             fixed: false, //不固定
-            content: '/views/module/purchase/purchaseorder/purchaseOrderLook.html?purchaseOrderId='+obj.data.purchaseOrderId,
+            content: '/views/module/purchase/order/purchaseOrderLook.html?purchaseOrderId='+obj.data.purchaseOrderId,
         });
         layer.full(index);
     }
@@ -135,7 +135,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
             area: [width+'px', height+'px'],
             title: false,
             fixed: false, //不固定
-            content: '/views/module/purchase/purchaseorder/purchaseOrderForm.html?purchaseOrderId='+obj.data.purchaseOrderId,
+            content: '/views/module/purchase/order/purchaseOrderForm.html?purchaseOrderId='+obj.data.purchaseOrderId,
             cancel: function(index, layero) {
                 table.reload(purchaseOrderTableId, {});
             },

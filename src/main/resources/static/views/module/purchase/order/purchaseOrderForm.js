@@ -14,9 +14,9 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     var ajax = layui.ajax;
     var utils = layui.utils;
     var laydate = layui.laydate;
-    var rootMapping = '/purchase/purchaseorder';
-    var itemTableId = 'purchaseorder-table';
-    var formId = 'purchaseorder-form';
+    var rootMapping = '/purchase/order';
+    var itemTableId = 'order-table';
+    var formId = 'order-form';
     var medicineLayer = null;
     form.render();
 
@@ -38,7 +38,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     var date = new Date();
     var ymd = date.format('yyMMdd');
     var num = date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds();
-    $('#purchaseorder-form input[name="purchaseOrderCode"]').val(ymd + num);
+    $('#order-form input[name="purchaseOrderCode"]').val(ymd + num);
 
 
     // 判断是否可以进行编辑，返回true 可以编辑，false 不可以编辑
@@ -311,7 +311,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
             $.getJSON(rootMapping + "/queryById",{purchaseOrderId: purchaseOrderId}, function (purchaseOrder) {
                 if (purchaseOrder != null) {
                     purchaseOrder.totalPrice = parseFloat(purchaseOrder.totalPrice).toFixed(2);
-                    form.val('purchaseorder-form', purchaseOrder);// 表单赋值
+                    form.val('order-form', purchaseOrder);// 表单赋值
                     form.render();
                     $('#' + itemTableId).datagrid('loadData', purchaseOrder.purchaseOrderDetails);// 加载采购单明细
                 }

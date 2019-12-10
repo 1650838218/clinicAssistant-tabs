@@ -1,6 +1,6 @@
-package com.littledoctor.clinicassistant.module.purchase.purchaseorder.dao;
+package com.littledoctor.clinicassistant.module.purchase.order.dao;
 
-import com.littledoctor.clinicassistant.module.purchase.purchaseorder.entity.PurchaseOrder;
+import com.littledoctor.clinicassistant.module.purchase.order.entity.PurOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -9,9 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 /**
  * @Auther: 周俊林
  * @Date: 2019-07-06 13:53
- * @Description:
+ * @Description: 采购单 进货单
  */
-public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Integer>, JpaSpecificationExecutor<PurchaseOrder> {
+public interface PurOrderRepository extends JpaRepository<PurOrder, Integer>, JpaSpecificationExecutor<PurOrder> {
 
     /**
      * 根据ID将采购单的状态改为已入库

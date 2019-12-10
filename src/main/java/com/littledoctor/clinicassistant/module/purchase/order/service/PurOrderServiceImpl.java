@@ -1,12 +1,12 @@
-package com.littledoctor.clinicassistant.module.purchase.purchaseorder.service;
+package com.littledoctor.clinicassistant.module.purchase.order.service;
 
 import com.littledoctor.clinicassistant.module.purchase.item.entity.PurItemEntity;
 import com.littledoctor.clinicassistant.module.purchase.item.service.PurItemService;
-import com.littledoctor.clinicassistant.module.purchase.purchaseorder.dao.PurchaseOrderRepository;
-import com.littledoctor.clinicassistant.module.purchase.purchaseorder.dao.PurchaseOrderSingleRepository;
-import com.littledoctor.clinicassistant.module.purchase.purchaseorder.entity.PurchaseOrder;
-import com.littledoctor.clinicassistant.module.purchase.purchaseorder.entity.PurchaseOrderDetail;
-import com.littledoctor.clinicassistant.module.purchase.purchaseorder.entity.PurchaseOrderSingle;
+import com.littledoctor.clinicassistant.module.purchase.order.dao.PurOrderRepository;
+import com.littledoctor.clinicassistant.module.purchase.order.dao.PurOrderSingleRepository;
+import com.littledoctor.clinicassistant.module.purchase.order.entity.PurOrder;
+import com.littledoctor.clinicassistant.module.purchase.order.entity.PurOrderDetail;
+import com.littledoctor.clinicassistant.module.purchase.order.entity.PurOrderSingle;
 import com.littledoctor.clinicassistant.module.purchase.supplier.entity.SupplierEntity;
 import com.littledoctor.clinicassistant.module.purchase.supplier.service.SupplierService;
 import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
@@ -29,13 +29,13 @@ import java.util.*;
  * @Description: 采购单
  */
 @Service
-public class PurchaseOrderServiceImpl implements PurchaseOrderService {
+public class PurOrderServiceImpl implements PurOrderService {
 
     @Autowired
-    private PurchaseOrderRepository purchaseOrderRepository;
+    private PurOrderRepository purOrderRepository;
 
     @Autowired
-    private PurchaseOrderSingleRepository purchaseOrderSingleRepository;
+    private PurOrderSingleRepository purOrderSingleRepository;
 
     @Autowired
     private PurItemService purItemService;
@@ -56,10 +56,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
      * @throws Exception
      */
     @Override
-    public Page<PurchaseOrderSingle> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) throws Exception {
-        Page<PurchaseOrderSingle> purchaseOrderPage = purchaseOrderSingleRepository.findAll(new Specification<PurchaseOrderSingle>() {
+    public Page<PurOrderSingle> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) throws Exception {
+        Page<PurOrderSingle> purchaseOrderPage = purOrderSingleRepository.findAll(new Specification<PurOrderSingle>() {
             @Override
-            public Predicate toPredicate(Root<PurchaseOrderSingle> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            public Predicate toPredicate(Root<PurOrderSingle> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicateList = new ArrayList<>();
                 if (StringUtils.isNotBlank(purchaseOrderCode)) {
                     predicateList.add(criteriaBuilder.equal(root.get("purchaseOrderCode"), purchaseOrderCode));
@@ -77,10 +77,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             }
         }, page);
         // 设置供应商名称
-        List<PurchaseOrderSingle> pol = purchaseOrderPage.getContent();
+        List<PurOrderSingle> pol = purchaseOrderPage.getContent();
         if (pol != null && pol.size() > 0) {
             for (int i = 0, len = pol.size(); i < len; i++) {
-                PurchaseOrderSingle pos = pol.get(i);
+                PurOrderSingle pos = pol.get(i);
                 if (pos.getSupplierId() != null) {
                     SupplierEntity s = supplierService.findById(String.valueOf(pos.getSupplierId()));
                     if (s != null) pos.setSupplierName(s.getSupplierName());
@@ -92,15 +92,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     /**
      * 保存采购单
-     * @param purchaseOrder
+     * @param purOrder
      * @return
      */
     @Override
-    public PurchaseOrder save(PurchaseOrder purchaseOrder) {
-        purchaseOrder.setCreateTiem(new Date());
-        purchaseOrder.setEntry(false);
-        purchaseOrder.setUpdateTime(new Date());
-        return purchaseOrderRepository.saveAndFlush(purchaseOrder);
+    public PurOrder save(PurOrder purOrder) {
+        purOrder.setCreateTiem(new Date());
+        purOrder.setEntry(false);
+        purOrder.setUpdateTime(new Date());
+        return purOrderRepository.saveAndFlush(purOrder);
     }
 
     /**
@@ -109,22 +109,22 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
      * @return
      */
     @Override
-    public PurchaseOrder queryById(String purchaseOrderId) throws Exception {
-        PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(Integer.parseInt(purchaseOrderId)).get();
-        if (purchaseOrder != null) {
+    public PurOrder queryById(String purchaseOrderId) throws Exception {
+        PurOrder purOrder = purOrderRepository.findById(Integer.parseInt(purchaseOrderId)).get();
+        if (purOrder != null) {
             // 设置供应商名称
-            SupplierEntity supplierEntity = supplierService.findById(String.valueOf(purchaseOrder.getSupplierId()));
-            purchaseOrder.setSupplierName(supplierEntity.getSupplierName());
-            List<PurchaseOrderDetail> pods = purchaseOrder.getPurchaseOrderDetails();
+            SupplierEntity supplierEntity = supplierService.findById(String.valueOf(purOrder.getSupplierId()));
+            purOrder.setSupplierName(supplierEntity.getSupplierName());
+            List<PurOrderDetail> pods = purOrder.getPurOrderDetails();
             if (pods != null && pods.size() > 0) {
                 // 查询字典显示值
                 Map<String, String> sldw = dictionaryService.getItemMapByKey("SLDW");
                 Map<String, String> kcdw = dictionaryService.getItemMapByKey("KCDW");
                 for (int i = 0, len = pods.size(); i < len; i++) {
-                    PurchaseOrderDetail pbi = pods.get(i);
+                    PurOrderDetail pbi = pods.get(i);
                     // 查询药品信息
-                    if (pbi.getPharmacyItemId() != null) {
-                        PurItemEntity pi = purItemService.getById(String.valueOf(pbi.getPharmacyItemId()));
+                    if (pbi.getPurItemId() != null) {
+                        PurItemEntity pi = purItemService.getById(String.valueOf(pbi.getPurItemId()));
                         if (pi != null) {
                             /*pbi.setPharmacyItemName(pi.getPharmacyItemName());
                             pbi.setManufacturer(pi.getManufacturer());
@@ -142,7 +142,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 }
             }
         }
-        return purchaseOrder;
+        return purOrder;
     }
 
     /**
@@ -153,7 +153,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     @Override
     public boolean delete(String purchaseOrderId) throws Exception {
         if (StringUtils.isNotBlank(purchaseOrderId)) {
-            purchaseOrderRepository.deleteById(Integer.parseInt(purchaseOrderId));
+            purOrderRepository.deleteById(Integer.parseInt(purchaseOrderId));
             return true;
         }
         return false;
@@ -174,7 +174,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 ids += iterator.next().toString();
                 if (iterator.hasNext()) ids += ",";
             }
-            purchaseOrderRepository.updateEntry(ids);
+            purOrderRepository.updateEntry(ids);
             return true;
         }
         return false;

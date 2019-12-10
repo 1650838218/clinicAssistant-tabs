@@ -2,7 +2,7 @@ package com.littledoctor.clinicassistant.module.purchase.stock.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.littledoctor.clinicassistant.module.purchase.purchaseorder.service.PurchaseOrderService;
+import com.littledoctor.clinicassistant.module.purchase.order.service.PurOrderService;
 import com.littledoctor.clinicassistant.module.purchase.stock.dao.StockDetailRepository;
 import com.littledoctor.clinicassistant.module.purchase.stock.entity.StockDetail;
 import com.littledoctor.clinicassistant.module.purchase.stock.mapper.StockDetailMapper;
@@ -32,7 +32,7 @@ public class StockDetailServiceImpl implements StockDetailService {
     private StockDetailRepository stockDetailRepository;
 
     @Autowired
-    private PurchaseOrderService purchaseOrderService;
+    private PurOrderService purOrderService;
 
     @Autowired(required = false)
     private StockDetailMapper stockDetailMapper;
@@ -57,7 +57,7 @@ public class StockDetailServiceImpl implements StockDetailService {
             }
             if (!purchaseOrderIds.isEmpty()) {
                 // 新增入库单的时候需要将与其对应的采购单的状态改为已入库
-                purchaseOrderService.updateEntry(purchaseOrderIds);
+                purOrderService.updateEntry(purchaseOrderIds);
             }
             return stockDetailRepository.saveAll(stockDetails);
         }
