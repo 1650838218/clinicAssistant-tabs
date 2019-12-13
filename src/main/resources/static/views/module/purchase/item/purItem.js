@@ -215,7 +215,13 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'ajax','eleTree'], function () {
                         if (text) $('.layui-card-header h3 span').removeClass().addClass('subhead-green').text('（' + text + '）');
                         var formFilter = 'type' + purItem.purItemType + '-form';
                         form.val(formFilter, purItem);
-                        $('#' + formFilter + ' .stockWarnUnit').text($('#' + formFilter).find('select[name="stockUnit"] option:selected').text());
+                        var stockUnit = $('#' + formFilter).find('select[name="stockUnit"] option:selected');
+                        console.log(stockUnit.val());
+                        if (stockUnit.val()) {
+                            $('#' + formFilter + ' .stockWarnUnit').text(stockUnit.text());
+                        } else {
+                            $('#' + formFilter + ' .stockWarnUnit').text('<零售单位>');
+                        }
                         $('.layui-card-body form').hide();
                         $('.layui-card-body form[lay-filter="' + formFilter + '"]').show();
                     } else {
