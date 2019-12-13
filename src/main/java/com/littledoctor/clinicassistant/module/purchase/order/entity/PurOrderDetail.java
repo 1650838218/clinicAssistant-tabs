@@ -47,13 +47,13 @@ public class PurOrderDetail {
     @Column(name = "TOTAL_PRICE")
     private BigDecimal totalPrice;
 
-    /** 药品名称 */
+    /** 品目名称 */
     @Transient
-    private String pharmacyItemName;
+    private String purItemName;
 
     /** 采购单位名称 */
     @Transient
-    private String PURUnitName;
+    private String purUnitName;
 
     /** 库存单位名称 */
     @Transient
@@ -131,20 +131,20 @@ public class PurOrderDetail {
         this.expireDate = expireDate;
     }
 
-    public String getPharmacyItemName() {
-        return pharmacyItemName;
+    public String getPurItemName() {
+        return purItemName;
     }
 
-    public void setPharmacyItemName(String pharmacyItemName) {
-        this.pharmacyItemName = pharmacyItemName;
+    public void setPurItemName(String purItemName) {
+        this.purItemName = purItemName;
     }
 
-    public String getPURUnitName() {
-        return PURUnitName;
+    public String getPurUnitName() {
+        return purUnitName;
     }
 
-    public void setPURUnitName(String PURUnitName) {
-        this.PURUnitName = PURUnitName;
+    public void setPurUnitName(String purUnitName) {
+        this.purUnitName = purUnitName;
     }
 
     public String getStockUnitName() {

@@ -217,15 +217,15 @@ public class PurItemServiceImpl implements PurItemService {
         } else {
             result = this.queryByName(keywords);
         }
-        /*if (result != null && result.size() > 0) {
-            // 查询药品类型字典，将显示值set进去
+        if (result != null && result.size() > 0) {
+            // 查询采购分类字典，将显示值set进去
             Map<String, String> ypfl = dictionaryService.getItemMapByKey(DictionaryKey.PUR_ITEM_CGPMFL);// 采购品目分类
-            Map<String, String> sldw = dictionaryService.getItemMapByKey("SLDW");// 数量单位
+            Map<String, String> sldw = dictionaryService.getItemMapByKey(DictionaryKey.PUR_ITEM_JHBZ);// 进货包装，采购单位
             for (int i = 0, len = result.size(); i < len; i++) {
                 if (ypfl != null) result.get(i).setPurItemTypeName(ypfl.get(result.get(i).getPurItemType()));
                 if (sldw != null) result.get(i).setPurUnitName(sldw.get(result.get(i).getPurUnit()));
             }
-        }*/
+        }
         return result;
     }
 

@@ -44,6 +44,10 @@ public class PurItemEntity implements java.io.Serializable {
     @Column(name = "PUR_ITEM_TYPE", nullable = false, length = 10)
     private String purItemType;
 
+    /** 品目分类 显示值 */
+    @Transient
+    private String purItemTypeName;
+
     /** 条形码 */
     @Column(name = "BARCODE", nullable = true, length = 50)
     private String barcode;
@@ -88,9 +92,13 @@ public class PurItemEntity implements java.io.Serializable {
     @Column(name = "IS_POISON", nullable = true)
     private Integer isPoison;
 
-    /** 采购单位 */
+    /** 进货包装（采购单位） */
     @Column(name = "PUR_UNIT", nullable = true, length = 10)
     private String purUnit;
+
+    /** 进货包装（采购单位） 显示值 */
+    @Transient
+    private String purUnitName;
 
     /** 库存单位 */
     @Column(name = "STOCK_UNIT", nullable = true, length = 10)
@@ -450,5 +458,20 @@ public class PurItemEntity implements java.io.Serializable {
         this.stockWarn = stockWarn;
     }
 
+    public String getPurItemTypeName() {
+        return purItemTypeName;
+    }
+
+    public void setPurItemTypeName(String purItemTypeName) {
+        this.purItemTypeName = purItemTypeName;
+    }
+
+    public String getPurUnitName() {
+        return purUnitName;
+    }
+
+    public void setPurUnitName(String purUnitName) {
+        this.purUnitName = purUnitName;
+    }
     /*  */
 }

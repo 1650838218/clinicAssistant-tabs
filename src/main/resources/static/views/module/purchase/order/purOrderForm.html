@@ -52,19 +52,19 @@
         <div class="center-panel">
             <div class="layui-card">
                 <div class="layui-card-body">
-                    <form id="purchaseorder-form" class="layui-form" lay-filter="purchaseorder-form">
-                        <input type="hidden" name="purchaseOrderId" value="">
+                    <form id="purorder-form" class="layui-form" lay-filter="purorder-form">
+                        <input type="hidden" name="purOrderId" value="">
                         <div class="layui-form-item">
                             <div class="layui-inline">
                                 <label class="layui-form-label">单号：</label>
                                 <div class="layui-input-inline">
-                                    <input name="purchaseOrderCode" readonly class="layui-input" lay-verify="required" placeholder="请填写采购单号">
+                                    <input name="purOrderCode" readonly class="layui-input" lay-verify="required" placeholder="请填写采购单号">
                                 </div>
                             </div>
                             <div class="layui-inline">
                                 <label class="layui-form-label">日期：</label>
                                 <div class="layui-input-inline">
-                                    <input name="purchaseOrderDate" readonly class="layui-input" placeholder="请选择采购单日期" lay-verify="required">
+                                    <input name="purOrderDate" readonly class="layui-input" placeholder="请选择采购单日期" lay-verify="required">
                                 </div>
                             </div>
                             <div class="layui-inline">
@@ -83,20 +83,18 @@
                                 </div>
                             </div>
                         </div>
-                        <table id="purchaseorder-table" style="max-height: 390px;width:100%"
+                        <table id="purorder-table" style="max-height: 390px;width:100%"
                                data-options="fitColumns: true, autoRowHeight: true, singleSelect: true, rownumbers:true">
                             <thead>
                                 <tr>
-                                    <th data-options="field: 'pharmacyItemId'" width="15%">药品名称</th>
-                                    <th data-options="field: 'specifications'" width="12%">规格</th>
-                                    <th data-options="field: 'manufacturer'" width="15%">制造商</th>
-                                    <th data-options="field: 'batchNumber',editor: {type:'textbox',options:{type:'text'}}" width="10%">批号</th>
-                                    <th data-options="field: 'manufactureDate',editor: {type: 'datebox',options: {editable: false,hasDownArrow: false}}" width="9%">生产日期</th>
-                                    <th data-options="field: 'expireDate', editor: {type: 'datebox',options: {editable: false,hasDownArrow: false}}" width="9%">有效期至</th>
-                                    <th data-options="field: 'purchaseCount'" width="7%">数量</th>
-                                    <th data-options="field: 'purchaseUnitName'" width="7%">单位</th>
-                                    <th data-options="field: 'unitPrice'" width="8%">单价(元)</th>
-                                    <th data-options="field: 'totalPrice'" width="8%">总价(元)</th>
+                                    <th data-options="field: 'purItemId'" width="21%">品目名称</th>
+                                    <th data-options="field: 'batchNumber',editor: {type:'textbox',options:{type:'text'}}" width="15%">批号</th>
+                                    <th data-options="field: 'manufactureDate',editor: {type: 'datebox',options: {editable: false,hasDownArrow: false}}" width="12%">生产日期</th>
+                                    <th data-options="field: 'expireDate', editor: {type: 'datebox',options: {editable: false,hasDownArrow: false}}" width="12%">有效期至</th>
+                                    <th data-options="field: 'purCount'" width="10%">数量</th>
+                                    <th data-options="field: 'purUnitName'" width="10%">单位</th>
+                                    <th data-options="field: 'unitPrice'" width="10%">进价(元)</th>
+                                    <th data-options="field: 'totalPrice'" width="10%">总价(元)</th>
                                 </tr>
                             </thead>
                         </table>
@@ -123,6 +121,6 @@
 <script src="/lib/easyui/1.8.1/jquery.easyui.min.js"></script>
 <script src="/lib/easyui/1.8.1/locale/easyui-lang-zh_CN.js"></script>
 <!--<script src="/lib/easyui/1.8.1/plugins/jquery.editcell.js"></script>-->
-<script src="/views/module/purchase/purchaseorder/purchaseOrderForm.js"></script>
+<script src="/views/module/purchase/order/purOrderForm.js"></script>
 </body>
 </html>

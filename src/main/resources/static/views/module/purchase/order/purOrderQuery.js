@@ -1,5 +1,5 @@
 // 采购单查询
-//@ sourceURL=purchaseOrderQuery.js
+//@ sourceURL=purOrderQuery.js
 layui.config({
     base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
 }).extend({
@@ -102,7 +102,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
             area: [width+'px', height+'px'],
             title: false,
             fixed: false, //不固定
-            content: '/views/module/purchase/order/purchaseOrderLook.html?purchaseOrderId='+obj.data.purchaseOrderId,
+            content: '/views/module/purchase/order/purOrderLook.html?purchaseOrderId='+obj.data.purchaseOrderId,
         });
         layer.full(index);
     }
@@ -135,7 +135,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
             area: [width+'px', height+'px'],
             title: false,
             fixed: false, //不固定
-            content: '/views/module/purchase/order/purchaseOrderForm.html?purchaseOrderId='+obj.data.purchaseOrderId,
+            content: '/views/module/purchase/order/purOrderForm.html?purchaseOrderId='+obj.data.purchaseOrderId,
             cancel: function(index, layero) {
                 table.reload(purchaseOrderTableId, {});
             },
