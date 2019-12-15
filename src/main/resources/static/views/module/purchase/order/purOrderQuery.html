@@ -63,13 +63,13 @@
                             <div class="layui-inline">
                                 <label class="layui-form-label">单号：</label>
                                 <div class="layui-input-inline">
-                                    <input name="purchaseOrderCode" class="layui-input" placeholder="请填写采购单号">
+                                    <input name="purOrderCode" class="layui-input" placeholder="请填写采购单号">
                                 </div>
                             </div>
                             <div class="layui-inline">
                                 <label class="layui-form-label">日期：</label>
                                 <div class="layui-input-inline">
-                                    <input name="purchaseOrderDate" readonly class="layui-input" placeholder="请选择采购单日期">
+                                    <input name="purOrderDate" readonly class="layui-input" placeholder="请选择采购单日期">
                                 </div>
                             </div>
                             <div class="layui-inline">
@@ -84,7 +84,7 @@
                             </div>
                         </div>
                     </form>
-                    <table class="layui-hide" lay-filter="purchaseorder-table" id="purchaseorder-table"></table>
+                    <table class="layui-hide" lay-filter="purorder-table" id="purorder-table"></table>
                 </div>
             </div>
         </div>
@@ -93,7 +93,7 @@
 <!--layui table 操作列-->
 <script type="text/html" id="operate-column">
     <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="look" title="查看">查看</a>
-    {{# if(d.purchaseOrderType != 1) { }}
+    {{# if(d.purOrderType != 1) { }}
         <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="update" title="修改">修改</a>
         <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="delete" title="删除">删除</a>
     {{# } else if(!d.entry) { }}

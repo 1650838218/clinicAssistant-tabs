@@ -1,6 +1,7 @@
 package com.littledoctor.clinicassistant.module.purchase.order.entity;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.sql.Blob;
 import java.util.Date;
 
@@ -10,25 +11,21 @@ import java.util.Date;
  * @Description:
  */
 @Entity
-@Table(name = "PURCHASE_ORDER")
+@Table(name = "PUR_ORDER")
 public class PurOrderSingle {
     /** 主键ID */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "PURCHASE_ORDER_ID", nullable = false)
-    private Integer purchaseOrderId;
+    @Column(name = "PUR_ORDER_ID", nullable = false)
+    private Long purOrderId;
 
     /** 采购单号，取当前时间yyyymmddhhmmsssss*/
-    @Column(name = "PURCHASE_ORDER_CODE")
-    private String purchaseOrderCode;
+    @Column(name = "PUR_ORDER_CODE")
+    private String purOrderCode;
 
     /** 采购单日期 */
-    @Column(name = "PURCHASE_ORDER_DATE")
-    private String purchaseOrderDate;
-
-    /** 采购单类型 */
-    @Column(name = "PURCHASE_ORDER_TYPE")
-    private String purchaseOrderType;
+    @Column(name = "PUR_ORDER_DATE")
+    private String purOrderDate;
 
     /** 供货商ID */
     @Column(name = "SUPPLIER_ID")
@@ -36,11 +33,11 @@ public class PurOrderSingle {
 
     /** 采购单总价 */
     @Column(name = "TOTAL_PRICE")
-    private Double totalPrice;
+    private BigDecimal totalPrice;
 
     /** 采购单照片附件 */
-    @Column(name = "PURCHASE_ORDER_PICTURE")
-    private Blob purchaseOrderPicture;
+    @Column(name = "PUR_ORDER_PICTURE")
+    private Blob purOrderPicture;
 
     /** 是否已入库 SF 1：已入库；0：未入库*/
     @Column(name = "IS_ENTRY")
@@ -58,36 +55,28 @@ public class PurOrderSingle {
     @Transient
     private String supplierName;
 
-    public Integer getPurchaseOrderId() {
-        return purchaseOrderId;
+    public Long getPurOrderId() {
+        return purOrderId;
     }
 
-    public void setPurchaseOrderId(Integer purchaseOrderId) {
-        this.purchaseOrderId = purchaseOrderId;
+    public void setPurOrderId(Long purOrderId) {
+        this.purOrderId = purOrderId;
     }
 
-    public String getPurchaseOrderCode() {
-        return purchaseOrderCode;
+    public String getPurOrderCode() {
+        return purOrderCode;
     }
 
-    public void setPurchaseOrderCode(String purchaseOrderCode) {
-        this.purchaseOrderCode = purchaseOrderCode;
+    public void setPurOrderCode(String purOrderCode) {
+        this.purOrderCode = purOrderCode;
     }
 
-    public String getPurchaseOrderDate() {
-        return purchaseOrderDate;
+    public String getPurOrderDate() {
+        return purOrderDate;
     }
 
-    public void setPurchaseOrderDate(String purchaseOrderDate) {
-        this.purchaseOrderDate = purchaseOrderDate;
-    }
-
-    public String getPurchaseOrderType() {
-        return purchaseOrderType;
-    }
-
-    public void setPurchaseOrderType(String purchaseOrderType) {
-        this.purchaseOrderType = purchaseOrderType;
+    public void setPurOrderDate(String purOrderDate) {
+        this.purOrderDate = purOrderDate;
     }
 
     public Integer getSupplierId() {
@@ -98,20 +87,20 @@ public class PurOrderSingle {
         this.supplierId = supplierId;
     }
 
-    public Double getTotalPrice() {
+    public BigDecimal getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(Double totalPrice) {
+    public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
     }
 
-    public Blob getPurchaseOrderPicture() {
-        return purchaseOrderPicture;
+    public Blob getPurOrderPicture() {
+        return purOrderPicture;
     }
 
-    public void setPurchaseOrderPicture(Blob purchaseOrderPicture) {
-        this.purchaseOrderPicture = purchaseOrderPicture;
+    public void setPurOrderPicture(Blob purOrderPicture) {
+        this.purOrderPicture = purOrderPicture;
     }
 
     public Boolean getEntry() {

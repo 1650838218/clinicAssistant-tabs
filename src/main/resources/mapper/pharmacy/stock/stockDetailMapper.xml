@@ -31,7 +31,7 @@
                         AND (
                             b.pharmacy_item_name LIKE CONCAT('%', #{keywords}, '%')
                             OR LOWER(b.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')
-                            OR UPPER(b.abbreviation) LIKE CONCAT('%', UPPER(#{keywords}), '%')
+                            OR UPPER(b.abbr_pinyin) LIKE CONCAT('%', UPPER(#{keywords}), '%')
                             OR b.barcode = #{keywords}
                         )
                     </if>
@@ -88,7 +88,7 @@
                     (
                         b.pharmacy_item_name LIKE CONCAT('%', #{keywords}, '%')
                         OR LOWER(b.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')
-                        OR UPPER(b.abbreviation) LIKE CONCAT('%', UPPER(#{keywords}), '%')
+                        OR UPPER(b.abbr_pinyin) LIKE CONCAT('%', UPPER(#{keywords}), '%')
                     )
                     <if test="pharmacyItemType != null">
                         AND b.pharmacy_item_type = #{pharmacyItemType}

@@ -2,7 +2,6 @@ package com.littledoctor.clinicassistant.module.purchase.order.entity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * @Auther: 周俊林
@@ -37,7 +36,7 @@ public class PurOrderDetail {
 
     /** 采购数量 */
     @Column(name = "PUR_COUNT")
-    private BigDecimal PurCount;
+    private BigDecimal purCount;
 
     /** 单价 */
     @Column(name = "UNIT_PRICE")
@@ -61,11 +60,11 @@ public class PurOrderDetail {
 
     /** 单位换算 */
     @Transient
-    private Double unitConvert;
+    private Long unitConvert;
 
     /** 库存数量 */
     @Transient
-    private Double stockCount;
+    private BigDecimal stockCount;
 
     public Long getPurOrderDetailId() {
         return PurOrderDetailId;
@@ -84,11 +83,11 @@ public class PurOrderDetail {
     }
 
     public BigDecimal getPurCount() {
-        return PurCount;
+        return purCount;
     }
 
     public void setPurCount(BigDecimal purCount) {
-        PurCount = purCount;
+        this.purCount = purCount;
     }
 
     public BigDecimal getUnitPrice() {
@@ -155,19 +154,19 @@ public class PurOrderDetail {
         this.stockUnitName = stockUnitName;
     }
 
-    public Double getStockCount() {
+    public BigDecimal getStockCount() {
         return stockCount;
     }
 
-    public void setStockCount(Double stockCount) {
+    public void setStockCount(BigDecimal stockCount) {
         this.stockCount = stockCount;
     }
 
-    public Double getUnitConvert() {
+    public Long getUnitConvert() {
         return unitConvert;
     }
 
-    public void setUnitConvert(Double unitConvert) {
+    public void setUnitConvert(Long unitConvert) {
         this.unitConvert = unitConvert;
     }
 }

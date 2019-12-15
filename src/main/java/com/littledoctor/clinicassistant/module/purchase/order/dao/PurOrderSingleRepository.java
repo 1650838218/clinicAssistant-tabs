@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  * @Date: 2019-07-27 23:31
  * @Description:
  */
-public interface PurOrderSingleRepository extends JpaRepository<PurOrderSingle, Integer>, JpaSpecificationExecutor<PurOrderSingle> {
+public interface PurOrderSingleRepository extends JpaRepository<PurOrderSingle, Long>, JpaSpecificationExecutor<PurOrderSingle> {
 }

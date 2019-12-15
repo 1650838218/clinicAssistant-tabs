@@ -50,7 +50,7 @@ public class PurItemServiceImpl implements PurItemService {
                 if (StringUtils.isNotBlank(keywords)) {
                     list.add(criteriaBuilder.equal(root.get("barcode"), keywords));
                     list.add(criteriaBuilder.like(root.get("purItemName"), "%" + keywords + "%"));
-                    list.add(criteriaBuilder.like(root.get("abbreviation"), keywords.toUpperCase() + "%"));
+                    list.add(criteriaBuilder.like(root.get("abbrPinyin"), keywords.toUpperCase() + "%"));
                     list.add(criteriaBuilder.like(root.get("fullPinyin"), keywords.toLowerCase() + "%"));
                 }
                 if (list.size() > 0) {
@@ -163,7 +163,7 @@ public class PurItemServiceImpl implements PurItemService {
                 public Predicate toPredicate(Root<PurItemEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                     List<Predicate> list = new ArrayList<>();
                     list.add(criteriaBuilder.like(root.get("purItemName"), "%" + name + "%"));
-                    list.add(criteriaBuilder.like(root.get("abbreviation"), name + "%"));
+                    list.add(criteriaBuilder.like(root.get("abbrPinyin"), name + "%"));
                     list.add(criteriaBuilder.like(root.get("fullPinyin"), name + "%"));
                     return criteriaBuilder.or(list.toArray(new Predicate[list.size()]));
                 }

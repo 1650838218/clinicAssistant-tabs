@@ -15,8 +15,8 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
     var utils = layui.utils;
     var laydate = layui.laydate;
     var form = layui.form;
-    var rootMappint = '/purchase/order';
-    var purchaseOrderTableId = 'order-table';
+    var rootMapping = '/purchase/order';
+    var purOrderTableId = 'purorder-table';
     var formId = 'query-form';
 
     // 动态加载供应商
@@ -29,26 +29,26 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
     });
     // 动态加载日期控件
     laydate.render({
-        elem: '#' + formId + ' input[name="purchaseOrderDate"]',
+        elem: '#' + formId + ' input[name="purOrderDate"]',
         range: true
     });
 
     // 初始化表格
     table.render({
-        elem: '#' + purchaseOrderTableId,
-        url: rootMappint + '/queryPage',
+        elem: '#' + purOrderTableId,
+        url: rootMapping + '/queryPage',
         page: true,
         height: 'full-105',
         request: {
             limitName: 'size' //每页数据量的参数名，默认：limit
         },
         cols: [[
-            {field: 'purchaseOrderId', title: TABLE_COLUMN.numbers, type: 'numbers'},
-            {field: 'purchaseOrderCode', title: '单号', width: '15%'},
-            {field: 'purchaseOrderDate', title: '日期', width: '12%'},
-            {field: 'purchaseOrderType', title: '类型', width: '10%',
+            {field: 'purOrderId', title: TABLE_COLUMN.numbers, type: 'numbers'},
+            {field: 'purOrderCode', title: '单号', width: '15%'},
+            {field: 'purOrderDate', title: '日期', width: '12%'},
+            {field: 'purOrderType', title: '类型', width: '10%',
                 templet: function (d) {
-                    if (parseInt(d.purchaseOrderType) === 1) {
+                    if (parseInt(d.purOrderType) === 1) {
                         return "药品采购单"
                     } else {
                         return "耗材采购单"
@@ -74,12 +74,12 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
 
     // 查询事件
     form.on('submit(submit-btn)', function (data) {
-        table.reload(purchaseOrderTableId,{where: data.field});
+        table.reload(purOrderTableId,{where: data.field});
         return false;
     });
 
     //监听表格操作列 监听单元格事件
-    table.on('tool(' + purchaseOrderTableId + ')', function (obj) {
+    table.on('tool(' + purOrderTableId + ')', function (obj) {
         if (obj.event === 'look') {
             lookRow(obj);
         } else if (obj.event === 'update') {
@@ -102,7 +102,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
             area: [width+'px', height+'px'],
             title: false,
             fixed: false, //不固定
-            content: '/views/module/purchase/order/purOrderLook.html?purchaseOrderId='+obj.data.purchaseOrderId,
+            content: '/views/module/purchase/order/purOrderLook.html?purOrderId='+obj.data.purOrderId,
         });
         layer.full(index);
     }
@@ -111,12 +111,12 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
     function deleteRow(obj) {
         // 此处的删除是真删除
         layer.confirm(MSG.delete_confirm + '该采购单吗？', {icon: 0}, function (index) {
-            var purchaseOrderId = obj.data.purchaseOrderId;
-            if (utils.isNotNull(purchaseOrderId)) {
-                ajax.delete(rootMappint + '/delete/' + purchaseOrderId, function (success) {
+            var purOrderId = obj.data.purOrderId;
+            if (utils.isNotNull(purOrderId)) {
+                ajax.delete(rootMapping + '/delete/' + purOrderId, function (success) {
                     if (success) {
                         layer.msg(MSG.delete_success);
-                        table.reload(purchaseOrderTableId, {});
+                        table.reload(purOrderTableId, {});
                     } else {
                         layer.msg(MSG.delete_fail);
                     }
@@ -135,12 +135,12 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
             area: [width+'px', height+'px'],
             title: false,
             fixed: false, //不固定
-            content: '/views/module/purchase/order/purOrderForm.html?purchaseOrderId='+obj.data.purchaseOrderId,
+            content: '/views/module/purchase/order/purOrderForm.html?purOrderId='+obj.data.purOrderId,
             cancel: function(index, layero) {
-                table.reload(purchaseOrderTableId, {});
+                table.reload(purOrderTableId, {});
             },
             end: function () {
-                table.reload(purchaseOrderTableId, {});
+                table.reload(purOrderTableId, {});
             }
         });
         layer.full(index);
@@ -155,12 +155,12 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
             area: [width+'px', height+'px'],
             title: false,
             fixed: false, //不固定
-            content: '/views/module/purchase/stock/stockDetail.html?purchaseOrderId='+obj.data.purchaseOrderId,
+            content: '/views/module/purchase/stock/stockDetail.html?purOrderId='+obj.data.purOrderId,
             cancel: function(index, layero) {
-                table.reload(purchaseOrderTableId, {});
+                table.reload(purOrderTableId, {});
             },
             end: function () {
-                table.reload(purchaseOrderTableId, {});
+                table.reload(purOrderTableId, {});
             }
         });
         layer.full(index);

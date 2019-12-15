@@ -1,5 +1,6 @@
 package com.littledoctor.clinicassistant.module.purchase.order.service;
 
+import com.littledoctor.clinicassistant.common.constant.DictionaryKey;
 import com.littledoctor.clinicassistant.module.purchase.item.entity.PurItemEntity;
 import com.littledoctor.clinicassistant.module.purchase.item.service.PurItemService;
 import com.littledoctor.clinicassistant.module.purchase.order.dao.PurOrderRepository;
@@ -21,6 +22,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -105,12 +107,12 @@ public class PurOrderServiceImpl implements PurOrderService {
 
     /**
      * 根据采购单ID查询采购单
-     * @param purchaseOrderId
+     * @param purOrderId
      * @return
      */
     @Override
-    public PurOrder queryById(String purchaseOrderId) throws Exception {
-        PurOrder purOrder = purOrderRepository.findById(Integer.parseInt(purchaseOrderId)).get();
+    public PurOrder queryById(String purOrderId) throws Exception {
+        PurOrder purOrder = purOrderRepository.findById(Long.parseLong(purOrderId)).get();
         if (purOrder != null) {
             // 设置供应商名称
             SupplierEntity supplierEntity = supplierService.findById(String.valueOf(purOrder.getSupplierId()));
@@ -118,25 +120,23 @@ public class PurOrderServiceImpl implements PurOrderService {
             List<PurOrderDetail> pods = purOrder.getPurOrderDetails();
             if (pods != null && pods.size() > 0) {
                 // 查询字典显示值
-                Map<String, String> sldw = dictionaryService.getItemMapByKey("SLDW");
-                Map<String, String> kcdw = dictionaryService.getItemMapByKey("KCDW");
+                Map<String, String> sldw = dictionaryService.getItemMapByKey(DictionaryKey.PUR_ITEM_JHBZ);
+                Map<String, String> kcdw = dictionaryService.getItemMapByKey(DictionaryKey.PUR_ITEM_LSDW);
                 for (int i = 0, len = pods.size(); i < len; i++) {
                     PurOrderDetail pbi = pods.get(i);
                     // 查询药品信息
                     if (pbi.getPurItemId() != null) {
                         PurItemEntity pi = purItemService.getById(String.valueOf(pbi.getPurItemId()));
                         if (pi != null) {
-                            /*pbi.setPharmacyItemName(pi.getPharmacyItemName());
-                            pbi.setManufacturer(pi.getManufacturer());
-                            pbi.setSpecifications(pi.getSpecifications());
+                            pbi.setPurItemName(pi.getPurItemName());
                             pbi.setUnitConvert(pi.getUnitConvert());
                             // 计算库存量
-                            if (pbi.getPurchaseCount() != null && pbi.getUnitConvert() != null) {
-                                pbi.setStockCount(pbi.getPurchaseCount() * pbi.getUnitConvert());
+                            if (pbi.getPurCount() != null && pbi.getUnitConvert() != null) {
+                                pbi.setStockCount(pbi.getPurCount().multiply(new BigDecimal(pbi.getUnitConvert())));
                             }
                             // 设置数量单位名称
-                            if (sldw != null) pbi.setPurchaseUnitName(sldw.get(pi.getPurchaseUnit()));
-                            if (kcdw != null) pbi.setStockUnitName(kcdw.get(pi.getStockUnit()));*/
+                            if (sldw != null) pbi.setPurUnitName(sldw.get(pi.getPurUnit()));
+                            if (kcdw != null) pbi.setStockUnitName(kcdw.get(pi.getStockUnit()));
                         }
                     }
                 }
@@ -147,13 +147,13 @@ public class PurOrderServiceImpl implements PurOrderService {
 
     /**
      * 删除采购单
-     * @param purchaseOrderId
+     * @param purOrderId
      * @return
      */
     @Override
-    public boolean delete(String purchaseOrderId) throws Exception {
-        if (StringUtils.isNotBlank(purchaseOrderId)) {
-            purOrderRepository.deleteById(Integer.parseInt(purchaseOrderId));
+    public boolean delete(String purOrderId) throws Exception {
+        if (StringUtils.isNotBlank(purOrderId)) {
+            purOrderRepository.deleteById(Long.parseLong(purOrderId));
             return true;
         }
         return false;
