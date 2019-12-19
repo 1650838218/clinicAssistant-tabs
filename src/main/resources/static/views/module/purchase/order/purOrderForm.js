@@ -346,9 +346,14 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
     });
 
-    // 取消按钮点击事件
-    $('button[lay-filter="cancel-btn"]').click(function () {
+    // 新建按钮点击事件
+    $('button[lay-filter="create-btn"]').click(function () {
         window.location.reload();
+    });
+
+    // 转到查询列表
+    $('button[lay-filter="query-btn"]').click(function () {
+        top.layui.index.openTabsPage('/views/module/purchase/order/purOrderQuery.html','查询采购单');
     });
 
     // 关闭按钮点击事件
@@ -356,12 +361,6 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
         parent.layer.close(index); //再执行关闭
     });
-
-    // 转到采购单列表
-/*    $('button[lay-filter="golist-btn"]').click(function () {
-        var treeMenu = $('#LAY-system-side-menu', parent.document);
-        treeMenu.find('li[data-name="purchase"] dl dd[data-name="supplier"] a').click();
-    });*/
 
     // 格式化总金额
     $('#'+ formId + ' input[name="totalPrice"]').bind('change', function () {
