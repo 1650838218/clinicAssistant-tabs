@@ -95,4 +95,12 @@ public interface PurItemService {
      * @throws Exception
      */
     List<PurItemEntity> findTreeEntity() throws Exception;
+
+    /**
+     * 根据ID查询品目
+     * @param purItemIdList
+     * @return
+     * @throws Exception
+     */
+    List<PurItemEntity> findAllById(List<Long> purItemIdList) throws Exception;
 }

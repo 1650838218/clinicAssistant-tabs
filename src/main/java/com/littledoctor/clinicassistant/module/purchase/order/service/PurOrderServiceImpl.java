@@ -17,6 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -51,25 +53,25 @@ public class PurOrderServiceImpl implements PurOrderService {
     /**
      * 分页查询订单
      * @param page
-     * @param purchaseOrderCode
-     * @param purchaseOrderDate
+     * @param purOrderCode
+     * @param purOrderDate
      * @param supplierId
      * @return
      * @throws Exception
      */
     @Override
-    public Page<PurOrderSingle> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) throws Exception {
-        Page<PurOrderSingle> purchaseOrderPage = purOrderSingleRepository.findAll(new Specification<PurOrderSingle>() {
+    public Page<PurOrder> queryPage(Pageable page, String purOrderCode, String purOrderDate, String supplierId) throws Exception {
+        Page<PurOrder> purOrderPage = purOrderRepository.findAll(new Specification<PurOrder>() {
             @Override
-            public Predicate toPredicate(Root<PurOrderSingle> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            public Predicate toPredicate(Root<PurOrder> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicateList = new ArrayList<>();
-                if (StringUtils.isNotBlank(purchaseOrderCode)) {
-                    predicateList.add(criteriaBuilder.equal(root.get("purchaseOrderCode"), purchaseOrderCode));
+                if (StringUtils.isNotBlank(purOrderCode)) {
+                    predicateList.add(criteriaBuilder.equal(root.get("purOrderCode"), purOrderCode));
                 }
-                if (StringUtils.isNotBlank(purchaseOrderDate)) {
-                    String[] dates = purchaseOrderDate.split(" - ");
+                if (StringUtils.isNotBlank(purOrderDate)) {
+                    String[] dates = purOrderDate.split(" - ");
                     if (dates != null && dates.length == 2) {
-                        predicateList.add(criteriaBuilder.between(root.get("purchaseOrderDate"), dates[0], dates[1]));
+                        predicateList.add(criteriaBuilder.between(root.get("purOrderDate"), dates[0], dates[1]));
                     }
                 }
                 if (StringUtils.isNotBlank(supplierId)) {
@@ -78,18 +80,37 @@ public class PurOrderServiceImpl implements PurOrderService {
                 return criteriaBuilder.and(predicateList.toArray(new Predicate[predicateList.size()]));
             }
         }, page);
-        // 设置供应商名称
-        List<PurOrderSingle> pol = purchaseOrderPage.getContent();
+
+        List<PurOrder> pol = purOrderPage.getContent();
         if (pol != null && pol.size() > 0) {
             for (int i = 0, len = pol.size(); i < len; i++) {
-                PurOrderSingle pos = pol.get(i);
+                // 设置供应商名称
+                PurOrder pos = pol.get(i);
                 if (pos.getSupplierId() != null) {
                     SupplierEntity s = supplierService.findById(String.valueOf(pos.getSupplierId()));
                     if (s != null) pos.setSupplierName(s.getSupplierName());
                 }
+                // 品目名称
+                if (!ObjectUtils.isEmpty(pos.getPurOrderDetails())) {
+                    List<Long> purItemIdList = new ArrayList<>();
+                    for (int j = 0; j < pos.getPurOrderDetails().size(); j++) {
+                        purItemIdList.add(pos.getPurOrderDetails().get(j).getPurItemId());
+                    }
+                    if (purItemIdList.size() > 0) {
+                        List<PurItemEntity> purItemEntityList = purItemService.findAllById(purItemIdList);
+                        if (!ObjectUtils.isEmpty(purItemEntityList)) {
+                            String purItemNames = "";
+                            for (int j = 0; j < purItemEntityList.size(); j++) {
+                                purItemNames += purItemEntityList.get(j).getPurItemName() + "，";
+                            }
+                            // 设置品目名称
+                            if (purItemNames.length() > 0) pos.setPurItemNames(purItemNames.substring(0, purItemNames.length() - 1));
+                        }
+                    }
+                }
             }
         }
-        return purchaseOrderPage;
+        return purOrderPage;
     }
 
     /**
@@ -161,15 +182,15 @@ public class PurOrderServiceImpl implements PurOrderService {
 
     /**
      * 更新入库状态为已入库
-     * @param purchaseOrderIds
+     * @param purOrderIds
      * @return
      * @throws Exception
      */
     @Override
-    public boolean updateEntry(HashSet<String> purchaseOrderIds) throws Exception {
-        if (purchaseOrderIds != null && !purchaseOrderIds.isEmpty()) {
+    public boolean updateEntry(HashSet<String> purOrderIds) throws Exception {
+        if (purOrderIds != null && !purOrderIds.isEmpty()) {
             String ids = "";
-            Iterator iterator = purchaseOrderIds.iterator();
+            Iterator iterator = purOrderIds.iterator();
             while (iterator.hasNext()) {
                 ids += iterator.next().toString();
                 if (iterator.hasNext()) ids += ",";

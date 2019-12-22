@@ -1,7 +1,6 @@
 package com.littledoctor.clinicassistant.module.purchase.order.service;
 
 import com.littledoctor.clinicassistant.module.purchase.order.entity.PurOrder;
-import com.littledoctor.clinicassistant.module.purchase.order.entity.PurOrderSingle;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -22,7 +21,7 @@ public interface PurOrderService {
      * @param supplierId
      * @return
      */
-    Page<PurOrderSingle> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) throws Exception;
+    Page<PurOrder> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) throws Exception;
 
     /**
      * 保存采购单

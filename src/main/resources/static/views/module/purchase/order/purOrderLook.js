@@ -12,26 +12,24 @@ layui.use(['form','utils', 'jquery', 'layer', 'table'], function () {
     var table = layui.table;
     var utils = layui.utils;
     var rootMapping = '/purchase/order';
-    var itemTableId = 'order-table';
-    var formId = 'order-form';
+    var itemTableId = 'purorder-table';
+    var formId = 'purorder-form';
     form.render();
 
     // 初始化表格
-    table.render({
+    var tableConfig = {
         elem: '#' + itemTableId,
         height: 'full-100',
         cols: [[
-            {field: 'purchaseOrderItemId', title: TABLE_COLUMN.numbers, type: 'numbers'},
-            {field: 'pharmacyItemName', title: '药品名称', width: '12%'},
-            {field: 'specifications', title: '规格', width: '10%'},
-            {field: 'manufacturer', title: '制造商'},
+            {field: 'purOrderDetailId', title: TABLE_COLUMN.numbers, type: 'numbers'},
+            {field: 'purItemName', title: '品目名称', width: '12%'},
             {field: 'batchNumber', title: '批号', width: '10%'},
             {field: 'manufactureDate', title: '生产日期', width: '10%'},
             {field: 'expireDate', title: '有效期至', width: '10%'},
-            {field: 'purchaseCount', title: '数量', width: '7%',templet: function (d) {
-                    return parseFloat(d.purchaseCount).toFixed(2);
+            {field: 'purCount', title: '数量', width: '7%',templet: function (d) {
+                    return parseFloat(d.purCount).toFixed(2);
                 }},
-            {field: 'purchaseUnitName', title: '单位', width: '7%'},
+            {field: 'purUnitName', title: '单位', width: '7%'},
             {field: 'unitPrice', title: '单价(元)', width: '8%',templet: function (d) {
                     return parseFloat(d.unitPrice).toFixed(2);
                 }},
@@ -39,17 +37,17 @@ layui.use(['form','utils', 'jquery', 'layer', 'table'], function () {
                     return parseFloat(d.totalPrice).toFixed(2);
                 }}
         ]],
-    });
+    };
 
     // 根据ID查询采购单
-    function queryPurchaseOrderById(purchaseOrderId) {
-        if (utils.isNotNull(purchaseOrderId)) {
-            $.getJSON(rootMapping + "/queryById",{purchaseOrderId: purchaseOrderId}, function (purchaseOrder) {
-                if (purchaseOrder != null) {
-                    purchaseOrder.totalPrice = purchaseOrder.totalPrice.toFixed(2) + ' 元';
-                    form.val('order-form', purchaseOrder);// 表单赋值
+    function queryPurOrderById(purOrderId) {
+        if (utils.isNotNull(purOrderId)) {
+            $.getJSON(rootMapping + "/queryById",{purOrderId: purOrderId}, function (purOrder) {
+                if (purOrder != null) {
+                    purOrder.totalPrice = purOrder.totalPrice.toFixed(2) + ' 元';
+                    form.val(formId, purOrder);// 表单赋值
                     form.render();
-                    table.reload(itemTableId,{data:purchaseOrder.purchaseOrderDetails});// 加载采购单明细
+                    table.reload(itemTableId,$.extend({},tableConfig,{data:purOrder.purOrderDetails}));// 加载采购单明细
                 }
             });
         } else {
@@ -63,8 +61,8 @@ layui.use(['form','utils', 'jquery', 'layer', 'table'], function () {
         var condition = search.substr(1).split('&');
         for (var i = 0; i < condition.length; i++) {
             var keyVal = condition[i].split('=');
-            if (keyVal[0] === 'purchaseOrderId') {
-                queryPurchaseOrderById(keyVal[1]);
+            if (keyVal[0] === 'purOrderId') {
+                queryPurOrderById(keyVal[1]);
                 break;
             }
         }

@@ -36,14 +36,14 @@ public class PurOrderController {
      * @return
      */
     @RequestMapping(value = "/queryPage", method = RequestMethod.GET)
-    public LayuiTableEntity<PurOrderSingle> queryPage(Pageable page, String purOrderCode, String purOrderDate, String supplierId) {
+    public LayuiTableEntity<PurOrder> queryPage(Pageable page, String purOrderCode, String purOrderDate, String supplierId) {
         try {
             if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
-            return new LayuiTableEntity<PurOrderSingle>(purOrderService.queryPage(page, purOrderCode, purOrderDate, supplierId));
+            return new LayuiTableEntity<PurOrder>(purOrderService.queryPage(page, purOrderCode, purOrderDate, supplierId));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return null;
+        return new LayuiTableEntity<>();
     }
 
     /**
@@ -74,7 +74,7 @@ public class PurOrderController {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return null;
+        return new PurOrder();
     }
 
     /**

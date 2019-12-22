@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import sun.rmi.runtime.Log;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -237,5 +236,16 @@ public class PurItemServiceImpl implements PurItemService {
     @Override
     public List<PurItemEntity> findTreeEntity() throws Exception {
         return purItemRepository.findAll();
+    }
+
+    /**
+     * 根据ID查询品目
+     * @param purItemIds
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<PurItemEntity> findAllById(List<Long> purItemIds) throws Exception {
+        return purItemRepository.findAllById(purItemIds);
     }
 }

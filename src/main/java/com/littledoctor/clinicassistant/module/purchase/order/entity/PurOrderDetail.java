@@ -16,7 +16,7 @@ public class PurOrderDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PUR_ORDER_DETAIL_ID", nullable = false)
-    private Long PurOrderDetailId;
+    private Long purOrderDetailId;
 
     /** 采购品目，为了关联采购的是哪个品目 */
     @Column(name = "PUR_ITEM_ID")
@@ -67,11 +67,11 @@ public class PurOrderDetail {
     private BigDecimal stockCount;
 
     public Long getPurOrderDetailId() {
-        return PurOrderDetailId;
+        return purOrderDetailId;
     }
 
     public void setPurOrderDetailId(Long purOrderDetailId) {
-        PurOrderDetailId = purOrderDetailId;
+        this.purOrderDetailId = purOrderDetailId;
     }
 
     public Long getPurItemId() {

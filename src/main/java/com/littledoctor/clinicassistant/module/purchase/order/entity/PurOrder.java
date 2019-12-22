@@ -62,6 +62,10 @@ public class PurOrder {
     @Transient
     private String supplierName;
 
+    /** 采购品目名称，本采购单所采购的品目的名称，用逗号分隔 */
+    @Transient
+    private String purItemNames;
+
     public Long getPurOrderId() {
         return purOrderId;
     }
@@ -148,5 +152,13 @@ public class PurOrder {
 
     public void setSupplierName(String supplierName) {
         this.supplierName = supplierName;
+    }
+
+    public String getPurItemNames() {
+        return purItemNames;
+    }
+
+    public void setPurItemNames(String purItemNames) {
+        this.purItemNames = purItemNames;
     }
 }

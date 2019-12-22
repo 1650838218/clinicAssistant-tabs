@@ -44,29 +44,21 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
         },
         cols: [[
             {field: 'purOrderId', title: TABLE_COLUMN.numbers, type: 'numbers'},
-            {field: 'purOrderCode', title: '单号', width: '15%'},
-            {field: 'purOrderDate', title: '日期', width: '12%'},
-            {field: 'purOrderType', title: '类型', width: '10%',
-                templet: function (d) {
-                    if (parseInt(d.purOrderType) === 1) {
-                        return "药品采购单"
-                    } else {
-                        return "耗材采购单"
-                    }
-                }
-            },
-            {field: 'supplierName', title: '供应商', event: 'lookSupplier',style:'cursor: pointer;',
+            {field: 'purOrderCode', title: '单号', width: '10%'},
+            {field: 'purOrderDate', title: '日期', width: '10%'},
+            {field: 'purItemNames', title: '采购品目'},
+            {field: 'supplierName', title: '供应商',width: '15%', event: 'lookSupplier',style:'cursor: pointer;',
                 templet: function (d) {
                     return d.supplierName + '<i class="layui-icon layui-icon-about supplier-name-icon" title="查看供应商详情"></i>';
                 }
             },
             {
-                field: 'totalPrice', title: '金额(元)', width: '15%',
+                field: 'totalPrice', title: '金额(元)', width: '10%',
                 templet: function (d) {
                     return parseFloat(d.totalPrice).toFixed(2);
                 }
             },
-            {title: TABLE_COLUMN.operation, toolbar: '#operate-column', width: '23%', align: 'center'}
+            {title: TABLE_COLUMN.operation, toolbar: '#operate-column', width: '17%', align: 'center'}
         ]],
         done: function (res, curr, count) {
         }
