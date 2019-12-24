@@ -58,7 +58,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
                     return parseFloat(d.totalPrice).toFixed(2);
                 }
             },
-            {title: TABLE_COLUMN.operation, toolbar: '#operate-column', width: '17%', align: 'center'}
+            {title: TABLE_COLUMN.operation, toolbar: '#operate-column', width: '20%', align: 'center'}
         ]],
         done: function (res, curr, count) {
         }

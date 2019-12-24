@@ -93,10 +93,7 @@
 <!--layui table 操作列-->
 <script type="text/html" id="operate-column">
     <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="look" title="查看">查看</a>
-    {{# if(d.purOrderType != 1) { }}
-        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="update" title="修改">修改</a>
-        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="delete" title="删除">删除</a>
-    {{# } else if(!d.entry) { }}
+    {{# if(!d.entry) { }}
         <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="update" title="修改">修改</a>
         <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="delete" title="删除">删除</a>
         <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="entry" title="入库">入库</a>

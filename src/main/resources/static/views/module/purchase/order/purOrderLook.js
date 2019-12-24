@@ -20,20 +20,21 @@ layui.use(['form','utils', 'jquery', 'layer', 'table'], function () {
     var tableConfig = {
         elem: '#' + itemTableId,
         height: 'full-100',
+        page: true,
         cols: [[
             {field: 'purOrderDetailId', title: TABLE_COLUMN.numbers, type: 'numbers'},
-            {field: 'purItemName', title: '品目名称', width: '12%'},
-            {field: 'batchNumber', title: '批号', width: '10%'},
-            {field: 'manufactureDate', title: '生产日期', width: '10%'},
-            {field: 'expireDate', title: '有效期至', width: '10%'},
-            {field: 'purCount', title: '数量', width: '7%',templet: function (d) {
+            {field: 'purItemName', title: '品目名称'},
+            {field: 'batchNumber', title: '批号', width: '13%'},
+            {field: 'manufactureDate', title: '生产日期', width: '13%'},
+            {field: 'expireDate', title: '有效期至', width: '13%'},
+            {field: 'purCount', title: '数量', width: '10%',templet: function (d) {
                     return parseFloat(d.purCount).toFixed(2);
                 }},
-            {field: 'purUnitName', title: '单位', width: '7%'},
-            {field: 'unitPrice', title: '单价(元)', width: '8%',templet: function (d) {
+            {field: 'purUnitName', title: '单位', width: '10%'},
+            {field: 'unitPrice', title: '单价(元)', width: '10%',templet: function (d) {
                     return parseFloat(d.unitPrice).toFixed(2);
                 }},
-            {field: 'totalPrice', title: '总价(元)', width: '8%',templet: function (d) {
+            {field: 'totalPrice', title: '总价(元)', width: '10%',templet: function (d) {
                     return parseFloat(d.totalPrice).toFixed(2);
                 }}
         ]],
@@ -47,7 +48,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table'], function () {
                     purOrder.totalPrice = purOrder.totalPrice.toFixed(2) + ' 元';
                     form.val(formId, purOrder);// 表单赋值
                     form.render();
-                    table.reload(itemTableId,$.extend({},tableConfig,{data:purOrder.purOrderDetails}));// 加载采购单明细
+                    table.render($.extend({},tableConfig,{data:purOrder.purOrderDetails}));// 加载采购单明细
                 }
             });
         } else {
