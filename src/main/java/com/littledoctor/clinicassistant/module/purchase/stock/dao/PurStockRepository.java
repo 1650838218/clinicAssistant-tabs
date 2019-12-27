@@ -1,6 +1,6 @@
 package com.littledoctor.clinicassistant.module.purchase.stock.dao;
 
-import com.littledoctor.clinicassistant.module.purchase.stock.entity.StockDetail;
+import com.littledoctor.clinicassistant.module.purchase.stock.entity.PurStock;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
  * @Description: 入库单
  */
 @Repository
-public interface StockDetailRepository extends JpaRepository<StockDetail, Integer>, JpaSpecificationExecutor<StockDetail> {
+public interface PurStockRepository extends JpaRepository<PurStock, Long>, JpaSpecificationExecutor<PurStock> {
 }

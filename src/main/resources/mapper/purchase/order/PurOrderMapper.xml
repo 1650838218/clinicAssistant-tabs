@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.littledoctor.clinicassistant.module.purchase.order.mapper.PurOrderMapper">
+
+    <!-- 根据条件查询 库存信息 -->
+    <select id="findAll" resultType="java.util.Map">
+        SELECT
+            a.pur_order_id,
+            a.pur_order_code,
+            a.pur_order_date,
+            a.supplier_id,
+            b.supplier_name,
+            d.pur_item_name,
+            a.is_entry,
+            a.create_time
+        FROM
+            pur_order a,
+            pur_supplier b,
+            (
+                SELECT
+                    a1.pur_order_id,
+                    GROUP_CONCAT(c1.pur_item_name SEPARATOR '，') pur_item_name,
+                    GROUP_CONCAT(c1.abbr_pinyin),
+                    GROUP_CONCAT(c1.full_pinyin)
+                FROM
+                    pur_order a1,
+                    pur_order_detail b1,
+                    pur_item c1
+                WHERE
+                    a1.pur_order_id = b1.pur_order_id
+                AND b1.pur_item_id = c1.pur_item_id
+                GROUP BY
+                    a1.pur_order_id
+            ) d
+        WHERE
+            a.supplier_id = b.supplier_id
+        AND a.pur_order_id = d.pur_order_id
+        AND date_format(a.create_time,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDat}
+        AND d.pur_item_name like concat('%', #{purItemName}, '%')
+        AND a.supplier_id = #{supplierId}
+        ORDER BY
+            a.is_entry ASC,
+            a.create_time DESC
+        LIMIT ${offSet},${pageSize}
+    </select>
+</mapper>

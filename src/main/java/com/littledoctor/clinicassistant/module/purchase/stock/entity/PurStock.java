@@ -9,22 +9,22 @@ import java.util.Date;
  * @Description: 库存明细
  */
 @Entity
-@Table(name = "STOCK_DETAIL")
-public class StockDetail {
+@Table(name = "PUR_STOCK")
+public class PurStock {
 
     /** 主键ID */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "STOCK_DETAIL_ID", nullable = false)
-    private Integer stockDetailId;
+    @Column(name = "PUR_STOCK_ID", nullable = false)
+    private Long purStockId;
 
     /** 采购单ID */
-    @Column(name = "PURCHASE_ORDER_ID")
-    private Integer purchaseOrderId;
+    @Column(name = "PUR_ORDER_ID")
+    private Long purOrderId;
 
-    /** 采购品目，为了关联采购的是哪个药品 */
-    @Column(name = "PHARMACY_ITEM_ID")
-    private Integer pharmacyItemId;
+    /** 采购品目，为了关联采购的是哪个品目 */
+    @Column(name = "PUR_ITEM_ID")
+    private Long purItemId;
 
     /** 批号 */
     @Column(name = "BATCH_NUMBER")
@@ -58,12 +58,12 @@ public class StockDetail {
     @Column(name = "UPDATE_TIME")
     private Date updateTime;
 
-    public Integer getStockDetailId() {
-        return stockDetailId;
+    public Long getPurStockId() {
+        return purStockId;
     }
 
-    public void setStockDetailId(Integer stockDetailId) {
-        this.stockDetailId = stockDetailId;
+    public void setPurStockId(Long purStockId) {
+        this.purStockId = purStockId;
     }
 
     public Double getStockCount() {
@@ -80,14 +80,6 @@ public class StockDetail {
 
     public void setSellingPrice(Double sellingPrice) {
         this.sellingPrice = sellingPrice;
-    }
-
-    public Integer getPharmacyItemId() {
-        return pharmacyItemId;
-    }
-
-    public void setPharmacyItemId(Integer pharmacyItemId) {
-        this.pharmacyItemId = pharmacyItemId;
     }
 
     public String getBatchNumber() {
@@ -122,14 +114,6 @@ public class StockDetail {
         this.stockState = stockState;
     }
 
-    public Integer getPurchaseOrderId() {
-        return purchaseOrderId;
-    }
-
-    public void setPurchaseOrderId(Integer purchaseOrderId) {
-        this.purchaseOrderId = purchaseOrderId;
-    }
-
     public Date getCreateTiem() {
         return createTiem;
     }
@@ -144,5 +128,21 @@ public class StockDetail {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Long getPurOrderId() {
+        return purOrderId;
+    }
+
+    public void setPurOrderId(Long purOrderId) {
+        this.purOrderId = purOrderId;
+    }
+
+    public Long getPurItemId() {
+        return purItemId;
+    }
+
+    public void setPurItemId(Long purItemId) {
+        this.purItemId = purItemId;
     }
 }

@@ -8,6 +8,7 @@ import com.littledoctor.clinicassistant.module.purchase.order.dao.PurOrderSingle
 import com.littledoctor.clinicassistant.module.purchase.order.entity.PurOrder;
 import com.littledoctor.clinicassistant.module.purchase.order.entity.PurOrderDetail;
 import com.littledoctor.clinicassistant.module.purchase.order.entity.PurOrderSingle;
+import com.littledoctor.clinicassistant.module.purchase.order.mapper.PurOrderMapper;
 import com.littledoctor.clinicassistant.module.purchase.supplier.entity.SupplierEntity;
 import com.littledoctor.clinicassistant.module.purchase.supplier.service.SupplierService;
 import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
@@ -39,9 +40,6 @@ public class PurOrderServiceImpl implements PurOrderService {
     private PurOrderRepository purOrderRepository;
 
     @Autowired
-    private PurOrderSingleRepository purOrderSingleRepository;
-
-    @Autowired
     private PurItemService purItemService;
 
     @Autowired
@@ -50,23 +48,57 @@ public class PurOrderServiceImpl implements PurOrderService {
     @Autowired
     private SupplierService supplierService;
 
+    @Autowired(required = false)
+    private PurOrderMapper purOrderMapper;
+
     /**
      * 分页查询订单
      * @param page
-     * @param purOrderCode
+     * @param purItemName
      * @param purOrderDate
      * @param supplierId
      * @return
      * @throws Exception
      */
     @Override
-    public Page<PurOrder> queryPage(Pageable page, String purOrderCode, String purOrderDate, String supplierId) throws Exception {
+    public Page<PurOrder> queryPage(Pageable page, String purItemName, String purOrderDate, String supplierId) throws Exception {
+        /*SELECT
+                *
+                FROM
+        pur_order a,
+        pur_order_detail b,
+        pur_item c
+        WHERE
+        a.create_time BETWEEN '2019-10-12'
+        AND '2019-11-12'
+        AND a.supplier_id = 1
+        AND a.pur_order_id = b.pur_order_id
+        AND b.pur_item_id = c.pur_item_id
+        AND c.pur_item_name LIKE '%三七%'
+        ORDER BY a.is_entry ASC, a.pur_order_code DESC
+        LIMIT 0,10*/
+        String startDate = "";// 开始日期  查询某日期范围内的订单
+        String endDate = "";// 结束日期
+        Long offSet = (long)0;// 偏移量
+        int pageSize = 10;// 每页的数据条数
+        if (StringUtils.isNotBlank(purOrderDate)) {
+            String[] dates = purOrderDate.split(" - ");
+            if (dates != null && dates.length == 2) {
+                startDate = dates[0];
+                endDate = dates[1];
+            }
+        }
+        List<PurOrder> purOrderList = purOrderMapper.findAll(purItemName,supplierId,startDate,endDate,offSet,pageSize);
+
+
+
+
         Page<PurOrder> purOrderPage = purOrderRepository.findAll(new Specification<PurOrder>() {
             @Override
             public Predicate toPredicate(Root<PurOrder> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicateList = new ArrayList<>();
-                if (StringUtils.isNotBlank(purOrderCode)) {
-                    predicateList.add(criteriaBuilder.equal(root.get("purOrderCode"), purOrderCode));
+                if (StringUtils.isNotBlank(purItemName)) {
+                    predicateList.add(criteriaBuilder.equal(root.get("purOrderCode"), purItemName));
                 }
                 if (StringUtils.isNotBlank(purOrderDate)) {
                     String[] dates = purOrderDate.split(" - ");

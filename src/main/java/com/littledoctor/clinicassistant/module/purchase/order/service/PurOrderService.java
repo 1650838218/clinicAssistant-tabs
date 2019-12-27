@@ -16,12 +16,12 @@ public interface PurOrderService {
     /**
      * 分页查询订单
      * @param page
-     * @param purchaseOrderCode
+     * @param purItemName
      * @param purchaseOrderDate
      * @param supplierId
      * @return
      */
-    Page<PurOrder> queryPage(Pageable page, String purchaseOrderCode, String purchaseOrderDate, String supplierId) throws Exception;
+    Page<PurOrder> queryPage(Pageable page, String purItemName, String purchaseOrderDate, String supplierId) throws Exception;
 
     /**
      * 保存采购单

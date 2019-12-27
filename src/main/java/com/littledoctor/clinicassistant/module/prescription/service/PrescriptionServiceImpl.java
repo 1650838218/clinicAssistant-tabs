@@ -1,7 +1,7 @@
 package com.littledoctor.clinicassistant.module.prescription.service;
 
 import com.littledoctor.clinicassistant.common.entity.SelectOption;
-import com.littledoctor.clinicassistant.module.purchase.stock.service.StockDetailService;
+import com.littledoctor.clinicassistant.module.purchase.stock.service.PurStockService;
 import com.littledoctor.clinicassistant.module.prescription.dao.PrescriptionRepository;
 import com.littledoctor.clinicassistant.module.prescription.dao.RxCatalogueRepository;
 import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
@@ -35,7 +35,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     private PrescriptionRepository prescriptionRepository;
 
     @Autowired
-    private StockDetailService stockDetailService;
+    private PurStockService purStockService;
 
     /**
      * 查询处方目录
@@ -171,7 +171,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                         for (int i = 0, len = medicals.length; i < len; i++) {
                             String medicalName = medicals[i].split("\\d+")[0];// 提取药材名称
                             String dose = medicals[i].replaceAll("[^0-9]", "");// 提取剂量
-                            Map<String, Object> medicalInfo = stockDetailService.findByName(medicalName);// 根据药材名称查询药材信息
+                            Map<String, Object> medicalInfo = purStockService.findByName(medicalName);// 根据药材名称查询药材信息
                             if (ObjectUtils.isEmpty(medicalInfo)) {
                                 notExist.add(medicalName);// 库存中没有此药材
                             } else {

@@ -1,102 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.littledoctor.clinicassistant.module.purchase.stock.mapper.StockDetailMapper">
+<mapper namespace="com.littledoctor.clinicassistant.module.purchase.stock.mapper.PurStockMapper">
 
     <!-- 根据条件查询 库存信息 -->
     <select id="findAll" resultType="java.util.Map">
         SELECT
-            b1.pharmacy_item_id pharmacyItemId,
-            b1.pharmacy_item_name pharmacyItemName,
-            b1.pharmacy_item_type pharmacyItemType,
-            b1.specifications specifications,
-            b1.manufacturer manufacturer,
+            b1.pur_item_id purItemId,
+            b1.pur_item_name purItemName,
+            b1.pur_item_type purItemType,
             b1.stock_unit stockUnit,
-            a1.stock_detail_id stockDetailId,
+            a1.pur_stock_id purStockId,
             a1.expire_date expireDate,
             a1.stock_count stockCount,
             a1.selling_price sellingPrice
         FROM
             (
                 SELECT
-                    b.pharmacy_item_id,
-                    b.pharmacy_item_name,
-                    b.pharmacy_item_type,
-                    b.specifications,
-                    b.manufacturer,
+                    b.pur_item_id,
+                    b.pur_item_name,
+                    b.pur_item_type,
                     b.stock_unit
                 FROM
-                    pharmacy_item b
+                    pur_item b
                 WHERE 1 = 1
                     <if test="keywords != null">
                         AND (
-                            b.pharmacy_item_name LIKE CONCAT('%', #{keywords}, '%')
+                            b.pur_item_name LIKE CONCAT('%', #{keywords}, '%')
                             OR LOWER(b.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')
                             OR UPPER(b.abbr_pinyin) LIKE CONCAT('%', UPPER(#{keywords}), '%')
                             OR b.barcode = #{keywords}
                         )
                     </if>
-                    <if test="pharmacyItemType != null">
-                            AND b.pharmacy_item_type = #{pharmacyItemType}
+                    <if test="purItemType != null">
+                            AND b.pur_item_type = #{purItemType}
                     </if>
             ) b1,
             (
                 SELECT
-                    a.stock_detail_id,
-                    a.pharmacy_item_id,
+                    a.pur_stock_id,
+                    a.pur_item_id,
                     a.expire_date,
                     a.stock_count,
                     a.selling_price
                 FROM
-                    stock_detail a
+                    pur_stock a
                 WHERE
                     a.stock_state = 1
             ) a1
         WHERE
-            b1.pharmacy_item_id = a1.pharmacy_item_id
+            b1.pur_item_id = a1.pur_item_id
     </select>
 
     <!-- 用于病历开方时根据药品名称查询药品信息 -->
     <select id="getCombogridForDecoction" resultType="java.util.Map">
         SELECT
-            b1.pharmacy_item_id pharmacyItemId,
-            b1.pharmacy_item_name pharmacyItemName,
+            b1.pur_item_id purItemId,
+            b1.pur_item_name purItemName,
             b1.poisonous poisonous,
             b1.usage_and_dosage usageAndDosage,
             b1.taboo taboo,
             b1.stock_unit stockUnit,
             b1.specifications specifications,
             b1.manufacturer manufacturer,
-            b1.pharmacy_item_type pharmacyItemType,
+            b1.pur_item_type purItemType,
             a1.selling_price sellingPrice,
             a1.stock_detail_id stockDetailId,
             a1.stock_count stockCount
         FROM
             (
                 SELECT
-                    b.pharmacy_item_id,
-                    b.pharmacy_item_name,
+                    b.pur_item_id,
+                    b.pur_item_name,
                     b.poisonous,
                     b.usage_and_dosage,
                     b.taboo,
                     b.stock_unit,
                     b.specifications,
                     b.manufacturer,
-                    b.pharmacy_item_type
+                    b.pur_item_type
                 FROM
-                    pharmacy_item b
+                    pur_item b
                 WHERE
                     (
-                        b.pharmacy_item_name LIKE CONCAT('%', #{keywords}, '%')
+                        b.pur_item_name LIKE CONCAT('%', #{keywords}, '%')
                         OR LOWER(b.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')
                         OR UPPER(b.abbr_pinyin) LIKE CONCAT('%', UPPER(#{keywords}), '%')
                     )
-                    <if test="pharmacyItemType != null">
-                        AND b.pharmacy_item_type = #{pharmacyItemType}
+                    <if test="purItemType != null">
+                        AND b.pur_item_type = #{purItemType}
                     </if>
             ) b1,
             (
                 SELECT
-                    a.pharmacy_item_id,
+                    a.pur_item_id,
                     a.selling_price,
                     GROUP_CONCAT(a.stock_detail_id ORDER BY a.stock_detail_id) stock_detail_id,
                     SUM(a.stock_count) stock_count
@@ -106,18 +102,18 @@
                     a.stock_count > 0
                 AND a.stock_state = 1
                 GROUP BY
-                    a.pharmacy_item_id,
+                    a.pur_item_id,
                     a.selling_price
             ) a1
         WHERE
-            b1.pharmacy_item_id = a1.pharmacy_item_id
+            b1.pur_item_id = a1.pur_item_id
     </select>
 
     <!--根据药材名称查询药材信息-->
     <select id="findByName" resultType="java.util.Map">
         SELECT
-            b1.pharmacy_item_id pharmacyItemId,
-            b1.pharmacy_item_name pharmacyItemName,
+            b1.pur_item_id purItemId,
+            b1.pur_item_name purItemName,
             b1.poisonous poisonous,
             b1.usage_and_dosage usageAndDosage,
             b1.taboo taboo,
@@ -128,20 +124,20 @@
         FROM
             (
                 SELECT
-                    b.pharmacy_item_id,
-                    b.pharmacy_item_name,
+                    b.pur_item_id,
+                    b.pur_item_name,
                     b.poisonous,
                     b.usage_and_dosage,
                     b.taboo,
                     b.stock_unit
                 FROM
-                    pharmacy_item b
+                    pur_item b
                 WHERE
-                    b.pharmacy_item_name = #{medicalName} AND b.pharmacy_item_type = 1
+                    b.pur_item_name = #{medicalName} AND b.pur_item_type = 1
             ) b1,
             (
                 SELECT
-                    a.pharmacy_item_id,
+                    a.pur_item_id,
                     a.selling_price,
                     GROUP_CONCAT(a.stock_detail_id ORDER BY a.stock_detail_id) stock_detail_id,
                     SUM(a.stock_count) stock_count
@@ -151,11 +147,11 @@
                     a.stock_count > 0
                 AND a.stock_state = 1
                 GROUP BY
-                    a.pharmacy_item_id,
+                    a.pur_item_id,
                     a.selling_price
             ) a1
         WHERE
-            b1.pharmacy_item_id = a1.pharmacy_item_id
+            b1.pur_item_id = a1.pur_item_id
         ORDER BY a1.selling_price
         LIMIT 1
     </select>

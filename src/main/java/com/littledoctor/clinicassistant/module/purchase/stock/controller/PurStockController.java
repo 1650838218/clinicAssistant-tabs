@@ -1,8 +1,8 @@
 package com.littledoctor.clinicassistant.module.purchase.stock.controller;
 
 import com.littledoctor.clinicassistant.common.entity.LayuiTableEntity;
-import com.littledoctor.clinicassistant.module.purchase.stock.entity.StockDetail;
-import com.littledoctor.clinicassistant.module.purchase.stock.service.StockDetailService;
+import com.littledoctor.clinicassistant.module.purchase.stock.entity.PurStock;
+import com.littledoctor.clinicassistant.module.purchase.stock.service.PurStockService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,26 +20,26 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/purchase/stock")
-public class StockDetailController {
+public class PurStockController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private StockDetailService stockDetailService;
+    private PurStockService purStockService;
 
     /**
      * 保存，适用于新增库存，修改库存
-     * @param stockDetails
+     * @param purStocks
      * @return
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public List<StockDetail> save(@RequestBody List<StockDetail> stockDetails) {
+    public List<PurStock> save(@RequestBody List<PurStock> purStocks) {
         try {
-            return stockDetailService.save(stockDetails);
+            return purStockService.save(purStocks);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return null;
+        return new ArrayList<>();
     }
 
     /**
@@ -49,22 +49,22 @@ public class StockDetailController {
     @RequestMapping(value = "/queryPage", method = RequestMethod.GET)
     public LayuiTableEntity<Map<String, String>> queryPage(Pageable page, String keywords, String pharmacyItemType) {
         try {
-            return new LayuiTableEntity<Map<String, String>>(stockDetailService.queryPage(page, keywords, pharmacyItemType));
+            return new LayuiTableEntity<Map<String, String>>(purStockService.queryPage(page, keywords, pharmacyItemType));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return null;
+        return new LayuiTableEntity<>();
     }
 
     /**
      * 更新 售价 库存数量
-     * @param stockDetail
+     * @param purStock
      * @return
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public StockDetail update(@RequestBody StockDetail stockDetail) {
+    public PurStock update(@RequestBody PurStock purStock) {
         try {
-            return stockDetailService.update(stockDetail);
+            return purStockService.update(purStock);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -73,13 +73,13 @@ public class StockDetailController {
 
     /**
      * 下架
-     * @param stockDetail
+     * @param purStock
      * @return
      */
     @RequestMapping(value = "/unshelve", method = RequestMethod.POST)
-    public Boolean unshelve(@RequestBody StockDetail stockDetail) {
+    public Boolean unshelve(@RequestBody PurStock purStock) {
         try {
-            return stockDetailService.unshelve(stockDetail);
+            return purStockService.unshelve(purStock);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -95,7 +95,7 @@ public class StockDetailController {
             @RequestParam(value = "q", required = false) String keywords,
             @RequestParam(value = "type", required = false) String pharmacyItemType) {
         try {
-            return stockDetailService.getCombogrid(keywords, pharmacyItemType);
+            return purStockService.getCombogrid(keywords, pharmacyItemType);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

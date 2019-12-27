@@ -1,7 +1,7 @@
 package com.littledoctor.clinicassistant.module.purchase.stock.service;
 
 import com.github.pagehelper.PageInfo;
-import com.littledoctor.clinicassistant.module.purchase.stock.entity.StockDetail;
+import com.littledoctor.clinicassistant.module.purchase.stock.entity.PurStock;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -12,14 +12,14 @@ import java.util.Map;
  * @Date: 2019-07-13 15:27
  * @Description: 入库单
  */
-public interface StockDetailService {
+public interface PurStockService {
 
     /**
      * 保存入库单
-     * @param stockDetails
+     * @param purStocks
      * @return
      */
-    List<StockDetail> save(List<StockDetail> stockDetails) throws Exception;
+    List<PurStock> save(List<PurStock> purStocks) throws Exception;
 
     /**
      * 分页查询
@@ -30,22 +30,22 @@ public interface StockDetailService {
      */
     PageInfo<Map<String, String>> queryPage(Pageable page, String keywords, String pharmacyItemType) throws Exception;
 
-    StockDetail queryById(Integer stockDetailId) throws Exception;
+    PurStock queryById(Long purStockId) throws Exception;
 
     /**
      * 更新 售价 库存数量
-     * @param stockDetail
+     * @param purStock
      * @return
      */
-    StockDetail update(StockDetail stockDetail) throws Exception;
+    PurStock update(PurStock purStock) throws Exception;
 
     /**
      * 下架
-     * @param stockDetail
+     * @param purStock
      * @return
      * @throws Exception
      */
-    Boolean unshelve(StockDetail stockDetail) throws Exception;
+    Boolean unshelve(PurStock purStock) throws Exception;
 
     /**
      * 获取下拉表格的list

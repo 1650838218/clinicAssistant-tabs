@@ -18,6 +18,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
     var rootMapping = '/purchase/order';
     var purOrderTableId = 'purorder-table';
     var formId = 'query-form';
+    form.render('radio',formId);
 
     // 动态加载供应商
     utils.splicingOption({

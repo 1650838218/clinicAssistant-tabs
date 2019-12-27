@@ -3,9 +3,9 @@ package com.littledoctor.clinicassistant.module.purchase.stock.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.littledoctor.clinicassistant.module.purchase.order.service.PurOrderService;
-import com.littledoctor.clinicassistant.module.purchase.stock.dao.StockDetailRepository;
-import com.littledoctor.clinicassistant.module.purchase.stock.entity.StockDetail;
-import com.littledoctor.clinicassistant.module.purchase.stock.mapper.StockDetailMapper;
+import com.littledoctor.clinicassistant.module.purchase.stock.dao.PurStockRepository;
+import com.littledoctor.clinicassistant.module.purchase.stock.entity.PurStock;
+import com.littledoctor.clinicassistant.module.purchase.stock.mapper.PurStockMapper;
 import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,40 +26,40 @@ import java.util.Map;
  */
 @Service
 @Transactional
-public class StockDetailServiceImpl implements StockDetailService {
+public class PurStockServiceImpl implements PurStockService {
 
     @Autowired
-    private StockDetailRepository stockDetailRepository;
+    private PurStockRepository purStockRepository;
 
     @Autowired
     private PurOrderService purOrderService;
 
     @Autowired(required = false)
-    private StockDetailMapper stockDetailMapper;
+    private PurStockMapper purStockMapper;
 
     @Autowired
     private DictionaryService dictionaryService;
 
     /**
      * 保存入库单
-     * @param stockDetails
+     * @param purStocks
      * @return
      */
     @Override
-    public List<StockDetail> save(List<StockDetail> stockDetails) throws Exception {
-        if (stockDetails != null && stockDetails.size() > 0) {
+    public List<PurStock> save(List<PurStock> purStocks) throws Exception {
+        if (purStocks != null && purStocks.size() > 0) {
             HashSet<String> purchaseOrderIds = new HashSet<>();
-            for (int i = 0, len = stockDetails.size(); i < len; i++) {
-                if (stockDetails.get(i).getPurchaseOrderId() != null) purchaseOrderIds.add(stockDetails.get(i).getPurchaseOrderId().toString());
-//                stockDetails.get(i).setStockState(1);// 初始化库存状态为1
-                stockDetails.get(i).setCreateTiem(new Date());
-                stockDetails.get(i).setUpdateTime(new Date());
+            for (int i = 0, len = purStocks.size(); i < len; i++) {
+                if (purStocks.get(i).getPurOrderId() != null) purchaseOrderIds.add(purStocks.get(i).getPurOrderId().toString());
+//                purStocks.get(i).setStockState(1);// 初始化库存状态为1
+                purStocks.get(i).setCreateTiem(new Date());
+                purStocks.get(i).setUpdateTime(new Date());
             }
             if (!purchaseOrderIds.isEmpty()) {
                 // 新增入库单的时候需要将与其对应的采购单的状态改为已入库
                 purOrderService.updateEntry(purchaseOrderIds);
             }
-            return stockDetailRepository.saveAll(stockDetails);
+            return purStockRepository.saveAll(purStocks);
         }
         return null;
     }
@@ -68,14 +68,14 @@ public class StockDetailServiceImpl implements StockDetailService {
      * 分页查询 库存
      * @param page
      * @param keywords
-     * @param pharmacyItemType
+     * @param purItemType
      * @return
      * @throws Exception
      */
     @Override
-    public PageInfo<Map<String, String>> queryPage(Pageable page, String keywords, String pharmacyItemType) throws Exception {
+    public PageInfo<Map<String, String>> queryPage(Pageable page, String keywords, String purItemType) throws Exception {
         PageHelper.startPage(page.getPageNumber(), page.getPageSize());
-        List<Map<String, String>> stockDetails = stockDetailMapper.findAll(keywords, pharmacyItemType);
+        List<Map<String, String>> stockDetails = purStockMapper.findAll(keywords, purItemType);
         PageInfo<Map<String, String>> result = new PageInfo<>(stockDetails);
         // 设置库存单位名称,药品分类名称
         if (result.getTotal() > 0) {
@@ -86,8 +86,8 @@ public class StockDetailServiceImpl implements StockDetailService {
                 if (map.containsKey("stockUnit") && kcdw.containsKey(map.get("stockUnit"))) {
                     map.put("stockUnitName", kcdw.get(map.get("stockUnit")));
                 }
-                if (map.containsKey("pharmacyItemType") && ypfl.containsKey(map.get("pharmacyItemType"))) {
-                    map.put("pharmacyItemTypeName", ypfl.get(map.get("pharmacyItemType")));
+                if (map.containsKey("purItemType") && ypfl.containsKey(map.get("purItemType"))) {
+                    map.put("purItemTypeName", ypfl.get(map.get("purItemType")));
                 }
             }
         }
@@ -96,31 +96,31 @@ public class StockDetailServiceImpl implements StockDetailService {
 
     /**
      * 根据ID查询库存信息
-     * @param stockDetailId
+     * @param purStockId
      * @return
      */
     @Override
-    public StockDetail queryById(Integer stockDetailId) throws Exception {
-        if (stockDetailId != null) {
-            return stockDetailRepository.findById(stockDetailId).get();
+    public PurStock queryById(Long purStockId) throws Exception {
+        if (purStockId != null) {
+            return purStockRepository.findById(purStockId).get();
         }
         return null;
     }
 
     /**
      * 更新 售价 库存数量
-     * @param stockDetail
+     * @param purStock
      * @return
      */
     @Override
-    public StockDetail update(StockDetail stockDetail) throws Exception {
-        if (stockDetail != null && stockDetail.getStockDetailId() != null) {
-            StockDetail old = this.queryById(stockDetail.getStockDetailId());
+    public PurStock update(PurStock purStock) throws Exception {
+        if (purStock != null && purStock.getPurStockId() != null) {
+            PurStock old = this.queryById(purStock.getPurStockId());
             if (old != null) {
-                old.setSellingPrice(stockDetail.getSellingPrice());
-                old.setStockCount(stockDetail.getStockCount());
+                old.setSellingPrice(purStock.getSellingPrice());
+                old.setStockCount(purStock.getStockCount());
                 old.setUpdateTime(new Date());
-                return stockDetailRepository.saveAndFlush(old);
+                return purStockRepository.saveAndFlush(old);
             }
         }
         return null;
@@ -128,18 +128,18 @@ public class StockDetailServiceImpl implements StockDetailService {
 
     /**
      * 下架
-     * @param stockDetail
+     * @param purStock
      * @return
      * @throws Exception
      */
     @Override
-    public Boolean unshelve(StockDetail stockDetail) throws Exception {
-        if (stockDetail != null && stockDetail.getStockDetailId() != null) {
-            StockDetail old = this.queryById(stockDetail.getStockDetailId());
+    public Boolean unshelve(PurStock purStock) throws Exception {
+        if (purStock != null && purStock.getPurStockId() != null) {
+            PurStock old = this.queryById(purStock.getPurStockId());
             if (old != null) {
                 old.setStockState(4);// 下架
                 old.setUpdateTime(new Date());
-                stockDetailRepository.saveAndFlush(old);
+                purStockRepository.saveAndFlush(old);
                 return true;
             }
         }
@@ -149,12 +149,12 @@ public class StockDetailServiceImpl implements StockDetailService {
     /**
      * 获取下拉表格的list
      * @param keywords
-     * @param pharmacyItemType
+     * @param purItemType
      * @return
      */
     @Override
-    public List<Map<String, Object>> getCombogrid(String keywords, String pharmacyItemType) throws Exception {
-        List<Map<String, Object>> result = stockDetailMapper.getCombogridForDecoction(keywords, pharmacyItemType);
+    public List<Map<String, Object>> getCombogrid(String keywords, String purItemType) throws Exception {
+        List<Map<String, Object>> result = purStockMapper.getCombogridForDecoction(keywords, purItemType);
         // 设置库存单位名称
         if (result.size() > 0) {
             Map<String, String> kcdw = dictionaryService.getItemMapByKey("KCDW");// 库存单位
@@ -177,7 +177,7 @@ public class StockDetailServiceImpl implements StockDetailService {
     @Override
     public Map<String, Object> findByName(String medicalName) throws Exception {
         if (StringUtils.isNotBlank(medicalName)) {
-            Map<String, Object> result = stockDetailMapper.findByName(medicalName);
+            Map<String, Object> result = purStockMapper.findByName(medicalName);
             // 设置库存单位名称
             if (!ObjectUtils.isEmpty(result)) {
                 Map<String, String> kcdw = dictionaryService.getItemMapByKey("KCDW");// 库存单位

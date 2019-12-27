@@ -10,8 +10,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Auther: 周俊林
@@ -30,16 +34,19 @@ public class PurOrderController {
     /**
      * 分页查询
      * @param page
-     * @param purOrderCode
+     * @param purItemName
      * @param purOrderDate
      * @param supplierId
      * @return
      */
     @RequestMapping(value = "/queryPage", method = RequestMethod.GET)
-    public LayuiTableEntity<PurOrder> queryPage(Pageable page, String purOrderCode, String purOrderDate, String supplierId) {
+    public LayuiTableEntity<PurOrder> queryPage(Pageable page, String purItemName, String purOrderDate, String supplierId) {
         try {
-            if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
-            return new LayuiTableEntity<PurOrder>(purOrderService.queryPage(page, purOrderCode, purOrderDate, supplierId));
+            List<Sort.Order> sortList = new ArrayList<>();
+            sortList.add(Sort.Order.asc("isEntry"));// 先根据是否入库排序
+            sortList.add(Sort.Order.desc("purOrderCode"));// 再根据订单号倒序排序
+            if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize(), Sort.by(sortList));
+            return new LayuiTableEntity<PurOrder>(purOrderService.queryPage(page, purItemName, purOrderDate, supplierId));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

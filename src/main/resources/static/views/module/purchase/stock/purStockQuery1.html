@@ -56,15 +56,15 @@
                     <form id="query-form" class="layui-form" lay-filter="query-form">
                         <div class="layui-form-item">
                             <div class="layui-inline">
-                                <label class="layui-form-label">药品名称：</label>
+                                <label class="layui-form-label">品目名称：</label>
                                 <div class="layui-input-inline">
                                     <input name="keywords" class="layui-input" placeholder="药品名称/全拼/简拼/条形码">
                                 </div>
                             </div>
                             <div class="layui-inline">
-                                <label class="layui-form-label">药品类型：</label>
+                                <label class="layui-form-label">品目分类：</label>
                                 <div class="layui-input-inline">
-                                    <select name="pharmacyItemType"></select>
+                                    <select name="purItemType"></select>
                                 </div>
                             </div>
                             <div class="layui-inline" style="margin-left: 15px">
@@ -73,7 +73,7 @@
                             </div>
                         </div>
                     </form>
-                    <table class="layui-hide" lay-filter="stockdetail-table" id="stockdetail-table"></table>
+                    <table class="layui-hide" lay-filter="stock-table" id="stock-table"></table>
                 </div>
             </div>
         </div>
@@ -86,6 +86,6 @@
 </script>
 <script src="/lib/layuiadmin/layui/layui.js"></script>
 <script src="/js/common/constant.js"></script>
-<script src="/views/module/purchase/stock/stockDetailQuery.js"></script>
+<script src="/views/module/purchase/stock/purStockQuery.js"></script>
 </body>
 </html>

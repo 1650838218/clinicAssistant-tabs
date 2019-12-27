@@ -1,4 +1,4 @@
-/** 采购单 */
+/** 入库单 */
 //@ sourceURL=stockDetail.js
 layui.config({
     base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径

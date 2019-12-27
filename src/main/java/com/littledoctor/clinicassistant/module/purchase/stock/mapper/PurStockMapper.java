@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * @业务信息:
- * @Filename: StockDetailMapper.java
+ * @Filename: PurStockMapper.java
  * @Description:
  * @Create Message:
  * Date         Author   Version   Description
@@ -20,23 +20,23 @@ import java.util.Map;
  * 2019-08-01   周俊林
  */
 @Mapper
-public interface StockDetailMapper {
+public interface PurStockMapper {
 
     /**
      * 根据条件查询库存信息
      * @param keywords
-     * @param pharmacyItemType
+     * @param purItemType
      * @return
      */
-    List<Map<String, String>> findAll(@Param("keywords") String keywords, @Param("pharmacyItemType") String pharmacyItemType);
+    List<Map<String, String>> findAll(@Param("keywords") String keywords, @Param("purItemType") String purItemType);
 
     /**
      * 用于病历开中药方时根据药品名称查询药品信息
      * @param keywords
-     * @param pharmacyItemType
+     * @param purItemType
      * @return
      */
-    List<Map<String, Object>> getCombogridForDecoction(@Param("keywords") String keywords, @Param("pharmacyItemType") String pharmacyItemType);
+    List<Map<String, Object>> getCombogridForDecoction(@Param("keywords") String keywords, @Param("purItemType") String purItemType);
 
     /**
      * 根据药材名称查询药材信息
