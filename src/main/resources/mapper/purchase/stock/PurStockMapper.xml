@@ -2,53 +2,92 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.littledoctor.clinicassistant.module.purchase.stock.mapper.PurStockMapper">
 
+    <select id="count" resultType="java.lang.Integer">
+        SELECT
+            count(1)
+        FROM
+            pur_stock a,
+            pur_item i
+        WHERE
+            a.pur_item_id = i.pur_item_id
+        AND a.stock_state = 1
+        <if test="keywords != null and keywords != ''">
+            AND (
+            i.pur_item_name LIKE CONCAT('%', #{keywords}, '%')
+            OR LOWER(i.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')
+            OR UPPER(i.abbr_pinyin) LIKE CONCAT('%', UPPER(#{keywords}), '%')
+            OR i.barcode = #{keywords}
+            )
+        </if>
+    </select>
+
     <!-- 根据条件查询 库存信息 -->
     <select id="findAll" resultType="java.util.Map">
         SELECT
-            b1.pur_item_id purItemId,
-            b1.pur_item_name purItemName,
-            b1.pur_item_type purItemType,
-            b1.stock_unit stockUnit,
-            a1.pur_stock_id purStockId,
-            a1.expire_date expireDate,
-            a1.stock_count stockCount,
-            a1.selling_price sellingPrice
+            a.pur_stock_id purStockId,
+            i.pur_item_name purItemName,
+            d.dict_name dictName,
+            a.batch_number batchNumber,
+            a.expire_date expireDate,
+            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',d1.dict_name,'）') stockCount,
+            REPLACE (FORMAT(a.selling_price, 4),',','') sellingPrice
         FROM
-            (
-                SELECT
-                    b.pur_item_id,
-                    b.pur_item_name,
-                    b.pur_item_type,
-                    b.stock_unit
-                FROM
-                    pur_item b
-                WHERE 1 = 1
-                    <if test="keywords != null">
-                        AND (
-                            b.pur_item_name LIKE CONCAT('%', #{keywords}, '%')
-                            OR LOWER(b.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')
-                            OR UPPER(b.abbr_pinyin) LIKE CONCAT('%', UPPER(#{keywords}), '%')
-                            OR b.barcode = #{keywords}
-                        )
-                    </if>
-                    <if test="purItemType != null">
-                            AND b.pur_item_type = #{purItemType}
-                    </if>
-            ) b1,
-            (
-                SELECT
-                    a.pur_stock_id,
-                    a.pur_item_id,
-                    a.expire_date,
-                    a.stock_count,
-                    a.selling_price
-                FROM
-                    pur_stock a
-                WHERE
-                    a.stock_state = 1
-            ) a1
+            pur_stock a,
+            pur_item i,
+            sys_dictionary d,
+            sys_dictionary d1
         WHERE
-            b1.pur_item_id = a1.pur_item_id
+            a.pur_item_id = i.pur_item_id
+        AND i.pur_item_type = d.dict_value
+        AND i.stock_unit = d1.dict_value
+        AND d.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_CGPMFL}'
+        AND d1.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_LSDW}'
+        AND a.stock_state = 1
+        AND d.is_use = 1
+        AND d1.is_use = 1
+        <if test="keywords != null and keywords != ''">
+            AND (
+            i.pur_item_name LIKE CONCAT('%', #{keywords}, '%')
+            OR LOWER(i.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')
+            OR UPPER(i.abbr_pinyin) LIKE CONCAT('%', UPPER(#{keywords}), '%')
+            OR i.barcode = #{keywords}
+            )
+        </if>
+        LIMIT ${offset},${pageSize}
+    </select>
+
+    <!--查看库存品目的采购信息-->
+    <select id="findByIdForOrder" resultType="java.util.Map">
+        SELECT
+            e.pur_item_name purItemName,
+            f.dict_name purItemType,
+            b.pur_order_code purOrderCode,
+            b.pur_order_date purOrderDate,
+            d.supplier_name supplierName,
+            CONCAT(0 + CAST(c.pur_count AS CHAR),'（',g.dict_name,'）') purCount,
+            REPLACE(FORMAT(c.unit_price,2),',','') unitPrice,
+            REPLACE(FORMAT(c.total_price,2),',','') totalPrice
+        FROM
+            pur_stock a,
+            pur_order b,
+            pur_order_detail c,
+            pur_supplier d,
+            pur_item e,
+            sys_dictionary f,
+            sys_dictionary g
+        WHERE
+            a.pur_stock_id = #{purStockId}
+        AND a.pur_order_id = b.pur_order_id
+        AND a.pur_item_id = e.pur_item_id
+        AND a.pur_item_id = c.pur_item_id
+        AND b.supplier_id = d.supplier_id
+        AND a.pur_order_id = c.pur_order_id
+        AND e.pur_item_type = f.dict_value
+        AND e.pur_unit = g.dict_value
+        AND f.is_use = 1
+        AND f.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_CGPMFL}'
+        AND g.is_use = 1
+        AND g.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_JHBZ}'
     </select>
 
     <!-- 用于病历开方时根据药品名称查询药品信息 -->

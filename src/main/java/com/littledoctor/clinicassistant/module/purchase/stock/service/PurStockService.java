@@ -1,7 +1,7 @@
 package com.littledoctor.clinicassistant.module.purchase.stock.service;
 
-import com.github.pagehelper.PageInfo;
 import com.littledoctor.clinicassistant.module.purchase.stock.entity.PurStock;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -25,10 +25,9 @@ public interface PurStockService {
      * 分页查询
      * @param page
      * @param keywords
-     * @param pharmacyItemType
      * @return
      */
-    PageInfo<Map<String, String>> queryPage(Pageable page, String keywords, String pharmacyItemType) throws Exception;
+    Page<Map<String, Object>> queryPage(Pageable page, String keywords) throws Exception;
 
     PurStock queryById(Long purStockId) throws Exception;
 
@@ -61,4 +60,11 @@ public interface PurStockService {
      * @return
      */
     Map<String, Object> findByName(String medicalName) throws Exception;
+
+    /**
+     * 查看库存品目的采购信息
+     * @param purStockId
+     * @return
+     */
+    Map<String, Object> findByIdForOrder(Long purStockId) throws Exception;
 }

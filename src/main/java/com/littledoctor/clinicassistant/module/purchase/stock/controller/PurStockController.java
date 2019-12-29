@@ -6,10 +6,12 @@ import com.littledoctor.clinicassistant.module.purchase.stock.service.PurStockSe
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,9 +49,10 @@ public class PurStockController {
      * @return
      */
     @RequestMapping(value = "/queryPage", method = RequestMethod.GET)
-    public LayuiTableEntity<Map<String, String>> queryPage(Pageable page, String keywords, String pharmacyItemType) {
+    public LayuiTableEntity<Map<String, Object>> queryPage(Pageable page, String keywords) {
         try {
-            return new LayuiTableEntity<Map<String, String>>(purStockService.queryPage(page, keywords, pharmacyItemType));
+            if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
+            return new LayuiTableEntity<Map<String, Object>>(purStockService.queryPage(page, keywords));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -84,6 +87,20 @@ public class PurStockController {
             log.error(e.getMessage(), e);
         }
         return false;
+    }
+
+    /**
+     * 查看库存品目的采购信息
+     * @param purStockId 库存id
+     * @return
+     */
+    public Map<String,Object> findByIdForOrder(@RequestParam Long purStockId) {
+        try {
+            return purStockService.findByIdForOrder(purStockId);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return new HashMap<>();
     }
 
     /**

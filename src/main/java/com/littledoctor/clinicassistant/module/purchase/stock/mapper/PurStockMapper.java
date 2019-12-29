@@ -23,12 +23,20 @@ import java.util.Map;
 public interface PurStockMapper {
 
     /**
-     * 根据条件查询库存信息
-     * @param keywords
-     * @param purItemType
+     * 查询库存
+     * @param keywords 品目名称
      * @return
      */
-    List<Map<String, String>> findAll(@Param("keywords") String keywords, @Param("purItemType") String purItemType);
+    int count(@Param("keywords") String keywords);
+
+    /**
+     * 根据条件查询库存信息
+     * @param keywords 品目名称
+     * @param offset 分页 偏移
+     * @param pageSize 分页 每页大小
+     * @return
+     */
+    List<Map<String, Object>> findAll(@Param("keywords") String keywords, @Param("offset") Long offset, @Param("pageSize") int pageSize);
 
     /**
      * 用于病历开中药方时根据药品名称查询药品信息
@@ -44,4 +52,11 @@ public interface PurStockMapper {
      * @return
      */
     Map<String, Object> findByName(@Param("medicalName") String medicalName);
+
+    /**
+     * 查看库存品目的采购信息
+     * @param purStockId
+     * @return
+     */
+    Map<String, Object> findByIdForOrder(@Param("purStockId") Long purStockId);
 }

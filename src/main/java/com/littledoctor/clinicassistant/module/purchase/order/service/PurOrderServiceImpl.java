@@ -4,10 +4,8 @@ import com.littledoctor.clinicassistant.common.constant.DictionaryKey;
 import com.littledoctor.clinicassistant.module.purchase.item.entity.PurItemEntity;
 import com.littledoctor.clinicassistant.module.purchase.item.service.PurItemService;
 import com.littledoctor.clinicassistant.module.purchase.order.dao.PurOrderRepository;
-import com.littledoctor.clinicassistant.module.purchase.order.dao.PurOrderSingleRepository;
 import com.littledoctor.clinicassistant.module.purchase.order.entity.PurOrder;
 import com.littledoctor.clinicassistant.module.purchase.order.entity.PurOrderDetail;
-import com.littledoctor.clinicassistant.module.purchase.order.entity.PurOrderSingle;
 import com.littledoctor.clinicassistant.module.purchase.order.mapper.PurOrderMapper;
 import com.littledoctor.clinicassistant.module.purchase.supplier.entity.SupplierEntity;
 import com.littledoctor.clinicassistant.module.purchase.supplier.service.SupplierService;
@@ -15,16 +13,10 @@ import com.littledoctor.clinicassistant.module.system.dictionary.service.Diction
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -61,22 +53,7 @@ public class PurOrderServiceImpl implements PurOrderService {
      * @throws Exception
      */
     @Override
-    public Page<PurOrder> queryPage(Pageable page, String purItemName, String purOrderDate, String supplierId) throws Exception {
-        /*SELECT
-                *
-                FROM
-        pur_order a,
-        pur_order_detail b,
-        pur_item c
-        WHERE
-        a.create_time BETWEEN '2019-10-12'
-        AND '2019-11-12'
-        AND a.supplier_id = 1
-        AND a.pur_order_id = b.pur_order_id
-        AND b.pur_item_id = c.pur_item_id
-        AND c.pur_item_name LIKE '%三七%'
-        ORDER BY a.is_entry ASC, a.pur_order_code DESC
-        LIMIT 0,10*/
+    public Page<Map<String, Object>> queryPage(Pageable page, String purItemName, String purOrderDate, String supplierId) throws Exception {
         String startDate = "";// 开始日期  查询某日期范围内的订单
         String endDate = "";// 结束日期
         Long offSet = (long)0;// 偏移量
@@ -88,61 +65,9 @@ public class PurOrderServiceImpl implements PurOrderService {
                 endDate = dates[1];
             }
         }
-        List<PurOrder> purOrderList = purOrderMapper.findAll(purItemName,supplierId,startDate,endDate,offSet,pageSize);
-
-
-
-
-        Page<PurOrder> purOrderPage = purOrderRepository.findAll(new Specification<PurOrder>() {
-            @Override
-            public Predicate toPredicate(Root<PurOrder> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                List<Predicate> predicateList = new ArrayList<>();
-                if (StringUtils.isNotBlank(purItemName)) {
-                    predicateList.add(criteriaBuilder.equal(root.get("purOrderCode"), purItemName));
-                }
-                if (StringUtils.isNotBlank(purOrderDate)) {
-                    String[] dates = purOrderDate.split(" - ");
-                    if (dates != null && dates.length == 2) {
-                        predicateList.add(criteriaBuilder.between(root.get("purOrderDate"), dates[0], dates[1]));
-                    }
-                }
-                if (StringUtils.isNotBlank(supplierId)) {
-                    predicateList.add(criteriaBuilder.equal(root.get("supplierId"), supplierId));
-                }
-                return criteriaBuilder.and(predicateList.toArray(new Predicate[predicateList.size()]));
-            }
-        }, page);
-
-        List<PurOrder> pol = purOrderPage.getContent();
-        if (pol != null && pol.size() > 0) {
-            for (int i = 0, len = pol.size(); i < len; i++) {
-                // 设置供应商名称
-                PurOrder pos = pol.get(i);
-                if (pos.getSupplierId() != null) {
-                    SupplierEntity s = supplierService.findById(String.valueOf(pos.getSupplierId()));
-                    if (s != null) pos.setSupplierName(s.getSupplierName());
-                }
-                // 品目名称
-                if (!ObjectUtils.isEmpty(pos.getPurOrderDetails())) {
-                    List<Long> purItemIdList = new ArrayList<>();
-                    for (int j = 0; j < pos.getPurOrderDetails().size(); j++) {
-                        purItemIdList.add(pos.getPurOrderDetails().get(j).getPurItemId());
-                    }
-                    if (purItemIdList.size() > 0) {
-                        List<PurItemEntity> purItemEntityList = purItemService.findAllById(purItemIdList);
-                        if (!ObjectUtils.isEmpty(purItemEntityList)) {
-                            String purItemNames = "";
-                            for (int j = 0; j < purItemEntityList.size(); j++) {
-                                purItemNames += purItemEntityList.get(j).getPurItemName() + "，";
-                            }
-                            // 设置品目名称
-                            if (purItemNames.length() > 0) pos.setPurItemNames(purItemNames.substring(0, purItemNames.length() - 1));
-                        }
-                    }
-                }
-            }
-        }
-        return purOrderPage;
+        int count = purOrderMapper.count(purItemName, supplierId, startDate, endDate);
+        List<Map<String, Object>> data = purOrderMapper.findAll(purItemName,supplierId,startDate,endDate,offSet,pageSize);
+        return new PageImpl<>(data, page, count);
     }
 
     /**
@@ -196,6 +121,25 @@ public class PurOrderServiceImpl implements PurOrderService {
             }
         }
         return purOrder;
+    }
+
+    /**
+     * 入库时，根据采购单ID查询采购单
+     * @param purOrderId 采购单ID
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map<String, Object> queryByIdForStock(String purOrderId) throws Exception {
+        if (StringUtils.isNotBlank(purOrderId)) {
+            Map<String,Object> purOrder = purOrderMapper.findByIdForStock(Long.parseLong(purOrderId));
+            List<Map<String, Object>> orderDetail = purOrderMapper.findOrderDetailForStock(Long.parseLong(purOrderId));
+            Map<String, Object> result = new HashMap<>();
+            result.put("order",purOrder);
+            result.put("detail",orderDetail);
+            return result;
+        }
+        return new HashMap<>();
     }
 
     /**

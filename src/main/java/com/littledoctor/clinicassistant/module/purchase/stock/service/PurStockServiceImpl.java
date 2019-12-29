@@ -1,7 +1,5 @@
 package com.littledoctor.clinicassistant.module.purchase.stock.service;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.littledoctor.clinicassistant.module.purchase.order.service.PurOrderService;
 import com.littledoctor.clinicassistant.module.purchase.stock.dao.PurStockRepository;
 import com.littledoctor.clinicassistant.module.purchase.stock.entity.PurStock;
@@ -9,15 +7,14 @@ import com.littledoctor.clinicassistant.module.purchase.stock.mapper.PurStockMap
 import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Auther: 周俊林
@@ -48,50 +45,35 @@ public class PurStockServiceImpl implements PurStockService {
     @Override
     public List<PurStock> save(List<PurStock> purStocks) throws Exception {
         if (purStocks != null && purStocks.size() > 0) {
-            HashSet<String> purchaseOrderIds = new HashSet<>();
+            HashSet<String> purOrderIds = new HashSet<>();
             for (int i = 0, len = purStocks.size(); i < len; i++) {
-                if (purStocks.get(i).getPurOrderId() != null) purchaseOrderIds.add(purStocks.get(i).getPurOrderId().toString());
-//                purStocks.get(i).setStockState(1);// 初始化库存状态为1
+                if (purStocks.get(i).getPurOrderId() != null) purOrderIds.add(purStocks.get(i).getPurOrderId().toString());
                 purStocks.get(i).setCreateTiem(new Date());
                 purStocks.get(i).setUpdateTime(new Date());
             }
-            if (!purchaseOrderIds.isEmpty()) {
+            if (!purOrderIds.isEmpty()) {
                 // 新增入库单的时候需要将与其对应的采购单的状态改为已入库
-                purOrderService.updateEntry(purchaseOrderIds);
+                purOrderService.updateEntry(purOrderIds);
             }
             return purStockRepository.saveAll(purStocks);
         }
-        return null;
+        return new ArrayList<>();
     }
 
     /**
      * 分页查询 库存
      * @param page
      * @param keywords
-     * @param purItemType
      * @return
      * @throws Exception
      */
     @Override
-    public PageInfo<Map<String, String>> queryPage(Pageable page, String keywords, String purItemType) throws Exception {
-        PageHelper.startPage(page.getPageNumber(), page.getPageSize());
-        List<Map<String, String>> stockDetails = purStockMapper.findAll(keywords, purItemType);
-        PageInfo<Map<String, String>> result = new PageInfo<>(stockDetails);
-        // 设置库存单位名称,药品分类名称
-        if (result.getTotal() > 0) {
-            Map<String, String> kcdw = dictionaryService.getItemMapByKey("KCDW");// 库存单位
-            Map<String, String> ypfl = dictionaryService.getItemMapByKey("YPFL");// 药品分类
-            for (int i = 0, len = result.getList().size(); i < len; i++) {
-                Map<String, String> map = result.getList().get(i);
-                if (map.containsKey("stockUnit") && kcdw.containsKey(map.get("stockUnit"))) {
-                    map.put("stockUnitName", kcdw.get(map.get("stockUnit")));
-                }
-                if (map.containsKey("purItemType") && ypfl.containsKey(map.get("purItemType"))) {
-                    map.put("purItemTypeName", ypfl.get(map.get("purItemType")));
-                }
-            }
-        }
-        return result;
+    public Page<Map<String, Object>> queryPage(Pageable page, String keywords) throws Exception {
+        Long offset = page.getOffset();
+        int pageSize = page.getPageSize();
+        int count = purStockMapper.count(keywords);
+        List<Map<String, Object>> stockDetails = purStockMapper.findAll(keywords,offset,pageSize);
+        return new PageImpl<>(stockDetails, page, count);
     }
 
     /**
@@ -188,5 +170,19 @@ public class PurStockServiceImpl implements PurStockService {
             return result;
         }
         return null;
+    }
+
+    /**
+     * 查看库存品目的采购信息
+     * @param purStockId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map<String, Object> findByIdForOrder(Long purStockId) throws Exception {
+        if (!ObjectUtils.isEmpty(purStockId)) {
+            return purStockMapper.findByIdForOrder(purStockId);
+        }
+        return new HashMap<>();
     }
 }

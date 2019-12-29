@@ -21,6 +21,15 @@
             width: 150px;
             margin-right: 0px;
         }
+        .center-panel form .layui-input-inline input {
+            border: none;
+        }
+        .layui-form-item {
+            margin-bottom: 10px;
+        }
+        .layui-table, .layui-table-view {
+            margin: 1px 0;
+        }
     </style>
 </head>
 <body>
@@ -29,19 +38,19 @@
         <div class="center-panel">
             <div class="layui-card">
                 <div class="layui-card-body">
-                    <form id="stockdetail-form" class="layui-form" lay-filter="stockdetail-form">
-                        <input type="hidden" name="purchaseOrderId" value="">
+                    <form id="stock-form" class="layui-form" lay-filter="stock-form">
+                        <input type="hidden" name="purOrderId" value="">
                         <div class="layui-form-item">
                             <div class="layui-inline">
                                 <label class="layui-form-label">采购单号：</label>
                                 <div class="layui-input-inline">
-                                    <input name="purchaseOrderCode" readonly class="layui-input" lay-verify="required" placeholder="请填写采购单号">
+                                    <input name="purOrderCode" readonly class="layui-input" lay-verify="required" placeholder="请填写采购单号">
                                 </div>
                             </div>
                             <div class="layui-inline">
                                 <label class="layui-form-label">采购日期：</label>
                                 <div class="layui-input-inline">
-                                    <input name="purchaseOrderDate" readonly class="layui-input" placeholder="请选择入库单日期" lay-verify="required">
+                                    <input name="purOrderDate" readonly class="layui-input" placeholder="请选择入库单日期" lay-verify="required">
                                 </div>
                             </div>
                             <div class="layui-inline">
@@ -57,10 +66,13 @@
                                 </div>
                             </div>
                         </div>
-                        <table id="stockdetail-table" lay-filter="stockdetail-table"></table>
+                        <div>
+                            <p style="color: red;font-size: 10px;">小提示：保本售价=进价÷单位换算；单位换算表示进货包装和零售单位之间的单位换算值；重定价若不填写则默认为参考售价；</p>
+                        </div>
+                        <table id="stock-table" lay-filter="stock-table"></table>
                         <div class="layui-row layui-col-space10" style="margin-top: 5px;">
                             <div class="layui-col-lg-offset10 layui-col-lg2" style="text-align: right;">
-                                <button type="button" lay-filter="submit-btn" lay-submit class="layui-btn layui-btn-sm">保存</button>
+                                <button type="button" lay-filter="submit-btn" lay-submit class="layui-btn layui-btn-sm">入库</button>
                                 <button type="button" lay-filter="close-btn" class="layui-btn layui-btn-primary layui-btn-sm">关闭</button>
                             </div>
                         </div>

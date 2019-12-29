@@ -27,10 +27,11 @@ layui.use(['form','utils', 'jquery', 'layer', 'table'], function () {
             {field: 'batchNumber', title: '批号', width: '13%'},
             {field: 'manufactureDate', title: '生产日期', width: '13%'},
             {field: 'expireDate', title: '有效期至', width: '13%'},
-            {field: 'purCount', title: '数量', width: '10%',templet: function (d) {
-                    return parseFloat(d.purCount).toFixed(2);
-                }},
-            {field: 'purUnitName', title: '单位', width: '10%'},
+            {field: 'purCount', title: '采购数量', width: '10%',templet: function (d) {
+                    return d.purCount + '（' + d.purUnitName + ')';
+                }
+             },
+            // {field: 'purUnitName', title: '采购单位', width: '10%'},
             {field: 'unitPrice', title: '单价(元)', width: '10%',templet: function (d) {
                     return parseFloat(d.unitPrice).toFixed(2);
                 }},

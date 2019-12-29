@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * @Auther: 周俊林
@@ -21,7 +22,7 @@ public interface PurOrderService {
      * @param supplierId
      * @return
      */
-    Page<PurOrder> queryPage(Pageable page, String purItemName, String purchaseOrderDate, String supplierId) throws Exception;
+    Page<Map<String, Object>> queryPage(Pageable page, String purItemName, String purchaseOrderDate, String supplierId) throws Exception;
 
     /**
      * 保存采购单
@@ -36,6 +37,14 @@ public interface PurOrderService {
      * @return
      */
     PurOrder queryById(String purchaseOrderId) throws Exception;
+
+    /**
+     * 入库时，根据采购单ID查询采购单
+     * @param purOrderId 采购单ID
+     * @return
+     * @throws Exception
+     */
+    Map<String, Object> queryByIdForStock(String purOrderId) throws Exception;
 
     /**
      * 删除采购单

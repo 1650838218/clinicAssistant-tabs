@@ -47,7 +47,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
             {field: 'purOrderId', title: TABLE_COLUMN.numbers, type: 'numbers'},
             {field: 'purOrderCode', title: '单号', width: '10%'},
             {field: 'purOrderDate', title: '日期', width: '10%'},
-            {field: 'purItemNames', title: '采购品目'},
+            {field: 'purItemName', title: '采购品目'},
             {field: 'supplierName', title: '供应商',width: '15%', event: 'lookSupplier',style:'cursor: pointer;',
                 templet: function (d) {
                     return d.supplierName + '<i class="layui-icon layui-icon-about supplier-name-icon" title="查看供应商详情"></i>';
@@ -148,7 +148,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
             area: [width+'px', height+'px'],
             title: false,
             fixed: false, //不固定
-            content: '/views/module/purchase/stock/stockDetail.html?purOrderId='+obj.data.purOrderId,
+            content: '/views/module/purchase/stock/purStock.html?purOrderId='+obj.data.purOrderId,
             cancel: function(index, layero) {
                 table.reload(purOrderTableId, {});
             },
