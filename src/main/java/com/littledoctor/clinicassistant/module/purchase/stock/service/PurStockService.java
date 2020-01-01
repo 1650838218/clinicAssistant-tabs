@@ -25,9 +25,10 @@ public interface PurStockService {
      * 分页查询
      * @param page
      * @param keywords
+     * @param expireDate
      * @return
      */
-    Page<Map<String, Object>> queryPage(Pageable page, String keywords) throws Exception;
+    Page<Map<String, Object>> queryPage(Pageable page, String keywords, boolean expireDate) throws Exception;
 
     PurStock queryById(Long purStockId) throws Exception;
 
@@ -40,11 +41,11 @@ public interface PurStockService {
 
     /**
      * 下架
-     * @param purStock
+     * @param purStockId
      * @return
      * @throws Exception
      */
-    Boolean unshelve(PurStock purStock) throws Exception;
+    Boolean unshelve(Long purStockId) throws Exception;
 
     /**
      * 获取下拉表格的list
@@ -67,4 +68,13 @@ public interface PurStockService {
      * @return
      */
     Map<String, Object> findByIdForOrder(Long purStockId) throws Exception;
+
+    /**
+     * 查询预警库存
+     * @param page
+     * @param keywords
+     * @return
+     * @throws Exception
+     */
+    Page<Map<String, Object>> queryPageForWarn(Pageable page, String keywords) throws Exception;
 }

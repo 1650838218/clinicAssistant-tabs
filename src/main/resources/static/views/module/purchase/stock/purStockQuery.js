@@ -18,6 +18,8 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form','element'], funct
     var rootMapping = '/purchase/stock';
     var stockTableId = 'stock-table';
     var formId = 'query-form';
+    var warnTableId = 'warn-table';
+    var warnFormId = 'warn-form';
 
     // 动态加载品目分类
     utils.splicingOption({
@@ -54,27 +56,71 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form','element'], funct
                     }
                 }
             },
-            {field: 'stockDetailId', title: TABLE_COLUMN.operation, toolbar: '#operate-column', width: '16%', align: 'center'}
+            {field: 'option', title: TABLE_COLUMN.operation, toolbar: '#operate-column', width: '16%', align: 'center'}
         ]]
     });
 
     // 当前库存 搜索
-    $('#query-form input[name="keywords"]').on('change', function () {
-        table.reload(stockTableId,{where: {keywords: $(this).val()}});
+    $('input[name="keywords"]').on('change', function () {
+        var index = $(this).parents('.layui-tab-item').index();
+        if (index == 0) {
+            var isChecked = $('#query-form input[type="checkbox"][name="expireDate"]').is(":checked");
+            table.reload(stockTableId,{where: {keywords: $(this).val(),expireDate: isChecked}});
+        } else if (index == 1) {
+            table.reload(warnTableId,{where: {keywords: $(this).val()}});
+        }
+    });
+
+    // 一个月到期
+    form.on('checkbox(expire-date)', function(data){
+        table.reload(stockTableId,{where: {keywords: $('#query-form input[name="keywords"]').val(), expireDate: data.elem.checked}});
     });
 
     // 查询事件
     form.on('submit(submit-btn)', function (data) {
-        table.reload(stockTableId,{where: data.field});
+        var index = $(data.elem).parents('.layui-tab-item').index();
+        if (index == 0) table.reload(stockTableId,{where: data.field});
+        else if (index == 1) table.reload(warnTableId,{where:data.field});
         return false;
     });
 
     // 监听表格编辑事件，当表格内容发生变化时触发
     table.on('edit(' + stockTableId + ')', function (obj) {
+        var newVal = obj.value;
+        var field = obj.field;
         var inputElem = $(this);
         var tdElem = inputElem.closest('td');
-        var optionTdElem = tdElem.nextAll('td[data-field="stockDetailId"]');
-        optionTdElem.find('a').removeClass('layui-btn-disabled').removeAttr('disabled');// 解禁 保存 按钮
+        var oldVal = tdElem.find('.layui-table-cell').text();
+        var regex = '';
+
+        if (field === 'stockCount') {// 修改库存数量
+            var stockUnit = oldVal.substring(oldVal.indexOf('（'));
+            regex = eval('/^\\d{1,10}(\\.\\d{1,4})?(' + stockUnit + ')?$/');
+        } else if (field === 'sellingPrice') {// 修改零售价
+            regex = /^\d{1,10}(\.\d{1,4})?$/;
+        }
+        if (!regex.test(newVal)) {
+            layer.alert('请输入不超过4位小数的正数！', {icon: LAYER_ICON.error}, function (index) {
+                var jsonVal = {};
+                jsonVal[field] = oldVal;
+                obj.update(jsonVal);
+                tdElem.click();
+                inputElem.focus();
+                layer.close(index);
+            });
+        } else {
+            if (field === 'stockCount' && !isNaN(newVal)) {
+                // 修改库存数量，并且只输入了一个数字，此时需要把单位拼上
+                setTimeout(function () {
+                    var jsonVal = {};
+                    jsonVal[field] = newVal + oldVal.substring(oldVal.indexOf('（'));
+                    obj.update(jsonVal);
+                    tdElem.find('.layui-table-cell').text(jsonVal[field]);
+                },0);
+            }
+            var optionTdElem = tdElem.nextAll('td[data-field="option"]');
+            optionTdElem.find('a').removeClass('layui-btn-disabled').removeAttr('disabled');// 解禁 保存 按钮
+        }
     });
 
     //监听表格操作列 监听单元格事件
@@ -90,36 +136,43 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form','element'], funct
 
     // 下架
     function unshelveRow(obj) {
-        var unshelveBtn = $(obj.tr).find('td[data-field="stockDetailId"] a[lay-event="unshelve"]');
-        unshelveBtn.addClass("layui-btn-disabled").attr("disabled",'disabled');
-        ajax.postJSON(rootMapping + '/unshelve', obj.data, function (result) {
-            if (result) {
-                layer.msg('下架成功！');
-                table.reload(stockTableId, {});// 刷新列表
-            } else {
-                layer.msg('下架失败！');
-                unshelveBtn.removeClass("layui-btn-disabled").removeAttr("disabled");
-            }
+        layer.confirm('是否确认下架该品目？', {icon: LAYER_ICON.question}, function (index) {
+            var unshelveBtn = $(obj.tr).find('td[data-field="option"] a[lay-event="unshelve"]');
+            unshelveBtn.addClass("layui-btn-disabled").attr("disabled",'disabled');
+            $.getJSON(rootMapping + '/unshelve', {'purStockId':obj.data.purStockId}, function (result) {
+                if (result) {
+                    layer.msg('下架成功！');
+                    table.reload(stockTableId, {});// 刷新列表
+                } else {
+                    layer.msg('下架失败！');
+                    unshelveBtn.removeClass("layui-btn-disabled").removeAttr("disabled");
+                }
+            });
+            layer.close(index);
         });
     }
 
     // 保存行
     function saveRow(obj) {
-        var saveBtn = $(obj.tr).find('td[data-field="stockDetailId"] a[lay-event="save"]');
-        saveBtn.addClass("layui-btn-disabled").attr("disabled",'disabled');
-        ajax.postJSON(rootMapping + '/update', obj.data, function (stockDetail) {
-           if (stockDetail != null) {
-               layer.msg(MSG.save_success);
-           }  else {
-               layer.msg(MSG.save_fail);
-               saveBtn.removeClass("layui-btn-disabled").removeAttr("disabled");
-           }
+        layer.confirm('是否确认修改该品目的库存信息？', {icon: LAYER_ICON.question}, function (index) {
+            var saveBtn = $(obj.tr).find('td[data-field="option"] a[lay-event="save"]');
+            saveBtn.addClass("layui-btn-disabled").attr("disabled", 'disabled');
+            var stockCount = obj.data.stockCount;
+            obj.data.stockCount = stockCount.substring(0, stockCount.indexOf('（'));
+            ajax.postJSON(rootMapping + '/update', obj.data, function (purStock) {
+                if (purStock != null) {
+                    layer.msg(MSG.save_success);
+                } else {
+                    layer.msg(MSG.save_fail);
+                    saveBtn.removeClass("layui-btn-disabled").removeAttr("disabled");
+                }
+            });
         });
     }
 
     // 查看行
     function lookRow(obj) {
-        // 获取被选中的供应商
+        // 获取被选中的库存品目
         var purStockId = obj.data.purStockId;
         if (utils.isNotNull(purStockId)) {
             // ajax请求，根据库存ID查询
@@ -129,42 +182,75 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form','element'], funct
                     content += '<form class="layui-form" action="">';
                     content += '<div class="layui-form-item">';
                     content += '<label class="layui-form-label">品目名称：</label>';
-                    content += '<div class="layui-form-mid layui-word-aux">' + supplier.supplierName + '</div>';
+                    content += '<div class="layui-form-mid">' + purStock.purItemName + '</div>';
                     content += '</div>';
                     content += '<div class="layui-form-item">';
                     content += '<label class="layui-form-label">品目分类：</label>';
-                    content += '<div class="layui-form-mid layui-word-aux">' + supplier.linkMan1 + '</div>';
+                    content += '<div class="layui-form-mid">' + purStock.purItemType + '</div>';
                     content += '</div>';
                     content += '<div class="layui-form-item">';
                     content += '<label class="layui-form-label">采购单号：</label>';
-                    content += '<div class="layui-form-mid layui-word-aux">' + supplier.phone1 + '</div>';
+                    content += '<div class="layui-form-mid">' + purStock.purOrderCode + '</div>';
                     content += '</div>';
                     content += '<div class="layui-form-item">';
                     content += '<label class="layui-form-label">采购日期：</label>';
-                    content += '<div class="layui-form-mid layui-word-aux">' + supplier.linkMan2 + '</div>';
+                    content += '<div class="layui-form-mid">' + purStock.purOrderDate + '</div>';
                     content += '</div>';
                     content += '<div class="layui-form-item">';
                     content += '<label class="layui-form-label">供应商：</label>';
-                    content += '<div class="layui-form-mid layui-word-aux">' + supplier.address + '</div>';
+                    content += '<div class="layui-form-mid">' + purStock.supplierName + '</div>';
                     content += '</div>';
                     content += '<div class="layui-form-item">';
                     content += '<label class="layui-form-label">采购数量：</label>';
-                    content += '<div class="layui-form-mid layui-word-aux">' + supplier.phone2 + '</div>';
+                    content += '<div class="layui-form-mid">' + purStock.purCount + '</div>';
                     content += '</div>';
                     content += '<div class="layui-form-item">';
-                    content += '<label class="layui-form-label">采购价格(元)：</label>';
-                    content += '<div class="layui-form-mid layui-word-aux">' + supplier.mainProducts + '</div>';
+                    content += '<label class="layui-form-label">采购单价：</label>';
+                    content += '<div class="layui-form-mid">' + purStock.unitPrice + ' 元</div>';
+                    content += '</div>';
+                    content += '<div class="layui-form-item">';
+                    content += '<label class="layui-form-label">采购总价：</label>';
+                    content += '<div class="layui-form-mid">' + purStock.totalPrice + ' 元</div>';
                     content += '</div>';
                     content += '</form>';
-                    layer.open({ title: '品目采购信息',area: '500px', content: content});
+                    layer.open({
+                        title: '品目采购信息',
+                        area: '500px',
+                        content: content
+                    });
                 } else {
                     layer.alert('未找到该品目采购信息！',{icon: LAYER_ICON.warning});
                 }
             });
-            // 显示供应商信息
         } else {
             layer.msg('请先选择一个库存品目！');
         }
     }
+
+    // 库存预警
+    table.render({
+        elem: '#' + warnTableId,
+        url: rootMapping + '/queryPageForWarn',
+        page: true,
+        height: 'full-145',
+        request: {
+            limitName: 'size' //每页数据量的参数名，默认：limit
+        },
+        cols: [[
+            {field: 'purStockId', title: TABLE_COLUMN.numbers, type: 'numbers'},
+            {field: 'purItemName', title: '品目名称', width: '20%'},
+            {field: 'purItemType', title: '品目分类'},
+            {field: 'stockCount', title: '库存数量'},
+            {field: 'stockWarn',title: '库存预警'}
+        ]]
+    });
+
+    // 选项卡切换
+    element.on('tab(lay-tab)', function(data){
+        // console.log(this); //当前Tab标题所在的原始DOM元素
+        // console.log(data.index); //得到当前Tab的所在下标
+        // console.log(data.elem); //得到当前的Tab大容器
+        if (data.index == 1) table.resize(warnTableId);
+    });
 });
 

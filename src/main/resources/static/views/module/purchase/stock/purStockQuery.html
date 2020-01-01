@@ -42,6 +42,9 @@
         .layui-layer .layui-form-label {
             width: 120px;
         }
+        .layui-form-sm .layui-form-item .layui-form-checkbox[lay-skin="primary"] {
+            margin-top: 0px;
+        }
     </style>
 </head>
 <body>
@@ -50,7 +53,7 @@
         <div class="center-panel">
             <div class="layui-card">
                 <div class="layui-card-body">
-                    <div class="layui-tab layui-tab-brief">
+                    <div class="layui-tab layui-tab-brief" lay-filter="lay-tab">
                         <ul class="layui-tab-title">
                             <li class="layui-this">当前库存</li>
                             <li>预警库存</li>
@@ -68,6 +71,11 @@
                                                 <input name="keywords" class="layui-input" placeholder="名称/全拼/简拼/条形码">
                                             </div>
                                         </div>
+                                        <div class="layui-inline">
+                                            <div class="layui-input-inline" style="padding-left: 20px;width: 110px">
+                                                <input type="checkbox" name="expireDate" lay-filter="expire-date" title="一个月内过期" lay-skin="primary">
+                                            </div>
+                                        </div>
                                         <div class="layui-inline" style="margin-left: 15px">
                                             <button type="button" lay-filter="submit-btn" lay-submit class="layui-btn layui-btn-sm" title="查询">查询</button>
                                             <button type="reset" lay-filter="cancel-btn" class="layui-btn layui-btn-primary layui-btn-sm" title="重置">重置</button>
@@ -76,7 +84,23 @@
                                 </form>
                                 <table class="layui-hide" lay-filter="stock-table" id="stock-table"></table>
                             </div>
-                            <div class="layui-tab-item">2</div>
+                            <div class="layui-tab-item">
+                                <form id="warn-form" class="layui-form layui-form-sm" lay-filter="warn-form" onsubmit="return false;">
+                                    <div class="layui-form-item">
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">品目：</label>
+                                            <div class="layui-input-inline">
+                                                <input name="keywords" class="layui-input" placeholder="名称/全拼/简拼/条形码">
+                                            </div>
+                                        </div>
+                                        <div class="layui-inline" style="margin-left: 15px">
+                                            <button type="button" lay-filter="submit-btn" lay-submit class="layui-btn layui-btn-sm" title="查询">查询</button>
+                                            <button type="reset" lay-filter="cancel-btn" class="layui-btn layui-btn-primary layui-btn-sm" title="重置">重置</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <table class="layui-hide" lay-filter="warn-table" id="warn-table"></table>
+                            </div>
                             <div class="layui-tab-item">3</div>
                             <div class="layui-tab-item">4</div>
                             <div class="layui-tab-item">5</div>

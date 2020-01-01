@@ -64,15 +64,16 @@ public class PurStockServiceImpl implements PurStockService {
      * 分页查询 库存
      * @param page
      * @param keywords
+     * @param expireDate
      * @return
      * @throws Exception
      */
     @Override
-    public Page<Map<String, Object>> queryPage(Pageable page, String keywords) throws Exception {
+    public Page<Map<String, Object>> queryPage(Pageable page, String keywords, boolean expireDate) throws Exception {
         Long offset = page.getOffset();
         int pageSize = page.getPageSize();
-        int count = purStockMapper.count(keywords);
-        List<Map<String, Object>> stockDetails = purStockMapper.findAll(keywords,offset,pageSize);
+        int count = purStockMapper.count(keywords, expireDate);
+        List<Map<String, Object>> stockDetails = purStockMapper.findAll(keywords,offset,pageSize, expireDate);
         return new PageImpl<>(stockDetails, page, count);
     }
 
@@ -86,7 +87,7 @@ public class PurStockServiceImpl implements PurStockService {
         if (purStockId != null) {
             return purStockRepository.findById(purStockId).get();
         }
-        return null;
+        return new PurStock();
     }
 
     /**
@@ -110,14 +111,14 @@ public class PurStockServiceImpl implements PurStockService {
 
     /**
      * 下架
-     * @param purStock
+     * @param purStockId
      * @return
      * @throws Exception
      */
     @Override
-    public Boolean unshelve(PurStock purStock) throws Exception {
-        if (purStock != null && purStock.getPurStockId() != null) {
-            PurStock old = this.queryById(purStock.getPurStockId());
+    public Boolean unshelve(Long purStockId) throws Exception {
+        if (purStockId != null) {
+            PurStock old = this.queryById(purStockId);
             if (old != null) {
                 old.setStockState(4);// 下架
                 old.setUpdateTime(new Date());
@@ -184,5 +185,21 @@ public class PurStockServiceImpl implements PurStockService {
             return purStockMapper.findByIdForOrder(purStockId);
         }
         return new HashMap<>();
+    }
+
+    /**
+     * 查询预警库存
+     * @param page
+     * @param keywords
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Page<Map<String, Object>> queryPageForWarn(Pageable page, String keywords) throws Exception {
+        Long offset = page.getOffset();
+        int pageSize = page.getPageSize();
+        int count = purStockMapper.countWarn(keywords);
+        List<Map<String, Object>> result = purStockMapper.findWarnAll(keywords,offset,pageSize);
+        return new PageImpl<>(result, page, count);
     }
 }

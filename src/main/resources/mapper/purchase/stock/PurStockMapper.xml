@@ -11,6 +11,14 @@
         WHERE
             a.pur_item_id = i.pur_item_id
         AND a.stock_state = 1
+        <if test="expireDate">
+            AND a.expire_date &lt;= date_format(date_add(NOW(), interval 1 MONTH) ,'%Y-%m-%d')
+            AND a.expire_date IS NOT NULL
+            AND LENGTH(a.expire_date) != 0
+        </if>
+        <if test="!expireDate">
+            AND (a.expire_date > date_format(sysdate(),'%Y-%m-%d') OR a.expire_date IS NULL OR LENGTH(a.expire_date) = 0)
+        </if>
         <if test="keywords != null and keywords != ''">
             AND (
             i.pur_item_name LIKE CONCAT('%', #{keywords}, '%')
@@ -38,6 +46,14 @@
             sys_dictionary d1
         WHERE
             a.pur_item_id = i.pur_item_id
+        <if test="expireDate">
+            AND a.expire_date &lt;= date_format(date_add(NOW(), interval 1 MONTH) ,'%Y-%m-%d')
+            AND a.expire_date IS NOT NULL
+            AND LENGTH(a.expire_date) != 0
+        </if>
+        <if test="!expireDate">
+            AND (a.expire_date > date_format(sysdate(),'%Y-%m-%d') OR a.expire_date IS NULL OR LENGTH(a.expire_date) = 0)
+        </if>
         AND i.pur_item_type = d.dict_value
         AND i.stock_unit = d1.dict_value
         AND d.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_CGPMFL}'
@@ -64,7 +80,7 @@
             b.pur_order_code purOrderCode,
             b.pur_order_date purOrderDate,
             d.supplier_name supplierName,
-            CONCAT(0 + CAST(c.pur_count AS CHAR),'（',g.dict_name,'）') purCount,
+            CONCAT(0 + CAST(c.pur_count AS CHAR),' ',g.dict_name) purCount,
             REPLACE(FORMAT(c.unit_price,2),',','') unitPrice,
             REPLACE(FORMAT(c.total_price,2),',','') totalPrice
         FROM
@@ -88,6 +104,59 @@
         AND f.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_CGPMFL}'
         AND g.is_use = 1
         AND g.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_JHBZ}'
+    </select>
+
+    <!--查询库存预警-->
+    <select id="findWarnAll" resultType="java.util.Map">
+        SELECT
+            a.pur_stock_id purStockId,
+            a.pur_item_id purItemId,
+            b.pur_item_name purItemName,
+            c.dict_name purItemType,
+            CONCAT(0 + CAST(b.stock_warn AS CHAR),'（',d.dict_name,'）') stockWarn,
+            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',d.dict_name,'）') stockCount
+        FROM
+            pur_stock a,
+            pur_item b,
+            sys_dictionary c,
+            sys_dictionary d
+        WHERE
+            a.pur_item_id = b.pur_item_id
+        AND a.stock_count &lt;= b.stock_warn
+        AND c.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_CGPMFL}'
+        AND d.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_LSDW}'
+        AND b.pur_item_type = c.dict_value
+        AND b.stock_unit = d.dict_value
+        AND c.is_use = 1
+        AND d.is_use = 1
+        <if test="keywords != null and keywords != ''">
+            AND (
+                b.pur_item_name LIKE CONCAT('%', #{keywords}, '%')
+                OR LOWER(b.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')
+                OR UPPER(b.abbr_pinyin) LIKE CONCAT('%', UPPER(#{keywords}), '%')
+                OR b.barcode = #{keywords}
+            )
+        </if>
+        LIMIT ${offset},${pageSize}
+    </select>
+
+    <select id="countWarn" resultType="java.lang.Integer">
+        SELECT
+            count(1)
+        FROM
+            pur_stock a,
+            pur_item b
+        WHERE
+            a.pur_item_id = b.pur_item_id
+        AND a.stock_count &lt;= b.stock_warn
+        <if test="keywords != null and keywords != ''">
+            AND (
+            b.pur_item_name LIKE CONCAT('%', #{keywords}, '%')
+            OR LOWER(b.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')
+            OR UPPER(b.abbr_pinyin) LIKE CONCAT('%', UPPER(#{keywords}), '%')
+            OR b.barcode = #{keywords}
+            )
+        </if>
     </select>
 
     <!-- 用于病历开方时根据药品名称查询药品信息 -->

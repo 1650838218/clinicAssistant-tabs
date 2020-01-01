@@ -49,10 +49,27 @@ public class PurStockController {
      * @return
      */
     @RequestMapping(value = "/queryPage", method = RequestMethod.GET)
-    public LayuiTableEntity<Map<String, Object>> queryPage(Pageable page, String keywords) {
+    public LayuiTableEntity<Map<String, Object>> queryPage(Pageable page, String keywords, boolean expireDate) {
         try {
             if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
-            return new LayuiTableEntity<Map<String, Object>>(purStockService.queryPage(page, keywords));
+            return new LayuiTableEntity<Map<String, Object>>(purStockService.queryPage(page, keywords, expireDate));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return new LayuiTableEntity<>();
+    }
+
+    /**
+     * 查询预警库存
+     * @param page
+     * @param keywords
+     * @return
+     */
+    @RequestMapping(value = "/queryPageForWarn", method = RequestMethod.GET)
+    public LayuiTableEntity<Map<String, Object>> queryPageForWarn(Pageable page, String keywords) {
+        try {
+            if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
+            return new LayuiTableEntity<Map<String, Object>>(purStockService.queryPageForWarn(page, keywords));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -76,13 +93,13 @@ public class PurStockController {
 
     /**
      * 下架
-     * @param purStock
+     * @param purStockId
      * @return
      */
-    @RequestMapping(value = "/unshelve", method = RequestMethod.POST)
-    public Boolean unshelve(@RequestBody PurStock purStock) {
+    @RequestMapping(value = "/unshelve", method = RequestMethod.GET)
+    public Boolean unshelve(@RequestParam Long purStockId) {
         try {
-            return purStockService.unshelve(purStock);
+            return purStockService.unshelve(purStockId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -94,6 +111,7 @@ public class PurStockController {
      * @param purStockId 库存id
      * @return
      */
+    @RequestMapping(value = "/findByIdForOrder", method = RequestMethod.GET)
     public Map<String,Object> findByIdForOrder(@RequestParam Long purStockId) {
         try {
             return purStockService.findByIdForOrder(purStockId);
