@@ -7,16 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @业务信息:
+ * @业务信息: 库存
  * @Filename: PurStockMapper.java
  * @Description:
- * @Create Message:
- * Date         Author   Version   Description
- * ------------------------------------------------------------------
- * 2019-08-01   周俊林
- * @Modification History:
- * Date         Author   Version   Description
- * ------------------------------------------------------------------
  * 2019-08-01   周俊林
  */
 @Mapper
@@ -77,4 +70,5 @@ public interface PurStockMapper {
      * @return
      */
     int countWarn(@Param("keywords") String keywords);
+
 }
