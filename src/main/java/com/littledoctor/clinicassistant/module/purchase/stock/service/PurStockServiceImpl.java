@@ -202,4 +202,20 @@ public class PurStockServiceImpl implements PurStockService {
         List<Map<String, Object>> result = purStockMapper.findWarnAll(keywords,offset,pageSize);
         return new PageImpl<>(result, page, count);
     }
+
+    /**
+     * 查询已过期
+     * @param page
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Page<Map<String, Object>> queryPageForExpire(Pageable page) throws Exception {
+        Long offset = page.getOffset();
+        int pageSize = page.getPageSize();
+        purStockRepository.updateStateForExpire();
+        int count = purStockMapper.countExpire();
+        List<Map<String, Object>> result = purStockMapper.findExpireAll(offset,pageSize);
+        return new PageImpl<>(result, page, count);
+    }
 }

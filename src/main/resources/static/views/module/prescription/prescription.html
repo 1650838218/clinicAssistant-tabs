@@ -43,16 +43,18 @@
         <div class="left-panel">
             <div class="left-search">
                 <input type="text" placeholder="搜索处方" autocomplete="off" class="layui-input" style="width: 70%">
-                <button id="add-root-btn1" class="layui-btn layui-btn-normal layui-btn-sm" title="新增分类">
-                    <i class="layui-icon layui-icon-add-1"></i>新增
-                </button>
+                <div class="layui-btn-group">
+                    <button id="add-menu-btn" class="layui-btn layui-btn-normal layui-btn-sm" title="维护分类">
+                        <i class="layui-icon layui-icon-util"></i>
+                    </button>
+                    <button id="del-menu-btn" class="layui-btn layui-btn-normal layui-btn-sm" title="删除">
+                        <i class="layui-icon layui-icon-delete"></i>
+                    </button>
+                </div>
             </div>
             <div class="left-tree">
                 <div id="blank-tip" style="text-align: center;display: none;padding-top: 150px;">
-                    暂时没有处方分类。
-                    <button id="add-root-btn2" class="layui-btn layui-btn-normal layui-btn-sm" title="新增分类">
-                        <i class="layui-icon layui-icon-add-1"></i>新增
-                    </button>
+                    暂时没有处方分类！
                 </div>
                 <ul class="ztree" id="catalogue"></ul>
             </div>
@@ -80,19 +82,6 @@
                                 </div>
                             </div>
                             <div class="layui-col-lg4 layui-col-sm4">
-                                <label class="layui-form-label">方剂类型：</label>
-                                <div class="layui-input-block">
-                                    <select name="prescriptionType">
-                                        <option value="">请选择方剂类型</option>
-                                        <option value="010">经方</option>
-                                        <option value="021">验方</option>
-                                        <option value="0571">偏方</option>
-                                        <option value="0572">秘方</option>
-                                        <option value="0573">单方</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="layui-col-lg4 layui-col-sm4">
                                 <label class="layui-form-label">方剂出处：</label>
                                 <div class="layui-input-block">
                                     <input name="prescriptionSource" class="layui-input" placeholder="请填写方剂出处" maxlength="50" >
@@ -109,37 +98,21 @@
                                         方剂组成填写示例：黄芪30克&nbsp;&nbsp;&nbsp;当归6克&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;请严格按规范填写！
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                         <div class="layui-row layui-col-space10 layui-form-item">
                             <div class="layui-col-lg6 layui-col-sm6">
                                 <label class="layui-form-label">用法：</label>
                                 <div class="layui-input-block">
-                                    <input name="takingMethod" class="layui-input" placeholder="请填写用法" maxlength="100" lay-verify="required">
+                                    <textarea name="takingMethod" autocomplete="off" class="layui-textarea" rows="5"
+                                              maxlength="100" placeholder="请填写用法" lay-verify="required"></textarea>
                                 </div>
                             </div>
                             <div class="layui-col-lg6 layui-col-sm6">
                                 <label class="layui-form-label">功用：</label>
                                 <div class="layui-input-block">
-                                    <input name="prescriptionFunction" class="layui-input" placeholder="请填写功用"
-                                           maxlength="100" lay-verify="required">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-row layui-col-space10 layui-form-item">
-                            <div class="layui-col-lg6 layui-col-sm6">
-                                <label class="layui-form-label">主治：</label>
-                                <div class="layui-input-block">
-                                    <textarea name="prescriptionAttending" autocomplete="off" class="layui-textarea" rows="4"
-                                              maxlength="500" lay-verify="required" placeholder="请填写主治"></textarea>
-                                </div>
-                            </div>
-                            <div class="layui-col-lg6 layui-col-sm6">
-                                <label class="layui-form-label">方解：</label>
-                                <div class="layui-input-block">
-                                    <textarea name="prescriptionExplain" autocomplete="off" class="layui-textarea" rows="4"
-                                              maxlength="2000" placeholder="请填写方解"></textarea>
+                                    <textarea name="prescriptionFunction" autocomplete="off" class="layui-textarea" rows="5"
+                                              maxlength="100" placeholder="请填写功用" lay-verify="required"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -147,14 +120,14 @@
                             <div class="layui-col-lg6 layui-col-sm6">
                                 <label class="layui-form-label">禁忌：</label>
                                 <div class="layui-input-block">
-                                    <textarea name="prescriptionTaboo" autocomplete="off" class="layui-textarea" rows="2"
+                                    <textarea name="prescriptionTaboo" autocomplete="off" class="layui-textarea" rows="5"
                                               maxlength="100" placeholder="请填写禁忌"></textarea>
                                 </div>
                             </div>
                             <div class="layui-col-lg6 layui-col-sm6">
                                 <label class="layui-form-label">方歌：</label>
                                 <div class="layui-input-block">
-                                    <textarea name="prescriptionSong" autocomplete="off" class="layui-textarea" rows="2"
+                                    <textarea name="prescriptionSong" autocomplete="off" class="layui-textarea" rows="5"
                                               maxlength="100" placeholder="请填写方歌"></textarea>
                                 </div>
                             </div>

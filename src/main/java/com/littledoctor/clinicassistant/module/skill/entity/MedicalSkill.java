@@ -8,7 +8,7 @@ import javax.persistence.*;
  * @Description: 医技项目
  */
 @Entity
-@Table(name = "MEDICAL_SKILL")
+@Table(name = "MED_SKILL")
 public class MedicalSkill {
 
     /** 主键 */

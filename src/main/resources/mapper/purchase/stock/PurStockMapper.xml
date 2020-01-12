@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.littledoctor.clinicassistant.module.purchase.stock.mapper.PurStockMapper">
 
+    <!-- 根据条件查询 库存信息 -->
     <select id="count" resultType="java.lang.Integer">
         SELECT
             count(1)
@@ -127,6 +128,7 @@
         AND d.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_LSDW}'
         AND b.pur_item_type = c.dict_value
         AND b.stock_unit = d.dict_value
+        AND a.stock_state = 1
         AND c.is_use = 1
         AND d.is_use = 1
         <if test="keywords != null and keywords != ''">
@@ -140,6 +142,7 @@
         LIMIT ${offset},${pageSize}
     </select>
 
+    <!--查询库存预警-->
     <select id="countWarn" resultType="java.lang.Integer">
         SELECT
             count(1)
@@ -149,6 +152,7 @@
         WHERE
             a.pur_item_id = b.pur_item_id
         AND a.stock_count &lt;= b.stock_warn
+        AND a.stock_state = 1
         <if test="keywords != null and keywords != ''">
             AND (
             b.pur_item_name LIKE CONCAT('%', #{keywords}, '%')
@@ -157,6 +161,52 @@
             OR b.barcode = #{keywords}
             )
         </if>
+    </select>
+
+    <!--查询已过期-->
+    <select id="countExpire" resultType="java.lang.Integer">
+        SELECT
+            count(1)
+        FROM
+            pur_stock a
+        WHERE a.stock_state = 3
+    </select>
+
+    <!--查询已过期-->
+    <select id="findExpireAll" resultType="java.util.Map">
+        SELECT
+            a.pur_stock_id purStockId,
+            a.pur_item_id purItemId,
+            b.pur_item_name purItemName,
+            d.dict_name purItemType,
+            CONCAT(0 + CAST(a.stock_count AS CHAR), '（', f.dict_name, '）') stockCount,
+            c.expire_date expireDate,
+            CONCAT(REPLACE(FORMAT(c.unit_price, 2), ',', ''), '/', e.dict_name) unitPrice,
+            REPLACE(FORMAT(c.unit_price / b.unit_convert * a.stock_count, 2), ',', '') loss
+        FROM
+            pur_stock a,
+            pur_item b,
+            pur_order_detail c,
+            sys_dictionary d,
+            sys_dictionary e,
+            sys_dictionary f
+        WHERE
+            a.pur_item_id = b.pur_item_id
+        AND a.pur_item_id = c.pur_item_id
+        AND a.stock_state = 3
+        AND d.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_CGPMFL}'
+        AND e.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_JHBZ}'
+        AND f.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_LSDW}'
+        AND d.is_use = 1
+        AND e.is_use = 1
+        AND f.is_use = 1
+        AND d.dict_type = 2
+        AND e.dict_type = 2
+        AND f.dict_type = 2
+        AND b.pur_item_type = d.dict_value
+        AND b.pur_unit = e.dict_value
+        AND b.stock_unit = f.dict_value
+        LIMIT ${offset},${pageSize}
     </select>
 
     <!-- 用于病历开方时根据药品名称查询药品信息 -->

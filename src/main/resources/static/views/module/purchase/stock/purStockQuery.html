@@ -58,8 +58,8 @@
                             <li class="layui-this">当前库存</li>
                             <li>预警库存</li>
                             <li>已过期</li>
-                            <li>已下架</li>
-                            <li>已退货</li>
+<!--                            <li>已下架</li>-->
+<!--                            <li>已退货</li>-->
                         </ul>
                         <div class="layui-tab-content">
                             <div class="layui-tab-item layui-show">
@@ -101,9 +101,16 @@
                                 </form>
                                 <table class="layui-hide" lay-filter="warn-table" id="warn-table"></table>
                             </div>
-                            <div class="layui-tab-item">3</div>
-                            <div class="layui-tab-item">4</div>
-                            <div class="layui-tab-item">5</div>
+                            <div class="layui-tab-item">
+                                <table class="layui-hide" lay-filter="expire-table" id="expire-table"></table>
+                                <div class="layui-row layui-col-space10" style="margin-top: 5px;">
+                                    <div class="layui-col-lg-offset10 layui-col-lg2" style="text-align: right;">
+                                        <button type="button" lay-filter="refresh-btn" class="layui-btn layui-btn-sm expire-btn">刷新</button>
+                                    </div>
+                                </div>
+                            </div>
+<!--                            <div class="layui-tab-item">4</div>-->
+<!--                            <div class="layui-tab-item">5</div>-->
                         </div>
                     </div>
                 </div>
@@ -114,7 +121,7 @@
 <!--layui table 操作列-->
 <script type="text/html" id="operate-column">
     <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="look" title="查看">查看</a>
-    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="unshelve" title="下架">下架</a>
+<!--    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="unshelve" title="下架">下架</a>-->
     <a class="layui-btn layui-btn-normal layui-btn-xs layui-btn-disabled" lay-event="save" disabled="" title="保存">保存</a>
 </script>
 <script src="/lib/layuiadmin/layui/layui.js"></script>

@@ -14,79 +14,67 @@ public class Prescription {
     /** 主键 */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "PRESCRIPTION_ID")
-    private Integer prescriptionId;
+    @Column(name = "RX_ID")
+    private Integer rxId;
 
     /** 处方名称 */
-    @Column(name = "PRESCRIPTION_NAME")
-    private String prescriptionName;
+    @Column(name = "RX_NAME")
+    private String rxName;
 
     /** 处方简称 首字母 */
-    @Column(name = "ABBREVIATION")
-    private String abbreviation;
+    @Column(name = "RX_ABBR")
+    private String rxAbbr;
 
     /** 目录ID */
     @Column(name = "CATALOGUE_ID")
     private Integer catalogueId;
 
-    /** 方剂类型（1：经方，2：验方，3：时方，4：单方，5：偏方，6：秘方） */
-    @Column(name = "PRESCRIPTION_TYPE")
-    private String prescriptionType;
-
     /** 处方来源 */
-    @Column(name = "PRESCRIPTION_SOURCE")
-    private String prescriptionSource;
+    @Column(name = "RX_SOURCE")
+    private String rxSource;
 
     /** 方剂组成（JSON格式的字符串） */
-    @Column(name = "PRESCRIPTION_COMPONENT")
-    private String prescriptionComponent;
+    @Column(name = "RX_COMPONENT")
+    private String rxComponent;
 
     /** 服用方法 */
     @Column(name = "TAKING_METHOD")
     private String takingMethod;
 
     /** 方剂功用 */
-    @Column(name = "PRESCRIPTION_FUNCTION")
-    private String prescriptionFunction;
-
-    /** 方剂主治 */
-    @Column(name = "PRESCRIPTION_ATTENDING")
-    private String prescriptionAttending;
-
-    /** 方解 */
-    @Column(name = "PRESCRIPTION_EXPLAIN")
-    private String prescriptionExplain;
+    @Column(name = "RX_FUNCTION")
+    private String rxFunction;
 
     /** 禁忌 */
-    @Column(name = "PRESCRIPTION_TABOO")
-    private String prescriptionTaboo;
+    @Column(name = "RX_TABOO")
+    private String rxTaboo;
 
     /** 方歌 */
-    @Column(name = "PRESCRIPTION_SONG")
-    private String prescriptionSong;
+    @Column(name = "RX_SONG")
+    private String rxSong;
 
-    public Integer getPrescriptionId() {
-        return prescriptionId;
+    public Integer getRxId() {
+        return rxId;
     }
 
-    public void setPrescriptionId(Integer prescriptionId) {
-        this.prescriptionId = prescriptionId;
+    public void setRxId(Integer rxId) {
+        this.rxId = rxId;
     }
 
-    public String getPrescriptionName() {
-        return prescriptionName;
+    public String getRxName() {
+        return rxName;
     }
 
-    public void setPrescriptionName(String prescriptionName) {
-        this.prescriptionName = prescriptionName;
+    public void setRxName(String rxName) {
+        this.rxName = rxName;
     }
 
-    public String getAbbreviation() {
-        return abbreviation;
+    public String getRxAbbr() {
+        return rxAbbr;
     }
 
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
+    public void setRxAbbr(String rxAbbr) {
+        this.rxAbbr = rxAbbr;
     }
 
     public Integer getCatalogueId() {
@@ -97,28 +85,20 @@ public class Prescription {
         this.catalogueId = catalogueId;
     }
 
-    public String getPrescriptionType() {
-        return prescriptionType;
+    public String getRxSource() {
+        return rxSource;
     }
 
-    public void setPrescriptionType(String prescriptionType) {
-        this.prescriptionType = prescriptionType;
+    public void setRxSource(String rxSource) {
+        this.rxSource = rxSource;
     }
 
-    public String getPrescriptionSource() {
-        return prescriptionSource;
+    public String getRxComponent() {
+        return rxComponent;
     }
 
-    public void setPrescriptionSource(String prescriptionSource) {
-        this.prescriptionSource = prescriptionSource;
-    }
-
-    public String getPrescriptionComponent() {
-        return prescriptionComponent;
-    }
-
-    public void setPrescriptionComponent(String prescriptionComponent) {
-        this.prescriptionComponent = prescriptionComponent;
+    public void setRxComponent(String rxComponent) {
+        this.rxComponent = rxComponent;
     }
 
     public String getTakingMethod() {
@@ -129,43 +109,27 @@ public class Prescription {
         this.takingMethod = takingMethod;
     }
 
-    public String getPrescriptionFunction() {
-        return prescriptionFunction;
+    public String getRxFunction() {
+        return rxFunction;
     }
 
-    public void setPrescriptionFunction(String prescriptionFunction) {
-        this.prescriptionFunction = prescriptionFunction;
+    public void setRxFunction(String rxFunction) {
+        this.rxFunction = rxFunction;
     }
 
-    public String getPrescriptionAttending() {
-        return prescriptionAttending;
+    public String getRxTaboo() {
+        return rxTaboo;
     }
 
-    public void setPrescriptionAttending(String prescriptionAttending) {
-        this.prescriptionAttending = prescriptionAttending;
+    public void setRxTaboo(String rxTaboo) {
+        this.rxTaboo = rxTaboo;
     }
 
-    public String getPrescriptionExplain() {
-        return prescriptionExplain;
+    public String getRxSong() {
+        return rxSong;
     }
 
-    public void setPrescriptionExplain(String prescriptionExplain) {
-        this.prescriptionExplain = prescriptionExplain;
-    }
-
-    public String getPrescriptionTaboo() {
-        return prescriptionTaboo;
-    }
-
-    public void setPrescriptionTaboo(String prescriptionTaboo) {
-        this.prescriptionTaboo = prescriptionTaboo;
-    }
-
-    public String getPrescriptionSong() {
-        return prescriptionSong;
-    }
-
-    public void setPrescriptionSong(String prescriptionSong) {
-        this.prescriptionSong = prescriptionSong;
+    public void setRxSong(String rxSong) {
+        this.rxSong = rxSong;
     }
 }

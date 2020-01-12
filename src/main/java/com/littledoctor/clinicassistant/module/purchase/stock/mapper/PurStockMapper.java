@@ -71,4 +71,17 @@ public interface PurStockMapper {
      */
     int countWarn(@Param("keywords") String keywords);
 
+    /**
+     * 查询已过期
+     * @return
+     */
+    int countExpire();
+
+    /**
+     * 查询已过期
+     * @param offset
+     * @param pageSize
+     * @return
+     */
+    List<Map<String, Object>> findExpireAll(Long offset, int pageSize);
 }

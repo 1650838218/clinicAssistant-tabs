@@ -77,4 +77,12 @@ public interface PurStockService {
      * @throws Exception
      */
     Page<Map<String, Object>> queryPageForWarn(Pageable page, String keywords) throws Exception;
+
+    /**
+     * 查询已过期
+     * @param page
+     * @return
+     * @throws Exception
+     */
+    Page<Map<String, Object>> queryPageForExpire(Pageable page) throws Exception;
 }

@@ -77,6 +77,22 @@ public class PurStockController {
     }
 
     /**
+     * 查询已过期品目
+     * @param page
+     * @return
+     */
+    @RequestMapping(value = "/queryPageForExpire", method = RequestMethod.GET)
+    public LayuiTableEntity<Map<String, Object>> queryPageForExpire(Pageable page) {
+        try {
+            if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
+            return new LayuiTableEntity<Map<String, Object>>(purStockService.queryPageForExpire(page));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return new LayuiTableEntity<>();
+    }
+
+    /**
      * 更新 售价 库存数量
      * @param purStock
      * @return
