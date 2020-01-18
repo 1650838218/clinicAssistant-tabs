@@ -1,17 +1,17 @@
 package com.littledoctor.clinicassistant.module.prescription.mapper;
 
-import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
+import com.littledoctor.clinicassistant.module.prescription.entity.RxDetail;
 
 public interface PrescriptionMapper {
     int deleteByPrimaryKey(Integer classicsId);
 
-    int insert(Prescription record);
+    int insert(RxDetail record);
 
-    int insertSelective(Prescription record);
+    int insertSelective(RxDetail record);
 
-    Prescription selectByPrimaryKey(Integer classicsId);
+    RxDetail selectByPrimaryKey(Integer classicsId);
 
-    int updateByPrimaryKeySelective(Prescription record);
+    int updateByPrimaryKeySelective(RxDetail record);
 
-    int updateByPrimaryKey(Prescription record);
+    int updateByPrimaryKey(RxDetail record);
 }

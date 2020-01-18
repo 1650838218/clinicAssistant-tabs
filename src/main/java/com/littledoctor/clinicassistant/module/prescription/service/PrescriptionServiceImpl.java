@@ -1,12 +1,12 @@
 package com.littledoctor.clinicassistant.module.prescription.service;
 
 import com.littledoctor.clinicassistant.common.entity.SelectOption;
+import com.littledoctor.clinicassistant.module.prescription.entity.RxDetail;
 import com.littledoctor.clinicassistant.module.purchase.stock.service.PurStockService;
-import com.littledoctor.clinicassistant.module.prescription.dao.PrescriptionRepository;
-import com.littledoctor.clinicassistant.module.prescription.dao.RxCatalogueRepository;
-import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
-import com.littledoctor.clinicassistant.module.prescription.entity.PrescriptionVo;
-import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalogue;
+import com.littledoctor.clinicassistant.module.prescription.dao.RxDetailRepository;
+import com.littledoctor.clinicassistant.module.prescription.dao.RxCatalogRepository;
+import com.littledoctor.clinicassistant.module.prescription.entity.RxDetailVo;
+import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalog;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -28,11 +28,11 @@ import java.util.Map;
 @Transactional
 public class PrescriptionServiceImpl implements PrescriptionService {
 
-    @Autowired
-    private RxCatalogueRepository rxCatalogueRepository;
+    @Autowired(required = false)
+    private RxCatalogRepository rxCatalogRepository;
 
-    @Autowired
-    private PrescriptionRepository prescriptionRepository;
+    @Autowired(required = false)
+    private RxDetailRepository rxDetailRepository;
 
     @Autowired
     private PurStockService purStockService;
@@ -42,32 +42,32 @@ public class PrescriptionServiceImpl implements PrescriptionService {
      * @return
      */
     @Override
-    public List<RxCatalogue> queryCatalogue() throws Exception {
-        return rxCatalogueRepository.findAll(Sort.by("catalogueId"));
+    public List<RxCatalog> queryCatalog() throws Exception {
+        return rxCatalogRepository.findAll(Sort.by("catalogId"));
     }
 
     /**
      * 保存处方目录
-     * @param rxCatalogue
+     * @param rxCatalog
      * @return
      * @throws Exception
      */
     @Override
-    public RxCatalogue saveCatalogue(RxCatalogue rxCatalogue) throws Exception {
-        return rxCatalogue != null ? rxCatalogueRepository.saveAndFlush(rxCatalogue) : null;
+    public RxCatalog saveCatalog(RxCatalog rxCatalog) throws Exception {
+        return rxCatalog != null ? rxCatalogRepository.saveAndFlush(rxCatalog) : null;
     }
 
     /**
      * 删除处方目录
-     * @param catalogueId
+     * @param catalogId
      * @return
      * @throws Exception
      */
     @Override
-    public boolean deleteCatalogue(String catalogueId) throws Exception {
-        if (StringUtils.isNotBlank(catalogueId)) {
-            rxCatalogueRepository.deleteById(Integer.parseInt(catalogueId));
-            prescriptionRepository.deleteByCatalogueId(Integer.parseInt(catalogueId));
+    public boolean deleteCatalog(String catalogId) throws Exception {
+        if (StringUtils.isNotBlank(catalogId)) {
+            rxCatalogRepository.deleteById(Long.parseLong(catalogId));
+            rxDetailRepository.deleteByCatalogId(Long.parseLong(catalogId));
             return true;
         }
         return false;
@@ -75,49 +75,49 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
     /**
      * 根据目录ID查询处方
-     * @param catalogueId
+     * @param catalogId
      * @return
      * @throws Exception
      */
     @Override
-    public Prescription findPrescriptionByCatalogueId(String catalogueId) throws Exception {
-        if (StringUtils.isNotBlank(catalogueId)) {
-            return prescriptionRepository.findByCatalogueId(Integer.parseInt(catalogueId));
+    public RxDetail findPrescriptionByCatalogId(String catalogId) throws Exception {
+        if (StringUtils.isNotBlank(catalogId)) {
+            return rxDetailRepository.findByCatalogId(Long.parseLong(catalogId));
         }
         return null;
     }
 
     /**
      * 根据ID查询处方
-     * @param prescriptionId
+     * @param rxId
      * @return
      */
     @Override
-    public Prescription findPrescriptionById(String prescriptionId) throws Exception {
-        if (StringUtils.isNotBlank(prescriptionId)) {
-            return prescriptionRepository.findById(Integer.parseInt(prescriptionId)).get();
+    public RxDetail findPrescriptionById(String rxId) throws Exception {
+        if (StringUtils.isNotBlank(rxId)) {
+            return rxDetailRepository.findById(Long.parseLong(rxId)).get();
         }
         return null;
     }
 
     /**
      * 保存处方
-     * @param prescriptionVo
+     * @param rxDetailVo
      * @return
      */
     @Override
-    public Prescription savePrescription(PrescriptionVo prescriptionVo) throws Exception {
-        if (prescriptionVo != null) {
-            Prescription prescription = prescriptionVo.getPrescription();
-            RxCatalogue rxCatalogue = prescriptionVo.getRxCatalogue();
-            if (prescription != null) {
-                if (prescription.getPrescriptionId() == null && prescription.getCatalogueId() == null && rxCatalogue != null) {// 新增
-                    RxCatalogue newRxCatalogue = rxCatalogueRepository.saveAndFlush(rxCatalogue);// 保存目录
-                    prescription.setCatalogueId(newRxCatalogue.getCatalogueId());
-                    return prescriptionRepository.saveAndFlush(prescription);// 保存处方
+    public RxDetail savePrescription(RxDetailVo rxDetailVo) throws Exception {
+        if (rxDetailVo != null) {
+            RxDetail rxDetail = rxDetailVo.getRxDetail();
+            RxCatalog rxCatalog = rxDetailVo.getRxCatalog();
+            if (rxDetail != null) {
+                if (rxDetail.getRxId() == null && rxDetail.getCatalogId() == null && rxCatalog != null) {// 新增
+                    RxCatalog newRxCatalog = rxCatalogRepository.saveAndFlush(rxCatalog);// 保存目录
+                    rxDetail.setCatalogId(newRxCatalog.getCatalogId());
+                    return rxDetailRepository.saveAndFlush(rxDetail);// 保存处方
                 } else { // 修改
-                    rxCatalogueRepository.updateName(prescription.getPrescriptionName(), prescription.getCatalogueId());
-                    return prescriptionRepository.saveAndFlush(prescription);// 保存处方
+                    rxCatalogRepository.updateName(rxDetail.getRxName(), rxDetail.getCatalogId());
+                    return rxDetailRepository.saveAndFlush(rxDetail);// 保存处方
                 }
             }
         }
@@ -126,13 +126,13 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
     /**
      * 根据ID查询处方分类
-     * @param catalogueId
+     * @param catalogId
      * @return
      */
     @Override
-    public RxCatalogue findCatalogueById(Integer catalogueId) {
-        if (catalogueId != null) {
-            return rxCatalogueRepository.findById(catalogueId).get();
+    public RxCatalog findCatalogById(Long catalogId) {
+        if (catalogId != null) {
+            return rxCatalogRepository.findById(catalogId).get();
         }
         return null;
     }
@@ -145,24 +145,24 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     @Override
     public List<SelectOption> getSelectOption(String keywords) {
         if (StringUtils.isBlank(keywords)) {
-            return prescriptionRepository.getSelectOption();
+            return rxDetailRepository.getSelectOption();
         } else {
-            return prescriptionRepository.getSelectOption(keywords.trim());
+            return rxDetailRepository.getSelectOption(keywords.trim());
         }
     }
 
     /**
      * 根据处方ID查询处方组成，并将处方组成转换成药材信息
      * 包括：药材名称，品目ID，单价，库存单位，剂量等
-     * @param prescriptionId
+     * @param rxId
      * @return
      */
     @Override
-    public Map<String, Object> getMedicalByPrescriptionId(String prescriptionId) throws Exception {
-        if (StringUtils.isNotBlank(prescriptionId)) {
-            Prescription p = this.findPrescriptionById(prescriptionId);
+    public Map<String, Object> getMedicalByRxId(String rxId) throws Exception {
+        if (StringUtils.isNotBlank(rxId)) {
+            RxDetail p = this.findPrescriptionById(rxId);
             if (p != null) {
-                String component = p.getPrescriptionComponent();
+                String component = p.getRxComponent();
                 if (StringUtils.isNotBlank(component)) {
                     String[] medicals = component.split("\\s+");// 将处方组成用空格分割成数组
                     if (!ObjectUtils.isEmpty(medicals)) {

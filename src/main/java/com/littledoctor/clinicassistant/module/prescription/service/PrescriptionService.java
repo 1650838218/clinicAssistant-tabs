@@ -1,9 +1,9 @@
 package com.littledoctor.clinicassistant.module.prescription.service;
 
 import com.littledoctor.clinicassistant.common.entity.SelectOption;
-import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
-import com.littledoctor.clinicassistant.module.prescription.entity.PrescriptionVo;
-import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalogue;
+import com.littledoctor.clinicassistant.module.prescription.entity.RxDetail;
+import com.littledoctor.clinicassistant.module.prescription.entity.RxDetailVo;
+import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalog;
 
 import java.util.List;
 import java.util.Map;
@@ -19,62 +19,62 @@ public interface PrescriptionService {
      * 根据目录名称，简称查询目录
      * @return
      */
-    List<RxCatalogue> queryCatalogue() throws Exception;
+    List<RxCatalog> queryCatalog() throws Exception;
 
     /**
      * 保存处方目录
-     * @param rxCatalogue
+     * @param rxCatalog
      * @return
      */
-    RxCatalogue saveCatalogue(RxCatalogue rxCatalogue) throws Exception;
+    RxCatalog saveCatalog(RxCatalog rxCatalog) throws Exception;
 
     /**
      * 删除处方目录
-     * @param catalogueId
+     * @param catalogId
      * @return
      */
-    boolean deleteCatalogue(String catalogueId) throws Exception;
+    boolean deleteCatalog(String catalogId) throws Exception;
 
     /**
      * 根据目录ID查询处方
-     * @param catalogueId
+     * @param catalogId
      * @return
      */
-    Prescription findPrescriptionByCatalogueId(String catalogueId) throws Exception;
+    RxDetail findPrescriptionByCatalogId(String catalogId) throws Exception;
 
     /**
      * 根据ID查询处方
-     * @param prescriptionId
+     * @param rxId
      * @return
      */
-    Prescription findPrescriptionById(String prescriptionId) throws Exception;
+    RxDetail findPrescriptionById(String rxId) throws Exception;
 
     /**
      * 保存处方
-     * @param prescriptionVo
+     * @param rxDetailVo
      * @return
      */
-    Prescription savePrescription(PrescriptionVo prescriptionVo) throws Exception;
+    RxDetail savePrescription(RxDetailVo rxDetailVo) throws Exception;
 
     /**
      * 根据ID查询处方分类
-     * @param catalogueId
+     * @param catalogId
      * @return
      */
-    RxCatalogue findCatalogueById(Integer catalogueId);
+    RxCatalog findCatalogById(Long catalogId) throws Exception;
 
     /**
      * 获取下拉框的option list
      * @return
      * @param keywords
      */
-    List<SelectOption> getSelectOption(String keywords);
+    List<SelectOption> getSelectOption(String keywords) throws Exception;
 
     /**
      * 根据处方ID查询处方组成，并将处方组成转换成药材信息
      * 包括：药材名称，品目ID，单价，库存单位，剂量等
-     * @param prescriptionId
+     * @param rxId
      * @return
      */
-    Map<String, Object> getMedicalByPrescriptionId(String prescriptionId) throws Exception;
+    Map<String, Object> getMedicalByRxId(String rxId) throws Exception;
 }

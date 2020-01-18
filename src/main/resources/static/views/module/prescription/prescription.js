@@ -1,4 +1,4 @@
-/** 处方管理 */
+/** 方剂管理 */
 //@ sourceURL=prescription.js
 layui.config({
     base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
@@ -13,7 +13,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
     var ajax = layui.ajax;
     var utils = layui.utils;
     var rootMapping = '/prescription';
-    var leftTreeId = 'catalogue';
+    var leftTreeId = 'catalog';
     var formId = 'prescription-form';
     form.render();
 
@@ -29,9 +29,9 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
             showLine: false,
             showIcon: false,
             expandSpeed: "normal",
-            addHoverDom: function addHoverDom(treeId, treeNode) {
+            /*addHoverDom: function addHoverDom(treeId, treeNode) {
                 var sObj = $("#" + treeNode.tId + "_span");
-                if (treeNode.catalogueType !== 1 || treeNode.editNameFlag || $("#addBtn_"+treeNode.tId).length > 0) return;
+                if (treeNode.catalogType !== 1 || treeNode.editNameFlag || $("#addBtn_"+treeNode.tId).length > 0) return;
                 var addStr = "<span class='button add' id='addBtn_" + treeNode.tId
                     + "' title='新增下级' onfocus='this.blur();'></span>";
                 sObj.after(addStr);
@@ -39,23 +39,23 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
                 if (btn) btn.bind("click", function(){
                     var leftTree = $.fn.zTree.getZTreeObj(leftTreeId);
                     // 添加节点，且进入修改状态
-                    var newNode = leftTree.addNodes(treeNode, {catalogueName:"新增目录", catalogueType: 1});
+                    var newNode = leftTree.addNodes(treeNode, {catalogName:"新增目录", catalogType: 1});
                     leftTree.editName(newNode[0]);
                     return false;
                 });
-            },
-            removeHoverDom: function removeHoverDom(treeId, treeNode) {
+            },*/
+            /*removeHoverDom: function removeHoverDom(treeId, treeNode) {
                 $("#addBtn_"+treeNode.tId).unbind().remove();
-            },
+            },*/
             selectedMulti: false
         },
         data: {
             key: {
-                name: "catalogueName"
+                name: "catalogName"
             },
             simpleData: {
                 enable: true,
-                idKey: "catalogueId",
+                idKey: "catalogId",
                 pIdKey: "parentCatalogueId",
                 rootPId: null
             }
@@ -63,11 +63,11 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
         edit: {
             drag: {},
             editNameSelectAll: true,
-            enable: true,
+            enable: false,
             removeTitle: BTN.delete,
             renameTitle: BTN.edit,
             showRenameBtn: function (treeId, treeNode) {
-                return treeNode.catalogueType === 1;
+                return treeNode.catalogType === 1;
             }
         },
         callback: {
@@ -75,12 +75,12 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
                 if (clickFlag === 1) {
                     $('.right-panel .blank-tip').hide();
                     $('#' + formId).show();
-                    if (treeNode.catalogueType === 1) {
+                    if (treeNode.catalogType === 1) {
                         // 清空表单
                         utils.clearForm('#' + formId);// 清空表单
                         form.render();
                     } else {
-                        getPrescriptionByCatalogueId(treeNode.catalogueId);// 查询处方
+                        getPrescriptionByCatalogueId(treeNode.catalogId);// 查询方剂
                     }
                 } else if (clickFlag === 0) {
                     $('#' + formId).hide();
@@ -114,27 +114,27 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
             },
             onRename: function (event, treeId, treeNode, isCancel) {
                 // 保存节点
-                var catalogue = {};
-                catalogue.catalogueId = treeNode.catalogueId;
-                catalogue.catalogueName = treeNode.catalogueName;
-                catalogue.catalogueType = 1;
-                catalogue.parentCatalogueId = treeNode.getParentNode() == null ? '' : treeNode.getParentNode().catalogueId;
-                catalogue.catalogueOrder = treeNode.getIndex();
+                var catalog = {};
+                catalog.catalogId = treeNode.catalogId;
+                catalog.catalogName = treeNode.catalogName;
+                catalog.catalogType = 1;
+                catalog.parentCatalogueId = treeNode.getParentNode() == null ? '' : treeNode.getParentNode().catalogId;
+                catalog.catalogOrder = treeNode.getIndex();
                 $.ajax({
                     type: 'POST',
-                    url: rootMapping + '/catalogue/save',
-                    data: JSON.stringify(catalogue),
+                    url: rootMapping + '/catalog/save',
+                    data: JSON.stringify(catalog),
                     dataType: "JSON",
                     contentType: 'application/json',
                     success: function (result) {
                         if (result == null) {
                             // 目录名称编辑后重新保存，保存失败则刷新
-                            layer.alert(treeNode.catalogueName + '保存失败，请重试！', {icon: LAYER_ICON.error}, function (index) {
+                            layer.alert(treeNode.catalogName + '保存失败，请重试！', {icon: LAYER_ICON.error}, function (index) {
                                 queryCatalogue();
                                 layer.close(index);
                             });
                         } else {
-                            treeNode.catalogueId = result.catalogueId;
+                            treeNode.catalogId = result.catalogId;
                             // 清空表单
                             utils.clearForm('#' + formId);// 清空表单
                             form.render();
@@ -144,7 +144,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
                     },
                     error: function (e) {
                         // 目录名称编辑后重新保存，保存失败则刷新
-                        layer.alert(treeNode.catalogueName + '保存失败，请重试！', {icon: LAYER_ICON.error}, function (index) {
+                        layer.alert(treeNode.catalogName + '保存失败，请重试！', {icon: LAYER_ICON.error}, function (index) {
                             queryCatalogue();
                             layer.close(index);
                         });
@@ -152,10 +152,10 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
                 });
             },
             beforeRemove: function (treeId, treeNode) {
-                layer.confirm(MSG.delete_confirm + '“' + treeNode.catalogueName + '”吗？',{icon:LAYER_ICON.question}, function (index) {
+                layer.confirm(MSG.delete_confirm + '“' + treeNode.catalogName + '”吗？',{icon:LAYER_ICON.question}, function (index) {
                     var leftTree = $.fn.zTree.getZTreeObj(treeId);
-                    if (treeNode.catalogueId) {
-                        ajax.delete(rootMapping + '/catalogue/delete/' + treeNode.catalogueId, function (success) {
+                    if (treeNode.catalogId) {
+                        ajax.delete(rootMapping + '/catalog/delete/' + treeNode.catalogId, function (success) {
                             if (success) {
                                 layer.msg(MSG.delete_success);
                                 leftTree.removeNode(treeNode, false);
@@ -183,12 +183,12 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
         }
     };
 
-    // 查询处方目录
+    // 查询方剂目录
     queryCatalogue();
-    function queryCatalogue(catalogueName) {
-        $.getJSON(rootMapping + '/queryCatalogue', {catalogueName: catalogueName}, function (catalogueList) {
-            if (catalogueList != null && catalogueList.length > 0) {
-                $.fn.zTree.init($("#" + leftTreeId), setting, catalogueList);
+    function queryCatalogue(catalogName) {
+        $.getJSON(rootMapping + '/queryCatalogue', {catalogName: catalogName}, function (catalogList) {
+            if (catalogList != null && catalogList.length > 0) {
+                $.fn.zTree.init($("#" + leftTreeId), setting, catalogList);
                 fuzzySearch(leftTreeId, '.left-search input', null, true);
             } else {
                 $('#blank-tip').show();
@@ -204,19 +204,21 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
         if (leftTree == null) {
             leftTree = $.fn.zTree.init($("#" + leftTreeId), setting, []);
         }
-        var newNode = leftTree.addNodes(null, {catalogueName:"新增分类", catalogueType: 1});
+        var newNode = leftTree.addNodes(null, {catalogName:"新增分类", catalogType: 1});
         leftTree.editName(newNode[0]);
         $('#blank-tip').hide();
     });
 
-    // 根据目录ID查询处方
-    function getPrescriptionByCatalogueId(catalogueId) {
-        if (utils.isNotNull(catalogueId)) {
-            $.getJSON(rootMapping + '/findPrescriptionByCatalogueId', {catalogueId: catalogueId}, function (prescription) {
-                if (prescription != null) {
-                    form.val(formId, prescription);
+    // 维护方剂目录
+
+    // 根据目录ID查询方剂
+    function getPrescriptionByCatalogueId(catalogId) {
+        if (utils.isNotNull(catalogId)) {
+            $.getJSON(rootMapping + '/findPrescriptionByCatalogueId', {catalogId: catalogId}, function (rxDetail) {
+                if (rxDetail != null) {
+                    form.val(formId, rxDetail);
                 } else {
-                    layer.alert('未找到该处方，请重试！',{icon: 0}, function (index) {
+                    layer.alert('未找到该方剂，请重试！',{icon: 0}, function (index) {
                         queryCatalogue();
                         utils.clearForm('#' + formId);// 清空表单
                         form.render();
@@ -229,14 +231,14 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
         }
     }
 
-    // 根据处方ID查询处方
-    function getPrescriptionById(prescriptionId) {
-        if (utils.isNotNull(prescriptionId)) {
-            $.getJSON(rootMapping + '/findPrescriptionById', {prescriptionId: prescriptionId}, function (prescription) {
-                if (prescription != null) {
-                    form.val(formId, prescription);
+    // 根据方剂ID查询方剂
+    function getRxDetailById(rxId) {
+        if (utils.isNotNull(rxId)) {
+            $.getJSON(rootMapping + '/findPrescriptionById', {rxId: rxId}, function (rxDetail) {
+                if (rxDetail != null) {
+                    form.val(formId, rxDetail);
                 } else {
-                    layer.alert('未找到该处方，请重试！',{icon: 0}, function (index) {
+                    layer.alert('未找到该方剂，请重试！',{icon: 0}, function (index) {
                         queryCatalogue();
                         utils.clearForm('#' + formId);// 清空表单
                         form.render();
@@ -245,40 +247,40 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
                 }
             });
         } else {
-            layer.msg('处方ID为空，无法查询！', {icon:2});
+            layer.msg('方剂ID为空，无法查询！', {icon:2});
         }
     }
 
-    // 保存处方
+    // 保存方剂
     form.on('submit(submit-btn)', function (data) {
         var formData = {};
-        formData.prescription = data.field;
+        formData.rxDetail = data.field;
         var leftTree = $.fn.zTree.getZTreeObj(leftTreeId);
         var selectNode = leftTree.getSelectedNodes();
         if (selectNode != null && selectNode.length > 0) {
-            if (!formData.prescription.prescriptionId) {// 新增处方，处方ID为空
+            if (!formData.rxDetail.rxId) {// 新增方剂，方剂ID为空
                 var rxCatalogue = {};
-                rxCatalogue.parentCatalogueId = selectNode[0].catalogueId;
-                rxCatalogue.catalogueName = formData.prescription.prescriptionName;
-                rxCatalogue.catalogueType = 2;
-                rxCatalogue.catalogueOrder = selectNode[0].children == null ? 0 : selectNode[0].children.length;
+                rxCatalogue.parentCatalogueId = selectNode[0].catalogId;
+                rxCatalogue.catalogName = formData.rxDetail.rxName;
+                rxCatalogue.catalogType = 2;
+                rxCatalogue.catalogOrder = selectNode[0].children == null ? 0 : selectNode[0].children.length;
                 formData.rxCatalogue = rxCatalogue;
             }
-            ajax.postJSON(rootMapping + '/prescription/save', formData, function (prescription) {
-                if (prescription != null && utils.isNotNull(prescription.prescriptionId) && utils.isNotNull(prescription.catalogueId)) {
+            ajax.postJSON(rootMapping + '/prescription/save', formData, function (rxDetail) {
+                if (rxDetail != null && utils.isNotNull(rxDetail.rxId) && utils.isNotNull(rxDetail.catalogId)) {
                     layer.msg(MSG.save_success);
-                    form.val(formId, prescription);
+                    form.val(formId, rxDetail);
                     // 手动增加目录节点
-                    $.getJSON(rootMapping + '/findCatalogueById', {catalogueId: prescription.catalogueId}, function (catalogue) {
+                    $.getJSON(rootMapping + '/findCatalogueById', {catalogId: rxDetail.catalogId}, function (catalog) {
                         var leftTree = $.fn.zTree.getZTreeObj(leftTreeId);
                         var selectNode = leftTree.getSelectedNodes();
                         if (selectNode != null && selectNode.length > 0) {
-                            if (selectNode[0].catalogueType === 1) {// 当前处方是新增的
-                                var newNode = leftTree.addNodes(selectNode[0], catalogue);
+                            if (selectNode[0].catalogType === 1) {// 当前方剂是新增的
+                                var newNode = leftTree.addNodes(selectNode[0], catalog);
                                 leftTree.selectNode(newNode[0]);
-                            } else {// 当前处方是修改的
-                                // leftTree.addNodes(selectNode[0].getParentNode(), catalogue);
-                                selectNode[0].catalogueName = catalogue.catalogueName;
+                            } else {// 当前方剂是修改的
+                                // leftTree.addNodes(selectNode[0].getParentNode(), catalog);
+                                selectNode[0].catalogName = catalog.catalogName;
                                 leftTree.updateNode(selectNode[0]);
                             }
                         }
@@ -293,12 +295,76 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
 
     // 取消
     $('#cancel-btn').click(function () {
-        var prescriptionId = $('#' + formId + ' input[name="prescriptionId"]').val();
-        if (prescriptionId !== null && prescriptionId !== undefined && prescriptionId !== '') {
-            getPrescriptionById(prescriptionId);// 重新查询
+        var rxId = $('#' + formId + ' input[name="rxId"]').val();
+        if (rxId !== null && rxId !== undefined && rxId !== '') {
+            getRxDetailById(rxId);// 重新查询
         } else {
             utils.clearForm('#' + formId);// 清空表单
             form.render();
+        }
+    });
+
+    // 统一事件处理
+    var eventFunction = {
+        // 新增
+        addCatalogBtn: function () {
+            var html = '';
+            html += '<form class="layui-form" lay-filter="addCatalogForm">';
+            html += '   <div class="layui-form-item">';
+            html += '       <label class="layui-form-label">目录名称：</label>';
+            html += '       <div class="layui-input-block">';
+            html += '           <input type="text" name="title" required  lay-verify="required" placeholder="请输入目录名称" autocomplete="off" class="layui-input">';
+            html += '       </div>';
+            html += '   </div>';
+            html += '   <div class="layui-form-item">';
+            html += '       <label class="layui-form-label">目录类型：</label>';
+            html += '       <div class="layui-input-block">';
+            html += '           <select name="city" lay-verify="required">';
+            html += '               <option value="1">分类</option>';
+            html += '               <option value="2" selected>方剂</option>';
+            html += '           </select>';
+            html += '       </div>';
+            html += '   </div>';
+            html += '</form>';
+            layer.open({
+                title: '新增目录',
+                content: html,
+                area:['500px', '300px'],
+                btnAlign: 'c',
+                success: function () {
+                    form.render('select','addCatalogForm');
+                },
+                yes: function () {
+
+                },
+                cancel: function () {
+
+                }
+            });
+        },
+        // 删除
+        // 取消
+        cancelBtn: function () {
+            var treeObject = $.fn.zTree.getZTreeObj(leftTreeId);
+            var selectNodes = treeObject.getSelectedNodes();
+            if (selectNodes) {
+                var node = selectNodes[0];
+                if (node.catalogType == 1) {
+                    getRxCatalogById(node.catalogId);// 方剂目录
+                } else if(node.catalogType == 2) {
+                    getRxDetailById(node.catalogId); // 方剂
+                }
+            } else {
+                layer.msg('请选择一个方剂！');
+            }
+        }
+    };
+
+    // 按钮绑定单击事件
+    $(document).on('click','.layui-btn[lay-event]',function(){
+        var event = $(this).attr('lay-event');
+        if (typeof eventFunction[event] === 'function') {
+            eventFunction[event].call(this);
         }
     });
 });

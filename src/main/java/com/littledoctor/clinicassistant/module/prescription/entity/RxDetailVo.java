@@ -13,25 +13,25 @@ package com.littledoctor.clinicassistant.module.prescription.entity;
  * ------------------------------------------------------------------
  * 2019-08-06   周俊林
  */
-public class PrescriptionVo {
+public class RxDetailVo {
 
-    private Prescription prescription;
+    private RxDetail rxDetail;
 
-    private RxCatalogue rxCatalogue;
+    private RxCatalog rxCatalog;
 
-    public Prescription getPrescription() {
-        return prescription;
+    public RxDetail getRxDetail() {
+        return rxDetail;
     }
 
-    public void setPrescription(Prescription prescription) {
-        this.prescription = prescription;
+    public void setRxDetail(RxDetail rxDetail) {
+        this.rxDetail = rxDetail;
     }
 
-    public RxCatalogue getRxCatalogue() {
-        return rxCatalogue;
+    public RxCatalog getRxCatalog() {
+        return rxCatalog;
     }
 
-    public void setRxCatalogue(RxCatalogue rxCatalogue) {
-        this.rxCatalogue = rxCatalogue;
+    public void setRxCatalog(RxCatalog rxCatalog) {
+        this.rxCatalog = rxCatalog;
     }
 }

@@ -8,14 +8,14 @@ import javax.persistence.*;
  * @Description: 处方
  */
 @Entity
-@Table(name = "PRESCRIPTION")
-public class Prescription {
+@Table(name = "RX_DETAIL")
+public class RxDetail {
 
     /** 主键 */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RX_ID")
-    private Integer rxId;
+    private Long rxId;
 
     /** 处方名称 */
     @Column(name = "RX_NAME")
@@ -26,8 +26,8 @@ public class Prescription {
     private String rxAbbr;
 
     /** 目录ID */
-    @Column(name = "CATALOGUE_ID")
-    private Integer catalogueId;
+    @Column(name = "CATALOG_ID")
+    private Long catalogId;
 
     /** 处方来源 */
     @Column(name = "RX_SOURCE")
@@ -53,11 +53,11 @@ public class Prescription {
     @Column(name = "RX_SONG")
     private String rxSong;
 
-    public Integer getRxId() {
+    public Long getRxId() {
         return rxId;
     }
 
-    public void setRxId(Integer rxId) {
+    public void setRxId(Long rxId) {
         this.rxId = rxId;
     }
 
@@ -77,12 +77,12 @@ public class Prescription {
         this.rxAbbr = rxAbbr;
     }
 
-    public Integer getCatalogueId() {
-        return catalogueId;
+    public Long getCatalogId() {
+        return catalogId;
     }
 
-    public void setCatalogueId(Integer catalogueId) {
-        this.catalogueId = catalogueId;
+    public void setCatalogId(Long catalogId) {
+        this.catalogId = catalogId;
     }
 
     public String getRxSource() {

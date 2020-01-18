@@ -2,9 +2,9 @@ package com.littledoctor.clinicassistant.module.prescription.controller;
 
 import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.common.entity.SelectOption;
-import com.littledoctor.clinicassistant.module.prescription.entity.Prescription;
-import com.littledoctor.clinicassistant.module.prescription.entity.PrescriptionVo;
-import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalogue;
+import com.littledoctor.clinicassistant.module.prescription.entity.RxDetail;
+import com.littledoctor.clinicassistant.module.prescription.entity.RxDetailVo;
+import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalog;
 import com.littledoctor.clinicassistant.module.prescription.service.PrescriptionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,10 +33,10 @@ public class PrescriptionController {
      * 查询处方目录
      * @return
      */
-    @RequestMapping(value = "/queryCatalogue", method = RequestMethod.GET)
-    public List<RxCatalogue> queryCatalogue() {
+    @RequestMapping(value = "/queryCatalog", method = RequestMethod.GET)
+    public List<RxCatalog> queryCatalog() {
         try {
-            return prescriptionService.queryCatalogue();
+            return prescriptionService.queryCatalog();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -45,13 +45,13 @@ public class PrescriptionController {
 
     /**
      * 保存处方目录
-     * @param rxCatalogue
+     * @param rxCatalog
      * @return
      */
-    @RequestMapping(value = "/catalogue/save", method = RequestMethod.POST)
-    public RxCatalogue saveCatalogue(@RequestBody RxCatalogue rxCatalogue) {
+    @RequestMapping(value = "/catalog/save", method = RequestMethod.POST)
+    public RxCatalog saveCatalog(@RequestBody RxCatalog rxCatalog) {
         try {
-            return prescriptionService.saveCatalogue(rxCatalogue);
+            return prescriptionService.saveCatalog(rxCatalog);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -60,14 +60,14 @@ public class PrescriptionController {
 
     /**
      * 根据ID删除处方目录
-     * @param catalogueId
+     * @param catalogId
      * @return
      */
-    @RequestMapping(value = "/catalogue/delete/{catalogueId}", method = RequestMethod.DELETE)
-    public boolean deleteCatalogue(@PathVariable(value = "catalogueId") String catalogueId) {
+    @RequestMapping(value = "/catalog/delete/{catalogId}", method = RequestMethod.DELETE)
+    public boolean deleteCatalog(@PathVariable(value = "catalogId") String catalogId) {
         try {
-            Assert.hasLength(catalogueId, Message.PARAMETER_IS_NULL);
-            return prescriptionService.deleteCatalogue(catalogueId);
+            Assert.hasLength(catalogId, Message.PARAMETER_IS_NULL);
+            return prescriptionService.deleteCatalog(catalogId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -76,13 +76,13 @@ public class PrescriptionController {
 
     /**
      * 根据目录ID查询处方
-     * @param catalogueId
+     * @param catalogId
      * @return
      */
-    @RequestMapping(value = "/findPrescriptionByCatalogueId", method = RequestMethod.GET)
-    public Prescription findPrescriptionByCatalogueId(@RequestParam String catalogueId) {
+    @RequestMapping(value = "/findPrescriptionByCatalogId", method = RequestMethod.GET)
+    public RxDetail findPrescriptionByCatalogId(@RequestParam String catalogId) {
         try {
-            return prescriptionService.findPrescriptionByCatalogueId(catalogueId);
+            return prescriptionService.findPrescriptionByCatalogId(catalogId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -91,13 +91,13 @@ public class PrescriptionController {
 
     /**
      * 根据ID查询处方
-     * @param prescriptionId
+     * @param rxId
      * @return
      */
     @RequestMapping(value = "/findPrescriptionById", method = RequestMethod.GET)
-    public Prescription findPrescriptionById(@RequestParam String prescriptionId) {
+    public RxDetail findPrescriptionById(@RequestParam String rxId) {
         try {
-            return prescriptionService.findPrescriptionById(prescriptionId);
+            return prescriptionService.findPrescriptionById(rxId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -106,13 +106,13 @@ public class PrescriptionController {
 
     /**
      * 保存处方
-     * @param prescriptionVo
+     * @param rxDetailVo
      * @return
      */
     @RequestMapping(value = "/prescription/save", method = RequestMethod.POST)
-    public Prescription savePrescription(@RequestBody PrescriptionVo prescriptionVo) {
+    public RxDetail savePrescription(@RequestBody RxDetailVo rxDetailVo) {
         try {
-            return prescriptionService.savePrescription(prescriptionVo);
+            return prescriptionService.savePrescription(rxDetailVo);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -121,17 +121,17 @@ public class PrescriptionController {
 
     /**
      * 根据ID查询处方分类
-     * @param catalogueId
+     * @param catalogId
      * @return
      */
-    @RequestMapping(value = "/findCatalogueById", method = RequestMethod.GET)
-    public RxCatalogue findCatalogueById(Integer catalogueId) {
+    @RequestMapping(value = "/findCatalogById", method = RequestMethod.GET)
+    public RxCatalog findCatalogById(Long catalogId) {
         try {
-            return prescriptionService.findCatalogueById(catalogueId);
+            return prescriptionService.findCatalogById(catalogId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return null;
+        return new RxCatalog();
     }
 
     /**
@@ -152,13 +152,13 @@ public class PrescriptionController {
     /**
      * 根据处方ID查询处方组成，并将处方组成转换成药材信息
      * 包括：药材名称，品目ID，单价，库存单位，剂量等
-     * @param prescriptionId
+     * @param rxId
      * @return
      */
-    @RequestMapping(value = "/getMedicalByPrescriptionId", method = RequestMethod.GET)
-    public Map<String, Object> getMedicalByPrescriptionId(@RequestParam String prescriptionId) {
+    @RequestMapping(value = "/getMedicalByRxId", method = RequestMethod.GET)
+    public Map<String, Object> getMedicalByRxId(@RequestParam String rxId) {
         try {
-            return prescriptionService.getMedicalByPrescriptionId(prescriptionId);
+            return prescriptionService.getMedicalByRxId(rxId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
