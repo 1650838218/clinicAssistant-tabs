@@ -1,7 +1,7 @@
 package com.littledoctor.clinicassistant.module.purchase.item.service;
 
 import com.littledoctor.clinicassistant.common.entity.SelectOption;
-import com.littledoctor.clinicassistant.module.purchase.item.entity.PurItemEntity;
+import com.littledoctor.clinicassistant.module.purchase.item.entity.ItemEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -10,9 +10,9 @@ import java.util.List;
 /**
  * @Auther: 周俊林
  * @Date: 2018/10/19 22:48
- * @Description: 采购品目
+ * @Description: 品目管理
  */
-public interface PurItemService {
+public interface ItemService {
     /**
      * 分页查询
      *
@@ -20,53 +20,53 @@ public interface PurItemService {
      * @param page
      * @return
      */
-    Page<PurItemEntity> queryPage(String keywords, Pageable page);
+    Page<ItemEntity> queryPage(String keywords, Pageable page);
 
     /**
      * 保存
-     * @param purItemEntity
+     * @param itemEntity
      * @return
      */
-    PurItemEntity save(PurItemEntity purItemEntity);
+    ItemEntity save(ItemEntity itemEntity);
 
     /**
      * 根据ID删除
-     * @param purItemId
+     * @param itemId
      * @return
      */
-    boolean delete(String purItemId);
+    boolean delete(String itemId);
 
     /**
      * 根据ID查询
-     * @param purItemId
+     * @param itemId
      * @return
      */
-    PurItemEntity getById(String purItemId);
+    ItemEntity getById(String itemId);
 
     /**
      * 判断条形码是否不重复，是否不存在
      *
-     * @param purItemId
+     * @param itemId
      * @param barcode
      * @return true 不存在  false 已存在，默认false
      */
-    boolean notRepeatBarcode(String purItemId, String barcode);
+    boolean notRepeatBarcode(String itemId, String barcode);
 
     /**
      * 判断药品名称是否不重复，是否不存在
      *
-     * @param purItemId
-     * @param purItemName
+     * @param itemId
+     * @param itemName
      * @return true 不存在  false 已存在，默认false
      */
-    boolean notRepeatName(String purItemId, String purItemName);
+    boolean notRepeatName(String itemId, String itemName);
 
     /**
      * 根据名称查询药品清单
      * @param name 可以是药品名称，药品全拼，药品简拼
      * @return
      */
-    List<PurItemEntity> queryByName(String name);
+    List<ItemEntity> queryByName(String name);
 
     /**
      * 获取下拉框的option list
@@ -77,24 +77,24 @@ public interface PurItemService {
 
     /**
      * 根据品目ID判断该品目是否存在
-     * @param purItemId
+     * @param itemId
      * @return
      */
-    boolean isExist(String purItemId);
+    boolean isExist(String itemId);
 
     /**
      * 获取下拉表格
      * @param keywords
      * @return
      */
-    List<PurItemEntity> getCombogrid(String keywords) throws Exception;
+    List<ItemEntity> getCombogrid(String keywords) throws Exception;
 
     /**
      * 查询品目的id和名称，并装配到TreeEntity中
      * @return
      * @throws Exception
      */
-    List<PurItemEntity> findTreeEntity() throws Exception;
+    List<ItemEntity> findTreeEntity() throws Exception;
 
     /**
      * 根据ID查询品目
@@ -102,5 +102,5 @@ public interface PurItemService {
      * @return
      * @throws Exception
      */
-    List<PurItemEntity> findAllById(List<Long> purItemIdList) throws Exception;
+    List<ItemEntity> findAllById(List<Long> purItemIdList) throws Exception;
 }

@@ -32,5 +32,4 @@ public interface Constant {
 
     /** 每页记录数 */
     public static final int PAGE_SIZE = 20;
-
 }

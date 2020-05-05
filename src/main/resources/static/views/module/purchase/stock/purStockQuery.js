@@ -24,7 +24,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form','element'], funct
     // 动态加载品目分类
     utils.splicingOption({
         elem: $('#' + formId + ' select[name="purItemType"]'),
-        where: {dictKey: DICT_KEY.PUR_ITEM_CGPMFL},
+        where: {dictKey: DICT_KEY.ITEM_PMFL},
         tips: '请选择品目分类'
     });
 

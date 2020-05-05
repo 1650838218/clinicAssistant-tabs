@@ -8,7 +8,7 @@ package com.littledoctor.clinicassistant.common.constant;
 public class DictionaryKey {
 
     /** 采购品目分类 */
-    public static final String PUR_ITEM_CGPMFL = "CGPMFL";
+    public static final String ITEM_PMFL = "PMFL";
 
     /** 进货包装 采购单位 */
     public static final String PUR_ITEM_JHBZ = "JHBZ";

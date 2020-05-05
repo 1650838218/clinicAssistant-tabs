@@ -6,9 +6,8 @@ import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.common.entity.LayuiTableEntity;
 import com.littledoctor.clinicassistant.common.entity.SelectOption;
-import com.littledoctor.clinicassistant.common.util.TreeUtils;
-import com.littledoctor.clinicassistant.module.purchase.item.entity.PurItemEntity;
-import com.littledoctor.clinicassistant.module.purchase.item.service.PurItemService;
+import com.littledoctor.clinicassistant.module.purchase.item.entity.ItemEntity;
+import com.littledoctor.clinicassistant.module.purchase.item.service.ItemService;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryEntity;
 import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
 import org.slf4j.Logger;
@@ -27,19 +26,67 @@ import java.util.Map;
 /**
  * @Auther: 周俊林
  * @Date: 2018/10/18 22:31
- * @Description: 采购品目
+ * @Description: 品目guanli
  */
 @RestController
-@RequestMapping(value = "/purchase/item")
-public class PurItemController {
+@RequestMapping(value = "/item")
+public class ItemController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private PurItemService purItemService;
+    private ItemService itemService;
 
     @Autowired
     private DictionaryService dictionaryService;
+
+    /**
+     * 保存
+     * @param itemEntity
+     * @return
+     */
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public ItemEntity save(@RequestBody ItemEntity itemEntity) {
+        try {
+            Assert.notNull(itemEntity, Message.PARAMETER_IS_NULL);
+            return itemService.save(itemEntity);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return new ItemEntity();
+    }
+
+    /**
+     * 判断条形码是否不重复，是否不存在
+     * @param itemId
+     * @param barcode
+     * @return true 不存在  false 已存在，默认false
+     */
+    @RequestMapping(value = "/notRepeatBarcode", method = RequestMethod.GET)
+    public boolean notRepeatBarcode(String itemId, @RequestParam String barcode) {
+        try {
+            return itemService.notRepeatBarcode(itemId, barcode);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return false;
+    }
+
+    /**
+     * 判断品目名称是否不重复，是否不存在
+     * @param itemId
+     * @param purItemName
+     * @return true 不存在  false 已存在，默认false
+     */
+    @RequestMapping(value = "/notRepeatName", method = RequestMethod.GET)
+    public boolean notRepeatName(String itemId, @RequestParam String purItemName) {
+        try {
+            return itemService.notRepeatName(itemId, purItemName);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return false;
+    }
 
     /**
      * 分页查询
@@ -48,11 +95,11 @@ public class PurItemController {
      * @return
      */
     @RequestMapping(value = "/queryPage")
-    public LayuiTableEntity<PurItemEntity> queryPage(String keywords, Pageable page) {
+    public LayuiTableEntity<ItemEntity> queryPage(String keywords, Pageable page) {
         try {
             if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
-            Page<PurItemEntity> result = purItemService.queryPage(keywords,page);
-            return new LayuiTableEntity<PurItemEntity>(result);
+            Page<ItemEntity> result = itemService.queryPage(keywords,page);
+            return new LayuiTableEntity<ItemEntity>(result);
         } catch (Exception e) {
             log.error(e.getMessage(),e);
         }
@@ -70,10 +117,10 @@ public class PurItemController {
         map.put("data", new ArrayList<>());
         try {
             // 查询采购品目分类
-            List<DictionaryEntity> dictItems = dictionaryService.getDictItemByDictKey(DictionaryKey.PUR_ITEM_CGPMFL);
+            List<DictionaryEntity> dictItems = dictionaryService.getDictItemByDictKey(DictionaryKey.ITEM_PMFL);
             if (!ObjectUtils.isEmpty(dictItems)) {
                 // 查询所有的品目
-                List<PurItemEntity> purItemList = purItemService.findTreeEntity();
+                List<ItemEntity> purItemList = itemService.findTreeEntity();
                 if (!ObjectUtils.isEmpty(purItemList)) {
                     Map<String, Integer> indexMap = new HashMap<>();
                     List<TreeEntity> result = new ArrayList<>();
@@ -89,13 +136,13 @@ public class PurItemController {
                     }
                     // 遍历品目
                     for (int i = 0; i < purItemList.size(); i++) {
-                        String key = purItemList.get(i).getPurItemType();// 品目分类
+                        String key = purItemList.get(i).getItemType();// 品目分类
                         if (indexMap.containsKey(key)) { // 根据 品目分类 找到 字典
                             Integer index = indexMap.get(key);
                             TreeEntity te = new TreeEntity();
                             te.setpId("dictVal_" + key);
-                            te.setId(String.valueOf(purItemList.get(i).getPurItemId()));
-                            te.setLabel(purItemList.get(i).getPurItemName());
+                            te.setId(String.valueOf(purItemList.get(i).getItemId()));
+                            te.setLabel(purItemList.get(i).getItemName());
                             result.get(index).getChildren().add(te);
                         }
                     }
@@ -118,31 +165,15 @@ public class PurItemController {
     }
 
     /**
-     * 保存
-     * @param purItemEntity
-     * @return
-     */
-    @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public PurItemEntity save(@RequestBody PurItemEntity purItemEntity) {
-        try {
-            Assert.notNull(purItemEntity, Message.PARAMETER_IS_NULL);
-            return purItemService.save(purItemEntity);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return null;
-    }
-
-    /**
      * 根据ID删除
-     * @param purItemId
+     * @param itemId
      * @return
      */
-    @RequestMapping(value = "/delete/{purItemId}", method = RequestMethod.DELETE)
-    public boolean delete(@PathVariable(value = "purItemId") String purItemId) {
+    @RequestMapping(value = "/delete/{itemId}", method = RequestMethod.DELETE)
+    public boolean delete(@PathVariable(value = "itemId") String itemId) {
         try {
-            Assert.hasLength(purItemId, Message.PARAMETER_IS_NULL);
-            return purItemService.delete(purItemId);
+            Assert.hasLength(itemId, Message.PARAMETER_IS_NULL);
+            return itemService.delete(itemId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -151,49 +182,17 @@ public class PurItemController {
 
     /**
      * 根据ID查询
-     * @param purItemId
+     * @param itemId
      * @return
      */
     @RequestMapping(value = "/getById", method = RequestMethod.GET)
-    public PurItemEntity getById(@RequestParam String purItemId) {
+    public ItemEntity getById(@RequestParam String itemId) {
         try {
-            return purItemService.getById(purItemId);
+            return itemService.getById(itemId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return new PurItemEntity();
-    }
-
-    /**
-     * 判断条形码是否不重复，是否不存在
-     * @param purItemId
-     * @param barcode
-     * @return true 不存在  false 已存在，默认false
-     */
-    @RequestMapping(value = "/notRepeatBarcode", method = RequestMethod.GET)
-    public boolean notRepeatBarcode(String purItemId, @RequestParam String barcode) {
-        try {
-            return purItemService.notRepeatBarcode(purItemId, barcode);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return false;
-    }
-
-    /**
-     * 判断品目名称是否不重复，是否不存在
-     * @param purItemId
-     * @param purItemName
-     * @return true 不存在  false 已存在，默认false
-     */
-    @RequestMapping(value = "/notRepeatName", method = RequestMethod.GET)
-    public boolean notRepeatName(String purItemId, @RequestParam String purItemName) {
-        try {
-            return purItemService.notRepeatName(purItemId, purItemName);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return false;
+        return new ItemEntity();
     }
 
     /**
@@ -202,10 +201,10 @@ public class PurItemController {
      * @return
      */
     @RequestMapping(value = "/queryByName", method = RequestMethod.GET)
-    public List<PurItemEntity> queryByName(@RequestParam String name) {
+    public List<ItemEntity> queryByName(@RequestParam String name) {
         try {
 //            Assert.hasLength(name, Message.PARAMETER_IS_NULL);
-            return purItemService.queryByName(name);
+            return itemService.queryByName(name);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -219,7 +218,7 @@ public class PurItemController {
     @RequestMapping(value = "/getSelectOption", method = RequestMethod.GET)
     public List<SelectOption> getSelectOption(@RequestParam(value = "q", required = false) String keywords) {
         try {
-            return purItemService.getSelectOption(keywords);
+            return itemService.getSelectOption(keywords);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -231,9 +230,9 @@ public class PurItemController {
      * @return
      */
     @RequestMapping(value = "/getCombogrid", method = RequestMethod.GET)
-    public List<PurItemEntity> getCombogrid(@RequestParam(value = "q", required = false) String keywords) {
+    public List<ItemEntity> getCombogrid(@RequestParam(value = "q", required = false) String keywords) {
         try {
-            return purItemService.getCombogrid(keywords);
+            return itemService.getCombogrid(keywords);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -242,13 +241,13 @@ public class PurItemController {
 
     /**
      * 根据品目ID判断该品目是否存在
-     * @param purItemId
+     * @param itemId
      * @return
      */
     @RequestMapping(value = "/isExist", method = RequestMethod.GET)
-    public boolean isExist(@RequestParam(value = "") String purItemId) {
+    public boolean isExist(@RequestParam(value = "") String itemId) {
         try {
-            return purItemService.isExist(purItemId);
+            return itemService.isExist(itemId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

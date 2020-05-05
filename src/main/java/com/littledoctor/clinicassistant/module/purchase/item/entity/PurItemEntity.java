@@ -40,7 +40,7 @@ public class PurItemEntity implements java.io.Serializable {
     @Column(name = "PUR_ITEM_NAME", nullable = false, length = 50)
     private String purItemName;
 
-    /** 品目分类（1：中草药；2：中成药；3：中药饮片；4：医疗耗材；5：其他耗材；字典键：CGPMFL） */
+    /** 品目分类（1：中草药；2：中成药；3：中药饮片；4：医疗耗材；5：其他耗材；字典键：PMFL） */
     @Column(name = "PUR_ITEM_TYPE", nullable = false, length = 10)
     private String purItemType;
 
@@ -155,7 +155,7 @@ public class PurItemEntity implements java.io.Serializable {
     }
 
     /**
-     * 获取品目分类（1：中草药；2：中成药；3：中药饮片；4：医疗耗材；5：其他耗材；字典键：CGPMFL）
+     * 获取品目分类（1：中草药；2：中成药；3：中药饮片；4：医疗耗材；5：其他耗材；字典键：PMFL）
      * 
      * @return 品目分类（1
      */
@@ -164,7 +164,7 @@ public class PurItemEntity implements java.io.Serializable {
     }
 
     /**
-     * 设置品目分类（1：中草药；2：中成药；3：中药饮片；4：医疗耗材；5：其他耗材；字典键：CGPMFL）
+     * 设置品目分类（1：中草药；2：中成药；3：中药饮片；4：医疗耗材；5：其他耗材；字典键：PMFL）
      * 
      * @param purItemType
      *          品目分类（1

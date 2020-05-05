@@ -1,0 +1,45 @@
+package com.littledoctor.clinicassistant.module.item.prescription.controller;
+
+import com.littledoctor.clinicassistant.module.item.patentmedicine.entity.ItemPatentMedicineEntity;
+import com.littledoctor.clinicassistant.module.item.patentmedicine.service.ItemPatentMedicineService;
+import com.littledoctor.clinicassistant.module.item.prescription.entity.ItemPrescriptionEntity;
+import com.littledoctor.clinicassistant.module.item.prescription.service.ItemPrescriptionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+/**
+ * @Auther: 周俊林
+ * @Date: 2020/5/4
+ * @Description: 方剂 品目
+ */
+@Controller
+@RequestMapping(value = "/itemPrescription")
+public class ItemPrescriptionController {
+
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    private ItemPrescriptionService itemPrescriptionService;
+
+    /**
+     * 保存
+     * @param entity
+     * @return
+     */
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    @ResponseBody
+    public ItemPrescriptionEntity save(@RequestBody ItemPrescriptionEntity entity) {
+        try {
+            return itemPrescriptionService.save(entity);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return new ItemPrescriptionEntity();
+    }
+}

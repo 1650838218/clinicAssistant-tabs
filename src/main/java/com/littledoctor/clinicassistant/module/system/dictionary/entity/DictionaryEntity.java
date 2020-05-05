@@ -34,7 +34,7 @@ public class DictionaryEntity implements java.io.Serializable {
     private String dictName;
 
     /** 字典项的值 */
-    @Column(name = "DICT_VALUE", nullable = true, length = 10)
+    @Column(name = "DICT_VALUE", nullable = true, length = 50)
     private String dictValue;
 
     /** 顺序号 */

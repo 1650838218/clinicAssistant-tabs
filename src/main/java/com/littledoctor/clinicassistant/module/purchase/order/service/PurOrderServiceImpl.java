@@ -1,8 +1,8 @@
 package com.littledoctor.clinicassistant.module.purchase.order.service;
 
 import com.littledoctor.clinicassistant.common.constant.DictionaryKey;
-import com.littledoctor.clinicassistant.module.purchase.item.entity.PurItemEntity;
-import com.littledoctor.clinicassistant.module.purchase.item.service.PurItemService;
+import com.littledoctor.clinicassistant.module.purchase.item.entity.ItemEntity;
+import com.littledoctor.clinicassistant.module.purchase.item.service.ItemService;
 import com.littledoctor.clinicassistant.module.purchase.order.dao.PurOrderRepository;
 import com.littledoctor.clinicassistant.module.purchase.order.entity.PurOrder;
 import com.littledoctor.clinicassistant.module.purchase.order.entity.PurOrderDetail;
@@ -32,7 +32,7 @@ public class PurOrderServiceImpl implements PurOrderService {
     private PurOrderRepository purOrderRepository;
 
     @Autowired
-    private PurItemService purItemService;
+    private ItemService itemService;
 
     @Autowired
     private DictionaryService dictionaryService;
@@ -104,9 +104,9 @@ public class PurOrderServiceImpl implements PurOrderService {
                     PurOrderDetail pbi = pods.get(i);
                     // 查询药品信息
                     if (pbi.getPurItemId() != null) {
-                        PurItemEntity pi = purItemService.getById(String.valueOf(pbi.getPurItemId()));
+                        ItemEntity pi = itemService.getById(String.valueOf(pbi.getPurItemId()));
                         if (pi != null) {
-                            pbi.setPurItemName(pi.getPurItemName());
+                            pbi.setPurItemName(pi.getItemName());
                             pbi.setUnitConvert(pi.getUnitConvert());
                             // 计算库存量
                             if (pbi.getPurCount() != null && pbi.getUnitConvert() != null) {

@@ -1,5 +1,5 @@
 /** 药品清单 */
-//@ sourceURL=purItem.js
+//@ sourceURL=addItem.js
 layui.config({
     base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
 }).extend({
@@ -82,7 +82,7 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'ajax','eleTree'], function () {
     // 动态加载采购单位下拉框
     utils.splicingOption({
         elem: $('#add-form select[name="purItemType"]'),
-        where: {dictKey: DICT_KEY.PUR_ITEM_CGPMFL},
+        where: {dictKey: DICT_KEY.ITEM_PMFL},
         tips: '请选择品目分类'
     });
 

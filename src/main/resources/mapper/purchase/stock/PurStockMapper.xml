@@ -57,7 +57,7 @@
         </if>
         AND i.pur_item_type = d.dict_value
         AND i.stock_unit = d1.dict_value
-        AND d.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_CGPMFL}'
+        AND d.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@ITEM_PMFL}'
         AND d1.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_LSDW}'
         AND a.stock_state = 1
         AND d.is_use = 1
@@ -102,7 +102,7 @@
         AND e.pur_item_type = f.dict_value
         AND e.pur_unit = g.dict_value
         AND f.is_use = 1
-        AND f.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_CGPMFL}'
+        AND f.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@ITEM_PMFL}'
         AND g.is_use = 1
         AND g.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_JHBZ}'
     </select>
@@ -124,7 +124,7 @@
         WHERE
             a.pur_item_id = b.pur_item_id
         AND a.stock_count &lt;= b.stock_warn
-        AND c.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_CGPMFL}'
+        AND c.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@ITEM_PMFL}'
         AND d.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_LSDW}'
         AND b.pur_item_type = c.dict_value
         AND b.stock_unit = d.dict_value
@@ -194,7 +194,7 @@
             a.pur_item_id = b.pur_item_id
         AND a.pur_item_id = c.pur_item_id
         AND a.stock_state = 3
-        AND d.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_CGPMFL}'
+        AND d.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@ITEM_PMFL}'
         AND e.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_JHBZ}'
         AND f.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_LSDW}'
         AND d.is_use = 1

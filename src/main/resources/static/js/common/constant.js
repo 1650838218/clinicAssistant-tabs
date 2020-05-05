@@ -78,9 +78,15 @@ Date.prototype.format = function(fmt)
 
 /** 字典键 */
 var DICT_KEY = {
-    PUR_ITEM_CGPMFL : 'CGPMFL' // 采购品目分类
+    ITEM_PMFL : 'PMFL' // 品目分类
     ,PUR_ITEM_JHBZ : 'JHBZ' // 进货包装
     ,PUR_ITEM_LSDW : 'LSDW' // 零售单位
+    ,ITEM_FJCC: 'FJCC' // 方剂出处
+    ,ITEM_HERBAL_MEDICINE: 'HerbalMedicine' // 中药分类
+    ,ITEM_PATENT_MEDICINE: 'PatentMedicine' // 成药分类
+    ,ITEM_PRESCRIPTION: 'Prescription' // 方剂分类
+    ,ITEM_MERIDIAN: 'Meridian' // 经络
+    ,ITEM_ACUPOINT: 'Acupoint' // 腧穴
 }
 
 //扩展datagrid:动态添加删除editor
