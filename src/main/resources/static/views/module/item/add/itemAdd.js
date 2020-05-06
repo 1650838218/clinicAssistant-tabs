@@ -1,5 +1,5 @@
 /** 新增品目 */
-//@ sourceURL=addItem.js
+//@ sourceURL=itemAdd.js
 layui.config({
     base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
 }).extend({
@@ -12,10 +12,8 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'ajax'], function () {
     var layer = layui.layer;
     var ajax = layui.ajax;
     var utils = layui.utils;
-    var rootMapping = '/item';
 
     // 设置高度
-    $('#left-tree').height($('.left-panel').height() - 40);
     $('.right-panel').height($(window).height() - 20);
     $('.right-panel .blank-tip').height($('.right-panel').height() - 43 -20);
 

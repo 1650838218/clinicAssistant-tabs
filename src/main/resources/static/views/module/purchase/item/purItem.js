@@ -1,5 +1,5 @@
 /** 药品清单 */
-//@ sourceURL=addItem.js
+//@ sourceURL=itemAdd.js
 layui.config({
     base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
 }).extend({

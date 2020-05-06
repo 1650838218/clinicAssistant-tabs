@@ -1,0 +1,31 @@
+.layui-form-item {
+    margin-bottom: 8px;
+}
+
+.layui-form-label {
+    padding:  9px 5px;
+}
+
+.layui-input-block {
+    margin-left: 90px;
+}
+.layui-textarea {
+    min-height: 70px;
+}
+.layui-layer-page .layui-layer-content {
+    position: relative;
+    overflow: visible !important;
+}
+.subhead-red {
+    color: red;
+    font-size: 10px;
+}
+.subhead-green {
+    color: green;
+}
+.right-panel {
+    margin: 10px 10px 10px 10px;
+}
+.layui-form-select dl {
+    max-height: 350px;
+}

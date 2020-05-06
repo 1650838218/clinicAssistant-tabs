@@ -1,5 +1,6 @@
 package com.littledoctor.clinicassistant.module.item.herbalmedicine.controller;
 
+import com.littledoctor.clinicassistant.common.entity.LayuiTableEntity;
 import com.littledoctor.clinicassistant.module.item.herbalmedicine.entity.ItemHerbalMedicineEntity;
 import com.littledoctor.clinicassistant.module.item.herbalmedicine.service.ItemHerbalMedicineService;
 import org.slf4j.Logger;
@@ -39,5 +40,19 @@ public class ItemHerbalMedicineController {
             log.error(e.getMessage(), e);
         }
         return new ItemHerbalMedicineEntity();
+    }
+
+    /**
+     * 查询
+     * @return
+     */
+    @RequestMapping(value = "/query", method = RequestMethod.GET)
+    public LayuiTableEntity<ItemHerbalMedicineEntity> query() {
+        try {
+
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return new LayuiTableEntity<>();
     }
 }
