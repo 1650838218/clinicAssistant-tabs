@@ -7,8 +7,8 @@
     margin: 10px 10px 10px 10px;
 }
 
-.cmdlist-text {
-    padding: 10px;
+#page {
+    text-align:center
 }
 
 .cmdlist-text .info {

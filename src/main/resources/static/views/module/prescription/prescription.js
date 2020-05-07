@@ -186,7 +186,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
     // 查询方剂目录
     queryCatalogue();
     function queryCatalogue(catalogName) {
-        $.getJSON(rootMapping + '/queryCatalogue', {catalogName: catalogName}, function (catalogList) {
+        $.getJSON(rootMapping + '/queryCatalog', {catalogName: catalogName}, function (catalogList) {
             if (catalogList != null && catalogList.length > 0) {
                 $.fn.zTree.init($("#" + leftTreeId), setting, catalogList);
                 fuzzySearch(leftTreeId, '.left-search input', null, true);
