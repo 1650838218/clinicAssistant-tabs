@@ -74,6 +74,13 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
         tips: '请选择所属分类'
     });
 
+    // 动态加载出处下拉框
+    utils.splicingOption({
+        elem: $('.layui-form select[name="source"]'),
+        where: {dictKey: DICT_KEY.ITEM_FJCC},
+        tips: '请选择出处'
+    });
+
     // 搜索
     $(".left-panel .left-search .layui-input").on("input change",function() {
         if ($.trim($(this).val()) === keyword) {
