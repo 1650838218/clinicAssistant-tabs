@@ -18,17 +18,17 @@
             <div class="left-search">
                 <input type="text" placeholder="方剂名称/简拼/全拼" class="layui-input" style="width: 70%">
                 <div class="layui-btn-group">
-                    <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="addCatalogBtn" title="新增">
+                    <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="addBtn" title="新增">
                         <i class="layui-icon layui-icon-add-1"></i>
                     </button>
-                    <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="delCatalogBtn" title="删除">
+                    <button class="layui-btn layui-btn-normal layui-btn-sm layui-btn-disabled" lay-event="delBtn" title="删除" disabled="disabled">
                         <i class="layui-icon layui-icon-delete"></i>
                     </button>
                 </div>
             </div>
             <div class="left-tree">
-                <div id="blank-tip" style="text-align: center;display: none;padding-top: 150px;">
-                    暂时没有方剂！
+                <div class="blank-tip" style="text-align: center;display: none;padding-top: 150px;">
+                    无数据！
                 </div>
                 <ul class="ztree" id="catalog"></ul>
             </div>

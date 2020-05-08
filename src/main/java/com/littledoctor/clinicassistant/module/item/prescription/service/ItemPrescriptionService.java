@@ -1,17 +1,25 @@
 package com.littledoctor.clinicassistant.module.item.prescription.service;
 
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
+import com.littledoctor.clinicassistant.common.util.StringUtils;
 import com.littledoctor.clinicassistant.module.item.add.dao.ItemAddDao;
 import com.littledoctor.clinicassistant.module.item.add.entity.ItemAllEntity;
 import com.littledoctor.clinicassistant.module.item.constant.ItemType;
-import com.littledoctor.clinicassistant.module.item.patentmedicine.dao.ItemPatentMedicineDao;
-import com.littledoctor.clinicassistant.module.item.patentmedicine.entity.ItemPatentMedicineEntity;
 import com.littledoctor.clinicassistant.module.item.prescription.dao.ItemPrescriptionDao;
 import com.littledoctor.clinicassistant.module.item.prescription.entity.ItemPrescriptionEntity;
+import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryEntity;
+import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,8 +33,34 @@ public class ItemPrescriptionService {
     @Autowired
     private ItemPrescriptionDao itemPrescriptionDao;
 
+//    @Autowired
+//    private ItemAddDao itemAddDao;
+
     @Autowired
-    private ItemAddDao itemAddDao;
+    private DictionaryService dictionaryService;
+
+    /**
+     * 判断名称是否不重复，是否不存在
+     * @param itemId
+     * @param itemName
+     * @return true 不存在  false 已存在，默认false
+     */
+    public boolean notRepeatName(String itemId, String itemName) throws Exception {
+        if (StringUtils.isNotBlank(itemName) ) {
+            return itemPrescriptionDao.count(new Specification<ItemPrescriptionEntity>() {
+                @Override
+                public Predicate toPredicate(Root<ItemPrescriptionEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                    List<Predicate> list = new ArrayList<>();
+                    list.add(criteriaBuilder.equal(root.get("itemName"), itemName));
+                    if (StringUtils.isNotBlank(itemId)) {
+                        list.add(criteriaBuilder.notEqual(root.get("itemId"), itemId));
+                    }
+                    return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
+                }
+            }) <= 0;
+        }
+        return false;
+    }
 
     /**
      * 保存
@@ -35,8 +69,8 @@ public class ItemPrescriptionService {
      */
     @Transactional
     public ItemPrescriptionEntity save(ItemPrescriptionEntity entity) throws Exception {
-        ItemPrescriptionEntity newEntity =  itemPrescriptionDao.saveAndFlush(entity);
-        if (newEntity.getItemId() != null) {
+        return itemPrescriptionDao.saveAndFlush(entity);
+        /*if (newEntity.getItemId() != null) {
             ItemAllEntity iae = new ItemAllEntity();
             iae.setItemId(newEntity.getItemId());
             iae.setItemName(newEntity.getItemName());
@@ -44,7 +78,7 @@ public class ItemPrescriptionService {
             itemAddDao.saveAndFlush(iae);
             return newEntity;
         }
-        return new ItemPrescriptionEntity();
+        return new ItemPrescriptionEntity();*/
     }
 
     /**
@@ -52,7 +86,7 @@ public class ItemPrescriptionService {
      * @param id
      * @return
      */
-    public ItemPrescriptionEntity findById(Long id) {
+    public ItemPrescriptionEntity findById(Long id) throws Exception {
         if (id != null) {
             return itemPrescriptionDao.findById(id).get();
         }
@@ -61,9 +95,60 @@ public class ItemPrescriptionService {
 
     /**
      * 查询目录
+     * @param keyword
      * @return
      */
-    public List<TreeEntity> queryCatalog() {
-        return itemPrescriptionDao.queryCatalog();
+    public List<TreeEntity> queryCatalog(String keyword) throws Exception {
+        List<ItemPrescriptionEntity> resultList = itemPrescriptionDao.findAll(new Specification<ItemPrescriptionEntity>() {
+            @Override
+            public Predicate toPredicate(Root<ItemPrescriptionEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                if (StringUtils.isNotBlank(keyword) && StringUtils.isNotBlank(keyword.trim())) {
+                    Predicate p1 = criteriaBuilder.like(root.get("itemName"), "%" + keyword.trim() + "%");
+                    Predicate p2 = criteriaBuilder.like(root.get("abbrPinyin"), keyword.trim().toUpperCase() + "%");
+                    Predicate p3 = criteriaBuilder.like(root.get("fullPinyin"), keyword.trim().toLowerCase() + "%");
+                    return criteriaBuilder.or(p1, p2, p3);
+                } else {
+                    return null;
+                }
+            }
+        });
+        if (ObjectUtils.isEmpty(resultList)) {
+            return new ArrayList<>();
+        } else {
+            List<TreeEntity> treeList = new ArrayList<>();
+            List<String> valueList = new ArrayList<>();
+            for (int i = 0; i < resultList.size(); i++) {
+                ItemPrescriptionEntity item = resultList.get(i);
+                TreeEntity tree = new TreeEntity();
+                tree.setId(item.getItemId().toString());
+                tree.setpId(ItemType.PRESCRIPTION + "_" + item.getItemType());
+                tree.setLabel(item.getItemName());
+                treeList.add(tree);
+                valueList.add(item.getItemType());
+            }
+            List<DictionaryEntity> dictList = dictionaryService.getDictItemByDictKeyAndDictValues(ItemType.PRESCRIPTION, valueList);
+            if (!ObjectUtils.isEmpty(dictList)) {
+                for (int i = dictList.size() - 1; i > -1 ; i--) {
+                    DictionaryEntity dict = dictList.get(i);
+                    TreeEntity tree = new TreeEntity();
+                    tree.setId(ItemType.PRESCRIPTION + "_" + dict.getDictValue());
+                    tree.setpId(null);
+                    tree.setLabel(dict.getDictName());
+                    treeList.add(0, tree);
+                }
+            }
+            return treeList;
+        }
+    }
+
+    /**
+     * 删除方剂
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    public boolean delete(Long id) throws Exception {
+        itemPrescriptionDao.deleteById(id);
+        return true;
     }
 }

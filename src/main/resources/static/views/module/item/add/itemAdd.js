@@ -147,7 +147,7 @@ layui.use(['form', 'utils', 'jquery', 'layer', 'ajax'], function () {
     form.on('submit(submit-btn)', function (data) {
         var formData = data.field;
         var formId = data.form.id;
-        var mapping = "/item" + formId.substring(0,formId.length - 4) + "/save"
+        var mapping = "/item" + formId.substring(0,formId.length - 4) + "/save";
         ajax.postJSON(mapping, formData, function (item) {
             if (item != null && utils.isNotNull(item.itemId)) {
                 layer.msg(MSG.save_success);

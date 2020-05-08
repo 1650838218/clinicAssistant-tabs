@@ -56,4 +56,13 @@ public interface DictionaryRepository extends JpaRepository<DictionaryEntity, Lo
      */
     @Query(value = "select t.dictName from DictionaryEntity t where t.dictKey = ?1 and t.dictValue = ?2 and t.dictType = 2")
     String getDictNameByDictKeyAndDictValue(String dictKey, String dictValue);
+
+    /**
+     * 查询字典项
+     * @param dictKey
+     * @param dictValues
+     * @return
+     */
+    @Query(value = "select t from DictionaryEntity t where t.dictKey = ?1 and t.dictValue in ?2 and t.dictType = 2 and t.isUse = 1 order by t.dictOrder")
+    List<DictionaryEntity> getDictItemByDictKeyAndDictValues(String dictKey, List<String> dictValues);
 }
