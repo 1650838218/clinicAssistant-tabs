@@ -91,13 +91,13 @@ public class PrescriptionController {
 
     /**
      * 根据ID查询处方
-     * @param rxId
+     * @param prescriptionId
      * @return
      */
     @RequestMapping(value = "/findPrescriptionById", method = RequestMethod.GET)
-    public RxDetail findPrescriptionById(@RequestParam String rxId) {
+    public RxDetail findPrescriptionById(@RequestParam String prescriptionId) {
         try {
-            return prescriptionService.findPrescriptionById(rxId);
+            return prescriptionService.findPrescriptionById(prescriptionId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -152,13 +152,13 @@ public class PrescriptionController {
     /**
      * 根据处方ID查询处方组成，并将处方组成转换成药材信息
      * 包括：药材名称，品目ID，单价，库存单位，剂量等
-     * @param rxId
+     * @param prescriptionId
      * @return
      */
     @RequestMapping(value = "/getMedicalByRxId", method = RequestMethod.GET)
-    public Map<String, Object> getMedicalByRxId(@RequestParam String rxId) {
+    public Map<String, Object> getMedicalByRxId(@RequestParam String prescriptionId) {
         try {
-            return prescriptionService.getMedicalByRxId(rxId);
+            return prescriptionService.getMedicalByRxId(prescriptionId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
