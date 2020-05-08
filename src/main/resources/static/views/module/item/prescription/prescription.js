@@ -42,8 +42,6 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
         },
         callback: {
             onClick: function (event, treeId, treeNode,clickFlag) {
-                console.log("aaaa");
-                console.log(clickFlag);
                 if (clickFlag === 1) {
                     // 普通选中
                     if (treeNode.isParent) {
