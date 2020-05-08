@@ -1,7 +1,5 @@
 package com.littledoctor.clinicassistant.module.item.skill.controller;
 
-import com.littledoctor.clinicassistant.module.item.prescription.entity.ItemPrescriptionEntity;
-import com.littledoctor.clinicassistant.module.item.prescription.service.ItemPrescriptionService;
 import com.littledoctor.clinicassistant.module.item.skill.entity.ItemSkillEntity;
 import com.littledoctor.clinicassistant.module.item.skill.service.ItemSkillService;
 import org.slf4j.Logger;

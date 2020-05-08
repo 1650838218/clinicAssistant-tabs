@@ -2,11 +2,9 @@ package com.littledoctor.clinicassistant.module.item.prescription.service;
 
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.common.util.StringUtils;
-import com.littledoctor.clinicassistant.module.item.add.dao.ItemAddDao;
-import com.littledoctor.clinicassistant.module.item.add.entity.ItemAllEntity;
 import com.littledoctor.clinicassistant.module.item.constant.ItemType;
-import com.littledoctor.clinicassistant.module.item.prescription.dao.ItemPrescriptionDao;
-import com.littledoctor.clinicassistant.module.item.prescription.entity.ItemPrescriptionEntity;
+import com.littledoctor.clinicassistant.module.item.prescription.dao.PrescriptionDao;
+import com.littledoctor.clinicassistant.module.item.prescription.entity.PrescriptionEntity;
 import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryEntity;
 import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +26,10 @@ import java.util.List;
  * @Description: 方剂 品目
  */
 @Service
-public class ItemPrescriptionService {
+public class PrescriptionService {
 
     @Autowired
-    private ItemPrescriptionDao itemPrescriptionDao;
-
-//    @Autowired
-//    private ItemAddDao itemAddDao;
+    private PrescriptionDao prescriptionDao;
 
     @Autowired
     private DictionaryService dictionaryService;
@@ -47,9 +42,9 @@ public class ItemPrescriptionService {
      */
     public boolean notRepeatName(String itemId, String itemName) throws Exception {
         if (StringUtils.isNotBlank(itemName) ) {
-            return itemPrescriptionDao.count(new Specification<ItemPrescriptionEntity>() {
+            return prescriptionDao.count(new Specification<PrescriptionEntity>() {
                 @Override
-                public Predicate toPredicate(Root<ItemPrescriptionEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                public Predicate toPredicate(Root<PrescriptionEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                     List<Predicate> list = new ArrayList<>();
                     list.add(criteriaBuilder.equal(root.get("itemName"), itemName));
                     if (StringUtils.isNotBlank(itemId)) {
@@ -68,17 +63,8 @@ public class ItemPrescriptionService {
      * @return
      */
     @Transactional
-    public ItemPrescriptionEntity save(ItemPrescriptionEntity entity) throws Exception {
-        return itemPrescriptionDao.saveAndFlush(entity);
-        /*if (newEntity.getItemId() != null) {
-            ItemAllEntity iae = new ItemAllEntity();
-            iae.setItemId(newEntity.getItemId());
-            iae.setItemName(newEntity.getItemName());
-            iae.setItemType(ItemType.PRESCRIPTION);
-            itemAddDao.saveAndFlush(iae);
-            return newEntity;
-        }
-        return new ItemPrescriptionEntity();*/
+    public PrescriptionEntity save(PrescriptionEntity entity) throws Exception {
+        return prescriptionDao.saveAndFlush(entity);
     }
 
     /**
@@ -86,11 +72,11 @@ public class ItemPrescriptionService {
      * @param id
      * @return
      */
-    public ItemPrescriptionEntity findById(Long id) throws Exception {
+    public PrescriptionEntity findById(Long id) throws Exception {
         if (id != null) {
-            return itemPrescriptionDao.findById(id).get();
+            return prescriptionDao.findById(id).get();
         }
-        return new ItemPrescriptionEntity();
+        return new PrescriptionEntity();
     }
 
     /**
@@ -99,9 +85,9 @@ public class ItemPrescriptionService {
      * @return
      */
     public List<TreeEntity> queryCatalog(String keyword) throws Exception {
-        List<ItemPrescriptionEntity> resultList = itemPrescriptionDao.findAll(new Specification<ItemPrescriptionEntity>() {
+        List<PrescriptionEntity> resultList = prescriptionDao.findAll(new Specification<PrescriptionEntity>() {
             @Override
-            public Predicate toPredicate(Root<ItemPrescriptionEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            public Predicate toPredicate(Root<PrescriptionEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 if (StringUtils.isNotBlank(keyword) && StringUtils.isNotBlank(keyword.trim())) {
                     Predicate p1 = criteriaBuilder.like(root.get("itemName"), "%" + keyword.trim() + "%");
                     Predicate p2 = criteriaBuilder.like(root.get("abbrPinyin"), keyword.trim().toUpperCase() + "%");
@@ -118,7 +104,7 @@ public class ItemPrescriptionService {
             List<TreeEntity> treeList = new ArrayList<>();
             List<String> valueList = new ArrayList<>();
             for (int i = 0; i < resultList.size(); i++) {
-                ItemPrescriptionEntity item = resultList.get(i);
+                PrescriptionEntity item = resultList.get(i);
                 TreeEntity tree = new TreeEntity();
                 tree.setId(item.getItemId().toString());
                 tree.setpId(ItemType.PRESCRIPTION + "_" + item.getItemType());
@@ -148,7 +134,7 @@ public class ItemPrescriptionService {
      * @throws Exception
      */
     public boolean delete(Long id) throws Exception {
-        itemPrescriptionDao.deleteById(id);
+        prescriptionDao.deleteById(id);
         return true;
     }
 }

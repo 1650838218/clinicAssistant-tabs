@@ -2,12 +2,8 @@ package com.littledoctor.clinicassistant.module.item.prescription.controller;
 
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.common.msg.Message;
-import com.littledoctor.clinicassistant.module.item.patentmedicine.entity.ItemPatentMedicineEntity;
-import com.littledoctor.clinicassistant.module.item.patentmedicine.service.ItemPatentMedicineService;
-import com.littledoctor.clinicassistant.module.item.prescription.entity.ItemPrescriptionEntity;
-import com.littledoctor.clinicassistant.module.item.prescription.service.ItemPrescriptionService;
-import com.littledoctor.clinicassistant.module.prescription.entity.RxCatalog;
-import com.littledoctor.clinicassistant.module.prescription.entity.RxDetail;
+import com.littledoctor.clinicassistant.module.item.prescription.entity.PrescriptionEntity;
+import com.littledoctor.clinicassistant.module.item.prescription.service.PrescriptionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +21,12 @@ import java.util.List;
  */
 @Controller
 @RequestMapping(value = "/item/prescription")
-public class ItemPrescriptionController {
+public class PrescriptionController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private ItemPrescriptionService itemPrescriptionService;
+    private PrescriptionService prescriptionService;
 
     /**
      * 判断名称是否不重复，是否不存在
@@ -42,7 +38,7 @@ public class ItemPrescriptionController {
     @ResponseBody
     public boolean notRepeatName(String itemId, @RequestParam String itemName) {
         try {
-            return itemPrescriptionService.notRepeatName(itemId, itemName);
+            return prescriptionService.notRepeatName(itemId, itemName);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -56,13 +52,13 @@ public class ItemPrescriptionController {
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ResponseBody
-    public ItemPrescriptionEntity save(@RequestBody ItemPrescriptionEntity entity) {
+    public PrescriptionEntity save(@RequestBody PrescriptionEntity entity) {
         try {
-            return itemPrescriptionService.save(entity);
+            return prescriptionService.save(entity);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return new ItemPrescriptionEntity();
+        return new PrescriptionEntity();
     }
 
     /**
@@ -72,13 +68,13 @@ public class ItemPrescriptionController {
      */
     @RequestMapping(value = "/findById", method = RequestMethod.GET)
     @ResponseBody
-    public ItemPrescriptionEntity findById(@RequestParam Long id) {
+    public PrescriptionEntity findById(@RequestParam Long id) {
         try {
-            return itemPrescriptionService.findById(id);
+            return prescriptionService.findById(id);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return new ItemPrescriptionEntity();
+        return new PrescriptionEntity();
     }
 
     /**
@@ -89,7 +85,7 @@ public class ItemPrescriptionController {
     @ResponseBody
     public List<TreeEntity> queryCatalog(String keyword) {
         try {
-            return itemPrescriptionService.queryCatalog(keyword);
+            return prescriptionService.queryCatalog(keyword);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -105,7 +101,7 @@ public class ItemPrescriptionController {
     public boolean delete(@PathVariable(value = "id") Long id) {
         try {
             Assert.isNull(id, Message.PARAMETER_IS_NULL);
-            return itemPrescriptionService.delete(id);
+            return prescriptionService.delete(id);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
