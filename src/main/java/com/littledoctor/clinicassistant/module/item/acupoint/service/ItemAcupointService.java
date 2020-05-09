@@ -5,8 +5,6 @@ import com.littledoctor.clinicassistant.module.item.acupoint.entity.ItemAcupoint
 import com.littledoctor.clinicassistant.module.item.add.dao.ItemAddDao;
 import com.littledoctor.clinicassistant.module.item.add.entity.ItemAllEntity;
 import com.littledoctor.clinicassistant.module.item.constant.ItemType;
-import com.littledoctor.clinicassistant.module.item.herbalmedicine.dao.ItemHerbalMedicineDao;
-import com.littledoctor.clinicassistant.module.item.herbalmedicine.entity.ItemHerbalMedicineEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

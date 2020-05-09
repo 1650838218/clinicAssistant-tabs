@@ -27,7 +27,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "item_herbal_medicine")
-public class ItemHerbalMedicineEntity implements java.io.Serializable {
+public class HerbalMedicineEntity implements java.io.Serializable {
     /** 版本号 */
     private static final long serialVersionUID = 8197057909099689566L;
 

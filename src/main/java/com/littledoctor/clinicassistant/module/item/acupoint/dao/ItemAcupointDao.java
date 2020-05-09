@@ -1,7 +1,6 @@
 package com.littledoctor.clinicassistant.module.item.acupoint.dao;
 
 import com.littledoctor.clinicassistant.module.item.acupoint.entity.ItemAcupointEntity;
-import com.littledoctor.clinicassistant.module.item.herbalmedicine.entity.ItemHerbalMedicineEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

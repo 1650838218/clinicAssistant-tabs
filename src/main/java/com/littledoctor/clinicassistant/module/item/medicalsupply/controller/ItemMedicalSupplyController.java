@@ -1,7 +1,5 @@
 package com.littledoctor.clinicassistant.module.item.medicalsupply.controller;
 
-import com.littledoctor.clinicassistant.module.item.herbalmedicine.entity.ItemHerbalMedicineEntity;
-import com.littledoctor.clinicassistant.module.item.herbalmedicine.service.ItemHerbalMedicineService;
 import com.littledoctor.clinicassistant.module.item.medicalsupply.entity.ItemMedicalSupplyEntity;
 import com.littledoctor.clinicassistant.module.item.medicalsupply.service.ItemMedicalSupplyService;
 import org.slf4j.Logger;

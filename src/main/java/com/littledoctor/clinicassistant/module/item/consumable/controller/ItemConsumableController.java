@@ -2,8 +2,6 @@ package com.littledoctor.clinicassistant.module.item.consumable.controller;
 
 import com.littledoctor.clinicassistant.module.item.consumable.entity.ItemConsumableEntity;
 import com.littledoctor.clinicassistant.module.item.consumable.service.ItemConsumableService;
-import com.littledoctor.clinicassistant.module.item.herbalmedicine.entity.ItemHerbalMedicineEntity;
-import com.littledoctor.clinicassistant.module.item.herbalmedicine.service.ItemHerbalMedicineService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

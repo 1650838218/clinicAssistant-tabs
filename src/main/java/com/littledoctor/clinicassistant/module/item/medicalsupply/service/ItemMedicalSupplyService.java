@@ -3,8 +3,6 @@ package com.littledoctor.clinicassistant.module.item.medicalsupply.service;
 import com.littledoctor.clinicassistant.module.item.add.dao.ItemAddDao;
 import com.littledoctor.clinicassistant.module.item.add.entity.ItemAllEntity;
 import com.littledoctor.clinicassistant.module.item.constant.ItemType;
-import com.littledoctor.clinicassistant.module.item.herbalmedicine.dao.ItemHerbalMedicineDao;
-import com.littledoctor.clinicassistant.module.item.herbalmedicine.entity.ItemHerbalMedicineEntity;
 import com.littledoctor.clinicassistant.module.item.medicalsupply.dao.ItemMedicalSupplyDao;
 import com.littledoctor.clinicassistant.module.item.medicalsupply.entity.ItemMedicalSupplyEntity;
 import org.springframework.beans.factory.annotation.Autowired;

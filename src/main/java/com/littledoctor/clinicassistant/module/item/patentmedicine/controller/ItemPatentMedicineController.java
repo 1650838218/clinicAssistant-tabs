@@ -1,7 +1,5 @@
 package com.littledoctor.clinicassistant.module.item.patentmedicine.controller;
 
-import com.littledoctor.clinicassistant.module.item.herbalmedicine.entity.ItemHerbalMedicineEntity;
-import com.littledoctor.clinicassistant.module.item.herbalmedicine.service.ItemHerbalMedicineService;
 import com.littledoctor.clinicassistant.module.item.patentmedicine.entity.ItemPatentMedicineEntity;
 import com.littledoctor.clinicassistant.module.item.patentmedicine.service.ItemPatentMedicineService;
 import org.slf4j.Logger;
