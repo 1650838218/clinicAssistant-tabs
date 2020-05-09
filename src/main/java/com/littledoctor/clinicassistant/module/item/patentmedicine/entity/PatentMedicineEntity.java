@@ -27,7 +27,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "item_patent_medicine")
-public class ItemPatentMedicineEntity implements java.io.Serializable {
+public class PatentMedicineEntity implements java.io.Serializable {
     /** 版本号 */
     private static final long serialVersionUID = -8722301909043006540L;
 

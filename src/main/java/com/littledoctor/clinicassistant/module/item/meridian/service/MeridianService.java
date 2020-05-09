@@ -3,10 +3,8 @@ package com.littledoctor.clinicassistant.module.item.meridian.service;
 import com.littledoctor.clinicassistant.module.item.add.dao.ItemAddDao;
 import com.littledoctor.clinicassistant.module.item.add.entity.ItemAllEntity;
 import com.littledoctor.clinicassistant.module.item.constant.ItemType;
-import com.littledoctor.clinicassistant.module.item.medicalsupply.dao.ItemMedicalSupplyDao;
-import com.littledoctor.clinicassistant.module.item.medicalsupply.entity.ItemMedicalSupplyEntity;
-import com.littledoctor.clinicassistant.module.item.meridian.dao.ItemMeridianDao;
-import com.littledoctor.clinicassistant.module.item.meridian.entity.ItemMeridianEntity;
+import com.littledoctor.clinicassistant.module.item.meridian.dao.MeridianDao;
+import com.littledoctor.clinicassistant.module.item.meridian.entity.MeridianEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +16,10 @@ import javax.transaction.Transactional;
  * @Description: 经络 品目
  */
 @Service
-public class ItemMeridianService {
+public class MeridianService {
 
     @Autowired
-    private ItemMeridianDao itemMeridianDao;
+    private MeridianDao meridianDao;
 
     @Autowired
     private ItemAddDao itemAddDao;
@@ -32,8 +30,8 @@ public class ItemMeridianService {
      * @return
      */
     @Transactional
-    public ItemMeridianEntity save(ItemMeridianEntity entity) throws Exception {
-        ItemMeridianEntity newEntity =  itemMeridianDao.saveAndFlush(entity);
+    public MeridianEntity save(MeridianEntity entity) throws Exception {
+        MeridianEntity newEntity =  meridianDao.saveAndFlush(entity);
         if (newEntity.getItemId() != null) {
             ItemAllEntity iae = new ItemAllEntity();
             iae.setItemId(newEntity.getItemId());
@@ -42,6 +40,6 @@ public class ItemMeridianService {
             itemAddDao.saveAndFlush(iae);
             return newEntity;
         }
-        return new ItemMeridianEntity();
+        return new MeridianEntity();
     }
 }

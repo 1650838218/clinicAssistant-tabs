@@ -26,7 +26,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "item_meridian")
-public class ItemMeridianEntity implements java.io.Serializable {
+public class MeridianEntity implements java.io.Serializable {
     /** 版本号 */
     private static final long serialVersionUID = -4450306334689067936L;
 
