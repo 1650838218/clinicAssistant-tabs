@@ -1,5 +1,5 @@
 /** 医技项目 */
-//@ sourceURL=medicalSkill.js
+//@ sourceURL=skill.js
 layui.config({
     base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
 }).extend({
@@ -12,7 +12,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
     var table = layui.table;
     var ajax = layui.ajax;
     var utils = layui.utils;
-    var rootMapping = '/skill';
+    var rootMapping = '/item/skill';
     var skillTableId = 'skill-table';
 
     // 初始化表格
@@ -21,8 +21,8 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
         url: rootMapping + '/findAll',
         limit: 300,// 最多可有300个医技项目
         cols: [[
-            {field: 'skillId', title: TABLE_COLUMN.numbers, type: 'numbers'},
-            {field: 'skillName', title: '项目名称', width: '40%',  edit: 'text'},
+            {field: 'itemId', title: TABLE_COLUMN.numbers, type: 'numbers'},
+            {field: 'itemName', title: '项目名称', width: '40%',  edit: 'text'},
             {field: 'unitPrice', title: '价格(元)', width: '30%', edit: 'text'},
             {title: TABLE_COLUMN.operation, toolbar: '#operate-column', align: 'center'}
         ]],
@@ -32,8 +32,8 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
                 res.code = 0;
                 res.msg = '';
                 res.data = [{
-                    skillId: '',
-                    skillName: '',
+                    itemId: '',
+                    itemName: '',
                     unitPrice: ''
                 }];
             }
@@ -44,7 +44,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
     });
 
     // 校验项目名称不能重复
-    function isRepeat(skillName) {
+    function isRepeat(itemName) {
         return false;
     }
 
@@ -55,7 +55,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
         var oldValue = inputElem.val();
         var tdElem = inputElem.closest('td');
         var msg = '';
-        if (obj.field === 'skillName') {
+        if (obj.field === 'itemName') {
             // 名称不能重复，不能为空
             if (!obj.value.trim()) {
                 msg = '项目名称不能为空！';
@@ -98,8 +98,8 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
         var dataBak = [];// 缓存表格已有的数据
         var oldData = table.cache[skillTableId];
         var newRow = {
-            skillId: '',
-            skillName: '',
+            itemId: '',
+            itemName: '',
             unitPrice: ''
         };
         // 获取当前行的位置
@@ -130,9 +130,9 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
     function deleteRow(obj) {
         // 此处的删除是真删除
         layer.confirm(MSG.delete_confirm + '该医技项目吗？', {icon: 0}, function (index) {
-            var skillId = obj.data.skillId;
-            if (utils.isNotNull(skillId)) {
-                ajax.delete(rootMapping + '/delete/' + skillId, function (success) {
+            var itemId = obj.data.itemId;
+            if (utils.isNotNull(itemId)) {
+                ajax.delete(rootMapping + '/delete/' + itemId, function (success) {
                     if (success) {
                         layer.msg(MSG.delete_success);
                         obj.del();
@@ -157,8 +157,8 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
             }
             // 如果表格行全部被删除，则新增一个空白行
             var newRow = [{
-                skillId: '',
-                skillName: '',
+                itemId: '',
+                itemName: '',
                 unitPrice: ''
             }];
             table.reload(skillTableId, {
@@ -173,18 +173,18 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
         // 行数据校验
         var rowData = obj.data;
         var rowIndex = obj.tr[0].rowIndex;
-        if (!utils.isNotNull(rowData.skillName.trim())
+        if (!utils.isNotNull(rowData.itemName.trim())
             || !utils.isNotNull(rowData.unitPrice.trim())) {
             layer.msg('医技项目名称和价格不能为空！', {icon: 5, shift: 6});
         }
         ajax.postJSON(rootMapping + '/save', rowData, function (skill) {
-            if (skill != null && utils.isNotNull(skill.skillId)) {
+            if (skill != null && utils.isNotNull(skill.itemId)) {
                 layer.msg(MSG.save_success);
                 /*var oldData = table.cache[skillTableId];
                 for (var i = 0; i < oldData.length; i++) {
                     if (oldData[i][table.config.indexName] === rowIndex) {
-                        oldData[i].skillId = skill.skillId;
-                        oldData[i].skillName = skill.skillName;
+                        oldData[i].itemId = skill.itemId;
+                        oldData[i].itemName = skill.itemName;
                         oldData[i].unitPrice = skill.unitPrice;
                         break;
                     }

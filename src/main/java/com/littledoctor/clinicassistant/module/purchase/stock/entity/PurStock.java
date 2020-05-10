@@ -46,7 +46,7 @@ public class PurStock {
     @Column(name = "SELLING_PRICE")
     private Double sellingPrice;
 
-    /** 库存状态(1：正常；2：已退货；3：已过期；4：下架) */
+    /** 库存状态(1：正常；2：已退货；3：已过期；4：下架;5: 已售完) */
     @Column(name = "STOCK_STATE")
     private Integer stockState;
 

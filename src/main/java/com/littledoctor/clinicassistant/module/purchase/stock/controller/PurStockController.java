@@ -77,7 +77,7 @@ public class PurStockController {
     }
 
     /**
-     * 查询已过期品目
+     * 查询已过期
      * @param page
      * @return
      */

@@ -1,40 +1,42 @@
-package com.littledoctor.clinicassistant.module.skill.controller;
+package com.littledoctor.clinicassistant.module.item.consumable.controller;
 
-import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.common.entity.LayuiTableEntity;
 import com.littledoctor.clinicassistant.common.entity.SelectOption;
-import com.littledoctor.clinicassistant.module.skill.entity.MedicalSkill;
-import com.littledoctor.clinicassistant.module.skill.service.MedicalSkillService;
+import com.littledoctor.clinicassistant.common.msg.Message;
+import com.littledoctor.clinicassistant.module.item.consumable.entity.ConsumableEntity;
+import com.littledoctor.clinicassistant.module.item.consumable.service.ConsumableService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @Auther: 周俊林
- * @Date: 2019-08-10 12:37
- * @Description: 医技项目
+ * @Date: 2020/5/4
+ * @Description: 其他耗材 品目
  */
 @RestController
-@RequestMapping("/skill")
-public class MedicalSkillController {
+@RequestMapping(value = "/item/consumable")
+public class ConsumableController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private MedicalSkillService medicalSkillService;
+    private ConsumableService consumableService;
+
 
     /**
      * 查询所有的医技项目
      * @return
      */
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public LayuiTableEntity<MedicalSkill> findAll() {
+    public LayuiTableEntity<ConsumableEntity> findAll() {
         try {
-            return new LayuiTableEntity<MedicalSkill>(medicalSkillService.findAll());
+            return new LayuiTableEntity<ConsumableEntity>(consumableService.findAll());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -43,30 +45,30 @@ public class MedicalSkillController {
 
     /**
      * 保存医技项目
-     * @param medicalSkill
+     * @param entity
      * @return
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public MedicalSkill save(@RequestBody MedicalSkill medicalSkill) {
+    public ConsumableEntity save(@RequestBody ConsumableEntity entity) {
         try {
-            Assert.notNull(medicalSkill, Message.PARAMETER_IS_NULL);
-            return medicalSkillService.save(medicalSkill);
+            Assert.notNull(entity, Message.PARAMETER_IS_NULL);
+            return consumableService.save(entity);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return null;
+        return new ConsumableEntity();
     }
 
     /**
      * 删除医技项目
-     * @param skillId
+     * @param id
      * @return
      */
-    @RequestMapping(value = "/delete/{skillId}", method = RequestMethod.DELETE)
-    public boolean delete(@PathVariable("skillId") String skillId) {
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    public boolean delete(@PathVariable("id") Long id) {
         try {
-            Assert.notNull(skillId, Message.PARAMETER_IS_NULL);
-            return medicalSkillService.delete(skillId);
+            Assert.notNull(id, Message.PARAMETER_IS_NULL);
+            return consumableService.delete(id);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -80,10 +82,10 @@ public class MedicalSkillController {
     @RequestMapping(value = "/getSelectOption", method = RequestMethod.GET)
     public List<SelectOption> getSelectOption() {
         try {
-            return medicalSkillService.getSelectOption();
+            return consumableService.getSelectOption();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return null;
+        return new ArrayList<>();
     }
 }

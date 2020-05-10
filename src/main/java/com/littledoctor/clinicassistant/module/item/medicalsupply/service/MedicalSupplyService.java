@@ -1,11 +1,8 @@
-package com.littledoctor.clinicassistant.module.item.meridian.service;
+package com.littledoctor.clinicassistant.module.item.medicalsupply.service;
 
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
-import com.littledoctor.clinicassistant.module.item.constant.ItemType;
-import com.littledoctor.clinicassistant.module.item.meridian.dao.MeridianDao;
-import com.littledoctor.clinicassistant.module.item.meridian.entity.MeridianEntity;
-import com.littledoctor.clinicassistant.module.system.dictionary.entity.DictionaryEntity;
-import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
+import com.littledoctor.clinicassistant.module.item.medicalsupply.dao.MedicalSupplyDao;
+import com.littledoctor.clinicassistant.module.item.medicalsupply.entity.MedicalSupplyEntity;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -23,16 +20,13 @@ import java.util.List;
 /**
  * @Auther: 周俊林
  * @Date: 2020/5/4
- * @Description: 经络 品目
+ * @Description: 医疗用品 品目
  */
 @Service
-public class MeridianService {
+public class MedicalSupplyService {
 
     @Autowired
-    private MeridianDao meridianDao;
-
-    @Autowired
-    private DictionaryService dictionaryService;
+    private MedicalSupplyDao medicalSupplyDao;
 
     /**
      * 保存
@@ -40,8 +34,8 @@ public class MeridianService {
      * @return
      */
     @Transactional
-    public MeridianEntity save(MeridianEntity entity) throws Exception {
-        return  meridianDao.saveAndFlush(entity);
+    public MedicalSupplyEntity save(MedicalSupplyEntity entity) throws Exception {
+        return  medicalSupplyDao.saveAndFlush(entity);
     }
 
     /**
@@ -52,9 +46,9 @@ public class MeridianService {
      */
     public boolean notRepeatName(String itemId, String itemName) throws Exception {
         if (StringUtils.isNotBlank(itemName) ) {
-            return meridianDao.count(new Specification<MeridianEntity>() {
+            return medicalSupplyDao.count(new Specification<MedicalSupplyEntity>() {
                 @Override
-                public Predicate toPredicate(Root<MeridianEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                public Predicate toPredicate(Root<MedicalSupplyEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                     List<Predicate> list = new ArrayList<>();
                     list.add(criteriaBuilder.equal(root.get("itemName"), itemName));
                     if (StringUtils.isNotBlank(itemId)) {
@@ -72,11 +66,11 @@ public class MeridianService {
      * @param id
      * @return
      */
-    public MeridianEntity findById(Long id) throws Exception {
+    public MedicalSupplyEntity findById(Long id) throws Exception {
         if (id != null) {
-            return meridianDao.findById(id).get();
+            return medicalSupplyDao.findById(id).get();
         }
-        return new MeridianEntity();
+        return new MedicalSupplyEntity();
     }
 
     /**
@@ -85,9 +79,9 @@ public class MeridianService {
      * @return
      */
     public List<TreeEntity> queryCatalog(String keyword) throws Exception {
-        List<MeridianEntity> resultList = meridianDao.findAll(new Specification<MeridianEntity>() {
+        List<MedicalSupplyEntity> resultList = medicalSupplyDao.findAll(new Specification<MedicalSupplyEntity>() {
             @Override
-            public Predicate toPredicate(Root<MeridianEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            public Predicate toPredicate(Root<MedicalSupplyEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 if (StringUtils.isNotBlank(keyword) && StringUtils.isNotBlank(keyword.trim())) {
                     Predicate p1 = criteriaBuilder.like(root.get("itemName"), "%" + keyword.trim() + "%");
                     Predicate p2 = criteriaBuilder.like(root.get("abbrPinyin"), keyword.trim().toUpperCase() + "%");
@@ -102,26 +96,13 @@ public class MeridianService {
             return new ArrayList<>();
         } else {
             List<TreeEntity> treeList = new ArrayList<>();
-            List<String> valueList = new ArrayList<>();
             for (int i = 0; i < resultList.size(); i++) {
-                MeridianEntity item = resultList.get(i);
+                MedicalSupplyEntity item = resultList.get(i);
                 TreeEntity tree = new TreeEntity();
                 tree.setId(item.getItemId().toString());
-                tree.setpId(ItemType.MERIDIAN + "_" + item.getItemType());
+                tree.setpId(null);
                 tree.setLabel(item.getItemName());
                 treeList.add(tree);
-                valueList.add(item.getItemType());
-            }
-            List<DictionaryEntity> dictList = dictionaryService.getDictItemByDictKeyAndDictValues(ItemType.MERIDIAN, valueList);
-            if (!ObjectUtils.isEmpty(dictList)) {
-                for (int i = dictList.size() - 1; i > -1 ; i--) {
-                    DictionaryEntity dict = dictList.get(i);
-                    TreeEntity tree = new TreeEntity();
-                    tree.setId(ItemType.MERIDIAN + "_" + dict.getDictValue());
-                    tree.setpId(null);
-                    tree.setLabel(dict.getDictName());
-                    treeList.add(0, tree);
-                }
             }
             return treeList;
         }
@@ -134,7 +115,7 @@ public class MeridianService {
      * @throws Exception
      */
     public boolean delete(Long id) throws Exception {
-        meridianDao.deleteById(id);
+        medicalSupplyDao.deleteById(id);
         return true;
     }
 }

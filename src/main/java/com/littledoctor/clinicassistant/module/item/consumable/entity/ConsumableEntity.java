@@ -26,7 +26,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "item_consumable")
-public class ItemConsumableEntity implements java.io.Serializable {
+public class ConsumableEntity implements java.io.Serializable {
     /** 版本号 */
     private static final long serialVersionUID = -8561384843001944776L;
 

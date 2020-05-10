@@ -20,9 +20,9 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
 
     // 设置左侧目录树的高度
     var bodyHeight = $(document.body).height();
-    $('.left-tree').height(bodyHeight > 530 ? bodyHeight - 80 : 450);
+    $('.left-tree').height(bodyHeight > 500 ? bodyHeight - 80 : 450);
     // 设置右侧面板高度
-    $('.right-panel .blank-tip').height(bodyHeight > 530 ? bodyHeight - 283 : 447).css('padding-top','200px');
+    $('.right-panel .blank-tip').height(bodyHeight > 500 ? bodyHeight - 283 : 447).css('padding-top','200px');
 
     // ztree setting
     var setting = {
@@ -98,7 +98,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
     });
 
     // 查询目录
-    function queryCatalog(keyword) {
+    function queryCatalog(keyword,selectNodeId) {
         $.getJSON(rootMapping + '/queryCatalog', {keyword: keyword}, function (resultList) {
             if (resultList != null && resultList.length > 0) {
                 $('.left-tree .blank-tip').hide();
@@ -106,13 +106,23 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
                 $.fn.zTree.destroy(leftTreeId);
                 var zTreeObject = $.fn.zTree.init($("#" + leftTreeId), setting, resultList);
                 zTreeObject.expandAll(true);// 展开所有节点
+                if (utils.isNotNull(selectNodeId)) {
+                    var currentNodes = zTreeObject.getNodeByParam('id', selectNodeId);
+                    if (currentNodes != null) {
+                        zTreeObject.selectNode(currentNodes);
+                    }
+                } else {
+                    $('#' + formId).hide();
+                    $('.right-panel .blank-tip').show();
+                    utils.btnDisabled($('.left-panel button[lay-event="delBtn"]'));
+                }
             } else {
                 $('.left-tree .blank-tip').show();
                 $('.left-tree .ztree').hide();
+                $('#' + formId).hide();
+                $('.right-panel .blank-tip').show();
+                utils.btnDisabled($('.left-panel button[lay-event="delBtn"]'));
             }
-            $('#' + formId).hide();
-            $('.right-panel .blank-tip').show();
-            utils.btnDisabled($('.left-panel button[lay-event="delBtn"]'));
         });
     }
     queryCatalog();
@@ -192,6 +202,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
             if (item != null && utils.isNotNull(item.itemId)) {
                 layer.msg(MSG.save_success);
                 form.val(formId,{itemId:item.itemId});
+                queryCatalog(null,item.itemId);
             } else {
                 layer.msg(MSG.save_fail);
             }

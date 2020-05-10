@@ -83,5 +83,5 @@ public interface PurStockMapper {
      * @param pageSize
      * @return
      */
-    List<Map<String, Object>> findExpireAll(Long offset, int pageSize);
+    List<Map<String, Object>> findExpireAll(@Param("offset") Long offset, @Param("pageSize") int pageSize);
 }

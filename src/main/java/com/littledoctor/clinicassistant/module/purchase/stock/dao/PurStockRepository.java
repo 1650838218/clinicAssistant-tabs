@@ -15,6 +15,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PurStockRepository extends JpaRepository<PurStock, Long>, JpaSpecificationExecutor<PurStock> {
 
+    /**
+     * 将过期品目的状态置为3
+     * @return
+     */
     @Modifying
     @Query(nativeQuery = true, value = "UPDATE pur_stock a SET a.stock_state = 3 WHERE a.expire_date > date_format(NOW(),'%Y-%m-%d') AND a.expire_date IS NOT NULL AND LENGTH(a.expire_date) != 0 AND a.stock_state = 1")
     int updateStateForExpire();

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>其他耗材</title>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/lib/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/my.css" media="all">
+</head>
+<body>
+<div class="layui-row">
+    <div class="layui-col-md12">
+        <div class="center-panel">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <table class="layui-hide" lay-filter="consumable-table" id="consumable-table"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--layui table 操作列-->
+<script type="text/html" id="operate-column">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="create">新增</a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="save">保存</a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="delete">删除</a>
+</script>
+<script src="/lib/layuiadmin/layui/layui.js"></script>
+<script src="/js/common/constant.js"></script>
+<script src="/views/module/item/consumable/consumable.js"></script>
+</body>
+</html>

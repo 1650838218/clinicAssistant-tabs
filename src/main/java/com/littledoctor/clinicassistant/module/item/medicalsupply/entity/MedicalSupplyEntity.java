@@ -27,7 +27,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "item_medical_supply")
-public class ItemMedicalSupplyEntity implements java.io.Serializable {
+public class MedicalSupplyEntity implements java.io.Serializable {
     /** 版本号 */
     private static final long serialVersionUID = -1105398926405982329L;
 

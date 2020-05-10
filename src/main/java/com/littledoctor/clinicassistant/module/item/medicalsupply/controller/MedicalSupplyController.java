@@ -1,9 +1,9 @@
-package com.littledoctor.clinicassistant.module.item.meridian.controller;
+package com.littledoctor.clinicassistant.module.item.medicalsupply.controller;
 
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.common.msg.Message;
-import com.littledoctor.clinicassistant.module.item.meridian.entity.MeridianEntity;
-import com.littledoctor.clinicassistant.module.item.meridian.service.MeridianService;
+import com.littledoctor.clinicassistant.module.item.medicalsupply.entity.MedicalSupplyEntity;
+import com.littledoctor.clinicassistant.module.item.medicalsupply.service.MedicalSupplyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +17,16 @@ import java.util.List;
 /**
  * @Auther: 周俊林
  * @Date: 2020/5/4
- * @Description: 经络 品目
+ * @Description: 医疗用品 品目
  */
 @Controller
-@RequestMapping(value = "/item/meridian")
-public class MeridianController {
+@RequestMapping(value = "/item/medicalSupply")
+public class MedicalSupplyController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private MeridianService meridianService;
+    private MedicalSupplyService medicalSupplyService;
 
     /**
      * 保存
@@ -35,13 +35,13 @@ public class MeridianController {
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ResponseBody
-    public MeridianEntity save(@RequestBody MeridianEntity entity) {
+    public MedicalSupplyEntity save(@RequestBody MedicalSupplyEntity entity) {
         try {
-            return meridianService.save(entity);
+            return medicalSupplyService.save(entity);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return new MeridianEntity();
+        return new MedicalSupplyEntity();
     }
 
     /**
@@ -54,7 +54,7 @@ public class MeridianController {
     @ResponseBody
     public boolean notRepeatName(String itemId, @RequestParam String itemName) {
         try {
-            return meridianService.notRepeatName(itemId, itemName);
+            return medicalSupplyService.notRepeatName(itemId, itemName);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -68,13 +68,13 @@ public class MeridianController {
      */
     @RequestMapping(value = "/findById", method = RequestMethod.GET)
     @ResponseBody
-    public MeridianEntity findById(@RequestParam Long id) {
+    public MedicalSupplyEntity findById(@RequestParam Long id) {
         try {
-            return meridianService.findById(id);
+            return medicalSupplyService.findById(id);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return new MeridianEntity();
+        return new MedicalSupplyEntity();
     }
 
     /**
@@ -85,7 +85,7 @@ public class MeridianController {
     @ResponseBody
     public List<TreeEntity> queryCatalog(String keyword) {
         try {
-            return meridianService.queryCatalog(keyword);
+            return medicalSupplyService.queryCatalog(keyword);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -101,7 +101,7 @@ public class MeridianController {
     public boolean delete(@PathVariable(value = "id") Long id) {
         try {
             Assert.isNull(id, Message.PARAMETER_IS_NULL);
-            return meridianService.delete(id);
+            return medicalSupplyService.delete(id);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

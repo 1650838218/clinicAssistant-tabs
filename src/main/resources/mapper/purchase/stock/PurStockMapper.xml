@@ -57,7 +57,7 @@
         </if>
         AND i.pur_item_type = d.dict_value
         AND i.stock_unit = d1.dict_value
-        AND d.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@ITEM_PMFL}'
+        AND d.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_CGPMFL}'
         AND d1.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_LSDW}'
         AND a.stock_state = 1
         AND d.is_use = 1
@@ -102,7 +102,7 @@
         AND e.pur_item_type = f.dict_value
         AND e.pur_unit = g.dict_value
         AND f.is_use = 1
-        AND f.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@ITEM_PMFL}'
+        AND f.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_CGPMFL}'
         AND g.is_use = 1
         AND g.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_JHBZ}'
     </select>
@@ -124,11 +124,11 @@
         WHERE
             a.pur_item_id = b.pur_item_id
         AND a.stock_count &lt;= b.stock_warn
-        AND c.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@ITEM_PMFL}'
+        AND a.stock_state = 1
+        AND c.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_CGPMFL}'
         AND d.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_LSDW}'
         AND b.pur_item_type = c.dict_value
         AND b.stock_unit = d.dict_value
-        AND a.stock_state = 1
         AND c.is_use = 1
         AND d.is_use = 1
         <if test="keywords != null and keywords != ''">
@@ -165,11 +165,7 @@
 
     <!--查询已过期-->
     <select id="countExpire" resultType="java.lang.Integer">
-        SELECT
-            count(1)
-        FROM
-            pur_stock a
-        WHERE a.stock_state = 3
+        SELECT count(1) FROM pur_stock a WHERE a.stock_state = 1
     </select>
 
     <!--查询已过期-->
@@ -178,35 +174,35 @@
             a.pur_stock_id purStockId,
             a.pur_item_id purItemId,
             b.pur_item_name purItemName,
-            d.dict_name purItemType,
-            CONCAT(0 + CAST(a.stock_count AS CHAR), '（', f.dict_name, '）') stockCount,
-            c.expire_date expireDate,
-            CONCAT(REPLACE(FORMAT(c.unit_price, 2), ',', ''), '/', e.dict_name) unitPrice,
-            REPLACE(FORMAT(c.unit_price / b.unit_convert * a.stock_count, 2), ',', '') loss
+            c.dict_name purItemType,
+            a.expire_date expireDate,
+            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',f.dict_name,'）') stockCount,
+            CONCAT(REPLACE(FORMAT(e.unit_price,2),',',''),'/',d.dict_name) unitPrice,
+            REPLACE(FORMAT(e.unit_price / b.unit_convert * a.stock_count,2),',','') loss
         FROM
             pur_stock a,
             pur_item b,
-            pur_order_detail c,
+            sys_dictionary c,
             sys_dictionary d,
-            sys_dictionary e,
+            pur_order_detail e,
             sys_dictionary f
         WHERE
-            a.pur_item_id = b.pur_item_id
-        AND a.pur_item_id = c.pur_item_id
-        AND a.stock_state = 3
-        AND d.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@ITEM_PMFL}'
-        AND e.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_JHBZ}'
-        AND f.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_LSDW}'
+            a.stock_state = '3'
+        AND c.is_use = 1
         AND d.is_use = 1
-        AND e.is_use = 1
         AND f.is_use = 1
+        AND c.dict_type = 2
         AND d.dict_type = 2
-        AND e.dict_type = 2
         AND f.dict_type = 2
-        AND b.pur_item_type = d.dict_value
-        AND b.pur_unit = e.dict_value
+        AND c.dict_key = 'CGPMFL'
+        AND d.dict_key = 'JHBZ'
+        AND f.dict_key = 'LSDW'
+        AND a.pur_item_id = b.pur_item_id
+        AND b.pur_item_type = c.dict_value
+        AND b.pur_unit = d.dict_value
+        AND a.pur_order_id = e.pur_order_id
+        AND a.pur_item_id = e.pur_item_id
         AND b.stock_unit = f.dict_value
-        LIMIT ${offset},${pageSize}
     </select>
 
     <!-- 用于病历开方时根据药品名称查询药品信息 -->

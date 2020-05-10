@@ -1,5 +1,5 @@
-/** 方剂管理 */
-//@ sourceURL=prescription.js
+/** 腧穴管理 */
+//@ sourceURL=acupoint.js
 layui.config({
     base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
 }).extend({
@@ -12,9 +12,9 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
     var layer = layui.layer;
     var ajax = layui.ajax;
     var utils = layui.utils;
-    var rootMapping = '/item/prescription';
+    var rootMapping = '/item/acupoint';
     var leftTreeId = 'catalog';
-    var formId = 'prescription-form';
+    var formId = 'acupoint-form';
     var keyword = '';
     form.render();
 
@@ -53,7 +53,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
                         utils.btnDisabled($('.left-panel button[lay-event="delBtn"]'));
                     } else {
                         utils.btnEnabled($('.left-panel button[lay-event="delBtn"]'));
-                        findById(treeNode.id);// 查询方剂
+                        findById(treeNode.id);// 查询腧穴
                     }
                 } else if (clickFlag === 0) {
                     // 取消选中
@@ -68,15 +68,8 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
     // 动态加载品目分类下拉框
     utils.splicingOption({
         elem: $('#' + formId + ' select[name="itemType"]'),
-        where: {dictKey: DICT_KEY.ITEM_PRESCRIPTION},
+        where: {dictKey: DICT_KEY.ITEM_ACUPOINT},
         tips: '请选择所属分类'
-    });
-
-    // 动态加载出处下拉框
-    utils.splicingOption({
-        elem: $('.layui-form select[name="source"]'),
-        where: {dictKey: DICT_KEY.ITEM_FJCC},
-        tips: '请选择出处'
     });
 
     // 搜索
@@ -119,7 +112,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
     }
     queryCatalog();
 
-    // 根据方剂ID查询方剂
+    // 根据腧穴ID查询腧穴
     function findById(id) {
         if (utils.isNotNull(id)) {
             $.getJSON(rootMapping + '/findById', {id: id}, function (result) {
@@ -128,7 +121,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
                     $('.right-panel .blank-tip').hide();
                     $('#' + formId).show();
                 } else {
-                    layer.alert('未找到该方剂，请重试！',{icon: 0}, function (index) {
+                    layer.alert('未找到该腧穴，请重试！',{icon: 0}, function (index) {
                         queryCatalog();
                         utils.clearForm('#' + formId);// 清空表单
                         form.render();
@@ -137,7 +130,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
                 }
             });
         } else {
-            layer.msg('方剂ID为空，无法查询！', {icon:2});
+            layer.msg('腧穴ID为空，无法查询！', {icon:2});
         }
     }
 
@@ -185,7 +178,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
         }
     });
 
-    // 保存方剂
+    // 保存腧穴
     form.on('submit(submit-btn)', function (data) {
         var formData = data.field;
         var formId = data.form.id;
@@ -230,7 +223,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
             var zTreeObject = $.fn.zTree.getZTreeObj(leftTreeId);
             var selectNodes = zTreeObject.getSelectedNodes();
             if (utils.isNotEmpty(selectNodes) && !selectNodes[0].isParent) {
-                layer.confirm(MSG.delete_confirm + '该方剂吗？', {icon: 3}, function () {
+                layer.confirm(MSG.delete_confirm + '该腧穴吗？', {icon: 3}, function () {
                     ajax.delete(rootMapping + '/delete/' + selectNodes[0].id, function (success) {
                         if (success) {
                             layer.msg(MSG.delete_success);
@@ -241,7 +234,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
                     });
                 });
             } else {
-                layer.msg('请选择一个方剂！', {icon: LAYER_ICON.warning});
+                layer.msg('请选择一个腧穴！', {icon: LAYER_ICON.warning});
             }
         }
     };

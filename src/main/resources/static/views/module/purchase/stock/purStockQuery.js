@@ -24,7 +24,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form','element'], funct
     // 动态加载品目分类
     utils.splicingOption({
         elem: $('#' + formId + ' select[name="purItemType"]'),
-        where: {dictKey: DICT_KEY.ITEM_PMFL},
+        where: {dictKey: DICT_KEY.PUR_ITEM_CGPMFL},
         tips: '请选择品目分类'
     });
 
@@ -56,7 +56,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form','element'], funct
                     }
                 }
             },
-            {field: 'option', title: TABLE_COLUMN.operation, toolbar: '#operate-column', width: '13%', align: 'center'}
+            {field: 'option', title: TABLE_COLUMN.operation, toolbar: '#operate-column', width: '11%', align: 'center'}
         ]]
     });
 
@@ -79,11 +79,8 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form','element'], funct
     // 查询事件
     form.on('submit(submit-btn)', function (data) {
         var index = $(data.elem).parents('.layui-tab-item').index();
-        if (index == 0) {
-            table.reload(stockTableId,{where: data.field});
-        } else if (index == 1) {
-            table.reload(warnTableId,{where:data.field});
-        }
+        if (index == 0) table.reload(stockTableId,{where: data.field});
+        else if (index == 1) table.reload(warnTableId,{where:data.field});
         return false;
     });
 
@@ -248,12 +245,13 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form','element'], funct
         ]]
     });
 
+
     // 已过期
     table.render({
         elem: '#expire-table',
         url: rootMapping + '/queryPageForExpire',
         page: true,
-        height: 'full-145',
+        height: 'full-110',
         request: {
             limitName: 'size' //每页数据量的参数名，默认：limit
         },
@@ -261,16 +259,11 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form','element'], funct
             {field: 'purStockId', title: TABLE_COLUMN.numbers, type: 'numbers'},
             {field: 'purItemName', title: '品目名称', width: '20%'},
             {field: 'purItemType', title: '品目分类'},
-            {field: 'expireDate',title: '有效期至'},
-            {field: 'stockCount', title: '库存数量'},
-            {field: 'unitPrice', title: '进价(元)'},
+            {field: 'stockWarn',title: '有效期至'},
+            {field: 'stockCount', title: '过期数量'},
+            {field: 'unitPrice',title: '进价(元)'},
             {field: 'loss', title: '损失(元)'}
         ]]
-    });
-
-    // 已过期刷新按钮
-    $('.expire-btn').click(function () {
-        table.reload('expire-table');
     });
 
     // 选项卡切换
@@ -278,11 +271,8 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form','element'], funct
         // console.log(this); //当前Tab标题所在的原始DOM元素
         // console.log(data.index); //得到当前Tab的所在下标
         // console.log(data.elem); //得到当前的Tab大容器
-        if (data.index == 1) {
-            table.resize(warnTableId);
-        } else if (data.index == 2) {
-            table.resize('expire-table');
-        }
+        if (data.index == 1) table.resize(warnTableId);
+        if (data.index == 2) table.resize('expire-table');
     });
 });
 

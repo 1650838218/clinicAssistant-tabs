@@ -1,0 +1,31 @@
+.layui-form-item {
+    margin-bottom: 8px;
+}
+
+.layui-form-label {
+    padding:  9px 5px;
+}
+
+.layui-input-block {
+    margin-left: 90px;
+}
+
+.layui-textarea {
+    min-height: 70px;
+}
+
+.layui-layer-page .layui-layer-content {
+    position: relative;
+    overflow: visible !important;
+}
+
+.left-tree .layui-btn-normal {
+    color: #0c64eb;
+    background-color: rgba(233,242,251,.8);
+    border-color: rgba(0,0,0,0);
+}
+
+.left-tree .layui-btn-normal:hover {
+    background-color: rgb(30, 159, 255);
+}
+

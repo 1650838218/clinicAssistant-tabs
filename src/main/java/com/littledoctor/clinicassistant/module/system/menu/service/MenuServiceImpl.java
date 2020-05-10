@@ -28,7 +28,7 @@ public class MenuServiceImpl implements MenuService {
     public MenuEntity save(MenuEntity menuEntity) {
         if (menuEntity != null) {
             if (menuEntity.getParentMenuId() == null) menuEntity.setParentMenuId((long)0);
-            menuEntity.setIsValid(1);
+//            menuEntity.setIsValid(1);
             return menuRepository.saveAndFlush(menuEntity);
         }
         return new MenuEntity();
