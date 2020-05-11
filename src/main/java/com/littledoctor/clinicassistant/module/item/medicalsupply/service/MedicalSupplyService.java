@@ -3,8 +3,11 @@ package com.littledoctor.clinicassistant.module.item.medicalsupply.service;
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.module.item.medicalsupply.dao.MedicalSupplyDao;
 import com.littledoctor.clinicassistant.module.item.medicalsupply.entity.MedicalSupplyEntity;
+import com.littledoctor.clinicassistant.module.purchase.supplier.entity.SupplierEntity;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -74,41 +77,6 @@ public class MedicalSupplyService {
     }
 
     /**
-     * 查询目录
-     * @param keyword
-     * @return
-     */
-    public List<TreeEntity> queryCatalog(String keyword) throws Exception {
-        List<MedicalSupplyEntity> resultList = medicalSupplyDao.findAll(new Specification<MedicalSupplyEntity>() {
-            @Override
-            public Predicate toPredicate(Root<MedicalSupplyEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                if (StringUtils.isNotBlank(keyword) && StringUtils.isNotBlank(keyword.trim())) {
-                    Predicate p1 = criteriaBuilder.like(root.get("itemName"), "%" + keyword.trim() + "%");
-                    Predicate p2 = criteriaBuilder.like(root.get("abbrPinyin"), keyword.trim().toUpperCase() + "%");
-                    Predicate p3 = criteriaBuilder.like(root.get("fullPinyin"), keyword.trim().toLowerCase() + "%");
-                    return criteriaBuilder.or(p1, p2, p3);
-                } else {
-                    return null;
-                }
-            }
-        });
-        if (ObjectUtils.isEmpty(resultList)) {
-            return new ArrayList<>();
-        } else {
-            List<TreeEntity> treeList = new ArrayList<>();
-            for (int i = 0; i < resultList.size(); i++) {
-                MedicalSupplyEntity item = resultList.get(i);
-                TreeEntity tree = new TreeEntity();
-                tree.setId(item.getItemId().toString());
-                tree.setpId(null);
-                tree.setLabel(item.getItemName());
-                treeList.add(tree);
-            }
-            return treeList;
-        }
-    }
-
-    /**
      * 删除
      * @param id
      * @return
@@ -117,5 +85,27 @@ public class MedicalSupplyService {
     public boolean delete(Long id) throws Exception {
         medicalSupplyDao.deleteById(id);
         return true;
+    }
+
+    /**
+     * 分页查询
+     * @param keywords
+     * @param page
+     * @return
+     */
+    public Page<MedicalSupplyEntity> queryPage(String keywords, Pageable page) {
+        return medicalSupplyDao.findAll(new Specification<MedicalSupplyEntity>() {
+            @Override
+            public Predicate toPredicate(Root<MedicalSupplyEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                if (StringUtils.isNotBlank(keywords) && StringUtils.isNotBlank(keywords.trim())) {
+                    Predicate p1 = criteriaBuilder.like(root.get("itemName"), "%" + keywords.trim() + "%");
+                    Predicate p2 = criteriaBuilder.like(root.get("abbrPinyin"), keywords.trim().toUpperCase() + "%");
+                    Predicate p3 = criteriaBuilder.like(root.get("fullPinyin"), keywords.trim().toLowerCase() + "%");
+                    return criteriaBuilder.or(p1, p2, p3);
+                } else {
+                    return null;
+                }
+            }
+        }, page);
     }
 }

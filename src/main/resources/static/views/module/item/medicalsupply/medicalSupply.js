@@ -6,104 +6,85 @@ layui.config({
     ajax: 'ajax'
     ,utils: 'utils'
 });
-layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
+layui.use(['form', 'jquery', 'layer', 'ajax','table','utils'], function () {
     var $ = layui.jquery;
     var form = layui.form;
     var layer = layui.layer;
+    var table = layui.table;
     var ajax = layui.ajax;
     var utils = layui.utils;
     var rootMapping = '/item/medicalSupply';
-    var leftTreeId = 'catalog';
+    var leftTableId = 'left-table';
     var formId = 'medicalsupply-form';
-    var keyword = '';
+    var currentId = '';// 当前选中的医疗用品的ID
     form.render();
 
-    // 设置左侧目录树的高度
-    var bodyHeight = $(document.body).height();
-    $('.left-tree').height(bodyHeight > 500 ? bodyHeight - 80 : 450);
-    // 设置右侧面板高度
-    $('.right-panel .blank-tip').height(bodyHeight > 500 ? bodyHeight - 283 : 447).css('padding-top','200px');
-
-    // ztree setting
-    var setting = {
-        view: {
-            showLine: false,
-            showIcon: false,
-            expandSpeed: "normal",
-            selectedMulti: false
+    // 初始化表格
+    table.render({
+        elem: '#left-table',
+        url: rootMapping + '/queryPage',
+        height: 'full-85',
+        page: {
+            limit: 10,
+            groups: 2,
+            layout: ['prev','page','next','count']
         },
-        data: {
-            key: {
-                name: "label"
-            },
-            simpleData: {
-                enable: true
-            }
+        request: {
+            limitName: 'size' //每页数据量的参数名，默认：limit
         },
-        callback: {
-            onClick: function (event, treeId, treeNode,clickFlag) {
-                if (clickFlag === 1) {
-                    // 普通选中
-                    if (treeNode.isParent) {
-                        // 清空表单
-                        utils.clearForm('#' + formId);// 清空表单
-                        form.render();
-                        $('#' + formId).hide();
-                        $('.right-panel .blank-tip').show();
-                        utils.btnDisabled($('.left-panel button[lay-event="delBtn"]'));
-                    } else {
+        text: {
+            none: '暂无数据！'
+        },
+        cols: [[
+            {field: 'itemName', title: '医疗用品名称'}
+        ]],
+        skin: 'nob',
+        // size: 'sm',
+        done: function (res, curr, count) {
+            $('.left-panel button[lay-event="addBtn"]').click();// 清空表单
+            utils.btnDisabled($('.left-panel button[lay-event="delBtn"]'));
+            if (currentId) {
+                var tableData = table.cache[leftTableId];
+                for (var i = 0; i < tableData.length; i++) {
+                    if (Number(tableData[i].itemId) === Number(currentId)) {
                         utils.btnEnabled($('.left-panel button[lay-event="delBtn"]'));
-                        findById(treeNode.id);// 查询医疗用品
+                        var rowIndex = tableData[i][table.config.indexName];
+                        $('.left-panel .layui-table tbody tr div').removeClass('select');
+                        $('.left-panel .layui-table tbody tr[data-index="' + rowIndex + '"]').find('div').addClass('select');
+                        findById(currentId);
                     }
-                } else if (clickFlag === 0) {
-                    // 取消选中
-                    $('#' + formId).hide();
-                    $('.right-panel .blank-tip').show();
-                    utils.btnDisabled($('.left-panel button[lay-event="delBtn"]'));
                 }
             }
-        }
-    };
-
-    // 搜索
-    $(".left-panel .left-search .layui-input").on("input change",function() {
-        if ($.trim($(this).val()) === keyword) {
-            return;
-        } else {
-            queryCatalog($.trim($(this).val()));
-            keyword = $.trim($(this).val());
         }
     });
 
-    // 查询目录
-    function queryCatalog(keyword,selectNodeId) {
-        $.getJSON(rootMapping + '/queryCatalog', {keyword: keyword}, function (resultList) {
-            if (resultList != null && resultList.length > 0) {
-                $('.left-tree .blank-tip').hide();
-                $('.left-tree .ztree').show();
-                $.fn.zTree.destroy(leftTreeId);
-                var zTreeObject = $.fn.zTree.init($("#" + leftTreeId), setting, resultList);
-                zTreeObject.expandAll(true);// 展开所有节点
-                if (utils.isNotNull(selectNodeId)) {
-                    var currentNodes = zTreeObject.getNodeByParam('id', selectNodeId);
-                    if (currentNodes != null) {
-                        zTreeObject.selectNode(currentNodes);
-                    }
-                } else {
-                    $('#' + formId).hide();
-                    $('.right-panel .blank-tip').show();
-                    utils.btnDisabled($('.left-panel button[lay-event="delBtn"]'));
-                }
-            } else {
-                $('.left-tree .blank-tip').show();
-                $('.left-tree .ztree').hide();
-                $('#' + formId).hide();
-                $('.right-panel .blank-tip').show();
-                utils.btnDisabled($('.left-panel button[lay-event="delBtn"]'));
+    // 监听行单击事件
+    table.on('row(left-table)', function (obj) {
+        $('.left-panel .layui-table tbody tr div').removeClass('select');
+        $(obj.tr).find('div').addClass('select');
+        utils.btnEnabled($('.left-panel button[lay-event="delBtn"]'));
+        // 获取id，根据ID查询多级字典，表单设置值
+        currentId = obj.data.itemId;
+        findById(currentId);
+
+    });
+
+    // 搜索
+    var timeoutId = null;
+    var lastKeyword = '';
+    $('.left-panel .left-search input').bind('input porpertychange', function () {
+        var _keywords = $(this).val();
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        timeoutId = setTimeout(function() {
+            if (lastKeyword === _keywords) {
+                return;
             }
-        });
-    }
-    queryCatalog();
+            table.reload(leftTableId,{where:{keywords: _keywords}});
+            lastKeyword = _keywords;
+        }, 500);
+    });
 
     // 根据医疗用品ID查询医疗用品
     function findById(id) {
@@ -111,11 +92,8 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
             $.getJSON(rootMapping + '/findById', {id: id}, function (result) {
                 if (result != null && utils.isNotNull(result.itemId)) {
                     form.val(formId, result);
-                    $('.right-panel .blank-tip').hide();
-                    $('#' + formId).show();
                 } else {
                     layer.alert('未找到该医疗用品，请重试！',{icon: 0}, function (index) {
-                        queryCatalog();
                         utils.clearForm('#' + formId);// 清空表单
                         form.render();
                         layer.close(index);
@@ -165,7 +143,8 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
             if (item != null && utils.isNotNull(item.itemId)) {
                 layer.msg(MSG.save_success);
                 form.val(formId,{itemId:item.itemId});
-                queryCatalog(null,item.itemId);
+                currentId = item.itemId;
+                table.reload(leftTableId);
             } else {
                 layer.msg(MSG.save_fail);
             }
@@ -179,6 +158,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
         if (utils.isNotNull(itemId)) {
             findById(itemId);// 重新查询
         } else {
+            currentId = undefined;
             utils.clearForm('#' + formId);// 清空表单
             form.render();
         }
@@ -189,30 +169,26 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
         // 新增
         addBtn: function () {
             utils.clearForm('#' + formId);// 清空表单
-            $('.right-panel .blank-tip').hide();
-            $('#' + formId).show();
             form.render();
-            var zTreeObject = $.fn.zTree.getZTreeObj(leftTreeId);
-            zTreeObject.cancelSelectedNode();
             utils.btnDisabled($('.left-panel button[lay-event="delBtn"]'));
         },
         // 删除
         delBtn: function () {
-            var zTreeObject = $.fn.zTree.getZTreeObj(leftTreeId);
-            var selectNodes = zTreeObject.getSelectedNodes();
-            if (utils.isNotEmpty(selectNodes) && !selectNodes[0].isParent) {
+            var itemId = $('#' + formId + ' input[name="itemId"]').val();
+            if (itemId != null && itemId != undefined && itemId != '') {
                 layer.confirm(MSG.delete_confirm + '该医疗用品吗？', {icon: 3}, function () {
-                    ajax.delete(rootMapping + '/delete/' + selectNodes[0].id, function (success) {
+                    ajax.delete(rootMapping + '/delete/' + itemId, function (success) {
                         if (success) {
                             layer.msg(MSG.delete_success);
-                            zTreeObject.removeNode(selectNodes[0]);
+                            currentId = undefined;
+                            table.reload(leftTableId);
                         } else {
                             layer.msg(MSG.delete_fail);
                         }
                     });
                 });
             } else {
-                layer.msg('请选择一个医疗用品！', {icon: LAYER_ICON.warning});
+                layer.msg('供应商ID为空，无法删除！', {icon: 2});
             }
         }
     };

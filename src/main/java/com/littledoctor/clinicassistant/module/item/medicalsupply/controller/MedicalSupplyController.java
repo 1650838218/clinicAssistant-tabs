@@ -1,12 +1,17 @@
 package com.littledoctor.clinicassistant.module.item.medicalsupply.controller;
 
+import com.littledoctor.clinicassistant.common.entity.LayuiTableEntity;
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.module.item.medicalsupply.entity.MedicalSupplyEntity;
 import com.littledoctor.clinicassistant.module.item.medicalsupply.service.MedicalSupplyService;
+import com.littledoctor.clinicassistant.module.purchase.supplier.entity.SupplierEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +24,7 @@ import java.util.List;
  * @Date: 2020/5/4
  * @Description: 医疗用品 品目
  */
-@Controller
+@RestController
 @RequestMapping(value = "/item/medicalSupply")
 public class MedicalSupplyController {
 
@@ -34,7 +39,6 @@ public class MedicalSupplyController {
      * @return
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    @ResponseBody
     public MedicalSupplyEntity save(@RequestBody MedicalSupplyEntity entity) {
         try {
             return medicalSupplyService.save(entity);
@@ -51,7 +55,6 @@ public class MedicalSupplyController {
      * @return true 不存在  false 已存在，默认false
      */
     @RequestMapping(value = "/notRepeatName", method = RequestMethod.GET)
-    @ResponseBody
     public boolean notRepeatName(String itemId, @RequestParam String itemName) {
         try {
             return medicalSupplyService.notRepeatName(itemId, itemName);
@@ -67,7 +70,6 @@ public class MedicalSupplyController {
      * @return
      */
     @RequestMapping(value = "/findById", method = RequestMethod.GET)
-    @ResponseBody
     public MedicalSupplyEntity findById(@RequestParam Long id) {
         try {
             return medicalSupplyService.findById(id);
@@ -78,18 +80,21 @@ public class MedicalSupplyController {
     }
 
     /**
-     * 查询目录
+     * 分页查询
+     * @param keywords
+     * @param page
      * @return
      */
-    @RequestMapping(value = "/queryCatalog", method = RequestMethod.GET)
-    @ResponseBody
-    public List<TreeEntity> queryCatalog(String keyword) {
+    @RequestMapping(value = "/queryPage")
+    public LayuiTableEntity<MedicalSupplyEntity> queryPage(String keywords, Pageable page) {
         try {
-            return medicalSupplyService.queryCatalog(keyword);
+            if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
+            Page<MedicalSupplyEntity> result = medicalSupplyService.queryPage(keywords,page);
+            return new LayuiTableEntity<MedicalSupplyEntity>(result);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error(e.getMessage(),e);
         }
-        return new ArrayList<>();
+        return new LayuiTableEntity<>();
     }
 
     /**
@@ -100,7 +105,7 @@ public class MedicalSupplyController {
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public boolean delete(@PathVariable(value = "id") Long id) {
         try {
-            Assert.isNull(id, Message.PARAMETER_IS_NULL);
+            Assert.notNull(id, Message.PARAMETER_IS_NULL);
             return medicalSupplyService.delete(id);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

@@ -26,12 +26,7 @@
                     </button>
                 </div>
             </div>
-            <div class="left-tree">
-                <div class="blank-tip" style="text-align: center;display: none;padding-top: 150px;">
-                    无数据！
-                </div>
-                <ul class="ztree" id="catalog"></ul>
-            </div>
+            <table class="layui-hide" lay-filter="left-table" id="left-table"></table>
         </div>
     </div>
     <div class="layui-col-md9">
@@ -41,11 +36,8 @@
                     <h3><b>医疗用品信息</b></h3>
                 </div>
                 <div class="layui-card-body">
-                    <div class="blank-tip" style="text-align: center;">
-                        请选择医疗用品！
-                    </div>
                     <!--医疗用品 -->
-                    <form id="medicalsupply-form" class="layui-form" lay-filter="medicalsupply-form" style="display: none">
+                    <form id="medicalsupply-form" class="layui-form" lay-filter="medicalsupply-form">
                         <input type="hidden" name="itemId" value="">
                         <div class="layui-row layui-col-space5 layui-form-item">
                             <div class="layui-col-sm6">

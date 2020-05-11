@@ -100,7 +100,7 @@ public class AcupointController {
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public boolean delete(@PathVariable(value = "id") Long id) {
         try {
-            Assert.isNull(id, Message.PARAMETER_IS_NULL);
+            Assert.notNull(id, Message.PARAMETER_IS_NULL);
             return acupointService.delete(id);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
