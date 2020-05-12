@@ -1,6 +1,6 @@
 package com.littledoctor.clinicassistant.module.purchase.stock.service;
 
-import com.littledoctor.clinicassistant.module.purchase.order.service.PurOrderService;
+import com.littledoctor.clinicassistant.module.purchase.order.service.OrderService;
 import com.littledoctor.clinicassistant.module.purchase.stock.dao.PurStockRepository;
 import com.littledoctor.clinicassistant.module.purchase.stock.entity.PurStock;
 import com.littledoctor.clinicassistant.module.purchase.stock.mapper.PurStockMapper;
@@ -29,7 +29,7 @@ public class PurStockServiceImpl implements PurStockService {
     private PurStockRepository purStockRepository;
 
     @Autowired
-    private PurOrderService purOrderService;
+    private OrderService orderService;
 
     @Autowired(required = false)
     private PurStockMapper purStockMapper;
@@ -53,7 +53,7 @@ public class PurStockServiceImpl implements PurStockService {
             }
             if (!purOrderIds.isEmpty()) {
                 // 新增入库单的时候需要将与其对应的采购单的状态改为已入库
-                purOrderService.updateEntry(purOrderIds);
+                orderService.updateEntry(purOrderIds);
             }
             return purStockRepository.saveAll(purStocks);
         }

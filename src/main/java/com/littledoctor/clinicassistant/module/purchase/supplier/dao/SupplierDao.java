@@ -13,7 +13,7 @@ import java.util.List;
  * @Date: 2019-05-04 12:57
  * @Description: 供应商
  */
-public interface SupplierRepository extends JpaRepository<SupplierEntity, Integer>, JpaSpecificationExecutor<SupplierEntity> {
+public interface SupplierDao extends JpaRepository<SupplierEntity, Integer>, JpaSpecificationExecutor<SupplierEntity> {
 
     /**
      * 获取selecOption

@@ -10,7 +10,7 @@ import java.math.BigDecimal;
  */
 @Entity
 @Table(name = "PUR_ORDER_DETAIL")
-public class PurOrderDetail {
+public class OrderDetailEntity {
 
     /** 主键ID */
     @Id

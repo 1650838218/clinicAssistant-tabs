@@ -1,6 +1,5 @@
 package com.littledoctor.clinicassistant.module.purchase.order.mapper;
 
-import com.littledoctor.clinicassistant.module.purchase.order.entity.PurOrder;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -9,11 +8,11 @@ import java.util.Map;
 
 /**
  * @业务信息: 采购单
- * @Filename: PurOrderMapper.java
+ * @Filename: OrderMapper.java
  * 2019-12-26   周俊林
  */
 @Mapper
-public interface PurOrderMapper {
+public interface OrderMapper {
 
     /**
      * 分页查询采购单

@@ -1,5 +1,5 @@
 /** 采购单 */
-//@ sourceURL=purOrderForm.js
+//@ sourceURL=orderForm.js
 layui.config({
     base: '/lib/layuiadmin/lib/extend/' //静态资源所在路径
 }).extend({
@@ -118,27 +118,27 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         onEndEdit: function (index, row) {
             var ed = $(this).datagrid('getEditor', {
                 index: index,
-                field: 'purItemId'
+                field: 'itemId'
             });
-            row.purItemName = $(ed.target).combogrid('getText');
+            row.itemName = $(ed.target).combogrid('getText');
         }
     });
 
     // 动态设置列的editor和其他属性
     var columns = [
         {
-            field: 'purItemId',
+            field: 'itemId',
             editor: {
                 type: 'combogrid',
                 options: {
-                    idField:'purItemId',
-                    textField:'purItemName',
+                    idField:'itemId',
+                    textField:'itemName',
                     method: 'get',
-                    url: '/purchase/item/getCombogrid',
+                    url: '/item/getPurchaseItem',
                     mode: 'remote',
                     columns:[[
-                        {field:'purItemName',title:'品目名称',width:150},
-                        {field:'purItemTypeName',title:'品目分类',width:80},
+                        {field:'itemName',title:'品目名称',width:150},
+                        {field:'itemTypeName',title:'品目分类',width:80},
                         {field:'specifications',title:'规格',width:120},
                         {field:'producer',title:'厂家/品牌/制造商',width:200}
                     ]],
@@ -161,16 +161,16 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                     },
                     onHidePanel: function () {
                         // 验证药品名称是否为空
-                        var editor = $('#' + itemTableId).datagrid('getEditor',{index: editIndex,field: 'purItemId'});
-                        var purItemId = $(editor.target).combogrid('getValue');
-                        if (!purItemId) {
+                        var editor = $('#' + itemTableId).datagrid('getEditor',{index: editIndex,field: 'itemId'});
+                        var itemId = $(editor.target).combogrid('getValue');
+                        if (!itemId) {
                             $(editor.target).combogrid('clear');// 为空则清空输入框
                         }
                     }
                 }
             },
             formatter:function(value,row){
-                return row.purItemName;
+                return row.itemName;
             }
         },
         {
@@ -253,10 +253,10 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         }
         if (endEditing()) {
             for (var i = 0; i < rowCount; i++) {
-                var purItemId = gridData.rows[i].purItemId;
+                var itemId = gridData.rows[i].itemId;
                 var totalPrice = gridData.rows[i].totalPrice;
-                if (!utils.isNotNull(purItemId) || !utils.isNotNull(totalPrice)) {
-                    beginEditing(i, 'purItemId');
+                if (!utils.isNotNull(itemId) || !utils.isNotNull(totalPrice)) {
+                    beginEditing(i, 'itemId');
                     layer.msg("请将明细数据补充完整！");
                     return false;
                 }
@@ -353,7 +353,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
 
     // 转到查询列表
     $('button[lay-filter="query-btn"]').click(function () {
-        top.layui.index.openTabsPage('/views/module/purchase/order/purOrderQuery.html','查询采购单');
+        top.layui.index.openTabsPage('/views/module/purchase/order/orderQuery.html','查询采购单');
     });
 
     // 关闭按钮点击事件

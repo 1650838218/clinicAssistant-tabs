@@ -12,7 +12,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "PUR_ORDER")
-public class PurOrderSingle {
+public class OrderSingleEntity {
     /** 主键ID */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

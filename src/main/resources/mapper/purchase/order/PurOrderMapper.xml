@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.littledoctor.clinicassistant.module.purchase.order.mapper.PurOrderMapper">
+<mapper namespace="com.littledoctor.clinicassistant.module.purchase.order.mapper.OrderMapper">
 
     <!-- 根据条件查询 库存信息 -->
     <select id="findAll" resultType="java.util.Map">

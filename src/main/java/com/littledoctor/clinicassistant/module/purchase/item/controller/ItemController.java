@@ -28,8 +28,8 @@ import java.util.Map;
  * @Date: 2018/10/18 22:31
  * @Description: 品目guanli
  */
-@RestController
-@RequestMapping(value = "/item")
+//@RestController
+//@RequestMapping(value = "/item")
 public class ItemController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());

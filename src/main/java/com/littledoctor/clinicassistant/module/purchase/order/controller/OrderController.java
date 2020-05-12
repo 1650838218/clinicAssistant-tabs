@@ -2,8 +2,8 @@ package com.littledoctor.clinicassistant.module.purchase.order.controller;
 
 import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.common.entity.LayuiTableEntity;
-import com.littledoctor.clinicassistant.module.purchase.order.entity.PurOrder;
-import com.littledoctor.clinicassistant.module.purchase.order.service.PurOrderService;
+import com.littledoctor.clinicassistant.module.purchase.order.entity.OrderEntity;
+import com.littledoctor.clinicassistant.module.purchase.order.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +22,12 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(value = "/purchase/order")
-public class PurOrderController {
+public class OrderController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private PurOrderService purOrderService;
+    private OrderService orderService;
 
     /**
      * 分页查询
@@ -41,7 +41,7 @@ public class PurOrderController {
     public LayuiTableEntity<Map<String,Object>> queryPage(Pageable page, String purItemName, String purOrderDate, String supplierId) {
         try {
             if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
-            return new LayuiTableEntity<Map<String,Object>>(purOrderService.queryPage(page, purItemName, purOrderDate, supplierId));
+            return new LayuiTableEntity<Map<String,Object>>(orderService.queryPage(page, purItemName, purOrderDate, supplierId));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -50,14 +50,14 @@ public class PurOrderController {
 
     /**
      * 保存采购单
-     * @param purOrder
+     * @param orderEntity
      * @return
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public PurOrder save(@RequestBody PurOrder purOrder) {
+    public OrderEntity save(@RequestBody OrderEntity orderEntity) {
         try {
-            Assert.notNull(purOrder, Message.PARAMETER_IS_NULL);
-            return purOrderService.save(purOrder);
+            Assert.notNull(orderEntity, Message.PARAMETER_IS_NULL);
+            return orderService.save(orderEntity);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -70,13 +70,13 @@ public class PurOrderController {
      * @return
      */
     @RequestMapping(value = "queryById", method = RequestMethod.GET)
-    public PurOrder queryById(@RequestParam String purOrderId) {
+    public OrderEntity queryById(@RequestParam String purOrderId) {
         try {
-            return purOrderService.queryById(purOrderId);
+            return orderService.queryById(purOrderId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return new PurOrder();
+        return new OrderEntity();
     }
 
     /**
@@ -87,7 +87,7 @@ public class PurOrderController {
     @RequestMapping(value = "queryByIdForStock", method = RequestMethod.GET)
     public Map<String, Object> queryByIdForStock(@RequestParam String purOrderId) {
         try {
-            return purOrderService.queryByIdForStock(purOrderId);
+            return orderService.queryByIdForStock(purOrderId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -103,7 +103,7 @@ public class PurOrderController {
     public boolean delete(@PathVariable("purOrderId") String purOrderId) {
         try {
             Assert.notNull(purOrderId, Message.PARAMETER_IS_NULL);
-            return purOrderService.delete(purOrderId);
+            return orderService.delete(purOrderId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

@@ -25,13 +25,13 @@ import java.util.Map;
  * @Date: 2018/10/19 22:48
  * @Description: 采购品目
  */
-@Service
+//@Service
 public class ItemServiceImpl implements ItemService {
 
-    @Autowired
+//    @Autowired
     private ItemRepository itemRepository;
 
-    @Autowired
+//    @Autowired
     private DictionaryService dictionaryService;
 
     /**

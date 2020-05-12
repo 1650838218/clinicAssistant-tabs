@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "PUR_ORDER")
-public class PurOrder {
+public class OrderEntity {
 
     /** 主键ID */
     @Id
@@ -56,7 +56,7 @@ public class PurOrder {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     @JoinColumn(name = "PUR_ORDER_ID")
-    private List<PurOrderDetail> purOrderDetails = new ArrayList<>();
+    private List<OrderDetailEntity> orderDetailEntities = new ArrayList<>();
 
     /** 供货商联系人 */
     @Transient
@@ -138,12 +138,12 @@ public class PurOrder {
         this.updateTime = updateTime;
     }
 
-    public List<PurOrderDetail> getPurOrderDetails() {
-        return purOrderDetails;
+    public List<OrderDetailEntity> getOrderDetailEntities() {
+        return orderDetailEntities;
     }
 
-    public void setPurOrderDetails(List<PurOrderDetail> purOrderDetails) {
-        this.purOrderDetails = purOrderDetails;
+    public void setOrderDetailEntities(List<OrderDetailEntity> orderDetailEntities) {
+        this.orderDetailEntities = orderDetailEntities;
     }
 
     public String getSupplierName() {
