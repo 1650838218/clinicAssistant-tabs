@@ -25,6 +25,27 @@ public class ItemEntity {
     /** 厂家制造商 */
     private String producer;
 
+    /** 进货包装 */
+    private String purUnit;
+
+    private String purUnitName;
+
+    public String getPurUnit() {
+        return purUnit;
+    }
+
+    public void setPurUnit(String purUnit) {
+        this.purUnit = purUnit;
+    }
+
+    public String getPurUnitName() {
+        return purUnitName;
+    }
+
+    public void setPurUnitName(String purUnitName) {
+        this.purUnitName = purUnitName;
+    }
+
     /**
      * 获取品目ID
      * 

@@ -19,8 +19,16 @@ public class OrderDetailEntity {
     private Long purOrderDetailId;
 
     /** 采购品目，为了关联采购的是哪个品目 */
-    @Column(name = "PUR_ITEM_ID")
-    private Long purItemId;
+    @Column(name = "ITEM_ID")
+    private Long itemId;
+
+    /** 品目名称 */
+    @Column(name = "item_name")
+    private String itemName;
+
+    /** 品目分类 */
+    @Column(name = "item_type")
+    private String itemType;
 
     /** 批号 */
     @Column(name = "BATCH_NUMBER")
@@ -38,6 +46,10 @@ public class OrderDetailEntity {
     @Column(name = "PUR_COUNT")
     private BigDecimal purCount;
 
+    /** 采购单位名称 */
+    @Column(name = "PUR_UNIT_NAME")
+    private String purUnitName;
+
     /** 单价 */
     @Column(name = "UNIT_PRICE")
     private BigDecimal unitPrice;
@@ -45,14 +57,6 @@ public class OrderDetailEntity {
     /** 总价 */
     @Column(name = "TOTAL_PRICE")
     private BigDecimal totalPrice;
-
-    /** 品目名称 */
-    @Transient
-    private String purItemName;
-
-    /** 采购单位名称 */
-    @Transient
-    private String purUnitName;
 
     /** 库存单位名称 */
     @Transient
@@ -74,12 +78,28 @@ public class OrderDetailEntity {
         this.purOrderDetailId = purOrderDetailId;
     }
 
-    public Long getPurItemId() {
-        return purItemId;
+    public Long getItemId() {
+        return itemId;
     }
 
-    public void setPurItemId(Long purItemId) {
-        this.purItemId = purItemId;
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public String getItemType() {
+        return itemType;
+    }
+
+    public void setItemType(String itemType) {
+        this.itemType = itemType;
     }
 
     public BigDecimal getPurCount() {
@@ -128,14 +148,6 @@ public class OrderDetailEntity {
 
     public void setExpireDate(String expireDate) {
         this.expireDate = expireDate;
-    }
-
-    public String getPurItemName() {
-        return purItemName;
-    }
-
-    public void setPurItemName(String purItemName) {
-        this.purItemName = purItemName;
     }
 
     public String getPurUnitName() {

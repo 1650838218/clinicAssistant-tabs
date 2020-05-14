@@ -72,7 +72,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                 iconCls: 'icon-add',
                 handler: function () {
                     if (endEditing()) {
-                        $('#' + itemTableId).datagrid('appendRow', {purItem: {}});
+                        $('#' + itemTableId).datagrid('appendRow', {});
                         editIndex = $('#' + itemTableId).datagrid('getRows').length - 1;
                         $('#' + itemTableId).datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
                     }
@@ -91,7 +91,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                     editIndex = undefined;
                     // 如果明细行被全部删除，则新增一个空白行
                     if ($('#' + itemTableId).datagrid('getData').total === 0) {
-                        $('#' + itemTableId).datagrid('appendRow', {purItem: {}});
+                        $('#' + itemTableId).datagrid('appendRow', {});
                     }
                 }
             }, '-',
@@ -103,7 +103,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                 }
             }
         ],
-        data: [{purItem:{}}],
+        data: [{}],
         onClickCell: function (rowIndex, field, value) {
             if (editIndex != rowIndex){
                 if (endEditing()){
@@ -147,10 +147,14 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                     panelMaxHeight: 200,
                     panelWidth:568,
                     hasDownArrow: false,
-                    onSelect: function(index,purItem){
+                    onSelect: function(index,rowData){
                         // 设置进货包装
                         var editor3 = $('#' + itemTableId).datagrid('getEditor',{index: editIndex,field: 'purUnitName'});
-                        $(editor3.target).textbox('setValue', purItem.purUnitName);
+                        $(editor3.target).textbox('setValue', rowData.purUnitName);
+                        var curRow = $('#' + itemTableId).datagrid('getSelected');
+                        if (curRow != null) {
+                            curRow.itemType = rowData.itemType;
+                        }
                     },
                     onChange: function (newValue, oldValue) {
                         if (!utils.isNotNull(newValue)) {
@@ -238,7 +242,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     ];
     for (var i = 0, l = columns.length; i < l; i++) {
         var e = $('#' + itemTableId).datagrid('getColumnOption', columns[i].field);
-        console.log(columns[i]);
+        // console.log(columns[i]);
         e.editor = columns[i].editor;
         e.formatter = columns[i].formatter;
     }
@@ -277,9 +281,9 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
             $.getJSON(rootMapping + "/queryById",{purOrderId: purOrderId}, function (purOrder) {
                 if (purOrder != null) {
                     purOrder.totalPrice = parseFloat(purOrder.totalPrice).toFixed(2);
-                    form.val('order-form', purOrder);// 表单赋值
+                    form.val(formId, purOrder);// 表单赋值
                     form.render();
-                    $('#' + itemTableId).datagrid('loadData', purOrder.purOrderDetails);// 加载采购单明细
+                    $('#' + itemTableId).datagrid('loadData', purOrder.orderDetailEntities);// 加载采购单明细
                 }
             });
         } else {
@@ -321,8 +325,8 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
             var purOrder = obj.field;// 表单值
             var orderItems = $('#' + itemTableId).datagrid('getData');// 获取表格数据
             // console.log(orderItems);
-            purOrder.purOrderDetails = orderItems.rows;
-            if (!generalBranchCheck(purOrder.totalPrice, purOrder.purOrderDetails)) {
+            purOrder.orderDetailEntities = orderItems.rows;
+            if (!generalBranchCheck(purOrder.totalPrice, purOrder.orderDetailEntities)) {
                 layer.confirm('采购单总金额大于明细总价之和，数据存在错误风险，确认保存吗？',
                     {
                         icon: LAYER_ICON.question,

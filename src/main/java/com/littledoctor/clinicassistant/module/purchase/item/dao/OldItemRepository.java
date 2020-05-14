@@ -13,7 +13,7 @@ import java.util.List;
  * @Date: 2018/10/19 20:34
  * @Description: 采购品目
  */
-public interface ItemRepository extends JpaRepository<ItemEntity,Long>, JpaSpecificationExecutor<ItemEntity> {
+public interface OldItemRepository extends JpaRepository<ItemEntity,Long>, JpaSpecificationExecutor<ItemEntity> {
 
     /**
      * 获取selecOption

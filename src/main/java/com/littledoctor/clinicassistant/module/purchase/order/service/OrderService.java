@@ -1,8 +1,8 @@
 package com.littledoctor.clinicassistant.module.purchase.order.service;
 
 import com.littledoctor.clinicassistant.common.constant.DictionaryKey;
+import com.littledoctor.clinicassistant.module.item.all.service.ItemService;
 import com.littledoctor.clinicassistant.module.purchase.item.entity.ItemEntity;
-import com.littledoctor.clinicassistant.module.purchase.item.service.ItemService;
 import com.littledoctor.clinicassistant.module.purchase.order.dao.OrderDao;
 import com.littledoctor.clinicassistant.module.purchase.order.entity.OrderEntity;
 import com.littledoctor.clinicassistant.module.purchase.order.entity.OrderDetailEntity;
@@ -92,7 +92,7 @@ public class OrderService {
             // 设置供应商名称
             SupplierEntity supplierEntity = supplierService.findById(String.valueOf(orderEntity.getSupplierId()));
             orderEntity.setSupplierName(supplierEntity.getSupplierName());
-            List<OrderDetailEntity> pods = orderEntity.getOrderDetailEntities();
+            /*List<OrderDetailEntity> pods = orderEntity.getOrderDetailEntities();
             if (pods != null && pods.size() > 0) {
                 // 查询字典显示值
                 Map<String, String> sldw = dictionaryService.getItemMapByKey(DictionaryKey.PUR_ITEM_JHBZ);
@@ -100,8 +100,8 @@ public class OrderService {
                 for (int i = 0, len = pods.size(); i < len; i++) {
                     OrderDetailEntity pbi = pods.get(i);
                     // 查询药品信息
-                    if (pbi.getPurItemId() != null) {
-                        ItemEntity pi = itemService.getById(String.valueOf(pbi.getPurItemId()));
+                    if (pbi.getItemId() != null) {
+                        ItemEntity pi = itemService.getById(String.valueOf(pbi.getItemId()));
                         if (pi != null) {
                             pbi.setPurItemName(pi.getItemName());
                             pbi.setUnitConvert(pi.getUnitConvert());
@@ -115,7 +115,7 @@ public class OrderService {
                         }
                     }
                 }
-            }
+            }*/
         }
         return orderEntity;
     }

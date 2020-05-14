@@ -34,7 +34,7 @@ public class PrescriptionEntity implements java.io.Serializable {
 
     /** 品目ID */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "item_id", unique = true, nullable = false, length = 20)
     private Long itemId;
 

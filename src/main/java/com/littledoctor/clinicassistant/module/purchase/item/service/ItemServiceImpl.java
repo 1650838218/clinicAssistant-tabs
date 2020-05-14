@@ -2,15 +2,13 @@ package com.littledoctor.clinicassistant.module.purchase.item.service;
 
 import com.littledoctor.clinicassistant.common.constant.DictionaryKey;
 import com.littledoctor.clinicassistant.common.entity.SelectOption;
-import com.littledoctor.clinicassistant.module.purchase.item.dao.ItemRepository;
+import com.littledoctor.clinicassistant.module.purchase.item.dao.OldItemRepository;
 import com.littledoctor.clinicassistant.module.purchase.item.entity.ItemEntity;
 import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -29,7 +27,7 @@ import java.util.Map;
 public class ItemServiceImpl implements ItemService {
 
 //    @Autowired
-    private ItemRepository itemRepository;
+    private OldItemRepository oldItemRepository;
 
 //    @Autowired
     private DictionaryService dictionaryService;
@@ -42,7 +40,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemEntity save(ItemEntity itemEntity) {
         if (itemEntity != null) {
-            return itemRepository.saveAndFlush(itemEntity);
+            return oldItemRepository.saveAndFlush(itemEntity);
         }
         return null;
     }
@@ -56,7 +54,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public boolean notRepeatBarcode(String itemId, String barcode) {
         if (StringUtils.isNotBlank(barcode)) {
-            return itemRepository.count(new Specification<ItemEntity>() {
+            return oldItemRepository.count(new Specification<ItemEntity>() {
                 @Override
                 public Predicate toPredicate(Root<ItemEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                     List<Predicate> list = new ArrayList<>();
@@ -81,7 +79,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public boolean notRepeatName(String itemId, String itemName) {
         if (StringUtils.isNotBlank(itemName)) {
-            return itemRepository.count(new Specification<ItemEntity>() {
+            return oldItemRepository.count(new Specification<ItemEntity>() {
                 @Override
                 public Predicate toPredicate(Root<ItemEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                     List<Predicate> list = new ArrayList<>();
@@ -104,7 +102,7 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     public Page<ItemEntity> queryPage(String keywords, Pageable page) {
-        return itemRepository.findAll(new Specification<ItemEntity>() {
+        return oldItemRepository.findAll(new Specification<ItemEntity>() {
             @Override
             public Predicate toPredicate(Root<ItemEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> list = new ArrayList<>();
@@ -130,7 +128,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public boolean delete(String itemId) {
         if (StringUtils.isNotBlank(itemId)) {
-            itemRepository.deleteById(Long.parseLong(itemId));
+            oldItemRepository.deleteById(Long.parseLong(itemId));
             return true;
         }
         return false;
@@ -144,7 +142,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemEntity getById(String itemId) {
         if (StringUtils.isNotBlank(itemId)) {
-            return itemRepository.findById(Long.parseLong(itemId)).get();
+            return oldItemRepository.findById(Long.parseLong(itemId)).get();
         }
         return null;
     }
@@ -157,7 +155,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemEntity> queryByName(String name) {
         if (StringUtils.isNotBlank(name)) {
-            return itemRepository.findAll(new Specification<ItemEntity>() {
+            return oldItemRepository.findAll(new Specification<ItemEntity>() {
                 @Override
                 public Predicate toPredicate(Root<ItemEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                     List<Predicate> list = new ArrayList<>();
@@ -179,9 +177,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<SelectOption> getSelectOption(String keywords) throws Exception {
         if (StringUtils.isBlank(keywords)) {
-            return itemRepository.getSelectOption();
+            return oldItemRepository.getSelectOption();
         } else {
-            return itemRepository.getSelectOption(keywords.trim());
+            return oldItemRepository.getSelectOption(keywords.trim());
         }
     }
 
@@ -193,7 +191,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public boolean isExist(String itemId) {
         if (StringUtils.isBlank(itemId)) {
-            return itemRepository.count(new Specification<ItemEntity>() {
+            return oldItemRepository.count(new Specification<ItemEntity>() {
                 @Override
                 public Predicate toPredicate(Root<ItemEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                     return criteriaBuilder.equal(root.get("itemId"), itemId);
@@ -212,7 +210,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemEntity> getCombogrid(String keywords) throws Exception {
         List<ItemEntity> result = new ArrayList<>();
         if (StringUtils.isBlank(keywords)) {
-            result = itemRepository.findAll();
+            result = oldItemRepository.findAll();
         } else {
             result = this.queryByName(keywords);
         }
@@ -235,7 +233,7 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     public List<ItemEntity> findTreeEntity() throws Exception {
-        return itemRepository.findAll();
+        return oldItemRepository.findAll();
     }
 
     /**
@@ -246,6 +244,6 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     public List<ItemEntity> findAllById(List<Long> purItemIds) throws Exception {
-        return itemRepository.findAllById(purItemIds);
+        return oldItemRepository.findAllById(purItemIds);
     }
 }

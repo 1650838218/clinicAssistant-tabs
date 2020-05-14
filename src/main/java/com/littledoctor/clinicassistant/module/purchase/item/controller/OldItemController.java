@@ -30,7 +30,7 @@ import java.util.Map;
  */
 //@RestController
 //@RequestMapping(value = "/item")
-public class ItemController {
+public class OldItemController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
