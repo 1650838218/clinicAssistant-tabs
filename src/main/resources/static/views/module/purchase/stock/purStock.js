@@ -25,10 +25,10 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         height: 'full-150',
         cols: [[
             {field: 'purOrderDetailId', title: TABLE_COLUMN.numbers, type: 'numbers'},
-            {field: 'purItemName', title: '品目名称',width: '20%'},
+            {field: 'itemName', title: '品目名称',width: '20%'},
             {field: 'purCount', title: '采购数量'},
             {field: 'unitPrice', title: '进价(元)'},
-            {field:'unitConvert', title:'单位换算'},
+            // {field:'unitConvert', title:'单位换算'},
             {field: 'breakevenPrice', title: '保本售价(元)', templet: function (d) {
                     var breakeven = d.unitPrice/d.unitConvert;
                     if (isNaN(breakeven)) {

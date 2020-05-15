@@ -46,8 +46,8 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'laydate', 'form'], func
         cols: [[
             {field: 'purOrderId', title: TABLE_COLUMN.numbers, type: 'numbers'},
             {field: 'purOrderCode', title: '单号', width: '10%'},
-            {field: 'purOrderDate', title: '日期', width: '10%'},
-            {field: 'purItemName', title: '采购品目'},
+            {field: 'purOrderDate', title: '采购日期', width: '10%'},
+            {field: 'itemName', title: '采购品目'},
             {field: 'supplierName', title: '供应商',width: '15%', event: 'lookSupplier',style:'cursor: pointer;',
                 templet: function (d) {
                     return d.supplierName + '<i class="layui-icon layui-icon-about supplier-name-icon" title="查看供应商详情"></i>';

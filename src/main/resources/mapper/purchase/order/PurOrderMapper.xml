@@ -10,7 +10,7 @@
             a.pur_order_date purOrderDate,
             a.supplier_id supplierId,
             b.supplier_name supplierName,
-            d.pur_item_name purItemName,
+            d.item_name itemName,
             a.is_entry entry,
             a.total_price totalPrice
         FROM
@@ -19,14 +19,9 @@
             (
                 SELECT
                     b1.pur_order_id,
-                    GROUP_CONCAT(c1.pur_item_name SEPARATOR '，') pur_item_name,
-                    GROUP_CONCAT(c1.abbr_pinyin) abbr_pinyin,
-                    GROUP_CONCAT(c1.full_pinyin) full_pinyin
+                    GROUP_CONCAT(b1.item_name SEPARATOR '，') item_name
                 FROM
-                    pur_order_detail b1,
-                    pur_item c1
-                WHERE
-                    b1.pur_item_id = c1.pur_item_id
+                    pur_order_detail b1
                 GROUP BY
                     b1.pur_order_id
             ) d
@@ -36,11 +31,9 @@
         <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
             AND date_format(a.create_time,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
         </if>
-        <if test="purItemName != null and purItemName != ''">
+        <if test="itemName != null and itemName != ''">
             AND (
-                d.pur_item_name LIKE concat('%', #{purItemName}, '%')
-                OR LOWER(d.abbr_pinyin) LIKE concat('%', LOWER(#{purItemName}), '%')
-                OR UPPER(d.full_pinyin) LIKE concat('%', UPPER(#{purItemName}), '%')
+                d.item_name LIKE concat('%', #{itemName}, '%')
             )
         </if>
         <if test="supplierId != null and supplierId != ''">
@@ -60,16 +53,12 @@
             (
                 SELECT
                     a1.pur_order_id,
-                    GROUP_CONCAT(c1.pur_item_name SEPARATOR '，') pur_item_name,
-                    GROUP_CONCAT(c1.abbr_pinyin) abbr_pinyin,
-                    GROUP_CONCAT(c1.full_pinyin) full_pinyin
+                    GROUP_CONCAT(b1.item_name SEPARATOR '，') item_name
                 FROM
                     pur_order a1,
-                    pur_order_detail b1,
-                    pur_item c1
+                    pur_order_detail b1
                 WHERE
                     a1.pur_order_id = b1.pur_order_id
-                AND b1.pur_item_id = c1.pur_item_id
                 GROUP BY
                     a1.pur_order_id
             ) d
@@ -78,11 +67,11 @@
         <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
             AND date_format(a.create_time,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
         </if>
-        <if test="purItemName != null and purItemName != ''">
+        <if test="itemName != null and itemName != ''">
             AND (
-            d.pur_item_name LIKE concat('%', #{purItemName}, '%')
-            OR LOWER(d.abbr_pinyin) LIKE concat('%', LOWER(#{purItemName}), '%')
-            OR UPPER(d.full_pinyin) LIKE concat('%', UPPER(#{purItemName}), '%')
+            d.item_name LIKE concat('%', #{itemName}, '%')
+            /*OR LOWER(d.abbr_pinyin) LIKE concat('%', LOWER(#{itemName}), '%')
+            OR UPPER(d.full_pinyin) LIKE concat('%', UPPER(#{itemName}), '%')*/
             )
         </if>
         <if test="supplierId != null and supplierId != ''">
@@ -112,36 +101,29 @@
         SELECT
             b.pur_order_id purOrderId,
             b.pur_order_detail_id purOrderDetailId,
-            b.pur_item_id purItemId,
-            c.pur_item_name purItemName,
-            CONCAT(0 + CAST(b.pur_count AS CHAR),'（',d.dict_name,'）') purCount,
+            b.item_id itemId,
+            b.item_name itemName,
+            CONCAT(0 + CAST(b.pur_count AS CHAR),'（',b.pur_unit_name,'）') purCount,
             REPLACE(FORMAT(b.unit_price,4),',','') unitPrice,
-            c.unit_convert unitConvert,
             os.stock_price stockPrice,
             b.batch_number batchNumber,
             b.expire_date expireDate,
             b.manufacture_date manufactureDate,
-            b.pur_count * c.unit_convert stockCount
+            b.convert_count stockCount
         FROM
             pur_order_detail b,
-            pur_item c,
-            sys_dictionary d,
             (
                 SELECT
-                    o.pur_item_id,
+                    o.item_id,
                     GROUP_CONCAT(DISTINCT s.selling_price SEPARATOR '，') stock_price
                 FROM
-                    pur_order_detail o LEFT JOIN pur_stock s ON o.pur_item_id = s.pur_item_id
+                    pur_order_detail o LEFT JOIN pur_stock s ON o.item_id = s.item_id
                 AND o.pur_order_id = #{purOrderId}
                 AND s.stock_state = 1
-                GROUP BY o.pur_item_id
+                GROUP BY o.item_id
             ) os
         WHERE
             b.pur_order_id = #{purOrderId}
-        AND b.pur_item_id = c.pur_item_id
-        AND c.pur_unit = d.dict_value
-        AND d.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_JHBZ}'
-        AND d.is_use = 1
-        AND b.pur_item_id = os.pur_item_id
+        AND b.item_id = os.item_id
     </select>
 </mapper>

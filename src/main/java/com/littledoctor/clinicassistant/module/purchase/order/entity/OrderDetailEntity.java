@@ -23,11 +23,11 @@ public class OrderDetailEntity {
     private Long itemId;
 
     /** 品目名称 */
-    @Column(name = "item_name")
+    @Column(name = "ITEM_NAME")
     private String itemName;
 
     /** 品目分类 */
-    @Column(name = "item_type")
+    @Column(name = "ITEM_TYPE")
     private String itemType;
 
     /** 批号 */

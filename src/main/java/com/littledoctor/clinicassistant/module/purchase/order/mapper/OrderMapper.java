@@ -16,7 +16,7 @@ public interface OrderMapper {
 
     /**
      * 分页查询采购单
-     * @param purItemName 采购品目名称，简拼，全拼
+     * @param itemName 采购品目名称，简拼，全拼
      * @param supplierId 供应商ID
      * @param startDate 采购日期
      * @param endDate 采购日期
@@ -24,19 +24,19 @@ public interface OrderMapper {
      * @param pageSize 一页的条目数
      * @return
      */
-    List<Map<String,Object>> findAll(@Param("purItemName") String purItemName, @Param("supplierId") String supplierId,
+    List<Map<String,Object>> findAll(@Param("itemName") String itemName, @Param("supplierId") String supplierId,
                       @Param("startDate") String startDate, @Param("endDate") String endDate,
                       @Param("offSet") Long offSet, @Param("pageSize") int pageSize);
 
     /**
      * 查询条数
-     * @param purItemName 采购品目名称，简拼，全拼
+     * @param itemName 采购品目名称，简拼，全拼
      * @param supplierId 供应商ID
      * @param startDate 采购日期
      * @param endDate 采购日期
      * @return
      */
-    int count(@Param("purItemName") String purItemName, @Param("supplierId") String supplierId,
+    int count(@Param("itemName") String itemName, @Param("supplierId") String supplierId,
               @Param("startDate") String startDate, @Param("endDate") String endDate);
 
     /**

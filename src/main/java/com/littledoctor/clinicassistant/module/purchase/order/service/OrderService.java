@@ -46,13 +46,13 @@ public class OrderService {
     /**
      * 分页查询订单
      * @param page
-     * @param purItemName
+     * @param itemName
      * @param purOrderDate
      * @param supplierId
      * @return
      * @throws Exception
      */
-    public Page<Map<String, Object>> queryPage(Pageable page, String purItemName, String purOrderDate, String supplierId) throws Exception {
+    public Page<Map<String, Object>> queryPage(Pageable page, String itemName, String purOrderDate, String supplierId) throws Exception {
         String startDate = "";// 开始日期  查询某日期范围内的订单
         String endDate = "";// 结束日期
         Long offSet = (long)0;// 偏移量
@@ -64,8 +64,8 @@ public class OrderService {
                 endDate = dates[1];
             }
         }
-        int count = orderMapper.count(purItemName, supplierId, startDate, endDate);
-        List<Map<String, Object>> data = orderMapper.findAll(purItemName,supplierId,startDate,endDate,offSet,pageSize);
+        int count = orderMapper.count(itemName, supplierId, startDate, endDate);
+        List<Map<String, Object>> data = orderMapper.findAll(itemName,supplierId,startDate,endDate,offSet,pageSize);
         return new PageImpl<>(data, page, count);
     }
 
@@ -103,7 +103,7 @@ public class OrderService {
                     if (pbi.getItemId() != null) {
                         ItemEntity pi = itemService.getById(String.valueOf(pbi.getItemId()));
                         if (pi != null) {
-                            pbi.setPurItemName(pi.getItemName());
+                            pbi.setitemName(pi.getItemName());
                             pbi.setUnitConvert(pi.getUnitConvert());
                             // 计算库存量
                             if (pbi.getPurCount() != null && pbi.getUnitConvert() != null) {

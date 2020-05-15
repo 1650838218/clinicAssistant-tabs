@@ -23,7 +23,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table'], function () {
         page: true,
         cols: [[
             {field: 'purOrderDetailId', title: TABLE_COLUMN.numbers, type: 'numbers'},
-            {field: 'purItemName', title: '品目名称'},
+            {field: 'itemName', title: '品目名称'},
             {field: 'batchNumber', title: '批号', width: '13%'},
             {field: 'manufactureDate', title: '生产日期', width: '13%'},
             {field: 'expireDate', title: '有效期至', width: '13%'},
@@ -49,7 +49,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table'], function () {
                     purOrder.totalPrice = purOrder.totalPrice.toFixed(2) + ' 元';
                     form.val(formId, purOrder);// 表单赋值
                     form.render();
-                    table.render($.extend({},tableConfig,{data:purOrder.purOrderDetails}));// 加载采购单明细
+                    table.render($.extend({},tableConfig,{data:purOrder.orderDetailEntities}));// 加载采购单明细
                 }
             });
         } else {

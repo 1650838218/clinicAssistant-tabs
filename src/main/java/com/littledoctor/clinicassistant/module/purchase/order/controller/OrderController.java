@@ -32,16 +32,16 @@ public class OrderController {
     /**
      * 分页查询
      * @param page
-     * @param purItemName
+     * @param itemName
      * @param purOrderDate
      * @param supplierId
      * @return
      */
     @RequestMapping(value = "/queryPage", method = RequestMethod.GET)
-    public LayuiTableEntity<Map<String,Object>> queryPage(Pageable page, String purItemName, String purOrderDate, String supplierId) {
+    public LayuiTableEntity<Map<String,Object>> queryPage(Pageable page, String itemName, String purOrderDate, String supplierId) {
         try {
             if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
-            return new LayuiTableEntity<Map<String,Object>>(orderService.queryPage(page, purItemName, purOrderDate, supplierId));
+            return new LayuiTableEntity<Map<String,Object>>(orderService.queryPage(page, itemName, purOrderDate, supplierId));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
