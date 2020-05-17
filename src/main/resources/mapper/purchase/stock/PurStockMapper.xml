@@ -7,11 +7,9 @@
         SELECT
             count(1)
         FROM
-            pur_stock a,
-            pur_item i
+            pur_stock a
         WHERE
-            a.pur_item_id = i.pur_item_id
-        AND a.stock_state = 1
+            a.stock_state = 1
         <if test="expireDate">
             AND a.expire_date &lt;= date_format(date_add(NOW(), interval 1 MONTH) ,'%Y-%m-%d')
             AND a.expire_date IS NOT NULL
@@ -22,10 +20,7 @@
         </if>
         <if test="keywords != null and keywords != ''">
             AND (
-            i.pur_item_name LIKE CONCAT('%', #{keywords}, '%')
-            OR LOWER(i.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')
-            OR UPPER(i.abbr_pinyin) LIKE CONCAT('%', UPPER(#{keywords}), '%')
-            OR i.barcode = #{keywords}
+            a.item_name LIKE CONCAT('%', #{keywords}, '%')
             )
         </if>
     </select>
@@ -34,19 +29,17 @@
     <select id="findAll" resultType="java.util.Map">
         SELECT
             a.pur_stock_id purStockId,
-            i.pur_item_name purItemName,
+            a.item_name itemName,
             d.dict_name dictName,
             a.batch_number batchNumber,
             a.expire_date expireDate,
-            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',d1.dict_name,'）') stockCount,
+            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',a.stock_unit_name,'）') stockCount,
             REPLACE (FORMAT(a.selling_price, 4),',','') sellingPrice
         FROM
             pur_stock a,
-            pur_item i,
-            sys_dictionary d,
-            sys_dictionary d1
+            sys_dictionary d
         WHERE
-            a.pur_item_id = i.pur_item_id
+            a.stock_state = 1
         <if test="expireDate">
             AND a.expire_date &lt;= date_format(date_add(NOW(), interval 1 MONTH) ,'%Y-%m-%d')
             AND a.expire_date IS NOT NULL
@@ -55,19 +48,12 @@
         <if test="!expireDate">
             AND (a.expire_date > date_format(sysdate(),'%Y-%m-%d') OR a.expire_date IS NULL OR LENGTH(a.expire_date) = 0)
         </if>
-        AND i.pur_item_type = d.dict_value
-        AND i.stock_unit = d1.dict_value
-        AND d.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_CGPMFL}'
-        AND d1.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_LSDW}'
-        AND a.stock_state = 1
+        AND a.item_type = d.dict_value
+        AND d.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@ITEM_PMFL}'
         AND d.is_use = 1
-        AND d1.is_use = 1
         <if test="keywords != null and keywords != ''">
             AND (
-            i.pur_item_name LIKE CONCAT('%', #{keywords}, '%')
-            OR LOWER(i.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')
-            OR UPPER(i.abbr_pinyin) LIKE CONCAT('%', UPPER(#{keywords}), '%')
-            OR i.barcode = #{keywords}
+            a.item_name LIKE CONCAT('%', #{keywords}, '%')
             )
         </if>
         LIMIT ${offset},${pageSize}
@@ -76,12 +62,12 @@
     <!--查看库存品目的采购信息-->
     <select id="findByIdForOrder" resultType="java.util.Map">
         SELECT
-            e.pur_item_name purItemName,
-            f.dict_name purItemType,
+            a.item_name itemName,
+            f.dict_name itemType,
             b.pur_order_code purOrderCode,
             b.pur_order_date purOrderDate,
             d.supplier_name supplierName,
-            CONCAT(0 + CAST(c.pur_count AS CHAR),' ',g.dict_name) purCount,
+            CONCAT(0 + CAST(c.pur_count AS CHAR),' ',c.pur_unit_name) purCount,
             REPLACE(FORMAT(c.unit_price,2),',','') unitPrice,
             REPLACE(FORMAT(c.total_price,2),',','') totalPrice
         FROM
@@ -89,54 +75,43 @@
             pur_order b,
             pur_order_detail c,
             pur_supplier d,
-            pur_item e,
-            sys_dictionary f,
-            sys_dictionary g
+            sys_dictionary f
         WHERE
             a.pur_stock_id = #{purStockId}
         AND a.pur_order_id = b.pur_order_id
-        AND a.pur_item_id = e.pur_item_id
         AND a.pur_item_id = c.pur_item_id
         AND b.supplier_id = d.supplier_id
         AND a.pur_order_id = c.pur_order_id
-        AND e.pur_item_type = f.dict_value
-        AND e.pur_unit = g.dict_value
         AND f.is_use = 1
-        AND f.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_CGPMFL}'
-        AND g.is_use = 1
-        AND g.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_JHBZ}'
+        AND f.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@ITEM_PMFL}'
     </select>
 
     <!--查询库存预警-->
     <select id="findWarnAll" resultType="java.util.Map">
         SELECT
             a.pur_stock_id purStockId,
-            a.pur_item_id purItemId,
-            b.pur_item_name purItemName,
-            c.dict_name purItemType,
-            CONCAT(0 + CAST(b.stock_warn AS CHAR),'（',d.dict_name,'）') stockWarn,
-            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',d.dict_name,'）') stockCount
+            a.item_id itemId,
+            a.item_name itemName,
+            c.dict_name itemType,
+            CONCAT(0 + CAST(b.stock_warn AS CHAR),'（',a.stock_unit_name,'）') stockWarn,
+            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',a.stock_unit_name,'）') stockCount
         FROM
             pur_stock a,
-            pur_item b,
-            sys_dictionary c,
-            sys_dictionary d
+            item_purchase b,
+            sys_dictionary c
         WHERE
-            a.pur_item_id = b.pur_item_id
+            a.item_id = b.item_id
         AND a.stock_count &lt;= b.stock_warn
         AND a.stock_state = 1
-        AND c.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_CGPMFL}'
-        AND d.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@PUR_ITEM_LSDW}'
-        AND b.pur_item_type = c.dict_value
-        AND b.stock_unit = d.dict_value
+        AND c.dict_key = '${@com.littledoctor.clinicassistant.common.constant.DictionaryKey@ITEM_PMFL}'
+        AND a.item_type = c.dict_value
         AND c.is_use = 1
-        AND d.is_use = 1
         <if test="keywords != null and keywords != ''">
             AND (
-                b.pur_item_name LIKE CONCAT('%', #{keywords}, '%')
+                b.item_name LIKE CONCAT('%', #{keywords}, '%')
                 OR LOWER(b.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')
                 OR UPPER(b.abbr_pinyin) LIKE CONCAT('%', UPPER(#{keywords}), '%')
-                OR b.barcode = #{keywords}
+--                 OR b.barcode = #{keywords}
             )
         </if>
         LIMIT ${offset},${pageSize}
@@ -148,17 +123,17 @@
             count(1)
         FROM
             pur_stock a,
-            pur_item b
+            item_purchase b
         WHERE
-            a.pur_item_id = b.pur_item_id
+            a.item_id = b.item_id
         AND a.stock_count &lt;= b.stock_warn
         AND a.stock_state = 1
         <if test="keywords != null and keywords != ''">
             AND (
-            b.pur_item_name LIKE CONCAT('%', #{keywords}, '%')
+            b.item_name LIKE CONCAT('%', #{keywords}, '%')
             OR LOWER(b.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')
             OR UPPER(b.abbr_pinyin) LIKE CONCAT('%', UPPER(#{keywords}), '%')
-            OR b.barcode = #{keywords}
+--             OR b.barcode = #{keywords}
             )
         </if>
     </select>
@@ -172,16 +147,16 @@
     <select id="findExpireAll" resultType="java.util.Map">
         SELECT
             a.pur_stock_id purStockId,
-            a.pur_item_id purItemId,
-            b.pur_item_name purItemName,
-            c.dict_name purItemType,
+            a.item_id itemId,
+            b.item_name itemName,
+            c.dict_name itemType,
             a.expire_date expireDate,
             CONCAT(0 + CAST(a.stock_count AS CHAR),'（',f.dict_name,'）') stockCount,
             CONCAT(REPLACE(FORMAT(e.unit_price,2),',',''),'/',d.dict_name) unitPrice,
             REPLACE(FORMAT(e.unit_price / b.unit_convert * a.stock_count,2),',','') loss
         FROM
             pur_stock a,
-            pur_item b,
+            item_purchase b,
             sys_dictionary c,
             sys_dictionary d,
             pur_order_detail e,
@@ -197,56 +172,56 @@
         AND c.dict_key = 'CGPMFL'
         AND d.dict_key = 'JHBZ'
         AND f.dict_key = 'LSDW'
-        AND a.pur_item_id = b.pur_item_id
-        AND b.pur_item_type = c.dict_value
+        AND a.item_id = b.item_id
+        AND b.item_type = c.dict_value
         AND b.pur_unit = d.dict_value
         AND a.pur_order_id = e.pur_order_id
-        AND a.pur_item_id = e.pur_item_id
+        AND a.item_id = e.item_id
         AND b.stock_unit = f.dict_value
     </select>
 
     <!-- 用于病历开方时根据药品名称查询药品信息 -->
     <select id="getCombogridForDecoction" resultType="java.util.Map">
         SELECT
-            b1.pur_item_id purItemId,
-            b1.pur_item_name purItemName,
+            b1.item_id itemId,
+            b1.item_name itemName,
             b1.poisonous poisonous,
             b1.usage_and_dosage usageAndDosage,
             b1.taboo taboo,
             b1.stock_unit stockUnit,
             b1.specifications specifications,
             b1.manufacturer manufacturer,
-            b1.pur_item_type purItemType,
+            b1.item_type itemType,
             a1.selling_price sellingPrice,
             a1.stock_detail_id stockDetailId,
             a1.stock_count stockCount
         FROM
             (
                 SELECT
-                    b.pur_item_id,
-                    b.pur_item_name,
+                    b.item_id,
+                    b.item_name,
                     b.poisonous,
                     b.usage_and_dosage,
                     b.taboo,
                     b.stock_unit,
                     b.specifications,
                     b.manufacturer,
-                    b.pur_item_type
+                    b.item_type
                 FROM
-                    pur_item b
+                    item_purchase b
                 WHERE
                     (
-                        b.pur_item_name LIKE CONCAT('%', #{keywords}, '%')
+                        b.item_name LIKE CONCAT('%', #{keywords}, '%')
                         OR LOWER(b.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')
                         OR UPPER(b.abbr_pinyin) LIKE CONCAT('%', UPPER(#{keywords}), '%')
                     )
-                    <if test="purItemType != null">
-                        AND b.pur_item_type = #{purItemType}
+                    <if test="itemType != null">
+                        AND b.item_type = #{itemType}
                     </if>
             ) b1,
             (
                 SELECT
-                    a.pur_item_id,
+                    a.item_id,
                     a.selling_price,
                     GROUP_CONCAT(a.stock_detail_id ORDER BY a.stock_detail_id) stock_detail_id,
                     SUM(a.stock_count) stock_count
@@ -256,18 +231,18 @@
                     a.stock_count > 0
                 AND a.stock_state = 1
                 GROUP BY
-                    a.pur_item_id,
+                    a.item_id,
                     a.selling_price
             ) a1
         WHERE
-            b1.pur_item_id = a1.pur_item_id
+            b1.item_id = a1.item_id
     </select>
 
     <!--根据药材名称查询药材信息-->
     <select id="findByName" resultType="java.util.Map">
         SELECT
-            b1.pur_item_id purItemId,
-            b1.pur_item_name purItemName,
+            b1.item_id itemId,
+            b1.item_name itemName,
             b1.poisonous poisonous,
             b1.usage_and_dosage usageAndDosage,
             b1.taboo taboo,
@@ -278,20 +253,20 @@
         FROM
             (
                 SELECT
-                    b.pur_item_id,
-                    b.pur_item_name,
+                    b.item_id,
+                    b.item_name,
                     b.poisonous,
                     b.usage_and_dosage,
                     b.taboo,
                     b.stock_unit
                 FROM
-                    pur_item b
+                    item_purchase b
                 WHERE
-                    b.pur_item_name = #{medicalName} AND b.pur_item_type = 1
+                    b.item_name = #{medicalName} AND b.item_type = 1
             ) b1,
             (
                 SELECT
-                    a.pur_item_id,
+                    a.item_id,
                     a.selling_price,
                     GROUP_CONCAT(a.stock_detail_id ORDER BY a.stock_detail_id) stock_detail_id,
                     SUM(a.stock_count) stock_count
@@ -301,11 +276,11 @@
                     a.stock_count > 0
                 AND a.stock_state = 1
                 GROUP BY
-                    a.pur_item_id,
+                    a.item_id,
                     a.selling_price
             ) a1
         WHERE
-            b1.pur_item_id = a1.pur_item_id
+            b1.item_id = a1.item_id
         ORDER BY a1.selling_price
         LIMIT 1
     </select>

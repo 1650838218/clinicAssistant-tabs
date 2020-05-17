@@ -1,6 +1,6 @@
 package com.littledoctor.clinicassistant.module.purchase.stock.dao;
 
-import com.littledoctor.clinicassistant.module.purchase.stock.entity.PurStock;
+import com.littledoctor.clinicassistant.module.purchase.stock.entity.PurStockEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * @Description: 入库单
  */
 @Repository
-public interface PurStockRepository extends JpaRepository<PurStock, Long>, JpaSpecificationExecutor<PurStock> {
+public interface PurStockRepository extends JpaRepository<PurStockEntity, Long>, JpaSpecificationExecutor<PurStockEntity> {
 
     /**
      * 将过期品目的状态置为3

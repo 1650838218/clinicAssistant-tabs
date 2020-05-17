@@ -1,6 +1,6 @@
 package com.littledoctor.clinicassistant.module.purchase.stock.service;
 
-import com.littledoctor.clinicassistant.module.purchase.stock.entity.PurStock;
+import com.littledoctor.clinicassistant.module.purchase.stock.entity.PurStockEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,10 +16,10 @@ public interface PurStockService {
 
     /**
      * 保存入库单
-     * @param purStocks
+     * @param purStockEntities
      * @return
      */
-    List<PurStock> save(List<PurStock> purStocks) throws Exception;
+    List<PurStockEntity> save(List<PurStockEntity> purStockEntities) throws Exception;
 
     /**
      * 分页查询
@@ -30,14 +30,14 @@ public interface PurStockService {
      */
     Page<Map<String, Object>> queryPage(Pageable page, String keywords, boolean expireDate) throws Exception;
 
-    PurStock queryById(Long purStockId) throws Exception;
+    PurStockEntity queryById(Long purStockId) throws Exception;
 
     /**
      * 更新 售价 库存数量
-     * @param purStock
+     * @param purStockEntity
      * @return
      */
-    PurStock update(PurStock purStock) throws Exception;
+    PurStockEntity update(PurStockEntity purStockEntity) throws Exception;
 
     /**
      * 下架

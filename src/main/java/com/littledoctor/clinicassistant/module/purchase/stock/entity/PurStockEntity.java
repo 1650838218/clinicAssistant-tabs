@@ -10,7 +10,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "PUR_STOCK")
-public class PurStock {
+public class PurStockEntity {
 
     /** 主键ID */
     @Id
@@ -23,8 +23,16 @@ public class PurStock {
     private Long purOrderId;
 
     /** 采购品目，为了关联采购的是哪个品目 */
-    @Column(name = "PUR_ITEM_ID")
-    private Long purItemId;
+    @Column(name = "ITEM_ID")
+    private Long itemId;
+
+    /** 品目名称 */
+    @Column(name = "ITEM_NAME")
+    private String itemName;
+
+    /** 品目分类 */
+    @Column(name = "ITEM_TYPE")
+    private String itemType;
 
     /** 批号 */
     @Column(name = "BATCH_NUMBER")
@@ -41,6 +49,10 @@ public class PurStock {
     /** 数量，购进的数量 */
     @Column(name = "STOCK_COUNT")
     private Double stockCount;
+
+    /** 库存单位名称 */
+    @Column(name = "STOCK_UNIT_NAME")
+    private String stockUnitName;
 
     /** 零售价 */
     @Column(name = "SELLING_PRICE")
@@ -138,11 +150,35 @@ public class PurStock {
         this.purOrderId = purOrderId;
     }
 
-    public Long getPurItemId() {
-        return purItemId;
+    public Long getItemId() {
+        return itemId;
     }
 
-    public void setPurItemId(Long purItemId) {
-        this.purItemId = purItemId;
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public String getItemType() {
+        return itemType;
+    }
+
+    public void setItemType(String itemType) {
+        this.itemType = itemType;
+    }
+
+    public String getStockUnitName() {
+        return stockUnitName;
+    }
+
+    public void setStockUnitName(String stockUnitName) {
+        this.stockUnitName = stockUnitName;
     }
 }

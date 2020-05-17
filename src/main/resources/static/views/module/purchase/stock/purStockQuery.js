@@ -23,8 +23,8 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form','element'], funct
 
     // 动态加载品目分类
     utils.splicingOption({
-        elem: $('#' + formId + ' select[name="purItemType"]'),
-        where: {dictKey: DICT_KEY.PUR_ITEM_CGPMFL},
+        elem: $('#' + formId + ' select[name="itemType"]'),
+        where: {dictKey: DICT_KEY.ITEM_PMFL},
         tips: '请选择品目分类'
     });
 
@@ -39,7 +39,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form','element'], funct
         },
         cols: [[
             {field: 'purStockId', title: TABLE_COLUMN.numbers, type: 'numbers'},
-            {field: 'purItemName', title: '品目名称', width: '20%'},
+            {field: 'itemName', title: '品目名称', width: '20%'},
             {field: 'dictName', title: '品目分类'},
             {field: 'batchNumber', title: '批号'},
             {field: 'expireDate', title: '有效期至'},
@@ -182,11 +182,11 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form','element'], funct
                     content += '<form class="layui-form" action="">';
                     content += '<div class="layui-form-item">';
                     content += '<label class="layui-form-label">品目名称：</label>';
-                    content += '<div class="layui-form-mid">' + purStock.purItemName + '</div>';
+                    content += '<div class="layui-form-mid">' + purStock.itemName + '</div>';
                     content += '</div>';
                     content += '<div class="layui-form-item">';
                     content += '<label class="layui-form-label">品目分类：</label>';
-                    content += '<div class="layui-form-mid">' + purStock.purItemType + '</div>';
+                    content += '<div class="layui-form-mid">' + purStock.itemType + '</div>';
                     content += '</div>';
                     content += '<div class="layui-form-item">';
                     content += '<label class="layui-form-label">采购单号：</label>';
@@ -238,8 +238,8 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form','element'], funct
         },
         cols: [[
             {field: 'purStockId', title: TABLE_COLUMN.numbers, type: 'numbers'},
-            {field: 'purItemName', title: '品目名称', width: '20%'},
-            {field: 'purItemType', title: '品目分类'},
+            {field: 'itemName', title: '品目名称', width: '20%'},
+            {field: 'itemType', title: '品目分类'},
             {field: 'stockCount', title: '库存数量'},
             {field: 'stockWarn',title: '库存预警'}
         ]]
@@ -257,8 +257,8 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form','element'], funct
         },
         cols: [[
             {field: 'purStockId', title: TABLE_COLUMN.numbers, type: 'numbers'},
-            {field: 'purItemName', title: '品目名称', width: '20%'},
-            {field: 'purItemType', title: '品目分类'},
+            {field: 'itemName', title: '品目名称', width: '20%'},
+            {field: 'itemType', title: '品目分类'},
             {field: 'stockWarn',title: '有效期至'},
             {field: 'stockCount', title: '过期数量'},
             {field: 'unitPrice',title: '进价(元)'},

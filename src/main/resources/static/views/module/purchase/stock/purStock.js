@@ -27,10 +27,10 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
             {field: 'purOrderDetailId', title: TABLE_COLUMN.numbers, type: 'numbers'},
             {field: 'itemName', title: '品目名称',width: '20%'},
             {field: 'purCount', title: '采购数量'},
-            {field: 'unitPrice', title: '进价(元)'},
+            {field: 'unitPrice', title: '单价(元)'},
             // {field:'unitConvert', title:'单位换算'},
             {field: 'breakevenPrice', title: '保本售价(元)', templet: function (d) {
-                    var breakeven = d.unitPrice/d.unitConvert;
+                    var breakeven = d.totalPrice/d.stockCount;
                     if (isNaN(breakeven)) {
                         return '';
                     } else {
@@ -50,6 +50,11 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         ]],
     };
 
+    $(document).on("focus",'.layui-table-edit', function(){
+        // if ($(this).val() === '请填写新售价') $(this).val('');
+        $(this).select();
+    });
+    
     // 明细表格校验
     function validateGrid() {
         var tableData = table.cache[itemTableId];

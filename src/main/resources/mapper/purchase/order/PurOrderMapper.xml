@@ -105,6 +105,7 @@
             b.item_name itemName,
             CONCAT(0 + CAST(b.pur_count AS CHAR),'（',b.pur_unit_name,'）') purCount,
             REPLACE(FORMAT(b.unit_price,4),',','') unitPrice,
+            REPLACE(FORMAT(b.total_price,4),',','') totalPrice,
             os.stock_price stockPrice,
             b.batch_number batchNumber,
             b.expire_date expireDate,

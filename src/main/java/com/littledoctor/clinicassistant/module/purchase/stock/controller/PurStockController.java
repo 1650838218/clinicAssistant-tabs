@@ -1,7 +1,7 @@
 package com.littledoctor.clinicassistant.module.purchase.stock.controller;
 
 import com.littledoctor.clinicassistant.common.entity.LayuiTableEntity;
-import com.littledoctor.clinicassistant.module.purchase.stock.entity.PurStock;
+import com.littledoctor.clinicassistant.module.purchase.stock.entity.PurStockEntity;
 import com.littledoctor.clinicassistant.module.purchase.stock.service.PurStockService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,13 +31,13 @@ public class PurStockController {
 
     /**
      * 保存，适用于新增库存，修改库存
-     * @param purStocks
+     * @param purStockEntities
      * @return
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public List<PurStock> save(@RequestBody List<PurStock> purStocks) {
+    public List<PurStockEntity> save(@RequestBody List<PurStockEntity> purStockEntities) {
         try {
-            return purStockService.save(purStocks);
+            return purStockService.save(purStockEntities);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -94,13 +94,13 @@ public class PurStockController {
 
     /**
      * 更新 售价 库存数量
-     * @param purStock
+     * @param purStockEntity
      * @return
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public PurStock update(@RequestBody PurStock purStock) {
+    public PurStockEntity update(@RequestBody PurStockEntity purStockEntity) {
         try {
-            return purStockService.update(purStock);
+            return purStockService.update(purStockEntity);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

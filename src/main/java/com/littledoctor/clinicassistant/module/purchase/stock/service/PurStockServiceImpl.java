@@ -2,7 +2,7 @@ package com.littledoctor.clinicassistant.module.purchase.stock.service;
 
 import com.littledoctor.clinicassistant.module.purchase.order.service.OrderService;
 import com.littledoctor.clinicassistant.module.purchase.stock.dao.PurStockRepository;
-import com.littledoctor.clinicassistant.module.purchase.stock.entity.PurStock;
+import com.littledoctor.clinicassistant.module.purchase.stock.entity.PurStockEntity;
 import com.littledoctor.clinicassistant.module.purchase.stock.mapper.PurStockMapper;
 import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
 import org.apache.commons.lang.StringUtils;
@@ -39,23 +39,23 @@ public class PurStockServiceImpl implements PurStockService {
 
     /**
      * 保存入库单
-     * @param purStocks
+     * @param purStockEntities
      * @return
      */
     @Override
-    public List<PurStock> save(List<PurStock> purStocks) throws Exception {
-        if (purStocks != null && purStocks.size() > 0) {
+    public List<PurStockEntity> save(List<PurStockEntity> purStockEntities) throws Exception {
+        if (purStockEntities != null && purStockEntities.size() > 0) {
             HashSet<String> purOrderIds = new HashSet<>();
-            for (int i = 0, len = purStocks.size(); i < len; i++) {
-                if (purStocks.get(i).getPurOrderId() != null) purOrderIds.add(purStocks.get(i).getPurOrderId().toString());
-                purStocks.get(i).setCreateTiem(new Date());
-                purStocks.get(i).setUpdateTime(new Date());
+            for (int i = 0, len = purStockEntities.size(); i < len; i++) {
+                if (purStockEntities.get(i).getPurOrderId() != null) purOrderIds.add(purStockEntities.get(i).getPurOrderId().toString());
+                purStockEntities.get(i).setCreateTiem(new Date());
+                purStockEntities.get(i).setUpdateTime(new Date());
             }
             if (!purOrderIds.isEmpty()) {
                 // 新增入库单的时候需要将与其对应的采购单的状态改为已入库
                 orderService.updateEntry(purOrderIds);
             }
-            return purStockRepository.saveAll(purStocks);
+            return purStockRepository.saveAll(purStockEntities);
         }
         return new ArrayList<>();
     }
@@ -83,25 +83,25 @@ public class PurStockServiceImpl implements PurStockService {
      * @return
      */
     @Override
-    public PurStock queryById(Long purStockId) throws Exception {
+    public PurStockEntity queryById(Long purStockId) throws Exception {
         if (purStockId != null) {
             return purStockRepository.findById(purStockId).get();
         }
-        return new PurStock();
+        return new PurStockEntity();
     }
 
     /**
      * 更新 售价 库存数量
-     * @param purStock
+     * @param purStockEntity
      * @return
      */
     @Override
-    public PurStock update(PurStock purStock) throws Exception {
-        if (purStock != null && purStock.getPurStockId() != null) {
-            PurStock old = this.queryById(purStock.getPurStockId());
+    public PurStockEntity update(PurStockEntity purStockEntity) throws Exception {
+        if (purStockEntity != null && purStockEntity.getPurStockId() != null) {
+            PurStockEntity old = this.queryById(purStockEntity.getPurStockId());
             if (old != null) {
-                old.setSellingPrice(purStock.getSellingPrice());
-                old.setStockCount(purStock.getStockCount());
+                old.setSellingPrice(purStockEntity.getSellingPrice());
+                old.setStockCount(purStockEntity.getStockCount());
                 old.setUpdateTime(new Date());
                 return purStockRepository.saveAndFlush(old);
             }
@@ -118,7 +118,7 @@ public class PurStockServiceImpl implements PurStockService {
     @Override
     public Boolean unshelve(Long purStockId) throws Exception {
         if (purStockId != null) {
-            PurStock old = this.queryById(purStockId);
+            PurStockEntity old = this.queryById(purStockId);
             if (old != null) {
                 old.setStockState(4);// 下架
                 old.setUpdateTime(new Date());
