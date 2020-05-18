@@ -110,7 +110,7 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
     var detailTable = table.render({
         elem: '#detail-table',
         height: 'full-186',
-        limit: 30,// 每个字典类型最多可以录入30个字典项
+        limit: 50,// 每个字典类型最多可以录入50个字典项
         cols: [[
             {field: 'dictName', title: '字典项名称', width: '35%', edit: 'text'},
             {field: 'dictValue', title: '字典项值', width: '20%', edit: 'text'},

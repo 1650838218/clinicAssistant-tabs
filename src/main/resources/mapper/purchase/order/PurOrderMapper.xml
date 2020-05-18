@@ -103,6 +103,7 @@
             b.pur_order_detail_id purOrderDetailId,
             b.item_id itemId,
             b.item_name itemName,
+            b.item_type itemType,
             CONCAT(0 + CAST(b.pur_count AS CHAR),'（',b.pur_unit_name,'）') purCount,
             REPLACE(FORMAT(b.unit_price,4),',','') unitPrice,
             REPLACE(FORMAT(b.total_price,4),',','') totalPrice,
@@ -110,9 +111,10 @@
             b.batch_number batchNumber,
             b.expire_date expireDate,
             b.manufacture_date manufactureDate,
-            b.convert_count stockCount
+            c.unit_convert unitConvert
         FROM
             pur_order_detail b,
+            item_purchase c,
             (
                 SELECT
                     o.item_id,
@@ -126,5 +128,7 @@
         WHERE
             b.pur_order_id = #{purOrderId}
         AND b.item_id = os.item_id
+        AND b.item_id = c.item_id
+        AND b.item_type = c.item_type
     </select>
 </mapper>

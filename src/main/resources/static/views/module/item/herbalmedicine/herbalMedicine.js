@@ -86,6 +86,12 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
         tips: '请选择零售单位'
     });
 
+    // 监听 零售单位 下拉框
+    form.on('select(stockUnit)', function (data) {
+        var optionText = $(data.elem).find('option[value="'+ data.value + '"]').text();// 零售单位
+        $(data.elem).parents('form').find('.stockWarnUnit').text(optionText);
+    });
+
     // 搜索
     $(".left-panel .left-search .layui-input").on("input change",function() {
         if ($.trim($(this).val()) === keyword) {
@@ -229,7 +235,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
             $('#' + formId).show();
             form.render();
             var zTreeObject = $.fn.zTree.getZTreeObj(leftTreeId);
-            zTreeObject.cancelSelectedNode();
+            if (zTreeObject != null) zTreeObject.cancelSelectedNode();
             utils.btnDisabled($('.left-panel button[lay-event="delBtn"]'));
         },
         // 删除

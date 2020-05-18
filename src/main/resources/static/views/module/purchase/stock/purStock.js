@@ -30,7 +30,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
             {field: 'unitPrice', title: '单价(元)'},
             // {field:'unitConvert', title:'单位换算'},
             {field: 'breakevenPrice', title: '保本售价(元)', templet: function (d) {
-                    var breakeven = d.totalPrice/d.stockCount;
+                    var breakeven = d.unitPrice/d.unitConvert;
                     if (isNaN(breakeven)) {
                         return '';
                     } else {
