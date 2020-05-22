@@ -224,7 +224,7 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
             elem: '#' + skillTableId
             ,id: skillTableId
             ,height: 'full-190'
-            ,url: '/skill/findAll' //数据接口
+            ,url: '/item/skill/findAll' //数据接口
             ,text: {
                 none: '无数据！'
             }

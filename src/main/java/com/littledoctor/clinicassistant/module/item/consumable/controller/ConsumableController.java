@@ -30,7 +30,7 @@ public class ConsumableController {
 
 
     /**
-     * 查询所有的医技项目
+     * 查询所有的其他耗材
      * @return
      */
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
@@ -44,7 +44,7 @@ public class ConsumableController {
     }
 
     /**
-     * 保存医技项目
+     * 保存其他耗材
      * @param entity
      * @return
      */
@@ -60,7 +60,7 @@ public class ConsumableController {
     }
 
     /**
-     * 删除医技项目
+     * 删除其他耗材
      * @param id
      * @return
      */

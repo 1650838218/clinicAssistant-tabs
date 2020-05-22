@@ -30,6 +30,14 @@ public class PurStockEntity {
     @Column(name = "ITEM_NAME")
     private String itemName;
 
+    /** 简拼 */
+    @Column(name = "abbr_pinyin", nullable = true, length = 50)
+    private String abbrPinyin;
+
+    /** 全拼 */
+    @Column(name = "full_pinyin", nullable = true, length = 500)
+    private String fullPinyin;
+
     /** 品目分类 */
     @Column(name = "ITEM_TYPE")
     private String itemType;
@@ -51,8 +59,8 @@ public class PurStockEntity {
     private Double stockCount;
 
     /** 库存单位名称 */
-    @Column(name = "STOCK_UNIT_NAME")
-    private String stockUnitName;
+    @Column(name = "STOCK_UNIT")
+    private String stockUnit;
 
     /** 零售价 */
     @Column(name = "SELLING_PRICE")
@@ -174,11 +182,27 @@ public class PurStockEntity {
         this.itemType = itemType;
     }
 
-    public String getStockUnitName() {
-        return stockUnitName;
+    public String getStockUnit() {
+        return stockUnit;
     }
 
-    public void setStockUnitName(String stockUnitName) {
-        this.stockUnitName = stockUnitName;
+    public void setStockUnit(String stockUnit) {
+        this.stockUnit = stockUnit;
+    }
+
+    public String getAbbrPinyin() {
+        return abbrPinyin;
+    }
+
+    public void setAbbrPinyin(String abbrPinyin) {
+        this.abbrPinyin = abbrPinyin;
+    }
+
+    public String getFullPinyin() {
+        return fullPinyin;
+    }
+
+    public void setFullPinyin(String fullPinyin) {
+        this.fullPinyin = fullPinyin;
     }
 }

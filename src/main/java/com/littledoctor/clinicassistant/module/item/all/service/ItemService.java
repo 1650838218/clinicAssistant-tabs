@@ -43,11 +43,9 @@ public class ItemService {
         result = itemMapper.getPurchaseItem(keywords);
         if (!ObjectUtils.isEmpty(result)) {
             Map<String, String> pmflMap = dictionaryService.getItemMapByKey(DictionaryKey.ITEM_PMFL);
-            Map<String, String> jhbzMap = dictionaryService.getItemMapByKey(DictionaryKey.PUR_ITEM_JHBZ);
             for (int i = 0; i < result.size(); i++) {
                 ItemEntity entity = result.get(i);
                 entity.setItemTypeName(pmflMap.get(entity.getItemType()));
-                entity.setPurUnitName(jhbzMap.get(entity.getPurUnit()));
             }
         }
         return result;

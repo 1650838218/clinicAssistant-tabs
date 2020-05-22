@@ -20,7 +20,9 @@
         </if>
         <if test="keywords != null and keywords != ''">
             AND (
-            a.item_name LIKE CONCAT('%', #{keywords}, '%')
+                a.item_name LIKE CONCAT('%', #{keywords}, '%')
+                OR LOWER(a.abbr_pinyin) LIKE concat('%', LOWER(#{keywords}), '%')
+                OR UPPER(a.full_pinyin) LIKE concat('%', UPPER(#{keywords}), '%')
             )
         </if>
     </select>
@@ -33,7 +35,7 @@
             d.dict_name dictName,
             a.batch_number batchNumber,
             a.expire_date expireDate,
-            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',a.stock_unit_name,'）') stockCount,
+            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',a.stock_unit,'）') stockCount,
             REPLACE (FORMAT(a.selling_price, 4),',','') sellingPrice
         FROM
             pur_stock a,
@@ -53,7 +55,9 @@
         AND d.is_use = 1
         <if test="keywords != null and keywords != ''">
             AND (
-            a.item_name LIKE CONCAT('%', #{keywords}, '%')
+                a.item_name LIKE CONCAT('%', #{keywords}, '%')
+                OR LOWER(a.abbr_pinyin) LIKE concat('%', LOWER(#{keywords}), '%')
+                OR UPPER(a.full_pinyin) LIKE concat('%', UPPER(#{keywords}), '%')
             )
         </if>
         LIMIT ${offset},${pageSize}
@@ -93,8 +97,8 @@
             a.item_id itemId,
             a.item_name itemName,
             c.dict_name itemType,
-            CONCAT(0 + CAST(b.stock_warn AS CHAR),'（',a.stock_unit_name,'）') stockWarn,
-            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',a.stock_unit_name,'）') stockCount
+            CONCAT(0 + CAST(b.stock_warn AS CHAR),'（',a.stock_unit,'）') stockWarn,
+            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',a.stock_unit,'）') stockCount
         FROM
             pur_stock a,
             item_purchase b,

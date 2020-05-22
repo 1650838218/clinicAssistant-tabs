@@ -96,10 +96,6 @@ public class PurItemEntity implements java.io.Serializable {
     @Column(name = "PUR_UNIT", nullable = true, length = 10)
     private String purUnit;
 
-    /** 进货包装（采购单位） 显示值 */
-    @Transient
-    private String purUnitName;
-
     /** 库存单位 */
     @Column(name = "STOCK_UNIT", nullable = true, length = 10)
     private String stockUnit;
@@ -464,14 +460,6 @@ public class PurItemEntity implements java.io.Serializable {
 
     public void setPurItemTypeName(String purItemTypeName) {
         this.purItemTypeName = purItemTypeName;
-    }
-
-    public String getPurUnitName() {
-        return purUnitName;
-    }
-
-    public void setPurUnitName(String purUnitName) {
-        this.purUnitName = purUnitName;
     }
     /*  */
 }

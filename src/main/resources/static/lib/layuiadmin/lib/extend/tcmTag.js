@@ -74,7 +74,7 @@ layui.define(["jquery", "layer"], function (exports) {
             },
             method: 'get',
             formatter: function (row) {
-                return row.pharmacyItemName + ' ' + parseFloat(row.sellingPrice).toFixed(2) + '元/' + row.stockUnitName;
+                return row.pharmacyItemName + ' ' + parseFloat(row.sellingPrice).toFixed(2) + '元/' + row.stockUnit;
             },
             onHidePanel: function () {
                 var combo = $(this);
@@ -182,7 +182,7 @@ layui.define(["jquery", "layer"], function (exports) {
         }
         var tagPanel = $('#' + options.id);
         var tagBody = tagPanel.find('.tcm-tag-body');
-        var tagHtml = '<div id="' + (options.id + '--' + data.pharmacyItemId) + '" class="tcm-tag"><p class="tcm-tag-name">' + data.pharmacyItemName + '</p><input type="number" value="' + (data.dose ? data.dose : 0) + '"/><p>' + data.stockUnitName + '</p><i class="layui-icon layui-icon-close" title="删除"></i></div>';
+        var tagHtml = '<div id="' + (options.id + '--' + data.pharmacyItemId) + '" class="tcm-tag"><p class="tcm-tag-name">' + data.pharmacyItemName + '</p><input type="number" value="' + (data.dose ? data.dose : 0) + '"/><p>' + data.stockUnit + '</p><i class="layui-icon layui-icon-close" title="删除"></i></div>';
         tagBody.append(tagHtml);
         if (thisTag.dataArray[options.id]) {
             thisTag.dataArray[options.id].push(data);

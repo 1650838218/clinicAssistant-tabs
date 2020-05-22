@@ -220,7 +220,7 @@ public class ItemServiceImpl implements ItemService {
             Map<String, String> sldw = dictionaryService.getItemMapByKey(DictionaryKey.PUR_ITEM_JHBZ);// 进货包装，采购单位
             for (int i = 0, len = result.size(); i < len; i++) {
                 if (ypfl != null) result.get(i).setItemTypeName(ypfl.get(result.get(i).getItemType()));
-                if (sldw != null) result.get(i).setPurUnitName(sldw.get(result.get(i).getPurUnit()));
+                if (sldw != null) result.get(i).setPurUnit(sldw.get(result.get(i).getPurUnit()));
             }
         }
         return result;

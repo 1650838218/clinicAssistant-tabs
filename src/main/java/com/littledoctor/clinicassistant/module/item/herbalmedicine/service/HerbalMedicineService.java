@@ -1,5 +1,6 @@
 package com.littledoctor.clinicassistant.module.item.herbalmedicine.service;
 
+import com.littledoctor.clinicassistant.common.constant.DictionaryKey;
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.module.item.constant.ItemType;
 import com.littledoctor.clinicassistant.module.item.herbalmedicine.dao.HerbalMedicineDao;
@@ -66,6 +67,10 @@ public class HerbalMedicineService {
      */
     @Transactional
     public HerbalMedicineEntity save(HerbalMedicineEntity entity) throws Exception {
+        String jhbz = dictionaryService.getDictNameByDictKeyAndDictValue(DictionaryKey.PUR_ITEM_JHBZ, entity.getPurUnit());
+        String kcdw = dictionaryService.getDictNameByDictKeyAndDictValue(DictionaryKey.PUR_ITEM_LSDW, entity.getStockUnit());
+        entity.setPurUnitName(jhbz);
+        entity.setStockUnitName(kcdw);
         return   herbalMedicineDao.saveAndFlush(entity);
     }
 

@@ -1,5 +1,6 @@
 package com.littledoctor.clinicassistant.module.purchase.stock.service;
 
+import com.littledoctor.clinicassistant.common.constant.DictionaryKey;
 import com.littledoctor.clinicassistant.module.purchase.order.service.OrderService;
 import com.littledoctor.clinicassistant.module.purchase.stock.dao.PurStockRepository;
 import com.littledoctor.clinicassistant.module.purchase.stock.entity.PurStockEntity;
@@ -137,18 +138,7 @@ public class PurStockServiceImpl implements PurStockService {
      */
     @Override
     public List<Map<String, Object>> getCombogrid(String keywords, String purItemType) throws Exception {
-        List<Map<String, Object>> result = purStockMapper.getCombogridForDecoction(keywords, purItemType);
-        // 设置库存单位名称
-        if (result.size() > 0) {
-            Map<String, String> kcdw = dictionaryService.getItemMapByKey("KCDW");// 库存单位
-            for (int i = 0, len = result.size(); i < len; i++) {
-                Map<String, Object> map = result.get(i);
-                if (map.containsKey("stockUnit") && kcdw.containsKey(map.get("stockUnit"))) {
-                    map.put("stockUnitName", kcdw.get(map.get("stockUnit")));
-                }
-            }
-        }
-        return result;
+        return purStockMapper.getCombogridForDecoction(keywords, purItemType);
     }
 
     /**
@@ -160,15 +150,7 @@ public class PurStockServiceImpl implements PurStockService {
     @Override
     public Map<String, Object> findByName(String medicalName) throws Exception {
         if (StringUtils.isNotBlank(medicalName)) {
-            Map<String, Object> result = purStockMapper.findByName(medicalName);
-            // 设置库存单位名称
-            if (!ObjectUtils.isEmpty(result)) {
-                Map<String, String> kcdw = dictionaryService.getItemMapByKey("KCDW");// 库存单位
-                if (result.containsKey("stockUnit") && kcdw.containsKey(result.get("stockUnit"))) {
-                    result.put("stockUnitName", kcdw.get(result.get("stockUnit")));
-                }
-            }
-            return result;
+            return purStockMapper.findByName(medicalName);
         }
         return null;
     }

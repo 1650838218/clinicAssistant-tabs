@@ -92,30 +92,6 @@ public class OrderService {
             // 设置供应商名称
             SupplierEntity supplierEntity = supplierService.findById(String.valueOf(orderEntity.getSupplierId()));
             orderEntity.setSupplierName(supplierEntity.getSupplierName());
-            /*List<OrderDetailEntity> pods = orderEntity.getOrderDetailEntities();
-            if (pods != null && pods.size() > 0) {
-                // 查询字典显示值
-                Map<String, String> sldw = dictionaryService.getItemMapByKey(DictionaryKey.PUR_ITEM_JHBZ);
-                Map<String, String> kcdw = dictionaryService.getItemMapByKey(DictionaryKey.PUR_ITEM_LSDW);
-                for (int i = 0, len = pods.size(); i < len; i++) {
-                    OrderDetailEntity pbi = pods.get(i);
-                    // 查询药品信息
-                    if (pbi.getItemId() != null) {
-                        ItemEntity pi = itemService.getById(String.valueOf(pbi.getItemId()));
-                        if (pi != null) {
-                            pbi.setitemName(pi.getItemName());
-                            pbi.setUnitConvert(pi.getUnitConvert());
-                            // 计算库存量
-                            if (pbi.getPurCount() != null && pbi.getUnitConvert() != null) {
-                                pbi.setStockCount(pbi.getPurCount().multiply(new BigDecimal(pbi.getUnitConvert())));
-                            }
-                            // 设置数量单位名称
-                            if (sldw != null) pbi.setPurUnitName(sldw.get(pi.getPurUnit()));
-                            if (kcdw != null) pbi.setStockUnitName(kcdw.get(pi.getStockUnit()));
-                        }
-                    }
-                }
-            }*/
         }
         return orderEntity;
     }

@@ -47,8 +47,8 @@ public class OrderDetailEntity {
     private BigDecimal purCount;
 
     /** 采购单位名称 */
-    @Column(name = "PUR_UNIT_NAME")
-    private String purUnitName;
+    @Column(name = "PUR_UNIT")
+    private String purUnit;
 
     /** 单价 */
     @Column(name = "UNIT_PRICE")
@@ -57,18 +57,6 @@ public class OrderDetailEntity {
     /** 总价 */
     @Column(name = "TOTAL_PRICE")
     private BigDecimal totalPrice;
-
-    /** 库存单位名称 */
-    @Transient
-    private String stockUnitName;
-
-    /** 单位换算 */
-    @Transient
-    private Long unitConvert;
-
-    /** 库存数量 */
-    @Transient
-    private BigDecimal stockCount;
 
     public Long getPurOrderDetailId() {
         return purOrderDetailId;
@@ -150,35 +138,11 @@ public class OrderDetailEntity {
         this.expireDate = expireDate;
     }
 
-    public String getPurUnitName() {
-        return purUnitName;
+    public String getPurUnit() {
+        return purUnit;
     }
 
-    public void setPurUnitName(String purUnitName) {
-        this.purUnitName = purUnitName;
-    }
-
-    public String getStockUnitName() {
-        return stockUnitName;
-    }
-
-    public void setStockUnitName(String stockUnitName) {
-        this.stockUnitName = stockUnitName;
-    }
-
-    public BigDecimal getStockCount() {
-        return stockCount;
-    }
-
-    public void setStockCount(BigDecimal stockCount) {
-        this.stockCount = stockCount;
-    }
-
-    public Long getUnitConvert() {
-        return unitConvert;
-    }
-
-    public void setUnitConvert(Long unitConvert) {
-        this.unitConvert = unitConvert;
+    public void setPurUnit(String purUnit) {
+        this.purUnit = purUnit;
     }
 }

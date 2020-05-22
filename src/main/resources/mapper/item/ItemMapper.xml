@@ -8,7 +8,7 @@
         <result property="itemType" column="ITEM_TYPE" />
         <result property="specifications" column="SPECIFICATIONS" />
         <result property="producer" column="PRODUCER" />
-        <result property="purUnit" column="pur_unit" />
+        <result property="purUnitName" column="pur_unit_name" />
     </resultMap>
 
 
@@ -17,28 +17,28 @@
         item_name like concat('%',#{keywords},'%') or upper(abbr_pinyin) like UPPER(concat(#{keywords},'%')) or lower(full_pinyin) like lower(concat(#{keywords},'%'))
     </sql>
     <select id="getPurchaseItem" resultMap="itemEntity">
-        SELECT a.item_id, a.item_name, 'HerbalMedicine' as item_type, NULL as specifications, a.producer, pur_unit FROM item_herbal_medicine a
+        SELECT a.item_id, a.item_name, 'HerbalMedicine' as item_type, NULL as specifications, a.producer, pur_unit_name FROM item_herbal_medicine a
             <if test="keywords != null and keywords != ''">
                 <where>
                     <include refid="queryByKeywords"/>
                 </where>
             </if>
         UNION ALL
-        SELECT b.item_id, b.item_name, 'PatentMedicine' as item_type, b.specifications, b.producer, pur_unit FROM item_patent_medicine b
+        SELECT b.item_id, b.item_name, 'PatentMedicine' as item_type, b.specifications, b.producer, pur_unit_name FROM item_patent_medicine b
             <if test="keywords != null and keywords != ''">
                 <where>
                     <include refid="queryByKeywords"/>
                 </where>
             </if>
         UNION ALL
-        SELECT c.item_id, c.item_name, 'MedicalSupply' as item_type, c.specifications, c.producer, pur_unit FROM item_medical_supply c
+        SELECT c.item_id, c.item_name, 'MedicalSupply' as item_type, c.specifications, c.producer, pur_unit_name FROM item_medical_supply c
             <if test="keywords != null and keywords != ''">
                 <where>
                     <include refid="queryByKeywords"/>
                 </where>
             </if>
         UNION ALL
-        SELECT d.item_id, d.item_name, 'Consumable' as item_type, d.specifications, d.producer, pur_unit FROM item_consumable d
+        SELECT d.item_id, d.item_name, 'Consumable' as item_type, d.specifications, d.producer, pur_unit_name FROM item_consumable d
             <if test="keywords != null and keywords != ''">
                 <where>
                     <include refid="queryByKeywords"/>

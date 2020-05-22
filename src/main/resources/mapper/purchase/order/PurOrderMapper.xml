@@ -111,7 +111,11 @@
             b.batch_number batchNumber,
             b.expire_date expireDate,
             b.manufacture_date manufactureDate,
-            c.unit_convert unitConvert
+            c.unit_convert unitConvert,
+            b.pur_count * c.unit_convert stockCount,
+            c.stock_unit stockUnit,
+            c.abbr_pinyin abbrPinyin,
+            c.full_pinyin fullPinyin
         FROM
             pur_order_detail b,
             item_purchase c,

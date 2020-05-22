@@ -1,9 +1,11 @@
 package com.littledoctor.clinicassistant.module.item.medicalsupply.service;
 
+import com.littledoctor.clinicassistant.common.constant.DictionaryKey;
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.module.item.medicalsupply.dao.MedicalSupplyDao;
 import com.littledoctor.clinicassistant.module.item.medicalsupply.entity.MedicalSupplyEntity;
 import com.littledoctor.clinicassistant.module.purchase.supplier.entity.SupplierEntity;
+import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,6 +33,9 @@ public class MedicalSupplyService {
     @Autowired
     private MedicalSupplyDao medicalSupplyDao;
 
+    @Autowired
+    private DictionaryService dictionaryService;
+
     /**
      * 保存
      * @param entity
@@ -38,6 +43,10 @@ public class MedicalSupplyService {
      */
     @Transactional
     public MedicalSupplyEntity save(MedicalSupplyEntity entity) throws Exception {
+        String jhbz = dictionaryService.getDictNameByDictKeyAndDictValue(DictionaryKey.PUR_ITEM_JHBZ, entity.getPurUnit());
+        String kcdw = dictionaryService.getDictNameByDictKeyAndDictValue(DictionaryKey.PUR_ITEM_LSDW, entity.getStockUnit());
+        entity.setPurUnitName(jhbz);
+        entity.setStockUnitName(kcdw);
         return  medicalSupplyDao.saveAndFlush(entity);
     }
 

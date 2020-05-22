@@ -1,5 +1,6 @@
 package com.littledoctor.clinicassistant.module.item.patentmedicine.service;
 
+import com.littledoctor.clinicassistant.common.constant.DictionaryKey;
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.module.item.constant.ItemType;
 import com.littledoctor.clinicassistant.module.item.patentmedicine.dao.PatentMedicineDao;
@@ -41,6 +42,10 @@ public class PatentMedicineService {
      */
     @Transactional
     public PatentMedicineEntity save(PatentMedicineEntity entity) throws Exception {
+        String jhbz = dictionaryService.getDictNameByDictKeyAndDictValue(DictionaryKey.PUR_ITEM_JHBZ, entity.getPurUnit());
+        String kcdw = dictionaryService.getDictNameByDictKeyAndDictValue(DictionaryKey.PUR_ITEM_LSDW, entity.getStockUnit());
+        entity.setPurUnitName(jhbz);
+        entity.setStockUnitName(kcdw);
         return patentMedicineDao.saveAndFlush(entity);
     }
 

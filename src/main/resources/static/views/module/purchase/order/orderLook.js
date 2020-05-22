@@ -28,7 +28,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table'], function () {
             {field: 'manufactureDate', title: '生产日期', width: '13%'},
             {field: 'expireDate', title: '有效期至', width: '13%'},
             {field: 'purCount', title: '采购数量', width: '10%',templet: function (d) {
-                    return d.purCount + '（' + d.purUnitName + ')';
+                    return d.purCount + '（' + d.purUnit + ')';
                 }
              },
             // {field: 'purUnitName', title: '采购单位', width: '10%'},

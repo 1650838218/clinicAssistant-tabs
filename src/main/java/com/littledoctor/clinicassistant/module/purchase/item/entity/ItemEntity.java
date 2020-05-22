@@ -117,9 +117,6 @@ public class ItemEntity implements java.io.Serializable {
     @Column(name = "pur_unit", nullable = true, length = 10)
     private String purUnit;
 
-    @Transient
-    private String purUnitName;
-
     /** 零售单位 */
     @Column(name = "stock_unit", nullable = true, length = 10)
     private String stockUnit;
@@ -486,14 +483,6 @@ public class ItemEntity implements java.io.Serializable {
 
     public void setItemTypeName(String itemTypeName) {
         this.itemTypeName = itemTypeName;
-    }
-
-    public String getPurUnitName() {
-        return purUnitName;
-    }
-
-    public void setPurUnitName(String purUnitName) {
-        this.purUnitName = purUnitName;
     }
 
     public String getSource() {

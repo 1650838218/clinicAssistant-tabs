@@ -84,7 +84,7 @@
                     <div class="layui-col-sm6">
                         <div class="layui-row layui-col-space5">
                             <div class="layui-col-md8">
-                                <label class="layui-form-label"><span class="required">*</span>年龄：</label>
+                                <label class="layui-form-label"><!--<span class="required">*</span>-->年龄：</label>
                                 <div class="layui-input-block">
                                     <input name="patientAge" class="layui-input" placeholder="年龄" maxlength="3" lay-verify="required|number">
                                 </div>
@@ -119,7 +119,7 @@
                         </div>
                     </div>
                     <div class="layui-col-sm12">
-                        <label class="layui-form-label"><span class="required">*</span>四诊：</label>
+                        <label class="layui-form-label"><!--<span class="required">*</span>-->四诊：</label>
                         <div class="layui-input-block">
                             <textarea name="lookSmellAskPress" class="layui-textarea" placeholder="请填写四诊" maxlength="500" lay-verify="required" style="min-height: 80px"></textarea>
                         </div>
@@ -131,7 +131,7 @@
                         </div>
                     </div>
                     <div class="layui-col-sm12">
-                        <label class="layui-form-label"><span class="required">*</span>诊断：</label>
+                        <label class="layui-form-label"><!--<span class="required">*</span>-->诊断：</label>
                         <div class="layui-input-block">
                             <input name="diagnosis" class="layui-input" placeholder="请填写诊断" maxlength="100" lay-verify="required">
                         </div>
@@ -143,7 +143,7 @@
                         </div>
                     </div>
                     <div class="layui-col-sm12">
-                        <label class="layui-form-label"><span class="required">*</span>处方：</label>
+                        <label class="layui-form-label"><!--<span class="required">*</span>-->处方：</label>
                         <div class="layui-input-block">
                             <input type="checkbox" name="prescriptionType" value="1" title="中药方" lay-skin="primary" lay-filter="prescriptionType">
                             <input type="checkbox" name="prescriptionType" value="2" title="中成药方" lay-skin="primary" lay-filter="prescriptionType">
@@ -231,7 +231,7 @@
                                         <th data-options="field: 'specifications'" width="18%">规格</th>
                                         <th data-options="field: 'usageAndDosage'" width="30%">用法用量</th>
                                         <th data-options="field: 'medicineCount',align:'center'" width="8%">数量</th>
-                                        <th data-options="field: 'stockUnitName',align:'center'" width="8%">单位</th>
+                                        <th data-options="field: 'stockUnit',align:'center'" width="8%">单位</th>
                                         <th data-options="field: 'sellingPrice'" width="10%">单价(元)</th>
                                         <th data-options="field: 'totalMoney'" width="10%">总价(元)</th>
                                     </tr>
