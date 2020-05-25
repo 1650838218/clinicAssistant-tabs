@@ -35,7 +35,7 @@
             d.dict_name dictName,
             a.batch_number batchNumber,
             a.expire_date expireDate,
-            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',a.stock_unit,'）') stockCount,
+            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',a.stock_unit_name,'）') stockCount,
             REPLACE (FORMAT(a.selling_price, 4),',','') sellingPrice
         FROM
             pur_stock a,
@@ -97,8 +97,8 @@
             a.item_id itemId,
             a.item_name itemName,
             c.dict_name itemType,
-            CONCAT(0 + CAST(b.stock_warn AS CHAR),'（',a.stock_unit,'）') stockWarn,
-            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',a.stock_unit,'）') stockCount
+            CONCAT(0 + CAST(b.stock_warn AS CHAR),'（',a.stock_unit_name,'）') stockWarn,
+            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',a.stock_unit_name,'）') stockCount
         FROM
             pur_stock a,
             item_purchase b,
@@ -155,33 +155,23 @@
             b.item_name itemName,
             c.dict_name itemType,
             a.expire_date expireDate,
-            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',f.dict_name,'）') stockCount,
-            CONCAT(REPLACE(FORMAT(e.unit_price,2),',',''),'/',d.dict_name) unitPrice,
+            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',a.stock_unit_name),'）') stockCount,
+            CONCAT(REPLACE(FORMAT(e.unit_price,2),',',''),'/',e.pur_unit_name) unitPrice,
             REPLACE(FORMAT(e.unit_price / b.unit_convert * a.stock_count,2),',','') loss
         FROM
             pur_stock a,
             item_purchase b,
             sys_dictionary c,
-            sys_dictionary d,
-            pur_order_detail e,
-            sys_dictionary f
+            pur_order_detail e
         WHERE
             a.stock_state = '3'
         AND c.is_use = 1
-        AND d.is_use = 1
-        AND f.is_use = 1
         AND c.dict_type = 2
-        AND d.dict_type = 2
-        AND f.dict_type = 2
         AND c.dict_key = 'CGPMFL'
-        AND d.dict_key = 'JHBZ'
-        AND f.dict_key = 'LSDW'
         AND a.item_id = b.item_id
         AND b.item_type = c.dict_value
-        AND b.pur_unit = d.dict_value
         AND a.pur_order_id = e.pur_order_id
         AND a.item_id = e.item_id
-        AND b.stock_unit = f.dict_value
     </select>
 
     <!-- 用于病历开方时根据药品名称查询药品信息 -->

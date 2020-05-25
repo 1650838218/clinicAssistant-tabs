@@ -59,8 +59,8 @@ public class PurStockEntity {
     private Double stockCount;
 
     /** 库存单位名称 */
-    @Column(name = "STOCK_UNIT")
-    private String stockUnit;
+    @Column(name = "STOCK_UNIT_NAME")
+    private String stockUnitName;
 
     /** 零售价 */
     @Column(name = "SELLING_PRICE")
@@ -182,12 +182,12 @@ public class PurStockEntity {
         this.itemType = itemType;
     }
 
-    public String getStockUnit() {
-        return stockUnit;
+    public String getStockUnitName() {
+        return stockUnitName;
     }
 
-    public void setStockUnit(String stockUnit) {
-        this.stockUnit = stockUnit;
+    public void setStockUnitName(String stockUnitName) {
+        this.stockUnitName = stockUnitName;
     }
 
     public String getAbbrPinyin() {

@@ -233,6 +233,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
             utils.clearForm('#' + formId);// 清空表单
             $('.right-panel .blank-tip').hide();
             $('#' + formId).show();
+            form.val(formId, {isPoison:0,purUnit:2,stockUnit:1,unitConvert:500});
             form.render();
             var zTreeObject = $.fn.zTree.getZTreeObj(leftTreeId);
             if (zTreeObject != null) zTreeObject.cancelSelectedNode();

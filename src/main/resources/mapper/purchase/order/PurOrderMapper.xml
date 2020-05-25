@@ -32,9 +32,7 @@
             AND date_format(a.create_time,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
         </if>
         <if test="itemName != null and itemName != ''">
-            AND (
-                d.item_name LIKE concat('%', #{itemName}, '%')
-            )
+            AND d.item_name LIKE concat('%', #{itemName}, '%')
         </if>
         <if test="supplierId != null and supplierId != ''">
             AND a.supplier_id = #{supplierId}
@@ -68,11 +66,7 @@
             AND date_format(a.create_time,'%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
         </if>
         <if test="itemName != null and itemName != ''">
-            AND (
-            d.item_name LIKE concat('%', #{itemName}, '%')
-            /*OR LOWER(d.abbr_pinyin) LIKE concat('%', LOWER(#{itemName}), '%')
-            OR UPPER(d.full_pinyin) LIKE concat('%', UPPER(#{itemName}), '%')*/
-            )
+            AND d.item_name LIKE concat('%', #{itemName}, '%')
         </if>
         <if test="supplierId != null and supplierId != ''">
             AND a.supplier_id = #{supplierId}
@@ -113,7 +107,7 @@
             b.manufacture_date manufactureDate,
             c.unit_convert unitConvert,
             b.pur_count * c.unit_convert stockCount,
-            c.stock_unit stockUnit,
+            c.stock_unit_name stockUnitName,
             c.abbr_pinyin abbrPinyin,
             c.full_pinyin fullPinyin
         FROM

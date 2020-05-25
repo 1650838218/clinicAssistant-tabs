@@ -47,8 +47,8 @@ public class OrderDetailEntity {
     private BigDecimal purCount;
 
     /** 采购单位名称 */
-    @Column(name = "PUR_UNIT")
-    private String purUnit;
+    @Column(name = "PUR_UNIT_NAME")
+    private String purUnitName;
 
     /** 单价 */
     @Column(name = "UNIT_PRICE")
@@ -138,11 +138,11 @@ public class OrderDetailEntity {
         this.expireDate = expireDate;
     }
 
-    public String getPurUnit() {
-        return purUnit;
+    public String getPurUnitName() {
+        return purUnitName;
     }
 
-    public void setPurUnit(String purUnit) {
-        this.purUnit = purUnit;
+    public void setPurUnitName(String purUnitName) {
+        this.purUnitName = purUnitName;
     }
 }

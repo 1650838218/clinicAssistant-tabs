@@ -149,8 +149,8 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                     hasDownArrow: false,
                     onSelect: function(index,rowData){
                         // 设置进货包装
-                        var editor3 = $('#' + itemTableId).datagrid('getEditor',{index: editIndex,field: 'purUnit'});
-                        $(editor3.target).textbox('setValue', rowData.purUnit);
+                        var editor3 = $('#' + itemTableId).datagrid('getEditor',{index: editIndex,field: 'purUnitName'});
+                        $(editor3.target).textbox('setValue', rowData.purUnitName);
                         var curRow = $('#' + itemTableId).datagrid('getSelected');
                         if (curRow != null) {
                             curRow.itemType = rowData.itemType;
@@ -159,7 +159,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                     onChange: function (newValue, oldValue) {
                         if (!utils.isNotNull(newValue)) {
                             // 清空进货包装
-                            var editor3 = $('#' + itemTableId).datagrid('getEditor',{index: editIndex,field: 'purUnit'});
+                            var editor3 = $('#' + itemTableId).datagrid('getEditor',{index: editIndex,field: 'purUnitName'});
                             $(editor3.target).textbox('clear');
                         }
                     },
@@ -196,7 +196,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
             }
         },
         {
-            field: 'purUnit',
+            field: 'purUnitName',
             editor: {
                 type: 'textbox',
                 options: {
@@ -205,7 +205,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                 }
             },
             formatter:function(value,row){
-                return row.purUnit;
+                return row.purUnitName;
             }
         },
         {
