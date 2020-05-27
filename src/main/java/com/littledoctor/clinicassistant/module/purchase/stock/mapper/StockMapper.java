@@ -8,12 +8,12 @@ import java.util.Map;
 
 /**
  * @业务信息: 库存
- * @Filename: PurStockMapper.java
+ * @Filename: StockMapper.java
  * @Description:
  * 2019-08-01   周俊林
  */
 @Mapper
-public interface PurStockMapper {
+public interface StockMapper {
 
     /**
      * 查询库存
@@ -34,12 +34,11 @@ public interface PurStockMapper {
     List<Map<String, Object>> findAll(@Param("keywords") String keywords, @Param("offset") Long offset, @Param("pageSize") int pageSize, @Param("expireDate") boolean expireDate);
 
     /**
-     * 用于病历开中药方时根据药品名称查询药品信息
+     * 查询库存中药
      * @param keywords
-     * @param purItemType
      * @return
      */
-    List<Map<String, Object>> getCombogridForDecoction(@Param("keywords") String keywords, @Param("purItemType") String purItemType);
+    List<Map<String, Object>> getCombogridForHerbalMedicine(@Param("keywords") String keywords);
 
     /**
      * 根据药材名称查询药材信息

@@ -1,10 +1,9 @@
 package com.littledoctor.clinicassistant.module.purchase.stock.service;
 
-import com.littledoctor.clinicassistant.common.constant.DictionaryKey;
 import com.littledoctor.clinicassistant.module.purchase.order.service.OrderService;
-import com.littledoctor.clinicassistant.module.purchase.stock.dao.PurStockRepository;
-import com.littledoctor.clinicassistant.module.purchase.stock.entity.PurStockEntity;
-import com.littledoctor.clinicassistant.module.purchase.stock.mapper.PurStockMapper;
+import com.littledoctor.clinicassistant.module.purchase.stock.dao.StockDao;
+import com.littledoctor.clinicassistant.module.purchase.stock.entity.StockEntity;
+import com.littledoctor.clinicassistant.module.purchase.stock.mapper.StockMapper;
 import com.littledoctor.clinicassistant.module.system.dictionary.service.DictionaryService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,16 +23,16 @@ import java.util.*;
  */
 @Service
 @Transactional
-public class PurStockServiceImpl implements PurStockService {
+public class StockService {
 
     @Autowired
-    private PurStockRepository purStockRepository;
+    private StockDao stockDao;
 
     @Autowired
     private OrderService orderService;
 
     @Autowired(required = false)
-    private PurStockMapper purStockMapper;
+    private StockMapper stockMapper;
 
     @Autowired
     private DictionaryService dictionaryService;
@@ -43,8 +42,7 @@ public class PurStockServiceImpl implements PurStockService {
      * @param purStockEntities
      * @return
      */
-    @Override
-    public List<PurStockEntity> save(List<PurStockEntity> purStockEntities) throws Exception {
+    public List<StockEntity> save(List<StockEntity> purStockEntities) throws Exception {
         if (purStockEntities != null && purStockEntities.size() > 0) {
             HashSet<String> purOrderIds = new HashSet<>();
             for (int i = 0, len = purStockEntities.size(); i < len; i++) {
@@ -56,7 +54,7 @@ public class PurStockServiceImpl implements PurStockService {
                 // 新增入库单的时候需要将与其对应的采购单的状态改为已入库
                 orderService.updateEntry(purOrderIds);
             }
-            return purStockRepository.saveAll(purStockEntities);
+            return stockDao.saveAll(purStockEntities);
         }
         return new ArrayList<>();
     }
@@ -69,12 +67,11 @@ public class PurStockServiceImpl implements PurStockService {
      * @return
      * @throws Exception
      */
-    @Override
     public Page<Map<String, Object>> queryPage(Pageable page, String keywords, boolean expireDate) throws Exception {
         Long offset = page.getOffset();
         int pageSize = page.getPageSize();
-        int count = purStockMapper.count(keywords, expireDate);
-        List<Map<String, Object>> stockDetails = purStockMapper.findAll(keywords,offset,pageSize, expireDate);
+        int count = stockMapper.count(keywords, expireDate);
+        List<Map<String, Object>> stockDetails = stockMapper.findAll(keywords,offset,pageSize, expireDate);
         return new PageImpl<>(stockDetails, page, count);
     }
 
@@ -83,28 +80,26 @@ public class PurStockServiceImpl implements PurStockService {
      * @param purStockId
      * @return
      */
-    @Override
-    public PurStockEntity queryById(Long purStockId) throws Exception {
+    public StockEntity queryById(Long purStockId) throws Exception {
         if (purStockId != null) {
-            return purStockRepository.findById(purStockId).get();
+            return stockDao.findById(purStockId).get();
         }
-        return new PurStockEntity();
+        return new StockEntity();
     }
 
     /**
      * 更新 售价 库存数量
-     * @param purStockEntity
+     * @param stockEntity
      * @return
      */
-    @Override
-    public PurStockEntity update(PurStockEntity purStockEntity) throws Exception {
-        if (purStockEntity != null && purStockEntity.getPurStockId() != null) {
-            PurStockEntity old = this.queryById(purStockEntity.getPurStockId());
+    public StockEntity update(StockEntity stockEntity) throws Exception {
+        if (stockEntity != null && stockEntity.getPurStockId() != null) {
+            StockEntity old = this.queryById(stockEntity.getPurStockId());
             if (old != null) {
-                old.setSellingPrice(purStockEntity.getSellingPrice());
-                old.setStockCount(purStockEntity.getStockCount());
+                old.setSellingPrice(stockEntity.getSellingPrice());
+                old.setStockCount(stockEntity.getStockCount());
                 old.setUpdateTime(new Date());
-                return purStockRepository.saveAndFlush(old);
+                return stockDao.saveAndFlush(old);
             }
         }
         return null;
@@ -116,14 +111,13 @@ public class PurStockServiceImpl implements PurStockService {
      * @return
      * @throws Exception
      */
-    @Override
     public Boolean unshelve(Long purStockId) throws Exception {
         if (purStockId != null) {
-            PurStockEntity old = this.queryById(purStockId);
+            StockEntity old = this.queryById(purStockId);
             if (old != null) {
                 old.setStockState(4);// 下架
                 old.setUpdateTime(new Date());
-                purStockRepository.saveAndFlush(old);
+                stockDao.saveAndFlush(old);
                 return true;
             }
         }
@@ -131,14 +125,12 @@ public class PurStockServiceImpl implements PurStockService {
     }
 
     /**
-     * 获取下拉表格的list
+     * 查询库存中药
      * @param keywords
-     * @param purItemType
      * @return
      */
-    @Override
-    public List<Map<String, Object>> getCombogrid(String keywords, String purItemType) throws Exception {
-        return purStockMapper.getCombogridForDecoction(keywords, purItemType);
+    public List<Map<String, Object>> getCombogridForHerbalMedicine(String keywords) throws Exception {
+        return stockMapper.getCombogridForHerbalMedicine(keywords);
     }
 
     /**
@@ -147,10 +139,9 @@ public class PurStockServiceImpl implements PurStockService {
      * @return
      * @throws Exception
      */
-    @Override
     public Map<String, Object> findByName(String medicalName) throws Exception {
         if (StringUtils.isNotBlank(medicalName)) {
-            return purStockMapper.findByName(medicalName);
+            return stockMapper.findByName(medicalName);
         }
         return null;
     }
@@ -161,10 +152,9 @@ public class PurStockServiceImpl implements PurStockService {
      * @return
      * @throws Exception
      */
-    @Override
     public Map<String, Object> findByIdForOrder(Long purStockId) throws Exception {
         if (!ObjectUtils.isEmpty(purStockId)) {
-            return purStockMapper.findByIdForOrder(purStockId);
+            return stockMapper.findByIdForOrder(purStockId);
         }
         return new HashMap<>();
     }
@@ -176,12 +166,11 @@ public class PurStockServiceImpl implements PurStockService {
      * @return
      * @throws Exception
      */
-    @Override
     public Page<Map<String, Object>> queryPageForWarn(Pageable page, String keywords) throws Exception {
         Long offset = page.getOffset();
         int pageSize = page.getPageSize();
-        int count = purStockMapper.countWarn(keywords);
-        List<Map<String, Object>> result = purStockMapper.findWarnAll(keywords,offset,pageSize);
+        int count = stockMapper.countWarn(keywords);
+        List<Map<String, Object>> result = stockMapper.findWarnAll(keywords,offset,pageSize);
         return new PageImpl<>(result, page, count);
     }
 
@@ -191,13 +180,12 @@ public class PurStockServiceImpl implements PurStockService {
      * @return
      * @throws Exception
      */
-    @Override
     public Page<Map<String, Object>> queryPageForExpire(Pageable page) throws Exception {
         Long offset = page.getOffset();
         int pageSize = page.getPageSize();
-        purStockRepository.updateStateForExpire();// 更新过期状态
-        int count = purStockMapper.countExpire();
-        List<Map<String, Object>> result = purStockMapper.findExpireAll(offset,pageSize);
+        stockDao.updateStateForExpire();// 更新过期状态
+        int count = stockMapper.countExpire();
+        List<Map<String, Object>> result = stockMapper.findExpireAll(offset,pageSize);
         return new PageImpl<>(result, page, count);
     }
 }

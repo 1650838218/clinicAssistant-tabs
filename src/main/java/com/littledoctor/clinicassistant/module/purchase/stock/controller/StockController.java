@@ -1,8 +1,8 @@
 package com.littledoctor.clinicassistant.module.purchase.stock.controller;
 
 import com.littledoctor.clinicassistant.common.entity.LayuiTableEntity;
-import com.littledoctor.clinicassistant.module.purchase.stock.entity.PurStockEntity;
-import com.littledoctor.clinicassistant.module.purchase.stock.service.PurStockService;
+import com.littledoctor.clinicassistant.module.purchase.stock.entity.StockEntity;
+import com.littledoctor.clinicassistant.module.purchase.stock.service.StockService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +22,12 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/purchase/stock")
-public class PurStockController {
+public class StockController {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private PurStockService purStockService;
+    private StockService stockService;
 
     /**
      * 保存，适用于新增库存，修改库存
@@ -35,9 +35,9 @@ public class PurStockController {
      * @return
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public List<PurStockEntity> save(@RequestBody List<PurStockEntity> purStockEntities) {
+    public List<StockEntity> save(@RequestBody List<StockEntity> purStockEntities) {
         try {
-            return purStockService.save(purStockEntities);
+            return stockService.save(purStockEntities);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -52,7 +52,7 @@ public class PurStockController {
     public LayuiTableEntity<Map<String, Object>> queryPage(Pageable page, String keywords, boolean expireDate) {
         try {
             if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
-            return new LayuiTableEntity<Map<String, Object>>(purStockService.queryPage(page, keywords, expireDate));
+            return new LayuiTableEntity<Map<String, Object>>(stockService.queryPage(page, keywords, expireDate));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -69,7 +69,7 @@ public class PurStockController {
     public LayuiTableEntity<Map<String, Object>> queryPageForWarn(Pageable page, String keywords) {
         try {
             if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
-            return new LayuiTableEntity<Map<String, Object>>(purStockService.queryPageForWarn(page, keywords));
+            return new LayuiTableEntity<Map<String, Object>>(stockService.queryPageForWarn(page, keywords));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -85,7 +85,7 @@ public class PurStockController {
     public LayuiTableEntity<Map<String, Object>> queryPageForExpire(Pageable page) {
         try {
             if (page.getPageNumber() != 0) page = PageRequest.of(page.getPageNumber() - 1, page.getPageSize());
-            return new LayuiTableEntity<Map<String, Object>>(purStockService.queryPageForExpire(page));
+            return new LayuiTableEntity<Map<String, Object>>(stockService.queryPageForExpire(page));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -94,13 +94,13 @@ public class PurStockController {
 
     /**
      * 更新 售价 库存数量
-     * @param purStockEntity
+     * @param stockEntity
      * @return
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public PurStockEntity update(@RequestBody PurStockEntity purStockEntity) {
+    public StockEntity update(@RequestBody StockEntity stockEntity) {
         try {
-            return purStockService.update(purStockEntity);
+            return stockService.update(stockEntity);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -115,7 +115,7 @@ public class PurStockController {
     @RequestMapping(value = "/unshelve", method = RequestMethod.GET)
     public Boolean unshelve(@RequestParam Long purStockId) {
         try {
-            return purStockService.unshelve(purStockId);
+            return stockService.unshelve(purStockId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -130,7 +130,7 @@ public class PurStockController {
     @RequestMapping(value = "/findByIdForOrder", method = RequestMethod.GET)
     public Map<String,Object> findByIdForOrder(@RequestParam Long purStockId) {
         try {
-            return purStockService.findByIdForOrder(purStockId);
+            return stockService.findByIdForOrder(purStockId);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -138,15 +138,14 @@ public class PurStockController {
     }
 
     /**
-     * 获取下拉表格的list
+     * 查询库存中药
      * @return
      */
-    @RequestMapping(value = "/getCombogrid", method = RequestMethod.GET)
-    public List<Map<String, Object>> getCombogrid(
-            @RequestParam(value = "q", required = false) String keywords,
-            @RequestParam(value = "type", required = false) String pharmacyItemType) {
+    @RequestMapping(value = "/getCombogridForHerbalMedicine", method = RequestMethod.GET)
+    public List<Map<String, Object>> getCombogridForHerbalMedicine(
+            @RequestParam(value = "q", required = false) String keywords) {
         try {
-            return purStockService.getCombogrid(keywords, pharmacyItemType);
+            return stockService.getCombogridForHerbalMedicine(keywords);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

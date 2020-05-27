@@ -134,7 +134,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                     idField:'itemId',
                     textField:'itemName',
                     method: 'get',
-                    url: '/item/getPurchaseItem',
+                    url: '/purchase/order/getPurchaseItem',
                     mode: 'remote',
                     columns:[[
                         {field:'itemName',title:'品目名称',width:150},

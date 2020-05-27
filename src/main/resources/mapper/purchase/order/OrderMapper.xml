@@ -129,4 +129,15 @@
         AND b.item_id = c.item_id
         AND b.item_type = c.item_type
     </select>
+
+
+    <!--查询采购品目-->
+    <select id="getPurchaseItem" resultType="java.util.Map">
+        select a.item_id as itemId, a.item_name as itemName, a.item_type as itemType, a.specifications, a.producer, a.pur_unit_name as purUnitName from item_purchase a
+        <if test="keywords != null and keywords != ''">
+            <where>
+                item_name like concat('%',#{keywords},'%') or upper(abbr_pinyin) like UPPER(concat(#{keywords},'%')) or lower(full_pinyin) like lower(concat(#{keywords},'%'))
+            </where>
+        </if>
+    </select>
 </mapper>

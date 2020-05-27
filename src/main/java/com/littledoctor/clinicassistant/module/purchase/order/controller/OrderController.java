@@ -1,7 +1,7 @@
 package com.littledoctor.clinicassistant.module.purchase.order.controller;
 
-import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.common.entity.LayuiTableEntity;
+import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.module.purchase.order.entity.OrderEntity;
 import com.littledoctor.clinicassistant.module.purchase.order.service.OrderService;
 import org.slf4j.Logger;
@@ -12,7 +12,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -108,5 +110,15 @@ public class OrderController {
             log.error(e.getMessage(), e);
         }
         return false;
+    }
+
+    @RequestMapping(value = "/getPurchaseItem", method = RequestMethod.GET)
+    public List<Map<String, Object>> getPurchaseItem(@RequestParam(value = "q", required = false) String keywords) {
+        try {
+            return orderService.getPurchaseItem(keywords);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return new ArrayList<>();
     }
 }

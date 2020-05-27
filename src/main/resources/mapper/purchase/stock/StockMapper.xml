@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.littledoctor.clinicassistant.module.purchase.stock.mapper.PurStockMapper">
+<mapper namespace="com.littledoctor.clinicassistant.module.purchase.stock.mapper.StockMapper">
 
     <!-- 根据条件查询 库存信息 -->
     <select id="count" resultType="java.lang.Integer">
@@ -167,14 +167,41 @@
             a.stock_state = '3'
         AND c.is_use = 1
         AND c.dict_type = 2
-        AND c.dict_key = 'CGPMFL'
+        AND c.dict_key = 'PMFL'
         AND a.item_id = b.item_id
         AND b.item_type = c.dict_value
         AND a.pur_order_id = e.pur_order_id
         AND a.item_id = e.item_id
     </select>
 
-    <!-- 用于病历开方时根据药品名称查询药品信息 -->
+    <!--查询库存中药-->
+    <select id="getCombogridForHerbalMedicine" resultType="java.util.Map">
+        SELECT
+            GROUP_CONCAT(t.pur_stock_id ORDER BY t.stock_count) purStockId,
+            t.item_id itemId,
+            t.item_name itemName,
+            t.selling_price sellingPrice,
+            SUM(t.stock_count) stockCount,
+            t.stock_unit_name stockUnitName
+        FROM
+            pur_stock t
+        WHERE
+            t.item_type = 'HerbalMedicine'
+        AND t.stock_state = 1
+        AND t.stock_count > 0
+        AND (
+                t.item_name LIKE CONCAT('%', #{keywords}, '%')
+                OR LOWER(t.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')
+                OR UPPER(t.abbr_pinyin) LIKE CONCAT('%', UPPER(#{keywords}), '%')
+            )
+        GROUP BY
+            t.item_id,
+            t.item_name,
+            t.selling_price
+            ,t.stock_unit_name
+    </select>
+
+    <!-- 查询库存中药
     <select id="getCombogridForDecoction" resultType="java.util.Map">
         SELECT
             b1.item_id itemId,
@@ -202,7 +229,7 @@
                     b.manufacturer,
                     b.item_type
                 FROM
-                    item_purchase b
+                    item_herbal_medicine b
                 WHERE
                     (
                         b.item_name LIKE CONCAT('%', #{keywords}, '%')
@@ -230,7 +257,7 @@
             ) a1
         WHERE
             b1.item_id = a1.item_id
-    </select>
+    </select>-->
 
     <!--根据药材名称查询药材信息-->
     <select id="findByName" resultType="java.util.Map">

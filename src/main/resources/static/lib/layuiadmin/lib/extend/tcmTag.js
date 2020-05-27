@@ -65,16 +65,16 @@ layui.define(["jquery", "layer"], function (exports) {
             prompt:'药材名称',
             panelHeight:'auto',
             panelMaxHeight: 200,
-            valueField: 'stockDetailId',
-            textField: 'pharmacyItemName',
+            valueField: 'purStockId',
+            textField: 'itemName',
             mode: 'remote',
-            url: '/purchase/stock/getCombogrid',
+            url: '/purchase/stock/getCombogridForHerbalMedicine',
             queryParams: {
                 type: 1
             },
             method: 'get',
             formatter: function (row) {
-                return row.pharmacyItemName + ' ' + parseFloat(row.sellingPrice).toFixed(2) + '元/' + row.stockUnit;
+                return row.itemName + ' ' + parseFloat(row.sellingPrice).toFixed(2) + '元/' + row.stockUnitName;
             },
             onHidePanel: function () {
                 var combo = $(this);
@@ -82,7 +82,7 @@ layui.define(["jquery", "layer"], function (exports) {
                 if (selectValue) {
                     var data = combo.combobox('getData');
                     $.each(data, function (i, n) {
-                        if (n.stockDetailId === selectValue) {
+                        if (n.purStockId === selectValue) {
                             n.dose = 0;// 将剂量初始化为0，避免后面的计算报错
                             that.addTag(n);
                             combo.combobox('clear');
@@ -174,15 +174,15 @@ layui.define(["jquery", "layer"], function (exports) {
         if (thisTag.dataArray[options.id]) {
             // 判断被添加的药材是否已存在
             for (var i = 0; i < thisTag.dataArray[options.id].length; i++) {
-                if (thisTag.dataArray[options.id][i].pharmacyItemName === data.pharmacyItemName) {
-                    layer.msg(data.pharmacyItemName + '已存在！');
+                if (thisTag.dataArray[options.id][i].itemName === data.itemName) {
+                    layer.msg(data.itemName + '已存在！');
                     return;
                 }
             }
         }
         var tagPanel = $('#' + options.id);
         var tagBody = tagPanel.find('.tcm-tag-body');
-        var tagHtml = '<div id="' + (options.id + '--' + data.pharmacyItemId) + '" class="tcm-tag"><p class="tcm-tag-name">' + data.pharmacyItemName + '</p><input type="number" value="' + (data.dose ? data.dose : 0) + '"/><p>' + data.stockUnit + '</p><i class="layui-icon layui-icon-close" title="删除"></i></div>';
+        var tagHtml = '<div id="' + (options.id + '--' + data.pharmacyItemId) + '" class="tcm-tag"><p class="tcm-tag-name">' + data.itemName + '</p><input type="number" value="' + (data.dose ? data.dose : 0) + '"/><p>' + data.stockUnitName + '</p><i class="layui-icon layui-icon-close" title="删除"></i></div>';
         tagBody.append(tagHtml);
         if (thisTag.dataArray[options.id]) {
             thisTag.dataArray[options.id].push(data);

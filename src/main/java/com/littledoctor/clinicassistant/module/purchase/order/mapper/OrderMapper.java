@@ -52,4 +52,11 @@ public interface OrderMapper {
      * @return
      */
     List<Map<String, Object>> findOrderDetailForStock(@Param("purOrderId") long purOrderId);
+
+    /**
+     * 查询采购品目
+     * @param keywords
+     * @return
+     */
+    List<Map<String, Object>> getPurchaseItem(@Param("keywords") String keywords);
 }

@@ -10,7 +10,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "PUR_STOCK")
-public class PurStockEntity {
+public class StockEntity {
 
     /** 主键ID */
     @Id

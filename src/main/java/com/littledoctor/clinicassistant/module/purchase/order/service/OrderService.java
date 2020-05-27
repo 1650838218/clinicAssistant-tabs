@@ -1,11 +1,9 @@
 package com.littledoctor.clinicassistant.module.purchase.order.service;
 
 import com.littledoctor.clinicassistant.common.constant.DictionaryKey;
-import com.littledoctor.clinicassistant.module.item.all.service.ItemService;
-import com.littledoctor.clinicassistant.module.purchase.item.entity.ItemEntity;
+import com.littledoctor.clinicassistant.module.purchase.item.service.ItemService;
 import com.littledoctor.clinicassistant.module.purchase.order.dao.OrderDao;
 import com.littledoctor.clinicassistant.module.purchase.order.entity.OrderEntity;
-import com.littledoctor.clinicassistant.module.purchase.order.entity.OrderDetailEntity;
 import com.littledoctor.clinicassistant.module.purchase.order.mapper.OrderMapper;
 import com.littledoctor.clinicassistant.module.purchase.supplier.entity.SupplierEntity;
 import com.littledoctor.clinicassistant.module.purchase.supplier.service.SupplierService;
@@ -16,8 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -30,9 +28,6 @@ public class OrderService {
 
     @Autowired
     private OrderDao orderDao;
-
-    @Autowired
-    private ItemService itemService;
 
     @Autowired
     private DictionaryService dictionaryService;
@@ -145,5 +140,24 @@ public class OrderService {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 采购单  查询采购品目下拉表格
+     * @param keywords
+     * @return
+     */
+    public List<Map<String, Object>> getPurchaseItem(String keywords) throws Exception {
+        List<Map<String, Object>> result = new ArrayList<>();
+        if (StringUtils.isNotBlank(keywords)) keywords = keywords.trim();
+        result = orderMapper.getPurchaseItem(keywords);
+        if (!ObjectUtils.isEmpty(result)) {
+            Map<String, String> pmflMap = dictionaryService.getItemMapByKey(DictionaryKey.ITEM_PMFL);
+            for (int i = 0; i < result.size(); i++) {
+                Map<String, Object> entity = result.get(i);
+                entity.put("itemTypeName",pmflMap.get(entity.get("itemType")));
+            }
+        }
+        return result;
     }
 }
