@@ -1,5 +1,6 @@
 package com.littledoctor.clinicassistant.module.item.prescription.controller;
 
+import com.littledoctor.clinicassistant.common.entity.SelectOption;
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.module.item.prescription.entity.PrescriptionEntity;
@@ -106,5 +107,19 @@ public class PrescriptionController {
             log.error(e.getMessage(), e);
         }
         return false;
+    }
+
+    /**
+     * 获取下拉框的option list
+     * @return
+     */
+    @RequestMapping(value = "/getSelectOption", method = RequestMethod.GET)
+    public List<SelectOption> getSelectOption() {
+        try {
+            return prescriptionService.getSelectOption();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return new ArrayList<>();
     }
 }

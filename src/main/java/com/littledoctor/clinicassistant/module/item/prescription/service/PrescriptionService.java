@@ -1,5 +1,6 @@
 package com.littledoctor.clinicassistant.module.item.prescription.service;
 
+import com.littledoctor.clinicassistant.common.entity.SelectOption;
 import com.littledoctor.clinicassistant.common.entity.TreeEntity;
 import com.littledoctor.clinicassistant.common.util.StringUtils;
 import com.littledoctor.clinicassistant.module.item.constant.ItemType;
@@ -136,5 +137,13 @@ public class PrescriptionService {
     public boolean delete(Long id) throws Exception {
         prescriptionDao.deleteById(id);
         return true;
+    }
+
+    /**
+     * 获取select option list
+     * @return
+     */
+    public List<SelectOption> getSelectOption() throws Exception {
+        return prescriptionDao.getSelectOption();
     }
 }
