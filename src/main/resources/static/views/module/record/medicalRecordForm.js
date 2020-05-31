@@ -140,11 +140,11 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
             panelHeight:'auto',
             panelMaxHeight: 200,
             panelWidth: 488,
-            idField: 'stockDetailId',
-            textField: 'pharmacyItemName',
+            idField: 'purStockId',
+            textField: 'itemName',
             method: 'get',
-            url: '/purchase/stock/getCombogrid',
-            queryParams: {type: 2},
+            url: '/purchase/stock/getCombogridForPatentMedicine',
+            queryParams: {},
             mode: 'remote',
             columns: [[
                 {field: 'pharmacyItemName', title: '药品名称', width: 150},
@@ -159,7 +159,7 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
                     var allData = $('#'+patentMedicineTableId).datagrid('getData');
                     for (var i = 0; i < allData.total; i++) {
                         var row = allData.rows[i];
-                        if (row.pharmacyItemId === selectRow.pharmacyItemId) {
+                        if (row.itemId === selectRow.itemId) {
                             combogrid.combogrid('clear');// 清空搜索框
                             layer.msg('此药品已存在！');
                             return false;

@@ -306,4 +306,33 @@
         LIMIT 1
     </select>
 
+    <!--查询库存中成药-->
+    <select id="getCombogridForPatentMedicine" resultType="java.util.Map">
+        SELECT
+            GROUP_CONCAT(t.pur_stock_id ORDER BY t.stock_count) purStockId,
+            t.item_id itemId,
+            t.item_name itemName,
+            t.specifications,
+            t.producer,
+            t.usage_dosage usageDosage,
+            t.selling_price sellingPrice,
+            SUM(t.stock_count) stockCount,
+            t.stock_unit_name stockUnitName
+        FROM
+            pur_stock t
+        WHERE
+            t.item_type = 'PatentMedicine'
+        AND t.stock_state = 1
+        AND t.stock_count > 0
+        AND (
+                t.item_name LIKE CONCAT('%', #{keywords}, '%')
+                OR LOWER(t.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')
+                OR UPPER(t.abbr_pinyin) LIKE CONCAT('%', UPPER(#{keywords}), '%')
+            )
+        GROUP BY
+            t.item_id,
+            t.item_name,
+            t.selling_price
+            ,t.stock_unit_name
+    </select>
 </mapper>

@@ -188,4 +188,13 @@ public class StockService {
         List<Map<String, Object>> result = stockMapper.findExpireAll(offset,pageSize);
         return new PageImpl<>(result, page, count);
     }
+
+    /**
+     * 查询库存中成药
+     * @param keywords
+     * @return
+     */
+    public List<Map<String, Object>> getCombogridForPatentMedicine(String keywords) throws Exception{
+        return stockMapper.getCombogridForPatentMedicine(keywords);
+    }
 }

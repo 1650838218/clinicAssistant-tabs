@@ -55,3 +55,9 @@
 .tcm-tag .layui-icon:hover {
     color: white;
 }
+
+.tcm-tag-body .tcm-tag-imcompatible {
+    border-color: red;
+    border-width: 2px;
+    border-style: solid;
+}

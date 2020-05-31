@@ -83,4 +83,11 @@ public interface StockMapper {
      * @return
      */
     List<Map<String, Object>> findExpireAll(@Param("offset") Long offset, @Param("pageSize") int pageSize);
+
+    /**
+     * 查询库存中成药
+     * @param keywords
+     * @return
+     */
+    List<Map<String, Object>> getCombogridForPatentMedicine(@Param("keywords") String keywords);
 }

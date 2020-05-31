@@ -197,6 +197,7 @@ layui.define(["jquery", "layer"], function (exports) {
             thisTag.dataArray[options.id] = newArray;
         }
         tagPanel.find('.show-count').text('共' + thisTag.dataArray[options.id].length + '味药材');
+        that.checkCompatibility();// 检查十八反十九畏
 
         // 绑定删除事件
         tagBody.find('#' + (options.id + '--' + data.itemId) + ' i.layui-icon').click(function () {
@@ -209,6 +210,7 @@ layui.define(["jquery", "layer"], function (exports) {
                     tag.remove();
                     that.updateMoney();// 修改单剂金额
                     that.updateCount();// 修改单剂药味数
+                    that.checkCompatibility();// 检查十八反十九畏
                     return false;
                 }
             });
@@ -261,7 +263,7 @@ layui.define(["jquery", "layer"], function (exports) {
     Class.prototype.checkCompatibility = function() {
         // 半蒌贝蔹芨攻乌  藻戟遂芫俱战草 诸参辛芍叛藜芦
         var eighteenImcompatible = [
-            ['甘草','大戟'],['甘草','芫花'],['甘草','甘遂'],['甘草','海藻'],
+            ['甘草','大戟'],['甘草','芫花'],['甘草','甘遂'],['甘草','海藻'],['麻黄','桂枝'],
             ['川乌','贝母'],['川乌','川贝'],['川乌','浙贝'],['川乌','瓜蒌'],['川乌','天花粉'],['川乌','半夏'],['川乌','白蔹'],['川乌','白及'],
             ['草乌','贝母'],['草乌','川贝'],['草乌','浙贝'],['草乌','瓜蒌'],['草乌','天花粉'],['草乌','半夏'],['草乌','白蔹'],['草乌','白及'],
             ['乌头','贝母'],['乌头','川贝'],['乌头','浙贝'],['乌头','瓜蒌'],['乌头','天花粉'],['乌头','半夏'],['乌头','白蔹'],['乌头','白及'],
@@ -272,6 +274,7 @@ layui.define(["jquery", "layer"], function (exports) {
         var nineteenCounteraction = [
             ['硫黄','朴硝'],['水银','砒霜'],['狼毒','密陀僧'],['巴豆','牵牛'],['丁香','郁金'],['川乌','犀角'],['草乌','犀角'],['牙硝','三棱'],['官桂','赤石脂'],['人参','五灵脂']
         ];
+        var others = [['葱白','蜂蜜']];
         var that = this;
         var options = that.config;
         var tagPanel = $('#' + options.id);
@@ -309,9 +312,19 @@ layui.define(["jquery", "layer"], function (exports) {
             }
         }
         if (result.length > 0) {
-            for (var i = 0; i < result.length; i++) {
-                var pair = result[i];
-
+            var tags = tagBody.children('.tcm-tag');
+            if (tags.length > 0) {
+                for (var i = 0; i < tags.length; i++) {
+                    console.log($(tags[i]));
+                    $(tags[i]).removeClass('tcm-tag-imcompatible ');
+                }
+                for (var i = 0; i < result.length; i++) {
+                    var pair = result[i];
+                    if (pair.length == 2 && tags.length > pair[0] && tags.length > pair[1]) {
+                        $(tags[pair[0]]).addClass('tcm-tag-imcompatible ');
+                        $(tags[pair[1]]).addClass('tcm-tag-imcompatible ');
+                    }
+                }
             }
         }
     }

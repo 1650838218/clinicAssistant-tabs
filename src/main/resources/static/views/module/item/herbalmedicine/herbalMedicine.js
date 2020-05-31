@@ -21,8 +21,9 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
     // 设置左侧目录树的高度
     var bodyHeight = $(document.body).height();
     $('.left-tree').height(bodyHeight > 530 ? bodyHeight - 80 : 450);
+    $('.left-tree .ztree').height(bodyHeight > 530 ? bodyHeight - 80 : 450);
     // 设置右侧面板高度
-    $('.right-panel .blank-tip').height(bodyHeight > 530 ? bodyHeight - 283 : 447).css('padding-top','200px');
+    $('.right-panel .blank-tip').height(bodyHeight > 530 ? bodyHeight - 283 : 247).css('padding-top','200px');
 
     // ztree setting
     var setting = {

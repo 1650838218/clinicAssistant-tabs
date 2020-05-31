@@ -151,4 +151,19 @@ public class StockController {
         }
         return new ArrayList<>();
     }
+
+    /**
+     * 查询库存中成药
+     * @return
+     */
+    @RequestMapping(value = "/getCombogridForPatentMedicine", method = RequestMethod.GET)
+    public List<Map<String, Object>> getCombogridForPatentMedicine(
+            @RequestParam(value = "q", required = false) String keywords) {
+        try {
+            return stockService.getCombogridForPatentMedicine(keywords);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return new ArrayList<>();
+    }
 }
