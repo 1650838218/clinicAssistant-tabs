@@ -111,7 +111,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
                 $('.left-tree .ztree').show();
                 $.fn.zTree.destroy(leftTreeId);
                 var zTreeObject = $.fn.zTree.init($("#" + leftTreeId), setting, resultList);
-                zTreeObject.expandAll(true);// 展开所有节点
+                zTreeObject.expandAll(!!keyword);// 展开所有节点
                 if (utils.isNotNull(selectNodeId)) {
                     var currentNodes = zTreeObject.getNodeByParam('id', selectNodeId);
                     if (currentNodes != null) {
@@ -208,7 +208,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
             if (item != null && utils.isNotNull(item.itemId)) {
                 layer.msg(MSG.save_success);
                 form.val(formId,{itemId:item.itemId});
-                queryCatalog(null,item.itemId);
+                queryCatalog($.trim($('.left-panel .left-search .layui-input').val()),item.itemId);
             } else {
                 layer.msg(MSG.save_fail);
             }

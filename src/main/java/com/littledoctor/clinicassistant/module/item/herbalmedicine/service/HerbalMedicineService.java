@@ -95,8 +95,8 @@ public class HerbalMedicineService {
                 }
                 if (StringUtils.isNotBlank(itemName.trim())) {
                     Predicate p1 = criteriaBuilder.like(root.get("itemName"), "%" + itemName.trim() + "%");
-                    Predicate p2 = criteriaBuilder.like(root.get("abbrPinyin"), itemName.trim().toUpperCase() + "%");
-                    Predicate p3 = criteriaBuilder.like(root.get("fullPinyin"), itemName.trim().toLowerCase() + "%");
+                    Predicate p2 = criteriaBuilder.like(root.get("abbrPinyin"), "%" + itemName.trim().toUpperCase() + "%");
+                    Predicate p3 = criteriaBuilder.like(root.get("fullPinyin"), "%" + itemName.trim().toLowerCase() + "%");
                     list.add(criteriaBuilder.or(p1,p2,p3));
                 }
                 return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
@@ -127,8 +127,8 @@ public class HerbalMedicineService {
             public Predicate toPredicate(Root<HerbalMedicineEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 if (StringUtils.isNotBlank(keyword) && StringUtils.isNotBlank(keyword.trim())) {
                     Predicate p1 = criteriaBuilder.like(root.get("itemName"), "%" + keyword.trim() + "%");
-                    Predicate p2 = criteriaBuilder.like(root.get("abbrPinyin"), keyword.trim().toUpperCase() + "%");
-                    Predicate p3 = criteriaBuilder.like(root.get("fullPinyin"), keyword.trim().toLowerCase() + "%");
+                    Predicate p2 = criteriaBuilder.like(root.get("abbrPinyin"), "%" + keyword.trim().toUpperCase() + "%");
+                    Predicate p3 = criteriaBuilder.like(root.get("fullPinyin"), "%" + keyword.trim().toLowerCase() + "%");
                     return criteriaBuilder.or(p1, p2, p3);
                 } else {
                     return null;

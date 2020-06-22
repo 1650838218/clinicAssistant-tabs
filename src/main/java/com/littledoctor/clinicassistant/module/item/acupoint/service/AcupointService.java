@@ -90,8 +90,8 @@ public class AcupointService {
             public Predicate toPredicate(Root<AcupointEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 if (StringUtils.isNotBlank(keyword) && StringUtils.isNotBlank(keyword.trim())) {
                     Predicate p1 = criteriaBuilder.like(root.get("itemName"), "%" + keyword.trim() + "%");
-                    Predicate p2 = criteriaBuilder.like(root.get("abbrPinyin"), keyword.trim().toUpperCase() + "%");
-                    Predicate p3 = criteriaBuilder.like(root.get("fullPinyin"), keyword.trim().toLowerCase() + "%");
+                    Predicate p2 = criteriaBuilder.like(root.get("abbrPinyin"), "%" + keyword.trim().toUpperCase() + "%");
+                    Predicate p3 = criteriaBuilder.like(root.get("fullPinyin"), "%" + keyword.trim().toLowerCase() + "%");
                     return criteriaBuilder.or(p1, p2, p3);
                 } else {
                     return null;

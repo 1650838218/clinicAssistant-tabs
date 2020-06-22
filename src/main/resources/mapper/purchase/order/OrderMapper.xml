@@ -136,7 +136,7 @@
         select a.item_id as itemId, a.item_name as itemName, a.item_type as itemType, a.specifications, a.producer, a.pur_unit_name as purUnitName from item_purchase a
         <if test="keywords != null and keywords != ''">
             <where>
-                item_name like concat('%',#{keywords},'%') or upper(abbr_pinyin) like UPPER(concat(#{keywords},'%')) or lower(full_pinyin) like lower(concat(#{keywords},'%'))
+                item_name like concat('%',#{keywords},'%') or upper(abbr_pinyin) like UPPER(concat('%', #{keywords},'%')) or lower(full_pinyin) like lower(concat('%', #{keywords},'%'))
             </where>
         </if>
     </select>
