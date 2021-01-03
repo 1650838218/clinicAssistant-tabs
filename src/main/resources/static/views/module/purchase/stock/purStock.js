@@ -6,11 +6,11 @@ layui.config({
     utils: 'utils' //扩展模块
     ,ajax: 'ajax'
 });
-layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], function () {
+layui.use(['form','utils', 'jquery', 'layer', 'ajax', 'laydate'], function () {
     var $ = layui.jquery;
     var form = layui.form;
     var layer = layui.layer;
-    var table = layui.table;
+    // var table = layui.table;
     var ajax = layui.ajax;
     var utils = layui.utils;
     var rootMapping = '/purchase/stock';
@@ -18,51 +18,154 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     var formId = 'stock-form';
     form.render();
 
-    // 初始化表格
-    var tableConfig = {
-        elem: '#' + itemTableId,
-        id: itemTableId,
-        height: 'full-150',
-        cols: [[
-            {field: 'purOrderDetailId', title: TABLE_COLUMN.numbers, type: 'numbers'},
-            {field: 'itemName', title: '品目名称',width: '20%'},
-            {field: 'purCount', title: '采购数量'},
-            {field: 'unitPrice', title: '单价(元)'},
-            // {field:'unitConvert', title:'单位换算'},
-            {field: 'breakevenPrice', title: '保本售价(元)', templet: function (d) {
-                    var breakeven = d.unitPrice/d.unitConvert;
-                    if (isNaN(breakeven)) {
-                        return '';
-                    } else {
-                        return breakeven.toFixed(4);
-                    }
-                }},
-            {field: 'stockPrice', title:'参考售价(元)', templet: function (d) {
-                    if (utils.isNotNull(d.stockPrice)) return d.stockPrice; else return '<p style="color: #D3D3D3;">暂无</p>';
-                }},
-            {field: 'sellingPrice',title: '重定价(元)',edit: 'text',templet: function (d) {
-                    if (isNaN(d.sellingPrice)) {
-                        return '<p style="color: #D3D3D3;">请填写新售价</p>';
-                    } else {
-                        return Number(d.sellingPrice).toFixed(4);
-                    }
-                }}
-        ]],
-    };
+    // 判断是否可以进行编辑，返回true 可以编辑，false 不可以编辑
+    var editIndex = undefined;
+    function endEditing(){
+        if (editIndex == undefined) return true;
+        if ($('#' + itemTableId).datagrid('validateRow', editIndex)){
+            $('#' + itemTableId).datagrid('endEdit', editIndex);
+            editIndex = undefined;
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-    $(document).on("focus",'.layui-table-edit', function(){
-        // if ($(this).val() === '请填写新售价') $(this).val('');
-        $(this).select();
+    // 开始编辑一行
+    function beginEditing(rowIndex,field) {
+        editIndex = rowIndex;
+        $('#' + itemTableId).datagrid('selectRow', rowIndex).datagrid('beginEdit', rowIndex);
+        var ed = $('#' + itemTableId).datagrid('getEditor', {index:rowIndex,field:field});
+        if (ed){
+            ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+        }
+    }
+
+    // 初始化表格
+    $('#' + itemTableId).datagrid({
+        data: [{}],
+        onClickCell: function (rowIndex, field, value) {
+            if (editIndex != rowIndex){
+                if (endEditing()){
+                    beginEditing(rowIndex, field);
+                } else {
+                    setTimeout(function(){
+                        $('#' + itemTableId).datagrid('selectRow', editIndex);
+                    },0);
+                }
+            }
+        },
+        onEndEdit: function (index, row) {
+            ed = $(this).datagrid('getEditor', {
+                index: index,
+                field: 'stockUnitName'
+            });
+            row.stockUnitName = $(ed.target).combobox('getText');
+        }
     });
-    
+
+    // 动态设置列的editor和其他属性
+    var columns = [
+        {
+            field: 'itemId',
+            formatter:function(value,row){
+                return row.itemName;
+            }
+        },
+        {
+            field: 'stockCount',
+            editor: {
+                type:'numberbox',
+                options:{
+                    required: true,
+                    min: 1,
+                    onChange: function (newValue,oldValue) {
+                        var selectedRow = $('#' + itemTableId).datagrid('getSelected');
+                        var breakevenPrice = $('#' + itemTableId).datagrid('getEditor',{index: editIndex, field: 'breakevenPrice'});
+                        $(breakevenPrice.target).textbox('setValue', (selectedRow.totalPrice / newValue).toFixed(4));
+                    }
+                }
+            }
+        },
+        {
+            field: 'stockUnitName',
+            editor: {
+                type: 'combobox',
+                options: {
+                    required: true,
+                    editable: false,
+                    readonly: false,
+                    valueField: 'dictValue',
+                    textField: 'dictName',
+                    url: '/system/dictionary/getDictItemByDictKey?dictKey=' + DICT_KEY.PUR_ITEM_LSDW,
+                    method: 'get'
+                }
+            },
+            formatter: function(value,row){
+                return row.stockUnitName;
+            }
+        },
+        {
+            field: 'breakevenPrice',
+            editor: {
+                type: 'textbox',
+                options: {
+                    editable: false,
+                    readonly: true
+                }
+            }
+        },
+        {
+            field: 'sellingPrice',
+            editor: {
+                type:'numberbox',
+                options:{
+                    precision:4,
+                    required: true
+                }
+            },
+            formatter: function (value, row) {
+                if (value != null) return (value - 0).toFixed(4);
+            }
+        }
+    ];
+    for (var i = 0, l = columns.length; i < l; i++) {
+        var e = $('#' + itemTableId).datagrid('getColumnOption', columns[i].field);
+        // console.log(columns[i]);
+        e.editor = columns[i].editor;
+        e.formatter = columns[i].formatter;
+    }
+
     // 明细表格校验
     function validateGrid() {
-        var tableData = table.cache[itemTableId];
-        for (var i = 0, len = tableData.leng; i < len; i++) {
-            if (!utils.isNotNull(tableData[i].sellingPrice)) {
-                layer.alert('重定价不能为空，请补充完整！', {icon: LAYER_ICON.error});
-                return false;
+        if (endEditing()) {
+            var gridData = $('#' + itemTableId).datagrid('getData');
+            var rowCount = gridData.total;
+            for (var i = 0; i < rowCount; i++) {
+                var itemId = gridData.rows[i].itemId;
+                var stockCount = gridData.rows[i].stockCount;
+                var stockUnitName = gridData.rows[i].stockUnitName;
+                var sellingPrice = gridData.rows[i].sellingPrice;
+                if (!utils.isNotNull(itemId) || !utils.isNotNull(stockCount) || !utils.isNotNull(stockUnitName) || !utils.isNotNull(sellingPrice)) {
+                    layer.msg("请将明细数据补充完整！");
+                    if (!utils.isNotNull(itemId)) {
+                        beginEditing(i, 'itemId');
+                    } else if (!utils.isNotNull(stockCount)) {
+                        beginEditing(i, 'stockCount');
+                    } else if (!utils.isNotNull(stockUnitName)) {
+                        beginEditing(i, 'stockUnitName');
+                    } else if (!utils.isNotNull(sellingPrice)) {
+                        beginEditing(i, 'sellingPrice');
+                    }
+                    return false;
+                }
             }
+        } else {
+            setTimeout(function(){
+                $('#' + itemTableId).datagrid('selectRow', editIndex);
+            },0);
+            layer.msg("请将明细数据补充完整！");
+            return false;
         }
         return true;
     }
@@ -75,8 +178,16 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                     purOrder.order.totalPrice = purOrder.order.totalPrice.toFixed(2) + ' 元';
                     form.val(formId, purOrder.order);// 表单赋值
                     form.render();
-                    tableConfig.data = purOrder.detail;
-                    table.render(tableConfig);// 加载采购单明细
+                    // console.log(purOrder.detail);
+                    if (purOrder.detail) {
+                        for (var i = 0; i < purOrder.detail.length; i++) {
+                            purOrder.detail[i].stockPrice = utils.isNotNull(purOrder.detail[i].stockPrice) ? purOrder.detail[i].stockPrice : '无';
+                            purOrder.detail[i].breakevenPrice = utils.isNotNull(purOrder.detail[i].stockCount) ? (purOrder.detail[i].totalPrice / purOrder.detail[i].stockCount).toFixed(4) : '无';
+                        }
+                    }
+                    $('#' + itemTableId).datagrid('loadData', purOrder.detail);
+                    // tableConfig.data = purOrder.detail;
+                    // table.render(tableConfig);// 加载采购单明细
                 }
             });
         } else {
@@ -106,7 +217,7 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
     form.on('submit(submit-btn)', function(obj){
         utils.btnDisabled($(obj.elem));
         if (validateGrid()) {
-            var purStocks = table.cache[itemTableId];// 获取表格数据
+            var purStocks = $('#' + itemTableId).datagrid('getData').rows;// 获取表格数据
             var purOrderId = $('#' + formId).find('input[name="purOrderId"]').val();
             // console.log(billItems);
             for (var i = 0, len = purStocks.length; i < len; i++) {
@@ -138,5 +249,14 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
             }
         }
     }
+
+    // 取消编辑
+    $(document).on("click", function(event){
+        if ($(event.target).parents('.datagrid-row').length > 0 || $(event.target).hasClass('datagrid-row')) {
+
+        } else {
+            endEditing();
+        }
+    });
 });
 

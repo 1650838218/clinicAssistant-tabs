@@ -121,6 +121,11 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
                 field: 'itemId'
             });
             row.itemName = $(ed.target).combogrid('getText');
+            ed = $(this).datagrid('getEditor', {
+                index: index,
+                field: 'purUnitName'
+            });
+            row.purUnitName = $(ed.target).combobox('getText');
         }
     });
 
@@ -198,10 +203,14 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
         {
             field: 'purUnitName',
             editor: {
-                type: 'textbox',
+                type: 'combobox',
                 options: {
                     editable: false,
-                    readonly: true
+                    readonly: false,
+                    valueField: 'dictValue',
+                    textField: 'dictName',
+                    url: '/system/dictionary/getDictItemByDictKey?dictKey=' + DICT_KEY.PUR_ITEM_JHBZ,
+                    method: 'get'
                 }
             },
             formatter:function(value,row){
@@ -436,6 +445,15 @@ layui.use(['form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydate'], funct
             }
         }
     }
+
+    // 取消编辑
+    $(document).on("click", function(event){
+        if ($(event.target).parents('.datagrid-row').length > 0 || $(event.target).hasClass('datagrid-row')) {
+
+        } else {
+            endEditing();
+        }
+    });
 });
 
 

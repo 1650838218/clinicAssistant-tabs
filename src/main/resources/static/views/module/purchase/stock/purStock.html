@@ -67,9 +67,26 @@
                             </div>
                         </div>
                         <div>
-                            <p style="color: red;font-size: 10px;">小提示：保本售价=进价÷单位换算；单位换算表示进货包装和零售单位之间的单位换算值；重定价若不填写则默认为参考售价；</p>
+                            <p style="color: red;font-size: 10px;">小提示：保本售价=总价÷数量；</p>
                         </div>
-                        <table id="stock-table" lay-filter="stock-table"></table>
+                        <!--<table id="stock-table" lay-filter="stock-table"></table>-->
+                        <table id="stock-table" style="max-height: 390px;width:100%"
+                               data-options="fitColumns: true, autoRowHeight: true, singleSelect: true, rownumbers:true">
+                            <thead>
+                            <tr>
+                                <th data-options="field: 'purOrderDetailId',hidden: 'true'"></th>
+                                <th width="22%" data-options="field: 'itemId'">品目名称</th>
+                                <!--<th data-options="field: 'itemType',hidden: 'true'"></th>-->
+                                <th width="10%" data-options="field: 'purCount'">进货数量</th>
+                                <th width="12%" data-options="field: 'totalPrice'">总价(元)</th>
+                                <th width="12%" data-options="field: 'stockPrice'">参考售价(元)</th>
+                                <th width="10%" data-options="field: 'stockCount',editor: {type:'numberbox',options:{required:true}}">入库数量</th>
+                                <th width="10%" data-options="field: 'stockUnitName',editor: {type: 'combobox',options: {editable: false}}">入库单位</th>
+                                <th width="12%" data-options="field: 'breakevenPrice'">保本售价(元)</th>
+                                <th width="12%" data-options="field: 'sellingPrice',editor: {type: 'numberbox',options: {required: true,precision:4}}">最终售价(元)</th>
+                            </tr>
+                            </thead>
+                        </table>
                         <div class="layui-row layui-col-space10" style="margin-top: 5px;">
                             <div class="layui-col-lg-offset10 layui-col-lg2" style="text-align: right;">
                                 <button type="button" lay-filter="submit-btn" lay-submit class="layui-btn layui-btn-sm">入库</button>
@@ -82,8 +99,11 @@
         </div>
     </div>
 </div>
+<script src="/lib/easyui/1.8.1/jquery.min.js"></script>
 <script src="/lib/layuiadmin/layui/layui.js"></script>
 <script src="/js/common/constant.js"></script>
+<script src="/lib/easyui/1.8.1/jquery.easyui.min.js"></script>
+<script src="/lib/easyui/1.8.1/locale/easyui-lang-zh_CN.js"></script>
 <script src="/views/module/purchase/stock/purStock.js"></script>
 </body>
 </html>

@@ -43,6 +43,7 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
             {field: 'dictName', title: '字典名称'}
         ]],
         skin: 'nob',
+        size: 'sm',
         done: function (res, curr, count) {
             $('#add-btn').click();// 清空表单
             $('#del-btn').addClass('layui-btn-disabled').attr('disabled','disabled');// 禁用 删除按钮
@@ -111,6 +112,7 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
         elem: '#detail-table',
         height: 'full-186',
         limit: 50,// 每个字典类型最多可以录入50个字典项
+        // size: 'sm',
         cols: [[
             {field: 'dictName', title: '字典项名称', width: '35%', edit: 'text'},
             {field: 'dictValue', title: '字典项值', width: '20%', edit: 'text'},

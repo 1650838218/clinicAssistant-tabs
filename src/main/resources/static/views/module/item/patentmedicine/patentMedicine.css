@@ -29,3 +29,11 @@
     background-color: rgb(30, 159, 255);
 }
 
+.layui-input, .layui-textarea, .layui-select {
+    height: 32px;
+}
+
+.layui-form-label {
+    padding: 6px 5px;
+}
+

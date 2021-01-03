@@ -112,6 +112,11 @@ public class OrderController {
         return false;
     }
 
+    /**
+     * 查询采购品目
+     * @param keywords
+     * @return
+     */
     @RequestMapping(value = "/getPurchaseItem", method = RequestMethod.GET)
     public List<Map<String, Object>> getPurchaseItem(@RequestParam(value = "q", required = false) String keywords) {
         try {

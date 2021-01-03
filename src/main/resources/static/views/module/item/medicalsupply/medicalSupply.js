@@ -19,6 +19,26 @@ layui.use(['form', 'jquery', 'layer', 'ajax','table','utils'], function () {
     var currentId = '';// 当前选中的医疗用品的ID
     form.render();
 
+    // 动态加载进货包装下拉框
+    utils.splicingOption({
+        elem: $('.layui-form select[name="purUnit"]'),
+        where: {dictKey: DICT_KEY.PUR_ITEM_JHBZ},
+        tips: '请选择进货包装'
+    });
+
+    // 动态加载零售单位下拉框
+    utils.splicingOption({
+        elem: $('.layui-form select[name="stockUnit"]'),
+        where: {dictKey: DICT_KEY.PUR_ITEM_LSDW},
+        tips: '请选择零售单位'
+    });
+
+    // 监听 零售单位 下拉框
+    form.on('select(stockUnit)', function (data) {
+        var optionText = $(data.elem).find('option[value="'+ data.value + '"]').text();// 零售单位
+        $(data.elem).parents('form').find('.stockWarnUnit').text(optionText);
+    });
+
     // 初始化表格
     table.render({
         elem: '#left-table',
@@ -153,7 +173,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','table','utils'], function () {
     });
 
     // 取消
-    $('#cancel-btn').click(function () {
+    $('.cancel-btn').click(function () {
         var itemId = $('#' + formId + ' input[name="itemId"]').val();
         if (utils.isNotNull(itemId)) {
             findById(itemId);// 重新查询

@@ -233,6 +233,7 @@ layui.use(['form', 'jquery', 'layer', 'ajax','utils'], function () {
         addBtn: function () {
             utils.clearForm('#' + formId);// 清空表单
             $('.right-panel .blank-tip').hide();
+            form.val('patentmedicine-form', {isPoison: 0});
             $('#' + formId).show();
             form.render();
             var zTreeObject = $.fn.zTree.getZTreeObj(leftTreeId);
