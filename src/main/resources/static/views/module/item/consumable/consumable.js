@@ -22,9 +22,9 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
         limit: 300,// 最多可有300个耗材
         cols: [[
             {field: 'itemId', title: TABLE_COLUMN.numbers, type: 'numbers'},
-            {field: 'itemName', title: '耗材名称', width: '20%',  edit: 'text'},
-            {field: 'specifications', title: '规格', width: '25%', edit: 'text'},
-            {field: 'producer', title: '品牌厂家', width: '35%', edit: 'text'},
+            {field: 'itemName', title: '耗材名称', width: '30%',  edit: 'text'},
+            {field: 'specifications', title: '规格', width: '20%', edit: 'text'},
+            {field: 'producer', title: '品牌厂家', width: '30%', edit: 'text'},
             {title: TABLE_COLUMN.operation, toolbar: '#operate-column', align: 'center'}
         ]],
         parseData: function (res) {

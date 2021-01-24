@@ -311,13 +311,13 @@ layui.define(["jquery", "layer"], function (exports) {
                 if (rp.length == 2) result.push(rp);
             }
         }
-        if (result.length > 0) {
-            var tags = tagBody.children('.tcm-tag');
-            if (tags.length > 0) {
-                for (var i = 0; i < tags.length; i++) {
-                    console.log($(tags[i]));
-                    $(tags[i]).removeClass('tcm-tag-imcompatible ');
-                }
+        var tags = tagBody.children('.tcm-tag');
+        if (tags.length > 0) {
+            for (var i = 0; i < tags.length; i++) {
+                // console.log($(tags[i]));
+                $(tags[i]).removeClass('tcm-tag-imcompatible ');
+            }
+            if (result.length > 0) {
                 for (var i = 0; i < result.length; i++) {
                     var pair = result[i];
                     if (pair.length == 2 && tags.length > pair[0] && tags.length > pair[1]) {

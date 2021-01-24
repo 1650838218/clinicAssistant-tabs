@@ -1,4 +1,4 @@
-package com.littledoctor.clinicassistant.module.record.entity;
+package com.littledoctor.clinicassistant.module.rxdaily.entity;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import java.util.List;
 public class MedicalRecordVo {
 
     // 患者信息
-    private MedicalRecord medicalRecord;
+    private RxDailyMain rxDailyMain;
 
     // 处方
     private List<RxVo> rxVoList;
@@ -18,12 +18,12 @@ public class MedicalRecordVo {
     // 结算
     private SettleAccount settleAccount;
 
-    public MedicalRecord getMedicalRecord() {
-        return medicalRecord;
+    public RxDailyMain getRxDailyMain() {
+        return rxDailyMain;
     }
 
-    public void setMedicalRecord(MedicalRecord medicalRecord) {
-        this.medicalRecord = medicalRecord;
+    public void setRxDailyMain(RxDailyMain rxDailyMain) {
+        this.rxDailyMain = rxDailyMain;
     }
 
     public List<RxVo> getRxVoList() {

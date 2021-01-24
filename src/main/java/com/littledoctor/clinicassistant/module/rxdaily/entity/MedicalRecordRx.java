@@ -1,4 +1,4 @@
-package com.littledoctor.clinicassistant.module.record.entity;/*
+package com.littledoctor.clinicassistant.module.rxdaily.entity;/*
  * Welcome to use the TableGo Tools.
  * 
  * http://www.tablego.cn

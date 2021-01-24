@@ -1,8 +1,7 @@
-package com.littledoctor.clinicassistant.module.record.mapper;
+package com.littledoctor.clinicassistant.module.rxdaily.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
 /**
  * @Auther: 周俊林
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Repository;
  * @Description:
  */
 @Mapper
-public interface MedicalRecordMapper {
+public interface RxDailyMapper {
 
     /**
      * 删除某病历下的所有处方

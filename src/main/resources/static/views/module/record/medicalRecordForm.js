@@ -17,11 +17,11 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
     var laydate = layui.laydate;
     var element = layui.element;
     var tcmTag = layui.tcmTag;
-    var rootMapping = '/record';
+    var rootMapping = '/rxdaily';
     var decoctionTableId = 'decoction-table';// 中药方 grid
     var patentMedicineTableId = 'patent-medicine-table';// 中成药方 grid
     var skillTableId = 'skill-table';// 医技项目 grid
-    var recordFormId = 'record-form';// 病历表单ID
+    var recordFormId = 'rxdaily-form';// 病历表单ID
     var decoctionFormId = 'decoction-form'; // 中药方 表单ID
     var patentMedicineFormId = 'patent-medicine-form';// 中成药方 表单ID
     var skillFormId = 'skill-form';// 医技项目 表单ID
@@ -60,7 +60,7 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
     });
 
     // 监听标签页的切换
-    element.on('tab(medical-record-tabs)', function(data){
+    element.on('tab(medical-rxdaily-tabs)', function(data){
         var tabBody = $('.layui-tab .layui-tab-content .layui-tab-item').eq(data.index);
         if (data.index == 1 && !tabInitState[0]) {
             initDecoctionTab();
@@ -147,9 +147,9 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
             queryParams: {},
             mode: 'remote',
             columns: [[
-                {field: 'pharmacyItemName', title: '药品名称', width: 150},
+                {field: 'itemName', title: '药品名称', width: 150},
                 {field: 'specifications', title: '规格', width: 120},
-                {field: 'manufacturer', title: '制造商', width: 200}
+                {field: 'producer', title: '制造商', width: 200}
             ]],
             onHidePanel: function () {
                 var combogrid = $(this);
@@ -230,8 +230,8 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
             }
             ,size: 'sm' //小尺寸的表格
             ,cols: [[ //表头
-                {field: 'skillId', type: 'checkbox'}
-                ,{field: 'skillName', title: '项目名称'}
+                {field: 'itemId', type: 'checkbox'}
+                ,{field: 'itemName', title: '项目名称'}
                 ,{field: 'unitPrice', title: '单价(元)'}
                 ,{field: 'dose', title: '治疗次数', edit: 'text'}
                 ,{field: 'totalMoney', title: '总价(元)'}

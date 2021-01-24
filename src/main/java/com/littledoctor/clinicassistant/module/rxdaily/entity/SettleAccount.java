@@ -1,4 +1,4 @@
-package com.littledoctor.clinicassistant.module.record.entity;/*
+package com.littledoctor.clinicassistant.module.rxdaily.entity;/*
  * Welcome to use the TableGo Tools.
  * 
  * http://www.tablego.cn
@@ -14,8 +14,6 @@ package com.littledoctor.clinicassistant.module.record.entity;/*
 import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
-
-import org.hibernate.annotations.GenericGenerator;
 
 /**
  * 结算表(SETTLE_ACCOUNT)

@@ -50,7 +50,6 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax'], function () {
 
     // 监听表格编辑
     table.on('edit(' + skillTableId + ')', function (obj) {
-        console.log(obj.data);
         var inputElem = $(this);
         var oldValue = inputElem.val();
         var tdElem = inputElem.closest('td');

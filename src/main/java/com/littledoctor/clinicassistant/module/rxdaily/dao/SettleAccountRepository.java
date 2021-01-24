@@ -1,7 +1,6 @@
-package com.littledoctor.clinicassistant.module.record.dao;
+package com.littledoctor.clinicassistant.module.rxdaily.dao;
 
-import com.littledoctor.clinicassistant.module.record.entity.MedicalRecord;
-import com.littledoctor.clinicassistant.module.record.entity.SettleAccount;
+import com.littledoctor.clinicassistant.module.rxdaily.entity.SettleAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

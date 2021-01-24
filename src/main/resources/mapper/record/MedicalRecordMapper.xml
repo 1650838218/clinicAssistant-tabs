@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.littledoctor.clinicassistant.module.record.mapper.MedicalRecordMapper">
+<mapper namespace="com.littledoctor.clinicassistant.module.rxdaily.mapper.RxDailyMapper">
 
     <delete id="deleteMedicalRecordRx">
         delete from MEDICAL_RECORD_RX where RECORD_ID = #{recordId};

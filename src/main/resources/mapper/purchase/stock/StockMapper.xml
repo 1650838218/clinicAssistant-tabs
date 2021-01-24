@@ -155,7 +155,7 @@
             b.item_name itemName,
             c.dict_name itemType,
             a.expire_date expireDate,
-            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',a.stock_unit_name),'）') stockCount,
+            CONCAT(0 + CAST(a.stock_count AS CHAR),'（',a.stock_unit_name,'）') stockCount,
             CONCAT(REPLACE(FORMAT(e.unit_price,2),',',''),'/',e.pur_unit_name) unitPrice,
             REPLACE(FORMAT(e.unit_price / b.unit_convert * a.stock_count,2),',','') loss
         FROM
@@ -312,18 +312,19 @@
             GROUP_CONCAT(t.pur_stock_id ORDER BY t.stock_count) purStockId,
             t.item_id itemId,
             t.item_name itemName,
-            t.specifications,
-            t.producer,
-            t.usage_dosage usageDosage,
+            p.specifications,
+            p.producer,
+            p.usage_dosage usageDosage,
             t.selling_price sellingPrice,
             SUM(t.stock_count) stockCount,
             t.stock_unit_name stockUnitName
         FROM
-            pur_stock t
+            pur_stock t, item_patent_medicine p
         WHERE
             t.item_type = 'PatentMedicine'
         AND t.stock_state = 1
         AND t.stock_count > 0
+        AND t.item_id = p.item_id
         AND (
                 t.item_name LIKE CONCAT('%', #{keywords}, '%')
                 OR LOWER(t.full_pinyin) LIKE CONCAT('%', LOWER(#{keywords}), '%')

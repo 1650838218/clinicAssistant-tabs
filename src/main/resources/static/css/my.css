@@ -143,6 +143,30 @@
     border-radius: 4px !important;
 }
 
+.layui-layer-content .layui-input, .layui-textarea, .layui-select {
+    height: 32px;
+}
+
+.layui-layer-content .layui-form-label {
+    padding: 6px 5px;
+}
+
+.layui-layer-content .layui-form-item {
+    margin-bottom: 10px;
+}
+
+.layui-layer-content .layui-form-radio {
+    margin: 2px 10px 0 0;
+}
+
+.layui-layer-content .layui-form-radio>i {
+    font-size: 17px;
+}
+
+.layui-layer-content .layui-input-block {
+    margin-left: 0;
+}
+
 .left-tree {
     height: 450px;
 }

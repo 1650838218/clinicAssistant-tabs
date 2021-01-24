@@ -105,6 +105,46 @@ layui.define(['jquery', 'form'], function (exports) {
             }
             elem.removeClass('layui-btn-disabled');// 按钮可用
             elem.removeAttr('disabled');
+        },
+        layerFormHtml: function (formItem, formFilter) {
+            if (!$.type(formItem) === 'array' || formItem.length == 0) return '';
+            var content = '';
+            content += '<form class="layui-form" lay-filter="' + formFilter + '">';
+            for (var i = 0; i < formItem.length; i++) {
+                var item = formItem[i];
+                if (item.type == 'hidden') {
+                    content += '<input type="hidden" value="" name="' + item.name + '">';
+                    continue;
+                }
+                content += '<div class="layui-form-item">';
+                content += '<label class="layui-form-label">' + item.label + '：</label>';
+                if (item.type == 'input') {
+                    content += '<div class="layui-input-inline">';
+                    if (item.readonly) {
+                        content += '<input name="' + item.name + '" placeholder="请输入' + item.label + '" readonly class="layui-input">';
+                    } else {
+                        content += '<input name="' + item.name + '" placeholder="请输入' + item.label + '" autocomplete="off" class="layui-input">';
+                    }
+                    content += '</div>';
+                } else if (item.type == 'radio') {
+                    content += '<div class="layui-input-block">';
+                    for (var j = 0; j < item.option.length; j++) {
+                        if (item.option[j].check) {
+                            content += '<input type="radio" name="' + item.name + '" value="' + item.option[j].value + '" title="' + item.option[j].text + '" checked>';
+                        } else {
+                            content += '<input type="radio" name="' + item.name + '" value="' + item.option[j].value + '" title="' + item.option[j].text + '">';
+                        }
+                    }
+                    content += '</div>';
+                } else if (item.type == 'select') {
+
+                } else if (item.type == 'checkbox') {
+
+                }
+                content += '</div>';
+            }
+            content += '</form>';
+            return content;
         }
     };
 

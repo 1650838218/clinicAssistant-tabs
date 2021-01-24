@@ -227,13 +227,13 @@
                                    data-options="fitColumns: true, autoRowHeight: true, singleSelect: true, rownumbers:true">
                                 <thead>
                                     <tr>
-                                        <th data-options="field: 'pharmacyItemName'" width="16%">药品名称</th>
-                                        <th data-options="field: 'specifications'" width="18%">规格</th>
-                                        <th data-options="field: 'usageAndDosage'" width="30%">用法用量</th>
-                                        <th data-options="field: 'medicineCount',align:'center'" width="8%">数量</th>
-                                        <th data-options="field: 'stockUnit',align:'center'" width="8%">单位</th>
-                                        <th data-options="field: 'sellingPrice'" width="10%">单价(元)</th>
-                                        <th data-options="field: 'totalMoney'" width="10%">总价(元)</th>
+                                        <th data-options="field: 'itemName',formatter:formatCellTooltip" width="16%">药品名称</th>
+                                        <th data-options="field: 'specifications',formatter:formatCellTooltip" width="18%">规格</th>
+                                        <th data-options="field: 'usageDosage',formatter:formatCellTooltip" width="30%">用法用量</th>
+                                        <th data-options="field: 'medicineCount',align:'center',formatter:formatCellTooltip" width="8%">数量</th>
+                                        <th data-options="field: 'stockUnitName',align:'center',formatter:formatCellTooltip" width="8%">单位</th>
+                                        <th data-options="field: 'sellingPrice',formatter:formatCellTooltip" width="10%">单价(元)</th>
+                                        <th data-options="field: 'totalMoney',formatter:formatCellTooltip" width="10%">总价(元)</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -288,6 +288,16 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    //格式化单元格提示信息
+    function formatCellTooltip(value){
+        if (value) {
+            return "<span title='" + value + "'>" + value + "</span>";
+        } else {
+            return "<span title=''></span>";
+        }
+    }
+</script>
 <script src="/lib/easyui/1.8.1/jquery.min.js"></script>
 <script src="/lib/layuiadmin/layui/layui.js"></script>
 <script src="/js/common/constant.js"></script>

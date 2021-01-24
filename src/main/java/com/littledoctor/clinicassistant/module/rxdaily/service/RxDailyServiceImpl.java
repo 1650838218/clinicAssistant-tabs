@@ -1,25 +1,25 @@
-package com.littledoctor.clinicassistant.module.record.service;
+package com.littledoctor.clinicassistant.module.rxdaily.service;
 
 import com.littledoctor.clinicassistant.common.entity.ReturnResult;
 import com.littledoctor.clinicassistant.common.msg.Message;
-import com.littledoctor.clinicassistant.module.record.dao.MedicalRecordRepository;
-import com.littledoctor.clinicassistant.module.record.dao.MedicalRecordRxDetailRepository;
-import com.littledoctor.clinicassistant.module.record.dao.MedicalRecordRxRepository;
-import com.littledoctor.clinicassistant.module.record.dao.SettleAccountRepository;
-import com.littledoctor.clinicassistant.module.record.entity.*;
-import com.littledoctor.clinicassistant.module.record.mapper.MedicalRecordMapper;
+import com.littledoctor.clinicassistant.module.rxdaily.dao.RxDailyRepository;
+import com.littledoctor.clinicassistant.module.rxdaily.dao.MedicalRecordRxDetailRepository;
+import com.littledoctor.clinicassistant.module.rxdaily.dao.MedicalRecordRxRepository;
+import com.littledoctor.clinicassistant.module.rxdaily.dao.SettleAccountRepository;
+import com.littledoctor.clinicassistant.module.rxdaily.entity.*;
+import com.littledoctor.clinicassistant.module.rxdaily.mapper.RxDailyMapper;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.query.criteria.internal.OrderImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -30,10 +30,10 @@ import java.util.List;
  */
 @Service
 @Transactional
-public class MedicalRecordServiceImpl implements MedicalRecordService {
+public class RxDailyServiceImpl implements RxDailyService {
 
     @Autowired
-    private MedicalRecordRepository medicalRecordRepository;
+    private RxDailyRepository rxDailyRepository;
 
     @Autowired
     private MedicalRecordRxRepository medicalRecordRxRepository;
@@ -42,7 +42,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     private MedicalRecordRxDetailRepository medicalRecordRxDetailRepository ;
 
     @Autowired(required = false)
-    private MedicalRecordMapper medicalRecordMapper;
+    private RxDailyMapper rxDailyMapper;
 
     @Autowired
     private SettleAccountRepository settleAccountRepository;
@@ -56,22 +56,22 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     @Override
     public ReturnResult save(MedicalRecordVo medicalRecordVo) throws Exception {
         if (!ObjectUtils.isEmpty(medicalRecordVo)) {
-            MedicalRecord medicalRecord = medicalRecordVo.getMedicalRecord();// 患者信息
-            if (!ObjectUtils.isEmpty(medicalRecord)) {
-                medicalRecord.setCreateTime(new Date());
-                medicalRecord = medicalRecordRepository.saveAndFlush(medicalRecord);// 保存患者信息
+            RxDailyMain rxDailyMain = medicalRecordVo.getRxDailyMain();// 患者信息
+            if (!ObjectUtils.isEmpty(rxDailyMain)) {
+                rxDailyMain.setUpdateTime(new Date());
+                rxDailyMain = rxDailyRepository.saveAndFlush(rxDailyMain);// 保存患者信息
                 List<RxVo> rxVoList = medicalRecordVo.getRxVoList();// 处方信息
                 if (!ObjectUtils.isEmpty(rxVoList)) {
-                    medicalRecordMapper.deleteMedicalRecordRx(medicalRecord.getRecordId());// 删除旧处方
+                    rxDailyMapper.deleteMedicalRecordRx(rxDailyMain.getRxDailyId());// 删除旧处方
                     // 插入处方信息
                     for (int i = 0; i < rxVoList.size(); i++) {// 保存处方信息
                         RxVo rxVo = rxVoList.get(i);
                         if (!ObjectUtils.isEmpty(rxVo)) {
                             MedicalRecordRx rx = rxVo.getMedicalRecordRx();
                             List<MedicalRecordRxDetail> detailList = rxVo.getDetailList();
-                            rx.setRecordId(medicalRecord.getRecordId());
+                            rx.setRecordId(rxDailyMain.getRxDailyId());
                             for (int j = 0; j < detailList.size(); j++) {
-                                detailList.get(j).setRecordId(medicalRecord.getRecordId());
+                                detailList.get(j).setRecordId(rxDailyMain.getRxDailyId());
                                 detailList.get(j).setRxType(rx.getRxType());
                             }
                             medicalRecordRxRepository.saveAndFlush(rx);// 保存处方
@@ -81,11 +81,11 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
                 }
                 // 结算信息
                 SettleAccount settleAccount = medicalRecordVo.getSettleAccount();
-                settleAccount.setRecordId(medicalRecord.getRecordId());
+                settleAccount.setRecordId(rxDailyMain.getRxDailyId());
                 settleAccountRepository.saveAndFlush(settleAccount);
                 // 返回信息
                 ReturnResult result = new ReturnResult(true, Message.SAVE_SUCCESS);
-                result.setObject(medicalRecord);
+                result.setObject(rxDailyMain);
                 return result;
             }
         }
@@ -103,10 +103,10 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         if (StringUtils.isNotBlank(recordId)) {
             MedicalRecordVo vo = new MedicalRecordVo();
             // 查询患者信息
-            MedicalRecord medicalRecord = medicalRecordRepository.findById(Long.parseLong(recordId)).get();
-            vo.setMedicalRecord(medicalRecord);
-            if (!ObjectUtils.isEmpty(medicalRecord) && !ObjectUtils.isEmpty(medicalRecord.getPrescriptionType())) {
-                String[] types = medicalRecord.getPrescriptionType().split(",");
+            RxDailyMain rxDailyMain = rxDailyRepository.findById(Long.parseLong(recordId)).get();
+            vo.setRxDailyMain(rxDailyMain);
+            if (!ObjectUtils.isEmpty(rxDailyMain) && !ObjectUtils.isEmpty(rxDailyMain.getRxType())) {
+                String[] types = rxDailyMain.getRxType().split(",");
                 List<RxVo> list = new ArrayList<>();
                 for (int i = 0; i < types.length; i++) {
                     list.add(findRxVo(recordId, types[i]));// 查询处方
@@ -158,6 +158,53 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
             });
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * 挂号，创建处方笺
+     * @param rxDailyMain
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public RxDailyMain register(RxDailyMain rxDailyMain) throws Exception {
+        rxDailyMain.setRxDailyId(null);
+        rxDailyMain.setUpdateTime(new Date());
+        rxDailyMain.setArriveTime(new Date());
+        rxDailyMain.setPaymentState(0);
+        return rxDailyRepository.save(rxDailyMain);
+    }
+
+    /**
+     * 获取下一个号码
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public int getRegisterNumber() throws Exception {
+        return rxDailyRepository.getRegisterNumber();
+    }
+
+    /**
+     * 查询当天没有结算的挂号单 处方笺
+     * @return
+     */
+    @Override
+    public List<RxDailyMain> getTodayRxDailyMainForNotPayment() throws Exception{
+        return rxDailyRepository.findAll(new Specification<RxDailyMain>() {
+            @Override
+            public Predicate toPredicate(Root<RxDailyMain> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                Predicate p1 = criteriaBuilder.equal(root.get("paymentState"), 0);
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                Predicate p2 = criteriaBuilder.greaterThanOrEqualTo(root.<Date>get("arriveTime"), calendar.getTime());
+//                criteriaBuilder.asc(root.get("registerNumber"));
+                return criteriaBuilder.and(p1, p2);
+            }
+        }, new Sort(Sort.Direction.ASC, "registerNumber"));
     }
 
     /**

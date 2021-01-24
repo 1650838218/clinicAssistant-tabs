@@ -112,6 +112,12 @@ layui.use(['form', 'jquery', 'layer', 'ajax','table','utils'], function () {
             $.getJSON(rootMapping + '/findById', {id: id}, function (result) {
                 if (result != null && utils.isNotNull(result.itemId)) {
                     form.val(formId, result);
+                    if (result.stockUnit) {
+                        var optionText = $('select[name="stockUnit"]').find('option[value="' + result.stockUnit + '"]').text();// 零售单位
+                        $('select[name="stockUnit"]').parents('form').find('.stockWarnUnit').text(optionText);
+                    } else {
+                        $('select[name="stockUnit"]').parents('form').find('.stockWarnUnit').text('<零售单位>');
+                    }
                 } else {
                     layer.alert('未找到该医疗用品，请重试！',{icon: 0}, function (index) {
                         utils.clearForm('#' + formId);// 清空表单

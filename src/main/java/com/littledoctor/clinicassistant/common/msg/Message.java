@@ -30,6 +30,14 @@ public interface Message {
 
     public static final String SAVE_FAILED = "保存失败！";
 
+    public static final String CREATE_SUCCESS = "创建成功！";
+
+    public static final String CREATE_FAILED = "创建失败！";
+
+    public static final String UPDATE_SUCCESS = "更新成功！";
+
+    public static final String UPDATE_FAILED = "更新失败！";
+
     public static final String DELETE_SUCCESS = "删除成功！";
 
     public static final String DELETE_FAILED = "删除失败！";
