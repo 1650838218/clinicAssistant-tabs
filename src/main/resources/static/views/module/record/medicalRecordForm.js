@@ -29,13 +29,39 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
     var editIndex = {};
     form.render();
 
+    // 设置页面高度
+    $(document.body).find('.center-panel').height(utils.getWindowHeight() - 20);
+
+    // 判断URL上是否有挂号单号，如果有则查询挂号单信息并返现，显示返回按钮
+    var href = window.location.href;
+    if (href.indexOf('rxDailyId') > -1) {
+        $('#btn-group button[lay-event="next"]').hide();
+        $('#btn-group button[lay-event="back"]').show();
+        var queryConditionStr = href.substring(href.indexOf('?')).split('&');
+        for (var i = 0; i < queryConditionStr.length; i++) {
+            if (queryConditionStr[i].indexOf('rxDailyId') > -1) {
+                var rxDailyId = queryConditionStr[i].split('=')[1];
+                $.getJSON('/rxdaily/getRegisterById', {rxDailyId : rxDailyId}, function (result) {
+                    if (result.success) {
+                        result.object.arriveTime = new Date(result.object.arriveTime).format('yyyy-MM-dd hh:mm');
+                        form.val('record-form', result.object);
+                    }
+                });
+                break;
+            }
+        }
+    } else {
+        $('#btn-group button[lay-event="next"]').show();
+        $('#btn-group button[lay-event="back"]').hide();
+    }
+
     // 设置就诊时间
     $('#' + recordFormId + ' input[name="arriveTime"]').val(new Date().format('yyyy-M-d h:m'));
 
     // 监听处方复选框的选择事件
     form.on('checkbox(prescriptionType)', function(data){
         if (data.elem.checked) {
-            $('#btn-group').show();
+            // $('#btn-group').show();
             $('.layui-tab ul li:eq(0)').hide();
             $('.layui-tab ul li:eq(' + data.value + ')').show();
             var thisTab = $('.layui-tab ul li.layui-this');
@@ -49,7 +75,7 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
             if (checked == null || checked.length == 0) {
                 $('.layui-tab ul li:eq(0)').show();
                 $('.layui-tab .layui-tab-content .layui-tab-item:eq(0)').addClass('layui-show');
-                $('#btn-group').hide();
+                // $('#btn-group').hide();
             } else {
                 var thisTab = $('.layui-tab ul li.layui-this');
                 if (thisTab == null || thisTab.length == 0) {
@@ -413,7 +439,7 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
                 }, $('button[lay-event="save"]'));
             }
         },
-        // 结算
+        // 结算btn-group
         pay: function () {
             if (eventFunction.validateRecord()) {
                 var recordData = eventFunction.getRecordData();
@@ -519,7 +545,11 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
                     ajax.postJSON(rootMapping + '/settleAccount', settleAccount, function (result) {
                         if (result.success) {
                             layer.close(index);
-                            window.location.reload();
+                            if (href.indexOf('rxDailyId') > -1) {
+                                eventFunction.back();
+                            } else {
+                                window.location.reload();
+                            }
                         } else {
                             layer.msg(result.msg);
                         }
@@ -557,6 +587,10 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
                     //
                 }
             });
+        },
+        // 返回
+        back: function () {
+            window.location.href = '/views/module/register/register.html';
         }
     };
 

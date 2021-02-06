@@ -58,7 +58,7 @@
             </div>
             <form id="record-form" lay-filter="record-form" class="layui-form layui-form-sm">
                 <button id="record-form-submit-btn" style="display: none;" lay-submit lay-filter="record-form-submit-btn">提交</button>
-                <input type="hidden" name="recordId" value="">
+                <input type="hidden" name="rxDailyId" value="">
                 <div class="layui-row layui-col-space10 layui-form-item">
                     <div class="layui-col-sm6">
                         <label class="layui-form-label">日期：</label>
@@ -83,13 +83,13 @@
                     </div>
                     <div class="layui-col-sm6">
                         <div class="layui-row layui-col-space5">
-                            <div class="layui-col-md8">
+                            <div class="layui-col-md12">
                                 <label class="layui-form-label"><!--<span class="required">*</span>-->年龄：</label>
                                 <div class="layui-input-block">
                                     <input name="patientAge" class="layui-input" placeholder="年龄" maxlength="3" lay-verify="required|number">
                                 </div>
                             </div>
-                            <div class="layui-col-md4">
+                            <!--<div class="layui-col-md4">
                                 <div class="layui-input-block" style="margin-left: 0px">
                                     <select name="ageUnit" lay-filter="ageUnit">
                                         <option value="Y">岁</option>
@@ -97,7 +97,7 @@
                                         <option value="D">天</option>
                                     </select>
                                 </div>
-                            </div>
+                            </div>-->
                         </div>
                     </div>
                     <div class="layui-col-sm6">
@@ -274,16 +274,19 @@
                         </div>
                     </div>
                 </div>
-                <div id="btn-group" class="layui-row" style="display: none;">
-                    <div class="layui-col-md-offset5 layui-col-md3">
-                        ￥：<label>0.00</label>元
-                    </div>
-                    <div class="layui-col-md-offset1 layui-col-md3 layui-btn-container">
-                        <button type="button" class="layui-btn layui-btn-sm" lay-event="save">保存</button>
-                        <button type="button" class="layui-btn layui-btn-sm" lay-event="pay">结算</button>
-                        <button type="button" class="layui-btn layui-btn-sm" lay-event="next">下一位</button>
-                    </div>
-                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md-offset4 layui-col-md8">
+        <div id="btn-group" class="layui-row">
+            <div class="layui-col-md-offset5 layui-col-md3">
+                ￥：<label>0.00</label>元
+            </div>
+            <div class="layui-col-md-offset1 layui-col-md3 layui-btn-container">
+                <button type="button" class="layui-btn layui-btn-sm" lay-event="save">保存</button>
+                <button type="button" class="layui-btn layui-btn-sm" lay-event="pay">结算</button>
+                <button type="button" class="layui-btn layui-btn-sm" lay-event="next" style="display: none">下一位</button>
+                <button type="button" class="layui-btn layui-btn-sm" lay-event="back" style="display: none">返回</button>
             </div>
         </div>
     </div>

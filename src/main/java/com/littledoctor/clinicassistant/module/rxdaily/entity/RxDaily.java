@@ -5,13 +5,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 病历(RX_DAILY_MAIN)
+ * 病历(RX_DAILY)
  * @author 周俊林
  * @version 1.0.0 2019-09-21
  */
 @Entity
-@Table(name = "RX_DAILY_MAIN")
-public class RxDailyMain implements java.io.Serializable {
+@Table(name = "RX_DAILY")
+public class RxDaily implements java.io.Serializable {
     /** 版本号 */
     private static final long serialVersionUID = 4640065184072222294L;
 

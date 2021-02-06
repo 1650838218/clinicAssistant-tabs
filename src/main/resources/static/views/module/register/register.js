@@ -21,8 +21,9 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form', 'util'], functio
         elem: '#register-table',
         url: rootMapping + '/getTodayRxDailyMainForNotPayment',
         limit: 300,// 最多可有300行
+        height: 'full-90',
         cols: [[
-            {field: 'registerId', title: TABLE_COLUMN.numbers, type: 'numbers'},
+            // {field: 'registerId', title: TABLE_COLUMN.numbers, type: 'numbers'},
             {field: 'registerNumber', title: '号牌', width: '6%', align: 'center'},
             {field: 'patientName', title: '姓名', width: '10%', align: 'center'},
             {field: 'patientSex', title: '性别', width: '6%', align: 'center', templet: function (d) {
@@ -30,8 +31,8 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form', 'util'], functio
                 }},
             {field: 'patientAge', title: '年龄', align: 'center', width: '6%'},
             {field: 'patientPhone', title: '电话', width: '15%'},
-            {field: 'patientAddress', title: '住址', width: '24%'},
-            {field: 'arriveTime', title: '就诊时间', width: '20%', align: 'center', templet: function (d) {
+            {field: 'patientAddress', title: '住址', width: '22%'},
+            {field: 'arriveTime', title: '就诊时间', width: '18%', align: 'center', templet: function (d) {
                     return d.arriveTime ? layui.util.toDateString(d.arriveTime) : '';
                 }},
             {title: TABLE_COLUMN.operation, toolbar: '#operate-column', align: 'center'}
@@ -46,42 +47,32 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form', 'util'], functio
     //监听表格操作列
     table.on('tool(' + registerTableId + ')', function (obj) {
         var data = obj.data;
-        if (obj.event === 'prescribe') {
-            prescribe(obj);
+        if (obj.event === 'update') {
+            openDialog(data); // 修改挂号单
+        } else if (obj.event === 'delete') {
+            deleteRegister(data.rxDailyId);
+        } else if (obj.event === 'charge') {
+            charge(data);
         }
     });
 
-    // 处方
-    function prescribe(obj) {
-        var dataBak = [];// 缓存表格已有的数据
-        var oldData = table.cache[skillTableId];
-        var newRow = {
-            itemId: '',
-            itemName: '',
-            unitPrice: ''
-        };
-        // 获取当前行的位置
-        var rowIndex = -1;
-        try {
-            rowIndex = obj.tr[0].rowIndex;
-        } catch (e) {
-            layer.alert(MSG.system_exception, {icon: 2});
-        }
-        //将之前的数组备份
-        for (var i = 0; i < oldData.length; i++) {
-            if (!Array.isArray(oldData[i]) || oldData[i].length > 0)
-                dataBak.push(oldData[i]);
-        }
-        // 插入空白行
-        if (rowIndex != -1) {
-            dataBak.splice(rowIndex + 1, 0, newRow);
-        } else {
-            dataBak.push(newRow);
-        }
-        table.reload(skillTableId, {
-            url:'',
-            data: dataBak   // 将新数据重新载入表格
+    // 删除挂号单
+    function deleteRegister(rxDailyId) {
+        layer.confirm(MSG.delete_confirm + '该挂号单吗？', {icon: 3}, function () {
+            ajax.delete(rootMapping + '/delete/' + rxDailyId, function (result) {
+                layer.msg(result.msg);
+                registerTable.reload();
+            });
         });
+    }
+
+    // 收费
+    function charge(data) {
+        var registerUrl = window.location.href;
+        // http://localhost:8090/views/module/register/register.html
+        var chargeUrl = '/views/module/record/medicalRecordForm.html?rxDailyId=' + data.rxDailyId;
+        window.location.href = chargeUrl;
+        // console.log(registerUrl);
     }
 
     // 新建按钮点击事件
@@ -92,6 +83,11 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form', 'util'], functio
             registerNmumber = result ? result : '';
             form.val('patientInfoForm', {registerNumber: registerNmumber});
         });
+        openDialog({registerNumber: registerNmumber});
+    });
+
+    // 打开对话框
+    function openDialog(formValue) {
         var formItems = [
             {type: 'hidden', name: 'rxDailyId'},
             {type: 'input', label: '号牌', name: 'registerNumber'},
@@ -109,16 +105,15 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form', 'util'], functio
             btnAlign: 'c',
             resize: false,
             success: function(layero, index) {
+                form.val('patientInfoForm', formValue);
                 form.render('radio', 'patientInfoForm');
-                form.val('patientInfoForm', {registerNumber: registerNmumber});
             },
             yes: function (index, layero) {
                 // 获取表单信息，保存
-                ajax.postJSON(rootMapping + '/register', layero.find('form').serializeObject(), function (result) {
+                ajax.postJSON(rootMapping + '/saveRegister', layero.find('form').serializeObject(), function (result) {
                     layer.msg(result.msg);
                     if (result.success) {
                         layer.close(index);
-                        // window.location.reload();
                         registerTable.reload();
                     }
                 }, layero.find('a.layui-layer-btn0'));
@@ -127,7 +122,7 @@ layui.use(['utils', 'jquery', 'layer', 'table', 'ajax', 'form', 'util'], functio
                 layer.close(index);
             }
         });
-    });
+    }
 
 });
 

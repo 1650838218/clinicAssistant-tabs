@@ -10,7 +10,7 @@ import java.util.List;
 public class MedicalRecordVo {
 
     // 患者信息
-    private RxDailyMain rxDailyMain;
+    private RxDaily rxDaily;
 
     // 处方
     private List<RxVo> rxVoList;
@@ -18,12 +18,12 @@ public class MedicalRecordVo {
     // 结算
     private SettleAccount settleAccount;
 
-    public RxDailyMain getRxDailyMain() {
-        return rxDailyMain;
+    public RxDaily getRxDaily() {
+        return rxDaily;
     }
 
-    public void setRxDailyMain(RxDailyMain rxDailyMain) {
-        this.rxDailyMain = rxDailyMain;
+    public void setRxDaily(RxDaily rxDaily) {
+        this.rxDaily = rxDaily;
     }
 
     public List<RxVo> getRxVoList() {

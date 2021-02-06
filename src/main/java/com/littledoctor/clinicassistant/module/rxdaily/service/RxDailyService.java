@@ -2,7 +2,7 @@ package com.littledoctor.clinicassistant.module.rxdaily.service;
 
 import com.littledoctor.clinicassistant.common.entity.ReturnResult;
 import com.littledoctor.clinicassistant.module.rxdaily.entity.MedicalRecordVo;
-import com.littledoctor.clinicassistant.module.rxdaily.entity.RxDailyMain;
+import com.littledoctor.clinicassistant.module.rxdaily.entity.RxDaily;
 import com.littledoctor.clinicassistant.module.rxdaily.entity.SettleAccount;
 
 import java.util.List;
@@ -39,10 +39,17 @@ public interface RxDailyService {
 
     /**
      * 挂号，创建处方笺
-     * @param rxDailyMain
+     * @param rxDaily
      * @return
      */
-    RxDailyMain register(RxDailyMain rxDailyMain) throws Exception;
+    RxDaily createRegister(RxDaily rxDaily) throws Exception;
+
+    /**
+     * 修改挂号 处方笺
+     * @param rxDaily
+     * @return
+     */
+    RxDaily updateRegister(RxDaily rxDaily) throws Exception;
 
     /**
      * 获取下一个号码
@@ -54,5 +61,20 @@ public interface RxDailyService {
      * 查询当天没有结算的挂号单 处方笺
      * @return
      */
-    List<RxDailyMain> getTodayRxDailyMainForNotPayment() throws Exception;
+    List<RxDaily> getTodayRxDailyMainForNotPayment() throws Exception;
+
+    /**
+     * 删除挂号单
+     * @param rxDailyId
+     * @return
+     */
+    boolean deleteRegister(Long rxDailyId) throws Exception;
+
+    /**
+     * 根据ID查询挂号单
+     * @param rxDailyId
+     * @return
+     * @throws Exception
+     */
+    RxDaily getRegisterById(Long rxDailyId) throws Exception;
 }

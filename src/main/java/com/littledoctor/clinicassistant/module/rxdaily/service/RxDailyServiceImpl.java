@@ -9,7 +9,6 @@ import com.littledoctor.clinicassistant.module.rxdaily.dao.SettleAccountReposito
 import com.littledoctor.clinicassistant.module.rxdaily.entity.*;
 import com.littledoctor.clinicassistant.module.rxdaily.mapper.RxDailyMapper;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.query.criteria.internal.OrderImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -56,22 +55,22 @@ public class RxDailyServiceImpl implements RxDailyService {
     @Override
     public ReturnResult save(MedicalRecordVo medicalRecordVo) throws Exception {
         if (!ObjectUtils.isEmpty(medicalRecordVo)) {
-            RxDailyMain rxDailyMain = medicalRecordVo.getRxDailyMain();// 患者信息
-            if (!ObjectUtils.isEmpty(rxDailyMain)) {
-                rxDailyMain.setUpdateTime(new Date());
-                rxDailyMain = rxDailyRepository.saveAndFlush(rxDailyMain);// 保存患者信息
+            RxDaily rxDaily = medicalRecordVo.getRxDaily();// 患者信息
+            if (!ObjectUtils.isEmpty(rxDaily)) {
+                rxDaily.setUpdateTime(new Date());
+                rxDaily = rxDailyRepository.saveAndFlush(rxDaily);// 保存患者信息
                 List<RxVo> rxVoList = medicalRecordVo.getRxVoList();// 处方信息
                 if (!ObjectUtils.isEmpty(rxVoList)) {
-                    rxDailyMapper.deleteMedicalRecordRx(rxDailyMain.getRxDailyId());// 删除旧处方
+                    rxDailyMapper.deleteMedicalRecordRx(rxDaily.getRxDailyId());// 删除旧处方
                     // 插入处方信息
                     for (int i = 0; i < rxVoList.size(); i++) {// 保存处方信息
                         RxVo rxVo = rxVoList.get(i);
                         if (!ObjectUtils.isEmpty(rxVo)) {
                             MedicalRecordRx rx = rxVo.getMedicalRecordRx();
                             List<MedicalRecordRxDetail> detailList = rxVo.getDetailList();
-                            rx.setRecordId(rxDailyMain.getRxDailyId());
+                            rx.setRecordId(rxDaily.getRxDailyId());
                             for (int j = 0; j < detailList.size(); j++) {
-                                detailList.get(j).setRecordId(rxDailyMain.getRxDailyId());
+                                detailList.get(j).setRecordId(rxDaily.getRxDailyId());
                                 detailList.get(j).setRxType(rx.getRxType());
                             }
                             medicalRecordRxRepository.saveAndFlush(rx);// 保存处方
@@ -81,11 +80,11 @@ public class RxDailyServiceImpl implements RxDailyService {
                 }
                 // 结算信息
                 SettleAccount settleAccount = medicalRecordVo.getSettleAccount();
-                settleAccount.setRecordId(rxDailyMain.getRxDailyId());
+                settleAccount.setRecordId(rxDaily.getRxDailyId());
                 settleAccountRepository.saveAndFlush(settleAccount);
                 // 返回信息
                 ReturnResult result = new ReturnResult(true, Message.SAVE_SUCCESS);
-                result.setObject(rxDailyMain);
+                result.setObject(rxDaily);
                 return result;
             }
         }
@@ -103,10 +102,10 @@ public class RxDailyServiceImpl implements RxDailyService {
         if (StringUtils.isNotBlank(recordId)) {
             MedicalRecordVo vo = new MedicalRecordVo();
             // 查询患者信息
-            RxDailyMain rxDailyMain = rxDailyRepository.findById(Long.parseLong(recordId)).get();
-            vo.setRxDailyMain(rxDailyMain);
-            if (!ObjectUtils.isEmpty(rxDailyMain) && !ObjectUtils.isEmpty(rxDailyMain.getRxType())) {
-                String[] types = rxDailyMain.getRxType().split(",");
+            RxDaily rxDaily = rxDailyRepository.findById(Long.parseLong(recordId)).get();
+            vo.setRxDaily(rxDaily);
+            if (!ObjectUtils.isEmpty(rxDaily) && !ObjectUtils.isEmpty(rxDaily.getRxType())) {
+                String[] types = rxDaily.getRxType().split(",");
                 List<RxVo> list = new ArrayList<>();
                 for (int i = 0; i < types.length; i++) {
                     list.add(findRxVo(recordId, types[i]));// 查询处方
@@ -161,18 +160,38 @@ public class RxDailyServiceImpl implements RxDailyService {
     }
 
     /**
-     * 挂号，创建处方笺
-     * @param rxDailyMain
+     * 挂号，保存处方笺
+     * @param rxDaily
      * @return
      * @throws Exception
      */
     @Override
-    public RxDailyMain register(RxDailyMain rxDailyMain) throws Exception {
-        rxDailyMain.setRxDailyId(null);
-        rxDailyMain.setUpdateTime(new Date());
-        rxDailyMain.setArriveTime(new Date());
-        rxDailyMain.setPaymentState(0);
-        return rxDailyRepository.save(rxDailyMain);
+    public RxDaily createRegister(RxDaily rxDaily) throws Exception {
+        rxDaily.setRxDailyId(null);
+        rxDaily.setUpdateTime(new Date());
+        rxDaily.setArriveTime(new Date());
+        rxDaily.setPaymentState(0);
+        return rxDailyRepository.save(rxDaily);
+    }
+
+    /**
+     * 修改挂号 处方笺
+     * @param rxDaily
+     * @return
+     */
+    @Override
+    public RxDaily updateRegister(RxDaily rxDaily) throws Exception {
+        RxDaily old = rxDailyRepository.findById(rxDaily.getRxDailyId()).get();
+        old.setRegisterNumber(rxDaily.getRegisterNumber());
+        old.setPatientName(rxDaily.getPatientName());
+        old.setPatientSex(rxDaily.getPatientSex());
+        old.setPatientAge(rxDaily.getPatientAge());
+        old.setPatientAddress(rxDaily.getPatientAddress());
+        old.setPatientJob(rxDaily.getPatientJob());
+        old.setPatientPhone(rxDaily.getPatientPhone());
+        old.setPaymentState(0);
+        old.setUpdateTime(new Date());
+        return rxDailyRepository.save(old);
     }
 
     /**
@@ -190,10 +209,10 @@ public class RxDailyServiceImpl implements RxDailyService {
      * @return
      */
     @Override
-    public List<RxDailyMain> getTodayRxDailyMainForNotPayment() throws Exception{
-        return rxDailyRepository.findAll(new Specification<RxDailyMain>() {
+    public List<RxDaily> getTodayRxDailyMainForNotPayment() throws Exception{
+        return rxDailyRepository.findAll(new Specification<RxDaily>() {
             @Override
-            public Predicate toPredicate(Root<RxDailyMain> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+            public Predicate toPredicate(Root<RxDaily> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 Predicate p1 = criteriaBuilder.equal(root.get("paymentState"), 0);
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -201,10 +220,32 @@ public class RxDailyServiceImpl implements RxDailyService {
                 calendar.set(Calendar.SECOND, 0);
                 calendar.set(Calendar.MILLISECOND, 0);
                 Predicate p2 = criteriaBuilder.greaterThanOrEqualTo(root.<Date>get("arriveTime"), calendar.getTime());
-//                criteriaBuilder.asc(root.get("registerNumber"));
                 return criteriaBuilder.and(p1, p2);
             }
         }, new Sort(Sort.Direction.ASC, "registerNumber"));
+    }
+
+    /**
+     * 删除挂号单
+     * @param rxDailyId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public boolean deleteRegister(Long rxDailyId) throws Exception {
+        rxDailyRepository.deleteById(rxDailyId);
+        return true;
+    }
+
+    /**
+     * 根据ID查询挂号单
+     * @param rxDailyId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public RxDaily getRegisterById(Long rxDailyId) throws Exception {
+        return rxDailyRepository.findById(rxDailyId).get();
     }
 
     /**

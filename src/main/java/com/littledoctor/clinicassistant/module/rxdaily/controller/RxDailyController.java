@@ -4,7 +4,7 @@ import com.littledoctor.clinicassistant.common.entity.LayuiTableEntity;
 import com.littledoctor.clinicassistant.common.entity.ReturnResult;
 import com.littledoctor.clinicassistant.common.msg.Message;
 import com.littledoctor.clinicassistant.module.rxdaily.entity.MedicalRecordVo;
-import com.littledoctor.clinicassistant.module.rxdaily.entity.RxDailyMain;
+import com.littledoctor.clinicassistant.module.rxdaily.entity.RxDaily;
 import com.littledoctor.clinicassistant.module.rxdaily.entity.SettleAccount;
 import com.littledoctor.clinicassistant.module.rxdaily.service.RxDailyService;
 import org.slf4j.Logger;
@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * @Auther: 周俊林
@@ -43,52 +41,86 @@ public class RxDailyController {
     }
 
     /**
-     * 挂号，新建处方笺
-     * @param rxDailyMain
+     * 挂号，保存处方笺
+     * @param rxDaily
      * @return
      */
-    @PostMapping("/register")
-    public ReturnResult register(@RequestBody RxDailyMain rxDailyMain) {
+    @PostMapping("/saveRegister")
+    public ReturnResult register(@RequestBody RxDaily rxDaily) {
         try {
-            Assert.notNull(rxDailyMain, Message.PARAMETER_IS_NULL);
-            RxDailyMain resultEntity = rxDailyService.register(rxDailyMain);
-            ReturnResult result = new ReturnResult(true, Message.CREATE_SUCCESS);
-            result.setObject(rxDailyMain);
-            return result;
+            Assert.notNull(rxDaily, Message.PARAMETER_IS_NULL);
+            if (rxDaily.getRxDailyId() != null) {
+                // 修改
+                RxDaily resultEntity = rxDailyService.updateRegister(rxDaily);
+                ReturnResult result = new ReturnResult(true, Message.UPDATE_SUCCESS);
+                result.setObject(rxDaily);
+                return result;
+            } else {
+                // 新建
+                RxDaily resultEntity = rxDailyService.createRegister(rxDaily);
+                ReturnResult result = new ReturnResult(true, Message.CREATE_SUCCESS);
+                result.setObject(rxDaily);
+                return result;
+            }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return new ReturnResult(false, Message.CREATE_FAILED);
+        return new ReturnResult(false, Message.SAVE_FAILED);
     }
 
     /**
      * 查询当天没有结算的挂号单 处方笺
      */
     @GetMapping("/getTodayRxDailyMainForNotPayment")
-    public LayuiTableEntity<RxDailyMain> getTodayRxDailyMainForNotPayment() {
+    public LayuiTableEntity<RxDaily> getTodayRxDailyMainForNotPayment() {
         try {
-            return new LayuiTableEntity<RxDailyMain>(rxDailyService.getTodayRxDailyMainForNotPayment());
+            return new LayuiTableEntity<RxDaily>(rxDailyService.getTodayRxDailyMainForNotPayment());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return new LayuiTableEntity<RxDailyMain>();
+        return new LayuiTableEntity<RxDaily>();
     }
 
     /**
-     * 保存 病历
-     * @param medicalRecordVo
+     * 删除挂号单 处方笺
      * @return
      */
-    @ResponseBody
-    @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public ReturnResult save(@RequestBody MedicalRecordVo medicalRecordVo) {
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    public ReturnResult deleteRegister(@PathVariable("id") Long rxDailyId) {
+        ReturnResult returnResult = new ReturnResult();
         try {
-            Assert.notNull(medicalRecordVo, Message.PARAMETER_IS_NULL);
-            return rxDailyService.save(medicalRecordVo);
+            Assert.notNull(rxDailyId, Message.PARAMETER_IS_NULL);
+            rxDailyService.deleteRegister(rxDailyId);
+            returnResult.setSuccess(true);
+            returnResult.setMsg(Message.DELETE_SUCCESS);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            returnResult.setSuccess(false);
+            returnResult.setMsg(Message.DELETE_FAILED);
         }
-        return new ReturnResult(false, Message.SAVE_FAILED);
+        return returnResult;
+    }
+
+    /**
+     * 根据Id查询挂号单
+     * @param rxDailyId
+     * @return
+     */
+    @GetMapping("/getRegisterById")
+    public ReturnResult getRegisterById(Long rxDailyId) {
+        ReturnResult returnResult = new ReturnResult();
+        try {
+            Assert.notNull(rxDailyId, Message.PARAMETER_IS_NULL);
+            RxDaily rxDaily = rxDailyService.getRegisterById(rxDailyId);
+            returnResult.setSuccess(true);
+            returnResult.setMsg(Message.QUERY_SUCCESS);
+            returnResult.setObject(rxDaily);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            returnResult.setSuccess(false);
+            returnResult.setMsg(Message.QUERY_FAILED);
+        }
+        return returnResult;
     }
 
     /**
