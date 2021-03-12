@@ -56,7 +56,7 @@
             <div class="layui-card-header">
                 <h3><b>患者信息</b></h3>
             </div>
-            <form id="record-form" lay-filter="record-form" class="layui-form layui-form-sm">
+            <form id="rxdaily-form" lay-filter="record-form" class="layui-form layui-form-sm">
                 <button id="record-form-submit-btn" style="display: none;" lay-submit lay-filter="record-form-submit-btn">提交</button>
                 <input type="hidden" name="rxDailyId" value="">
                 <div class="layui-row layui-col-space10 layui-form-item">
@@ -145,9 +145,9 @@
                     <div class="layui-col-sm12">
                         <label class="layui-form-label"><!--<span class="required">*</span>-->处方：</label>
                         <div class="layui-input-block">
-                            <input type="checkbox" name="prescriptionType" value="1" title="中药方" lay-skin="primary" lay-filter="prescriptionType">
-                            <input type="checkbox" name="prescriptionType" value="2" title="中成药方" lay-skin="primary" lay-filter="prescriptionType">
-                            <input type="checkbox" name="prescriptionType" value="3" title="医技项目" lay-skin="primary" lay-filter="prescriptionType">
+                            <input type="checkbox" name="rxType" value="1" title="中药方" lay-skin="primary" lay-filter="rx-type">
+                            <input type="checkbox" name="rxType" value="2" title="中成药方" lay-skin="primary" lay-filter="rx-type">
+                            <input type="checkbox" name="rxType" value="3" title="医技项目" lay-skin="primary" lay-filter="rx-type">
                         </div>
                     </div>
                 </div>
@@ -158,7 +158,7 @@
     <div class="layui-col-md8">
         <div class="layui-card">
             <div class="layui-card-body">
-                <div class="layui-tab layui-tab-brief" lay-filter="medical-record-tabs">
+                <div class="layui-tab layui-tab-brief" lay-filter="medical-rxdaily-tabs">
                     <ul class="layui-tab-title">
                         <li></li>
                         <li style="display: none">中药方</li>

@@ -124,6 +124,35 @@ public class RxDailyController {
     }
 
     /**
+     * 保存处方笺  收费 结算 保存
+     * @param rxDaily
+     * @return
+     */
+    @PostMapping("/saveRxDaily")
+    public ReturnResult saveRxDaily(@RequestBody RxDaily rxDaily) {
+        try {
+            Assert.notNull(rxDaily, Message.PARAMETER_IS_NULL);
+            if (rxDaily.getRxDailyId() != null) {
+                // 修改
+                RxDaily resultEntity = rxDailyService.updateRxDaily(rxDaily);
+                ReturnResult result = new ReturnResult(true, Message.UPDATE_SUCCESS);
+                result.setObject(rxDaily);
+                return result;
+            } else {
+                // 新建
+                RxDaily resultEntity = rxDailyService.createRxDaily(rxDaily);
+                ReturnResult result = new ReturnResult(true, Message.CREATE_SUCCESS);
+                result.setObject(rxDaily);
+                return result;
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return new ReturnResult(false, Message.SAVE_FAILED);
+    }
+
+
+    /**
      * 根据ID查询 病历
      * @param recordId
      * @return

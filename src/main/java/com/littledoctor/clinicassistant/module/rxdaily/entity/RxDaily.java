@@ -1,8 +1,10 @@
 package com.littledoctor.clinicassistant.module.rxdaily.entity;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 病历(RX_DAILY)
@@ -112,6 +114,24 @@ public class RxDaily implements java.io.Serializable {
     /** 支付时间 */
     @Column(name = "PAYMENT_TIME")
     private Date paymentTime;
+
+    @Transient
+    private RxDailyHerbal rxDailyHerbal;
+
+    @Transient
+    private List<RxDailyHerbalDtl> rxDailyHerbalDtlList;
+
+    @Transient
+    private RxDailyPatent rxDailyPatent;
+
+    @Transient
+    private List<RxDailyPatentDtl> rxDailyPatentDtlList;
+
+    @Transient
+    private RxDailySkill rxDailySkill;
+
+    @Transient
+    private List<RxDailySkillDtl> rxDailySkillDtlList;
 
     public Long getRxDailyId() {
         return rxDailyId;
@@ -303,5 +323,53 @@ public class RxDaily implements java.io.Serializable {
 
     public void setPaymentTime(Date paymentTime) {
         this.paymentTime = paymentTime;
+    }
+
+    public RxDailyHerbal getRxDailyHerbal() {
+        return rxDailyHerbal;
+    }
+
+    public void setRxDailyHerbal(RxDailyHerbal rxDailyHerbal) {
+        this.rxDailyHerbal = rxDailyHerbal;
+    }
+
+    public List<RxDailyHerbalDtl> getRxDailyHerbalDtlList() {
+        return rxDailyHerbalDtlList;
+    }
+
+    public void setRxDailyHerbalDtlList(List<RxDailyHerbalDtl> rxDailyHerbalDtlList) {
+        this.rxDailyHerbalDtlList = rxDailyHerbalDtlList;
+    }
+
+    public RxDailyPatent getRxDailyPatent() {
+        return rxDailyPatent;
+    }
+
+    public void setRxDailyPatent(RxDailyPatent rxDailyPatent) {
+        this.rxDailyPatent = rxDailyPatent;
+    }
+
+    public List<RxDailyPatentDtl> getRxDailyPatentDtlList() {
+        return rxDailyPatentDtlList;
+    }
+
+    public void setRxDailyPatentDtlList(List<RxDailyPatentDtl> rxDailyPatentDtlList) {
+        this.rxDailyPatentDtlList = rxDailyPatentDtlList;
+    }
+
+    public RxDailySkill getRxDailySkill() {
+        return rxDailySkill;
+    }
+
+    public void setRxDailySkill(RxDailySkill rxDailySkill) {
+        this.rxDailySkill = rxDailySkill;
+    }
+
+    public List<RxDailySkillDtl> getRxDailySkillDtlList() {
+        return rxDailySkillDtlList;
+    }
+
+    public void setRxDailySkillDtlList(List<RxDailySkillDtl> rxDailySkillDtlList) {
+        this.rxDailySkillDtlList = rxDailySkillDtlList;
     }
 }

@@ -56,10 +56,10 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
     }
 
     // 设置就诊时间
-    $('#' + recordFormId + ' input[name="arriveTime"]').val(new Date().format('yyyy-M-d h:m'));
+    $('#' + recordFormId + ' input[name="arriveTime"]').val(new Date().format('yyyy-MM-dd hh:mm'));
 
     // 监听处方复选框的选择事件
-    form.on('checkbox(prescriptionType)', function(data){
+    form.on('checkbox(rx-type)', function(data){
         if (data.elem.checked) {
             // $('#btn-group').show();
             $('.layui-tab ul li:eq(0)').hide();
@@ -279,7 +279,7 @@ layui.use(['element','form','utils', 'jquery', 'layer', 'table', 'ajax', 'laydat
         var re = new RegExp(/^([1-9][0-9]{0,1}|100)$/);
         var msg = '';
         if (!re.test(value)) {
-            msg = '请输入1-100之间的整数';
+            msg = '请输入1-100之间的整数！';
         }
         if (msg) {
             layer.msg(msg);

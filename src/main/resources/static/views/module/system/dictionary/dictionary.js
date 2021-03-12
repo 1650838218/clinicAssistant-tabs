@@ -27,7 +27,7 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
     var leftTable = table.render({
         elem: '#left-table',
         url: rootMapping + '/queryPage',
-        height: 'full-85',
+        height: 'full-80',
         page: {
             limit: 10,
             groups: 2,
@@ -89,7 +89,7 @@ layui.use(['form', 'jquery', 'layer', 'table', 'ajax','utils'], function () {
                     }
                 });
             } catch (e) {
-                console.log(e);
+                // console.log(e);
                 layer.alert(MSG.query_fail, {icon: 2});
             }
         } else {
